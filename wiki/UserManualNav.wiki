@@ -2,7 +2,7 @@ This is the nav bar
 
 List out the main 
 sections
-* Foo
-* bar
-* woo
-* zoo
+  * Foo
+  * bar
+  * woo
+  * zoo
