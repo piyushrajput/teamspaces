@@ -9,6 +9,7 @@
     author_quote="Water invented humans so it could get up hills. ^_^"
     screenshot="http://code.google.com/gadgets/FeedGadget/images/screenshot.png"
     thumbnail="http://code.google.com/gadgets/FeedGadget/images/thumbnail.png">
+    <Require feature="dynamic-height"/>
     <Locale messages="http://code.google.com/gadgets/FeedGadget/intl/ALL_ALL.xml"/>
     <Locale lang="ja" messages="http://code.google.com/gadgets/FeedGadget/intl/ja_ALL.xml"/>
     <Locale lang="ru" messages="http://code.google.com/gadgets/FeedGadget/intl/ru_ALL.xml"/>
