@@ -1,12 +1,25 @@
 #labels Featured
-= Screen Shots =
+=== Team Overview ===
 
-== Team Overview ==
+
 
 http://teamspaces.googlecode.com/svn/wiki/image/teams_overview.jpg
 
-== Team Details ==
+
+
+=== Team Details ===
 
 
 http://teamspaces.googlecode.com/svn/wiki/image/teams_detail.jpg
 
+
+
+=== Discussion Forum ===
+
+
+http://teamspaces.googlecode.com/svn/wiki/image/discussion_overview.jpg
+
+
+=== Discussion Thread ===
+
+http://teamspaces.googlecode.com/svn/wiki/image/discussion_detail.jpg
