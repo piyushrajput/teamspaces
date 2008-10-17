@@ -1,2 +1,6 @@
 #labels Featured
-Under Constructions
+= Screen Shots =
+
+== Team Overview ==
+
+http://teamspaces.googlecode.com/svn/wiki/image/teams_overview.jpg
