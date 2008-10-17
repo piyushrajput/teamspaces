@@ -1,2 +1,4 @@
 #labels Featured,Phase-Requirements
 Under Construction
+
+<wiki:gadget url="http://teamspaces.googlecode.com/svn/wiki/image/gadget.xml" height="400" width="100%" border="0" up_feeds="Android Blog:http://android-developers.blogspot.com/atom.xml" />
