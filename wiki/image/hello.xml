@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Module>
-<ModulePrefs title="hello world example" />
+<ModulePrefs     title="Google Code Gadget"
+    author="Gabriel Harrison"
+    author_email="gharrison.feedback@gmail.com"
+    author_affiliation="Google, Inc."
+    author_location="San Francisco, CA"
+    author_quote="Water invented humans so it could get up hills. ^_^"
+    screenshot="http://code.google.com/gadgets/FeedGadget/images/screenshot.png"
+    thumbnail="http://code.google.com/gadgets/FeedGadget/images/thumbnail.png" />
 <Content type="html"><![CDATA[
 Hello, world!
 ]]></Content>
