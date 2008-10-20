@@ -1,4 +1,4 @@
-=Teams=
+http://teamspaces.googlecode.com/svn/wiki/image/teams_icon.png =Teams=
 
 * The building blocks of Teamspaces are the core concepts of Team and people
 
