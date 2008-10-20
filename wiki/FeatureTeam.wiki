@@ -1,1 +1,8 @@
-Under Construction
+=Teams=
+
+* The building blocks of Teamspaces are the core concepts of Team and people
+
+* A Teamspace is a collaborative container that can be customized to meet a targeted interaction.
+
+* Teamspaces comes preloaded with 3 different space types: Interest, Project, and Department
+The widget framework allows you add additional concepts to a Teamspace unique to your company
