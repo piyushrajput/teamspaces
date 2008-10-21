@@ -1,1 +1,3 @@
-Under Construction
+* Make broadcast announcements to your Teamspace to share important information
+
+* Notify your Teamspace of new announcements or posts via email or let them discover it on their own.
