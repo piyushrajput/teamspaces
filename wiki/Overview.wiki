@@ -1,7 +1,6 @@
 #labels Featured,Phase-Requirements
 
-
-http://teamspaces.googlecode.com/svn/wiki/image/Ctg.jpg
+http://teamspaces.googlecode.com/svn/wiki/image/teamspaces_overview.jpg
 
 FeatureTeam
 FeatureWiki
