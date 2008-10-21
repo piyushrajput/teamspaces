@@ -1,5 +1,8 @@
 #labels Featured,Phase-Requirements
 
+
+http://teamspaces.googlecode.com/svn/wiki/image/Ctg.jpg
+
 FeatureTeam
 FeatureWiki
 FeatureDiscussion
