@@ -1,96 +1,53 @@
-  <title>Team Profile Administration</title> 
-- <prolog>
-- <metadata>
-- <keywords>
-- <indexterm>
-  <indexterm>Team Profile Administration</indexterm> 
-  </indexterm>
-  </keywords>
-  </metadata>
-  </prolog>
-- <body>
-  <p>Available if the user has Teams Application Administration Rights</p> 
-  <p>A Team Profile is a template for the layout of the team. The Teams Admin will manage the different team types. When you create a new team it will ask for the team type you would like to use to determine which layout to use. If you change a team type be aware that it will change the layout of all teams using that Team Type.</p> 
-  <p>To find the Team Profile administration you will:</p> 
-- <p>
-- <ol>
-  <li>Navigate to the "Teams" Tab</li> 
-  <li>Find an area called "Admin Quick Links"</li> 
-  <li>Select on the link name "Setup"</li> 
-  </ol>
-  </p>
-  <p>The Team types management interface consists of a list of Team Profiles that are available to the end user. You can create, edit, clone, and delete a team profile.</p> 
-- <p>
-  <b>New Team Profile</b> 
-  </p>
-- <p>
-- <ol>
-  <li>Click on the new button in the Team admin Setup area above the list of "Popular Team Types"</li> 
-  <li>Enter a name and description for the team type that will be used later when you create a team</li> 
-  <li>Follow the instructions on the page and "Click to add widgets". This will allow you to choice from a list of Salesforce widgts to add to the interface</li> 
-  <li>A overlay will appear with the list of Saleforce Widgets. Select the name of the widget to add it to the Team Type.</li> 
-  <li>Click "Save" when you have added and arranged all the widgets in the team area to your satisfaction.</li> 
-  </ol>
-  </p>
-- <p>
-  <b>Edit Team Profile</b> 
-  </p>
-  <p>To edit a team type select the "Edit" link to the left of the team type list items. Then follow the same instructions to change the team area as the new Team Type flow.</p> 
-- <p>
-  <b>Clone Team Profilr</b> 
-  </p>
-  <p>To clone a team type select the "Clone" link to the left of the team type list items. Then follow the same instructions to change the team area as the new Team Type flow.</p> 
-- <p>
-  <b>Delete</b> 
-  <b>Team Profile</b> 
-  </p>
-  <p>fill in</p> 
-- <p>
-  <b>Definition of Team Profile Permissions:</b> 
-  </p>
-- <p>
-- <dl>
-- <dlentry>
-  <dt>Manage Teams</dt> 
-  <dd /> 
-  </dlentry>
-- <dlentry>
-  <dt>Manage Discussion Forum</dt> 
-  <dd /> 
-  </dlentry>
-- <dlentry>
-  <dt>Create Discussion Topics</dt> 
-  <dd /> 
-  </dlentry>
-- <dlentry>
-  <dt>Post Topic Replies</dt> 
-  <dd /> 
-  </dlentry>
-- <dlentry>
-  <dt>Manage Wiki</dt> 
-  <dd /> 
-  </dlentry>
-- <dlentry>
-  <dt>Create Wiki Pages</dt> 
-  <dd /> 
-  </dlentry>
-- <dlentry>
-  <dt>Post Wiki Comments</dt> 
-  <dd /> 
-  </dlentry>
-- <dlentry>
-  <dt>Manage Project Tasks</dt> 
-  <dd /> 
-  </dlentry>
-- <dlentry>
-  <dt>Create Project Tasks</dt> 
-  <dd /> 
-  </dlentry>
-  </dl>
-- <note>
-  <p>Any Content the user creates will be editable to the user. For example If a user creates a discussion topic but does not have manage discussion forum perm for that team they will be able to edit only the topic they created. For Project Tasks if you are a project assignee you will have edit rights to that task</p> 
-  </note>
-- <note>
-  <p>For Project Tasks if you are a project assignee you will have edit rights to that task</p> 
-  </note>
-  </p>
+Team Profile Administration
+
+  Available if the user has Teams Application Administration Rights
+ 
+  A Team Profile is a template for the layout of the team. The Teams Admin will manage the different team types. When you create a new team it will ask for the team type you would like to use to determine which layout to use. If you change a team type be aware that it will change the layout of all teams using that Team Type. 
+  
+*To find the Team Profile administration you will:*
+
+ * Navigate to the "Teams" Tab
+ * Find an area called "Admin Quick Links"
+ * Select on the link name "Setup"
+
+  The Team types management interface consists of a list of Team Profiles that are available to the end user. You can create, edit, clone, and delete a team profile.</p> 
+
+  *New Team Profile*
+
+ * Click on the new button in the Team admin Setup area above the list of "Popular Team Types"
+ * Enter a name and description for the team type that will be used later when you create a team
+ * Follow the instructions on the page and "Click to add widgets". This will allow you to choice from a list of Salesforce widgts to add to the interface
+ * A overlay will appear with the list of Saleforce Widgets. Select the name of the widget to add it to the Team Type.
+ * Click "Save" when you have added and arranged all the widgets in the team area to your satisfaction.
+
+  *Edit Team Profile*
+  
+  To edit a team type select the "Edit" link to the left of the team type list items. Then follow the same instructions to change the team area as the new Team Type flow.
+
+  *Clone Team Profile*
+  
+  To clone a team type select the "Clone" link to the left of the team type list items. Then follow the same instructions to change the team area as the new Team Type flow.
+
+  *Delete*
+  *Team Profile*
+  
+  fill in
+
+  *Definition of Team Profile Permissions:*
+
+  {{{
+     Manage Teams</dt> 
+     Manage Discussion Forum</dt> 
+     Create Discussion Topics</dt> 
+     Post Topic Replies</dt> 
+     Manage Wiki</dt> 
+     Create Wiki Pages</dt> 
+     Post Wiki Comments</dt> 
+     Manage Project Tasks</dt> 
+     Create Project Tasks</dt> 
+  }}}
+
+
+  _Any Content the user creates will be editable to the user. For example If a user creates a discussion topic but does not have manage discussion forum perm for that team they will be able to edit only the topic they created. For Project Tasks if you are a project assignee you will have edit rights to that task
+
+For Project Tasks if you are a project assignee you will have edit rights to that task_
