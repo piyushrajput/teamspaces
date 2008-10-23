@@ -1,10 +1,9 @@
+*Admin*
 
-=== Admin ===
+*Teams*
 
-=== Teams ===
+*Project*
 
-=== Project ===
+*Wiki*
 
-=== Wiki ===
-
-=== Discussion ===
+*Discussion*
