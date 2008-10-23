@@ -2,8 +2,6 @@
 
 Team Type Administration
 
-_Available in: [enter applicable editions here]_
-
 A Team Type is a template for the layout of the team. The Teams Admin will manage the different team types. When you create a new team it will ask for the team type you would like to use to determine which layout to use. If you change a team type be aware that it will change the layout of all teams using that Team Type.
 
 To find the team type administration you will: 
