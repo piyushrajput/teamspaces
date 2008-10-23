@@ -1,4 +1,5 @@
 *[TeamAdmin Admin]*
+ * [Profile TeamProfileAdmin}
 
 *Teams*
 
