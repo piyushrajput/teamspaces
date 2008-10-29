@@ -23,3 +23,7 @@ http://teamspaces.googlecode.com/svn/wiki/image/discussion_overview.jpg
 === Discussion Thread ===
 
 http://teamspaces.googlecode.com/svn/wiki/image/discussion_detail.jpg
+
+=== Timeline ===
+
+http://teamspaces.googlecode.com/svn/wiki/image/timeline.jpg
