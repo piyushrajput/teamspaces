@@ -27,3 +27,11 @@ http://teamspaces.googlecode.com/svn/wiki/image/discussion_detail.jpg
 === Timeline ===
 
 http://teamspaces.googlecode.com/svn/wiki/image/timeline.jpg
+
+=== Task List ===
+
+http://teamspaces.googlecode.com/svn/wiki/image/tasklist_details.jpg
+
+=== Task Edit ===
+
+http://teamspaces.googlecode.com/svn/wiki/image/task_edit.jpg
