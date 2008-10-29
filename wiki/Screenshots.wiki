@@ -35,3 +35,11 @@ http://teamspaces.googlecode.com/svn/wiki/image/tasklist_details.jpg
 === Task Edit ===
 
 http://teamspaces.googlecode.com/svn/wiki/image/task_edit.jpg
+
+=== Wiki ===
+
+http://teamspaces.googlecode.com/svn/wiki/image/wiki_detail.jpg
+
+=== Wiki Edit ===
+
+http://teamspaces.googlecode.com/svn/wiki/image/wiki_edit.jpg
