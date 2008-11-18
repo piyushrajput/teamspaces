@@ -2,7 +2,9 @@
  * [TeamProfileAdmin Profile]
  * [TeamTypeAdmin Team Types]
 
-*Teams*
+*[TeamManual Teams]*
+ * [NewTeam Create Team]
+ * [AddTeamMember Add a Team Member]
 
 *Project*
 
