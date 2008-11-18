@@ -6,8 +6,14 @@
  * [NewTeam Create Team]
  * [AddTeamMember Add a Team Member]
 
-*Project*
+*[ProjectManual Project]*
+ * []
+ * []
 
-*Wiki*
+*[WikiManual Wiki]*
+ * []
+ * []
 
-*Discussion*
+*[DiscussionManual Discussion]*
+ * []
+ * []
