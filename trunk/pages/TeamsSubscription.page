@@ -1,0 +1,298 @@
+<apex:page id="TeamsSubscription" sidebar="false" tabStyle="Team__c" controller="TeamsSubscriptionController">
+	<script src="/soap/ajax/11.1/connection.js" type="text/javascript"></script>
+	<script>
+		var API_SESSION_ID = '{!$Api.Session_ID}';
+		//Common Resource URL  
+		var globalCommonResourcesPath = '{!URLFOR($Resource.commonResources)}';
+	</script>
+	<!-- Prototype + Scriptaculous -->
+	<script type="text/javascript" src="{!URLFOR($Resource.Script_aculo_us, 'prototype.js')}"></script>
+	<script type="text/javascript" src="{!URLFOR($Resource.Script_aculo_us, 'scriptaculous.js')}"></script>
+	<script type="text/javascript" src="{!URLFOR($Resource.Script_aculo_us, 'effects.js')}"></script>
+	<!-- Portal Support -->
+	<script src="{!$Resource.portalSupport}" />	
+	<!-- Common Js for All Sections -->
+	<script src="{!URLFOR($Resource.TeamsResources, 'inc/js/admin.js')}" />
+	<script type="text/javascript" src="{!URLFOR($Resource.commonResources, 'inc/js/common.js')}"></script>
+	<!-- CSS de TS -->
+	<link rel="stylesheet"  href="{!URLFOR($Resource.TeamsResources, '/inc/css/commonLayout.css')}" />	
+	<link rel="stylesheet"  href="{!URLFOR($Resource.TeamsResources, '/inc/css/profileEdition.css')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.TeamsResources, 'inc/css/teamDetail.css')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.TeamsResources, 'inc/css/widgets/TeamMemberWidget.css')}" />	
+    <!-- CSS styles for Portal Integration -->
+    <apex:stylesheet value="{!URLFOR($Resource.portalStyles, 'portal.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.TeamsResources, 'inc/css/headerTeams.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.TeamsResources, 'inc/css/widgetTeam.css')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.commonResources, 'inc/css/fonts.css')}" />   
+	<style>
+		.permisionSectionContainer,
+		.permisionSectionContainerRight {
+			position: relative;  
+			overflow: hidden;
+		}
+		
+		.infoIcon {
+			cursor:pointer;			
+		}
+		
+		div.header div.page_section h2.small {
+			font-size: 13px;
+		}
+		
+		.noTopMargin {
+			margin-top:0px !important;
+		}
+		
+		div.toplinks {
+			background:#E0E0E0;
+			height:22px;
+			border-bottom:3px solid #297B9C;
+			overflow:hidden;
+			clear:both;
+			position:relative;
+			text-align:center;
+		}
+		
+		div.toplinks a {
+			background: #297B9C;
+			padding:2px;
+			color:#ffffff;
+			text-decoration:none;
+		}
+		
+		.tooltip {
+			background-color:#F9F8CD;
+			border:1px solid #221E1F;
+			display:none;
+			font-family:"Lucida Grande",Verdana;
+			font-size:12px;
+			overflow:auto;
+			padding:5px;
+			position:absolute;
+			text-align:left;
+			width:240px;
+			z-index:100;
+		}
+		.imgCheckbox{
+			float:left;
+			text-align:right;
+			margin:0px;
+		}
+		
+		.inputButton{
+			background:transparent url({!URLFOR($Resource.TeamsResources, 'images/layout/buttons/button_right_bkg.gif')}) no-repeat scroll right bottom;
+			color:#FFFFFF !important;
+			cursor:pointer;
+			display: block;
+			float:left;
+			font-family:Verdana,Arial;
+			font-size:10px;
+			font-weight:bold;
+			border:none ;
+			height:21px;
+			line-height:10px;
+			padding:2px 10px 8px 5px;
+			text-decoration:none;
+			white-space:nowrap;
+		}
+		
+		.message_to_user{
+	
+			background:#FFFFC0 none repeat scroll 0% 50%;
+			border:1px solid #2264B1;
+			color:#050707;
+			font-size:12px;
+			margin-left:10px;
+			margin-right:10px;
+			padding:10px 10px 19px;
+			position:relative;
+		}
+		
+		.message_to_user img {
+			margin-right:3px;
+			float:left;
+			border:0pt none;
+		}
+		
+		.crudButtons{
+			overflow:hidden;
+			position:relative;	
+			align:center;
+			margin:  10px auto 0pt;
+			position: absolute;
+			left: 50%
+		}
+	
+		div.permisionSectionContainer{
+			float: left;
+			width: 50%;
+		}
+		
+		div.permisionSectionContainerRight{
+			float: left;
+			width: 48%;
+			margin-left: 10px;
+		}
+		
+		.labelTD {
+			width: 530px;
+		}
+	</style>	
+	<!-- Header -->
+	<div class="header_portal" id="headerTeams">
+		<div class="page_section">
+			<div>
+				<h1 class="arial_black">{!$ObjectType.Team__c.labelPlural}</h1>
+				<h2 class="arial_black">Subscriptions</h2>
+			</div>  
+		</div>  
+		<div class="searchBox">
+			<div>
+				<div>
+					<div class="center_gray">
+						<form method="get" action="/apex/TeamSearchResult" onsubmit="return checkSearchLength();">
+							<div class="search_box_input f_left">
+								<div class="legend_portal">
+									<img class="f_left" alt="" src="{!URLFOR($Resource.TeamsResources, 'images/layout/magnifier.gif')}" />
+									<span>Find {!$ObjectType.Team__c.labelPlural}  </span>
+								</div>
+								<input type="text" value="Enter keyword or name" name="key" onfocus="setValue('');"  onblur="if(getValue(this)==''){ setValue('Enter keyword or name'); }"/>
+							</div>
+							<input type="submit" value="Search" class="search_btn f_left"/>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div> 
+		<div class="help">
+			<div>
+				<a href="javascript:;">Help for this page</a>  <img src="{!URLFOR($Resource.TeamsResources, 'images/layout/help_icon.gif')}" alt="" />
+			</div>
+		</div> 
+		<div class="gray_border"></div>
+	</div>	
+	<div class="sidebar">
+		<!-- Team Details Widget -->		 
+		<c:TeamDetailsWidget teamId="{!idTeam}" />
+		<!-- Team members -->
+		<c:TeamMembersWidget teamId="{!idTeam}" />	
+		<div class="clear"></div>		
+	</div>
+	<!-- BreadCrumbs -->
+	<apex:form id="form_content" onsubmit="getInputValue(); if(!isCloneAction){if(validator('{!$Component.form_content}', 'warning_to_user'))return false;};">
+		<div class="breadcrumbs"  align="center">
+			<apex:outputpanel rendered="{!IF(subscriptionCount == 0, true, false)}">
+				<apex:commandButton value="Save" action="{!saveSubscription}"/>
+			</apex:outputpanel>
+			<apex:outputpanel rendered="{!IF(subscriptionCount == 0, false, true)}">
+				<apex:commandButton value="Update" action="{!saveSubscription}"/>
+			</apex:outputpanel>
+			<apex:commandButton value="Cancel" action="{!cancelSubscription}"/>
+			<apex:outputpanel rendered="{!IF(subscriptionCount == 0, false, true)}">
+				<apex:commandButton value="Unsubscribe" action="{!deleteSubscription}"/>
+			</apex:outputpanel>
+		</div>
+		<!-- Main Content Div -->
+		<div class="main_content">		
+			<div class="holder">
+			<!-- Start Main Content -->
+				<!-- Section Title -->
+				<div class="teamsTitleBlue" id="titleSection">
+					Manage {!$ObjectType.Team__c.label} Subscriptions
+				</div>
+				<!-- Form Begin -->
+					<div class="formContainer">
+						<!-- Team Checkboxes Section -->
+						<div class="fieldSection">
+							{!$ObjectType.Team__c.label}
+						</div>
+						<table cellpadding="0" cellspacing="0" class="checkboxEdition">
+							<tr>
+								<td class="labelTD"><label>When a {!$ObjectType.Team__c.label} member updates his status</label></td>
+								<td><apex:inputCheckbox value="{!subscription.TeamMemberStatusUpdated__c}"/></td>
+							</tr>
+							<tr>
+								<td class="labelTD"><label>When a {!$ObjectType.Team__c.label} member is joins or leaves the {!$ObjectType.Team__c.label}</label></td>
+								<td><apex:inputCheckbox value="{!subscription.TeamMemberJoinLeave__c}"/></td>
+							</tr>
+						</table>
+						<!-- discussion Checkboxes Section -->
+						<div class="fieldSection">
+							{!$ObjectType.DiscussionForum__c.label}
+						</div>
+						<table cellpadding="0" cellspacing="0"  class="checkboxEdition">
+							<tr>
+								<td class="labelTD"><label>When a new {!$ObjectType.DiscussionTopic__c.label} is created </label></td>
+								<td><apex:inputCheckbox value="{!subscription.DiscussionNewTopic__c}"/></td>
+							</tr>
+							<tr>
+								<td class="labelTD"><label>When a new {!$ObjectType.DiscussionTopic__c.label} or reply happens with in the {!$ObjectType.Team__c.label}</label></td>
+								<td><apex:inputCheckbox value="{!subscription.DiscussionNewReply__c}"/></td>
+							</tr>
+							<tr>
+								<td class="labelTD"><label>When someone replies to a {!$ObjectType.DiscussionTopic__c.label} i authored</label></td>
+								<td><apex:inputCheckbox value="{!subscription.DiscussionReplyToMe__c}"/></td>
+							</tr>
+						</table>
+						<!-- Project Checkboxes Section -->
+						<div class="fieldSection clear">
+							{!$ObjectType.Project2__c.label}
+						</div>
+						<table cellpadding="0" cellspacing="0"  class="checkboxEdition">
+							<tr>
+								<td class="labelTD"><label>When a task has been un/assigned to me </label></td>
+								<td><apex:inputCheckbox value="{!subscription.ProjectTaskAssignedToMe__c}"/></td>
+							</tr>
+							<tr>
+								<td class="labelTD"><label>When a task assigned to be has been changed by another </label></td>
+								<td><apex:inputCheckbox value="{!subscription.ProjectTaskAssignToMeChanged__c}"/></td>
+							</tr>
+							<tr>
+								<td class="labelTD"><label>All task status or percent complete changes within a {!$ObjectType.Project2__c.label}</label></td>
+								<td><apex:inputCheckbox value="{!subscription.ProjectTaskChanged__c}"/></td>
+							</tr>
+							<tr>
+								<td class="labelTD"><label>When a task has been deleted </label></td>
+								<td><apex:inputCheckbox value="{!subscription.ProjectTaskDeleted__c}"/></td>
+							</tr>
+						</table>
+						<!-- Wiki Checkboxes Section -->						
+						<div class="fieldSection">
+							{!$ObjectType.WikiPage__c.labelPlural}
+						</div>
+						<table cellpadding="0" cellspacing="0"  class="checkboxEdition">
+							<tr>
+								<td class="labelTD"><label>When a new {!$ObjectType.WikiPage__c.label} has been added to the {!$ObjectType.WikiPage__c.labelPlural}</label></td>
+								<td><apex:inputCheckbox value="{!subscription.WikiNewPage__c}"/></td>
+							</tr>
+							<tr>
+								<td class="labelTD"><label>When a {!$ObjectType.WikiPage__c.label} i authored was edited </label></td>
+								<td><apex:inputCheckbox value="{!subscription.WikiCreatedByMeUpdated__c}"/></td>
+							</tr>
+							<tr>
+								<td class="labelTD"><label>When any changes happen to the {!$ObjectType.WikiPage__c.labelPlural}</label></td>
+								<td><apex:inputCheckbox value="{!subscription.WikiPageUpdated__c}"/></td>
+							</tr>
+						</table>
+					</div><!-- End Form container -->
+			</div><!-- End Main Content -->
+		</div>
+		<!-- BreadCrumbs -->
+		<div class="breadcrumbs" style="padding-bottom: 10px;" align="center">
+			<br>
+			<apex:outputpanel rendered="{!IF(subscriptionCount == 0, true, false)}">
+				<apex:commandButton value="Save" action="{!saveSubscription}"/>
+			</apex:outputpanel>
+			<apex:outputpanel rendered="{!IF(subscriptionCount == 0, false, true)}">
+				<apex:commandButton value="Update" action="{!saveSubscription}"/>
+			</apex:outputpanel>
+			<apex:commandButton value="Cancel" action="{!cancelSubscription}"/>
+			<apex:outputpanel rendered="{!IF(subscriptionCount == 0, false, true)}">
+				<apex:commandButton value="Unsubscribe" action="{!deleteSubscription}"/>
+			</apex:outputpanel>
+		</div>
+	</apex:form>
+	<script>	
+		readPortalCSSRules();
+	</script>	
+</apex:page>

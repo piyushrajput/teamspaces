@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <deploymentStatus>Deployed</deploymentStatus>
+    <fields>
+        <fullName>Column__c</fullName>
+        <label>Column</label>
+        <precision>2</precision>
+        <scale>0</scale>
+        <type>Number</type>
+    </fields>
+    <fields>
+        <fullName>Row__c</fullName>
+        <label>Row</label>
+        <precision>2</precision>
+        <scale>0</scale>
+        <type>Number</type>
+    </fields>
+    <fields>
+        <fullName>TeamType__c</fullName>
+        <label>Team Type</label>
+        <referenceTo>TeamType__c</referenceTo>
+        <relationshipName>WidgetLayouts</relationshipName>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Widget__c</fullName>
+        <label>Widget</label>
+        <referenceTo>Widget__c</referenceTo>
+        <relationshipName>WidgetLayouts</relationshipName>
+        <type>Lookup</type>
+    </fields>
+    <label>Widget Layout</label>
+    <nameField>
+        <label>WidgetLayout Name</label>
+        <type>Text</type>
+    </nameField>
+    <pluralLabel>WidgetLayouts</pluralLabel>
+    <sharingModel>Read</sharingModel>
+</CustomObject>

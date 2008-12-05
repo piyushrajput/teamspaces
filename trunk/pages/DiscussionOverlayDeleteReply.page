@@ -1,0 +1,51 @@
+<apex:page id="deleteReplyPage" sidebar="false" controller="DiscussionReplyController" tabStyle="DiscussionForum__c">
+	<style>
+		div.sure {
+			font-weight: bold;
+			margin: 3px;
+			color: #333333;
+		}
+		
+		div.info {
+			color: #ADADAD;
+		}
+	</style>
+	<script>
+		function statusDeletingReply(obj) {
+			var buttons = $$('input.saveBtn');
+			for (var i = 0; i < buttons.size(); i++) {
+				if(buttons[i].value == 'Continue and delete reply'){
+					buttons[i].value = '  Deleting...  ';
+					buttons[i].disabled = 'disabled';
+				}
+			}
+		}	
+	</script>
+	<div id="deleteReply_overlay" style="display:none;" class="overlayForm">	
+		<!-- Overlay Title -->
+		<div class="overlayTitleContent">
+			<div class="overlayTitle">Delete Reply</div>
+			<div class="overlayCloseEvent">
+				<a href="Javascript:;" onclick="modal.close();">
+					<img src="{!URLFOR($Resource.TeamsResources, 'images/layout/genericClose.gif')}" alt="Close Window" title="Close Window" />
+				</a>
+			</div>
+		</div>
+		<!-- Overlay Content -->
+		<div class="overlayMainContent">
+			<apex:form id="deleteReplyForm">			
+				<!-- Overlay Form Content -->
+				<div class="overlayFormContent">
+					<div class="sure">Are you sure you want to delete this reply?</div>
+					<div class="info">Once a reply is deleted, it is not recoverable.</div>
+				</div>
+				<div class="overlaySeparateLine" />
+				<!-- Save and Cancel Buttons -->
+				<div class="overlayFromButtons" align="center">
+					<apex:commandButton id="deleteReplyBtn" rerender="replysHolder" styleclass="overlaySaveBtn" value="Continue and delete reply" action="{!deleteReply}" onclick="statusDeletingReply(this);" onComplete="modal.close();" />
+					<input class="overlayCancelBtn" type="button" value="Cancel" onclick="modal.close();" />
+				</div>  						
+			</apex:form>
+		</div>
+	</div>
+</apex:page>

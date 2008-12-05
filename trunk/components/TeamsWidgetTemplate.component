@@ -1,0 +1,54 @@
+<apex:component controller="TeamsWidgetTemplateController">
+	<!-- ### Attribute Definitions ### This attribute is required if the component is a teams catalog widget -->
+	<apex:attribute name="team" description="The team ID" type="String" required="true" assignTo="{!teamId}" />
+	<apex:attribute name="sidebar" description="Sideba Holder" type="Boolean" required="false" assignTo="{!sidebar}" />	
+	<script type="text/javascript" src="{!URLFOR($Resource.TeamsResources, 'inc/js/TeamsWidgetCommon.js')}"></script>	
+	<!-- ### Wide Widget ### -->
+	<apex:outputPanel layout="block" rendered="{!IF(!sidebar, true, false)}">
+		<div class="myBigWidget">
+			<!-- Widget Title -->		
+			<div class="wideHeader">
+				<h4>Title Here</h4>
+			</div>
+			<!-- Widget Links Holder -->
+			<div class="linkAction">
+				<a href="Javascript:;">Link action</a>
+			</div>
+			<!-- Widget Container --> 		
+			<div class="wideBody">
+				Lorem Ipsum is simply dummy text of the printing and typesetting industry. 
+				Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, 
+				when an unknown printer took a galley of type and scrambled it to make a type specimen book. 
+				It has survived not only five centuries, but also the leap into electronic typesetting, 
+				remaining essentially unchanged. It was popularised in the 1960s...	
+			</div>
+		</div>
+	</apex:outputPanel>
+	<!--  ### Thin Widget ###  -->
+	<apex:outputPanel layout="block" rendered="{!IF(sidebar, true, false)}">
+		<div class="teamWidget mySmallWidget" >
+			<!-- Widget Title -->		
+			<div class="thinHeader">
+				<div><div><h4>Title Here</h4></div></div>
+			</div>
+			<!-- Widget Container -->   		
+			<div class="box_content">
+				<!-- Widget Links Holder -->
+				<div class="thinWidgetLinkAction">
+					<a href="Javascript:;">Link action</a>
+				</div>
+				<div class="thinBody">
+					{!permission.ObjectType}
+					Lorem Ipsum is simply dummy text of the printing and typesetting industry. 
+					Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, 
+					when an unknown printer took a galley of type and scrambled it to make a type specimen book. 
+					It has survived not only five centuries, but also the leap into electronic typesetting, 
+					remaining essentially unchanged. It was popularised in the 1960s...	
+				</div>				
+			</div>
+			<!-- Widget Holder Foot -->
+			<div class="bottom_borders"><div><div></div></div></div>
+		</div>
+		<div class="clear"></div>
+	</apex:outputPanel>
+</apex:component>

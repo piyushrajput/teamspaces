@@ -1,0 +1,23 @@
+<apex:component controller="PeopleHeaderSearchController" >
+<div>
+	<div>
+		<!-- Search Form -->
+		<div class="center_gray">
+			<form method="get" action="/apex/PeopleKeywordSearchResults" onsubmit="return checkSearchLength();">
+				<div class="search_box_input f_left">
+					<div class="legend_portal">
+						<img class="f_left" alt="" src="{!URLFOR($Resource.TeamsResources, 'images/layout/magnifier.gif')}" />
+						<span>Find People</span>
+					</div>
+					<input type="text" value="Enter keyword or name" name="key" onfocus="setValue('');"  onblur="if(getValue(this)==''){ setValue('Enter keyword or name'); }"/>
+				</div>
+				<input type="submit" value="Search" class="search_btn f_left"/>
+			</form>
+		</div>
+		<!-- /Search Form -->						
+	</div>
+</div>	
+<script>
+	resetSearchInput();
+</script>
+</apex:component>

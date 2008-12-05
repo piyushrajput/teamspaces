@@ -1,0 +1,289 @@
+<apex:page sidebar="false" showHeader="false" controller="DiscussionReplyController">
+	<script>
+		var replyMessageId = '';
+		var reFreshEvent = null;
+	
+		function getHTMLvalue(){
+			var b = document.getElementsByTagName('iframe');
+			for(var it = 0; it < b.length; it++){
+				var aux = b[it].src.split('fckeditor');
+				if(aux.length > 1){
+					var iframes = b[it].contentWindow.document.getElementsByTagName('iframe');
+					var markup = iframes[0].contentWindow.document.body.innerHTML;
+					break;							
+				}
+			}
+			return markup; 
+		}		
+		
+		var IDmessage = '';
+		
+		function ltrim(s) {
+		 return s.replace(/^\s+/, "");
+		}
+		
+		function rtrim(s) {
+		 return s.replace(/\s+$/, "");
+		}
+		
+		function trim(s) {
+		 return rtrim(ltrim(s));
+		}
+
+		function replyBuild(messageId){
+			var idmessage = 'contentMessage-'+messageId;
+			var messageHTML = $(idmessage).innerHTML;
+			var length = messageHTML.length;
+			
+			if (length > 200){
+				var mess = trim(messageHTML.substring(0,200));		
+				$('quotes').innerHTML = mess + ' ...';
+			}
+			else
+			{
+				$('quotes').innerHTML = trim(messageHTML);
+			}
+			var date = $('date-'+messageId).innerHTML;
+			var author = $('userName-'+messageId).innerHTML;
+			$('quotesAuthor').update('Quote From '+ author +' of '+ date) ;
+			IDmessage = messageId;
+		}
+		
+		function editReplyMessage(messageId, hasQuote){
+			relocateOverlay();
+			replyMessageId = messageId;
+			
+			// Set The id to Edit
+			var aux = $('messageIdField');
+			var IdToedit = aux.innerHTML;
+			$(IdToedit).value = replyMessageId;
+			
+			if(hasQuote){
+				// Build Ids
+				var quoteMessageID = 'quoteMessage-' + messageId;
+				var quoteDateID = 'quoteDate-' + messageId;
+				var contentMessageID = 'contentMessage-' + messageId;	
+				var quoteauthorID = 'quoteAuthor-' + messageId;
+				
+				// Get contents
+				var message = $(contentMessageID).innerHTML;
+				var quotedMessage = $(quoteMessageID).innerHTML;
+				var quotedMessageDate = $(quoteDateID).innerHTML;
+				var quotedMessageAuthor = $(quoteauthorID).innerHTML;
+				var contentMessage = $(contentMessageID).innerHTML;
+				
+				// Setup the overlay
+				$('editReplyTitle').innerHTML = 'Edit Reply';
+				messageToEdit = message;				
+				$('quotesAuthor').innerHTML = quotedMessageAuthor;
+				$('quotes').innerHTML = quotedMessage;
+				topicFirstMessage = messageToEdit; 
+				createOverlay('', 'replyMessage_overlay', '378', 'createFCKEditor(\'replyMessageArea\')');
+			} else {
+			
+				// Build Ids
+				var contentMessageID = 'contentMessage-' + messageId;
+				var message = $(contentMessageID).innerHTML;
+				// Setup the overlay
+				$('editReplyTitle').innerHTML = 'Edit Reply';
+				messageToEdit = message;	
+				topicFirstMessage = messageToEdit;
+				createOverlay('', 'replyMessage_overlay', '378', 'createFCKEditor(\'replyMessageArea\')');
+			}
+		}
+		
+		function relocateOverlay(){	
+			Control.Modal.center(Control.Modal.container);
+		}
+	
+		function refreshPage () {
+			var buttonForm = $('DiscussionDetail:auxForm:auxLink');
+			buttonForm.onclick();
+		}	
+		
+		function setFocusReply(){		
+			createFCKEditor('replyTopicArea');		
+		}
+		
+		function setFocusReplyMessage(){		
+			createFCKEditor('replyMessageArea');
+		}
+		
+		function lTrim(sStr){
+		 while (sStr.charAt(0) == " ")
+		  sStr = sStr.substr(1, sStr.length - 1);
+		 return sStr;
+		}
+		
+		function rTrim(sStr){
+		 while (sStr.charAt(sStr.length - 1) == " ")
+		  sStr = sStr.substr(0, sStr.length - 1);
+		 return sStr;
+		}
+		
+		function allTrim(sStr){
+		 return rTrim(lTrim(sStr));
+		}
+		
+		function validateReplyText(topicArea){
+			var messageTextArea = getHTMLvalue();
+			var topicTextAreaApex = $(topicArea);
+			topicTextAreaApex.value = messageTextArea;		
+			
+			messageTextValue = topicTextAreaApex.value;
+			messageTextValue = messageTextValue.replace(/( ){1,}/g, '');
+			messageTextValue = messageTextValue.replace(/nbsp;/g,'');
+			messageTextValue = messageTextValue.replace(/<br>/g,'');
+			messageTextValue = messageTextValue.replace(/&/g,'');
+			messageTextValue = messageTextValue.replace(/[ ]*[\n]*[\r]*[\t]*/g,'');
+			messageTextValue = messageTextValue.replace(/<[^>]*>/g, '');
+			messageTextValue = messageTextValue.replace(/^\s+|\s+$/g,'');
+			messageTextLength = messageTextValue.length;
+
+			/**
+			* safari extra whitespace and empty textarea.			
+			* if charAt(0) is whitespace and message length = 1 means default fck editor state in safari.
+			* This is not correct so we dont allow.
+			*/
+			var emptySafari =  messageTextValue.charCodeAt(0) == 160 && messageTextLength == 1;
+
+			if(emptySafari || messageTextValue.value == '' || messageTextValue.value ==' ' || messageTextValue == ' ' || messageTextLength == 0 || topicTextAreaApex.value == null){
+				return false;
+				
+			} else {
+				return true;
+			}
+		}
+		
+		function validateQuoteReply(messageAreaId, parentMessageId){
+			parentId = $(parentMessageId);
+			messageArea = $(messageAreaId);
+			parentId.value = IDmessage;
+			messageArea.value = getHTMLvalue();		
+			
+			messageAreaValue = 	messageArea.value;
+			messageAreaValue = messageAreaValue.replace(/nbsp;/g,'');
+			messageAreaValue = messageAreaValue.replace(/&/g,'');
+			messageAreaValue = messageAreaValue.replace(/[ ]*[\n]*[\r]*[\t]*/g,'');
+			messageAreaValue = messageAreaValue.replace(/<[^>]*>/g, '');
+			messageAreaLength = messageAreaValue.length;
+
+			if(messageAreaLength == 0 || messageArea.value == null){
+				return false;
+			} else {
+				return true;
+			}
+		}
+		
+		function statusSavingReply(obj, topicArea) {
+        	if(!validateReplyText(topicArea)){
+        		alert('Please fill in a message.');
+        	}else {
+        		var buttons = $$('input.overlaySaveBtn');
+        		for (var i = 0; i < buttons.size(); i++) {
+        			if(buttons[i].value == 'Post'){
+        				buttons[i].value = '  Saving...  ';
+        				buttons[i].disabled = 'disabled';
+        			}
+        		}
+        	}
+		}
+		
+		function statusNormal(obj){
+			var buttons = $$('input.overlaySaveBtn');
+       		for (var i = 0; i < buttons.size(); i++) {
+       			if(buttons[i].value == '  Saving...  '){
+       				buttons[i].value = 'Post';
+       				buttons[i].disabled = false;
+       			}
+       		}
+		}
+	</script>
+	<!-- Reply Topic Overlay -->
+	<div id="replyTopic_overlay" style="display:none;" class="overlayForm">	
+		<!-- Overlay Title -->
+		<div class="overlayTitleContent">
+			<div class="overlayTitle" id="editReplyTitle">Post Reply</div> 
+			<div class="overlayCloseEvent">
+				<a href="Javascript:;" onclick="modal.close();">
+					<img src="{!URLFOR($Resource.TeamsResources, 'images/layout/genericClose.gif')}" alt="Close Window" title="Close Window" />
+				</a>
+			</div>
+		</div>
+		<!-- Overlay Content -->
+		<div class="overlayMainContent">
+			<!-- Required Information -->
+			<span class="overlayRequiredInfo">= Required Information</span>
+			<apex:form onsubmit="return validateReplyText('{!$Component.replyTopicAreaApex}');">
+			<!-- Overlay Form Content -->
+			<div class="overlayFormContent">
+				<table border="0" style="width:95%;">
+					<tr>
+						<td valign="top" ><span class="inputInfo">Message</span></td>
+						<td valign="top" style="width:4px;"><span style="display:block;width:4px; height:199px; background-color: #C0272D;"></span></td>
+						<td style="height:130px;">
+							<div class="FCKloader" id="FCKloaderReply" style="display:block;"><center><img src="{!URLFOR($Resource.WikiResource, 'images/layout/FCKloader.gif')}" /></center><br />Loading...</div>
+							<div id="fckContentDivReply" style="visibility:hidden;">
+								<textarea id="replyTopicArea" name="message" style="width:98%;height:110px;"></textarea>
+								<apex:inputTextArea id="replyTopicAreaApex" style="width:98%;height:110px;display:none;" value="{!topicReply.Message}" ></apex:inputTextArea>
+							</div>
+						</td>
+					</tr>
+				</table>
+			</div>
+			<div class="overlaySeparateLine"></div>
+			<!-- Saven and Cancel Buttons -->
+			<div class="overlayFromButtons" align="center">
+				<apex:commandbutton styleClass="overlaySaveBtn" value="Post" action="{!saveNewTopicReply}" onclick="statusSavingReply(this,'{!$Component.replyTopicAreaApex}');" oncomplete="modal.close();refreshReplys();statusNormal(this);"/>
+				<input class="overlayCancelBtn" type="button" value="Cancel" onclick="modal.close();" />
+			</div>  						
+			</apex:form>
+		</div>
+	</div>
+	<!-- Quote Reply Message Overlay -->
+	<div id="replyMessage_overlay" style="display:none;" class="overlayForm">	
+		<!-- Overlay Title -->
+		<div class="overlayTitleContent">
+			<div class="overlayTitle">Quote Reply</div>
+			<div class="overlayCloseEvent">
+				<a href="Javascript:;" onclick="modal.close();">
+					<img src="{!URLFOR($Resource.TeamsResources, 'images/layout/genericClose.gif')}" alt="Close Window" title="Close Window" />
+				</a>
+			</div>
+		</div>
+		<!-- Overlay Content -->
+		<div class="overlayMainContent">
+			<div id="quotesAuthor" class="quotesAuhor" ></div>
+			<div id="quotes" class="quotesReply"></div>
+			<!-- Required Information -->
+			<span class="overlayRequiredInfo">= Required Information</span>
+			<apex:form onsubmit="return validateQuoteReply('{!$Component.replyQuoteTextAreaApex}', '{!$Component.replyQuoteParentMessage}');">
+				<!-- Overlay Form Content -->
+				<div class="overlayFormContent">
+					<table border="0" style="width:95%;">
+						<tr>
+							<td valign="top" style="width:40px;padding-left: 15px;"><span class="inputInfo">Message</span></td>
+							<td valign="top" style="width:4px;"><span style="display:block;width:4px; height:199px; background-color: #C0272D;"></span></td>
+							<td>
+								<div class="FCKloader" id="FCKloaderMessage" style="display:block;"><center><img src="{!URLFOR($Resource.WikiResource, 'images/layout/FCKloader.gif')}" /></center><br />Loading...</div>
+								<div id="fckContentDivMessage" style="visibility:hidden;">
+									<textarea id="replyMessageArea" style="width:98%;" ></textarea>
+									<apex:inputTextArea id="replyQuoteTextAreaApex" style="width:98%;height:110px;display:none;" value="{!quoteReply.Message}" ></apex:inputTextArea>
+									<apex:inputHidden id="replyQuoteParentMessage" value="{!quoteReply.ParentMessage}" />
+								</div>
+							</td>
+						</tr>
+					</table>
+				</div>
+				<div class="overlaySeparateLine" />
+				<!-- Saven and Cancel Buttons -->
+				<div class="overlayFromButtons" align="center">
+				    <apex:inputHidden value="{!quoteReply.MessageId}" id="messageIdToEdit" />
+				    <div style="display:none;" id="messageIdField">{!$Component.messageIdToEdit}</div>
+				    <apex:commandbutton styleClass="overlaySaveBtn" value="Post" action="{!saveQuoteReply}" onclick="statusSavingReply(this,'{!$Component.replyQuoteTextAreaApex}')" oncomplete="modal.close();refreshReplys();statusNormal(this);"/>
+					<input class="overlayCancelBtn" type="button" value="Cancel" onclick="modal.close();" />
+				</div>  						
+			</apex:form>
+		</div>
+	</div>
+</apex:page>

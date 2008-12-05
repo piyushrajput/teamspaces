@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <deploymentStatus>Deployed</deploymentStatus>
+    <enableActivities>true</enableActivities>
+    <enableHistory>true</enableHistory>
+    <enableReports>true</enableReports>
+    <fields>
+        <fullName>Description__c</fullName>
+        <label>Description</label>
+        <length>32000</length>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Duration__c</fullName>
+        <defaultValue>0</defaultValue>
+        <label>Duration (Days)</label>
+        <precision>10</precision>
+        <required>true</required>
+        <scale>0</scale>
+        <type>Number</type>
+    </fields>
+    <fields>
+        <fullName>EndDate__c</fullName>
+        <label>End Date</label>
+        <type>DateTime</type>
+    </fields>
+    <fields>
+        <fullName>Indent__c</fullName>
+        <label>Indent</label>
+        <precision>18</precision>
+        <scale>0</scale>
+        <type>Number</type>
+    </fields>
+    <fields>
+        <fullName>Is_Expanded__c</fullName>
+        <defaultValue>false</defaultValue>
+        <label>Is Expanded</label>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Milestone__c</fullName>
+        <defaultValue>false</defaultValue>
+        <label>Milestone</label>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>ParentTask__c</fullName>
+        <label>Parent Task</label>
+        <referenceTo>ProjectTask__c</referenceTo>
+        <relationshipName>ParentTask</relationshipName>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Percent_Completed__c</fullName>
+        <label>Percent Completed</label>
+        <precision>18</precision>
+        <scale>0</scale>
+        <type>Percent</type>
+    </fields>
+    <fields>
+        <fullName>Priority__c</fullName>
+        <label>Priority</label>
+        <picklist>
+            <picklistValues>
+                <fullName>High</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Medium</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Low</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Project__c</fullName>
+        <label>Project</label>
+        <referenceTo>Project2__c</referenceTo>
+        <relationshipName>TaskProject</relationshipName>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>StartDate__c</fullName>
+        <defaultValue>Now()</defaultValue>
+        <label>Start Date</label>
+        <required>true</required>
+        <type>DateTime</type>
+    </fields>
+    <fields>
+        <fullName>Task_Position__c</fullName>
+        <label>Task Position</label>
+        <precision>18</precision>
+        <scale>0</scale>
+        <type>Number</type>
+    </fields>
+    <fields>
+        <fullName>Team__c</fullName>
+        <label>Team</label>
+        <referenceTo>Team__c</referenceTo>
+        <relationshipLabel>Project Tasks</relationshipLabel>
+        <relationshipName>ProjectTasks</relationshipName>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>taskSynchId__c</fullName>
+        <label>taskSynchId</label>
+        <length>255</length>
+        <type>Text</type>
+    </fields>
+    <label>Project Task</label>
+    <nameField>
+        <label>Project Task Name</label>
+        <type>Text</type>
+    </nameField>
+    <pluralLabel>Project Tasks</pluralLabel>
+    <recordTypes>
+        <fullName>name</fullName>
+        <active>true</active>
+        <picklistValues>
+            <picklist>Priority__c</picklist>
+            <values>
+                <fullName>High</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Low</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Medium</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+    </recordTypes>
+    <sharingModel>Private</sharingModel>
+</CustomObject>
