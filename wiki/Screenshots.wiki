@@ -1,24 +1,15 @@
 #labels Featured
 === Team Overview ===
 
-
-
 http://teamspaces.googlecode.com/svn/wiki/image/teams_overview.jpg
-
-
 
 === Team Details ===
 
-
 http://teamspaces.googlecode.com/svn/wiki/image/teams_detail.jpg
-
-
 
 === Discussion Forum ===
 
-
 http://teamspaces.googlecode.com/svn/wiki/image/discussion_overview.jpg
-
 
 === Discussion Thread ===
 
