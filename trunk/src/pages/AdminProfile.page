@@ -1,0 +1,334 @@
+<apex:page id="AdminProfile" sidebar="false" tabStyle="Team__c" controller="AdminProfileController">
+	
+	<!-- Prototype + Scriptaculous -->
+	<apex:includeScript value="{!URLFOR($Resource.Script_aculo_us, 'prototype.js')}" />
+	<apex:includeScript value="{!URLFOR($Resource.Script_aculo_us, 'scriptaculous.js')}" />
+	<apex:includeScript value="{!URLFOR($Resource.Script_aculo_us, 'effects.js')}" />
+	
+	
+	<!-- Portal Support -->
+	<apex:includeScript value="{!$Resource.portalSupport}" />
+	
+	<!-- Common Js for All Sections -->
+	<apex:includeScript value="{!URLFOR($Resource.TeamsResources, 'inc/js/admin.js')}" />
+	<apex:includeScript value="{!URLFOR($Resource.TeamsResources, 'inc/js/sorttable.js')}" />
+	<apex:includeScript value="{!URLFOR($Resource.commonResources, 'inc/js/common.js')}" />
+	<apex:includeScript value="{!URLFOR($Resource.commonResources, 'inc/js/modal.js')}" />
+	<apex:includeScript value="{!URLFOR($Resource.commonResources, 'inc/js/growls/proto-growl/growl.js')}" />
+	<apex:includeScript value="{!URLFOR($Resource.TeamsResources, 'inc/js/Validator.js')}" />
+    
+    <!-- CSS styles for Portal Integration -->
+    <apex:stylesheet value="{!URLFOR($Resource.portalStyles, 'portal.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.TeamsResources, 'inc/css/headerTeams.css')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.TeamsResources, 'inc/css/widgetTeam.css')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.TeamsResources, 'inc/css/teamsOverlaysTemplate.css')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.commonResources, 'inc/css/fonts.css')}" />
+	
+	<!-- Common css for modal -->
+	<apex:stylesheet value="{!URLFOR($Resource.commonResources, 'inc/css/modal.css')}" />	
+	
+	<!-- CSS de TS -->
+	<apex:stylesheet value="{!URLFOR($Resource.TeamsResources, '/inc/css/commonLayout.css')}" />	
+	<apex:stylesheet value="{!URLFOR($Resource.TeamsResources, '/inc/css/profileEdition.css')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.TeamsResources, '/inc/css/DeleteTeamProfile.css')}"/>
+	
+	<!-- ### Ajax Toolkit Include ### -->
+	<apex:includeScript value="/soap/ajax/12.0/connection.js" />
+		
+	<!-- Common JS  -->
+	<apex:includeScript value="{!URLFOR($Resource.TeamsResources, 'inc/js/AdminProfile.js')}" />
+	
+	<!-- Common CSS  -->
+	<apex:stylesheet value="{!URLFOR($Resource.TeamsResources, 'inc/css/AdminProfile.css')}" />
+	
+	<!-- Style Definition linked with controller (Do not remove)  -->
+	<style>
+		.inputButton{
+			background:transparent url({!URLFOR($Resource.TeamsResources, 'images/layout/buttons/button_right_bkg.gif')}) no-repeat scroll right bottom;
+		}
+	</style>
+	
+	<!--Required definition for toolkit initialization, variables defined from 
+		controller values, event registration and startup functions 
+		(Do not remove)
+	-->
+	<script>
+			/**
+        * Namespace Prefix Getter
+        */
+        var namespace = "{!namespace}";
+
+		
+		/**
+		* Initialize toolkit connection
+		*@void
+		*/
+		function init(){
+			sforce.connection.sessionId = '{!$Api.Session_ID}';
+			sforce.connection.defaultNamespace = namespace;
+		}
+		
+		document.observe("dom:loaded", documentLoad); 
+		document.observe("dom:loaded", firefoxFix); 
+		$('bodyTable').observe("click", tooltipoff);
+		
+		var globalCheckboxChecked = "{!URLFOR($Resource.TeamsResources, 'images/layout/icons/checkbox_checked.gif')}"
+		var globalCheckboxUnchecked = "{!URLFOR($Resource.TeamsResources, 'images/layout/icons/checkbox_unchecked.gif')}"
+		var globalTeamLabel = '{!$ObjectType.Team__c.label}';
+		var globalTeamProfileName = '{!teamProfile.Name}';
+		var globalCommonResourcesPath = '{!URLFOR($Resource.commonResources)}';
+		document.observe("dom:loaded", documentLoad); 
+	</script>
+	
+	
+	<a href="#modal_container" id="initializeModal" style="display:none;"></a>
+	<div id="modal_container"></div>
+	<script>createOverlay('initializeModal')</script>
+	<!-- info tooltip -->
+	<div id="divToolTip" class="tooltip">
+		<div id="messageTooltip"></div>
+	</div>
+	<!-- Header -->
+	<apex:composition template="HeaderTemplate">
+		<apex:define name="moduleId"><apex:variable var="moduleId" value="headerTeams"/></apex:define>
+	    <apex:define name="module">{!$ObjectType.Team__c.label}</apex:define>
+	    <apex:define name="title">Admin-Team Profile</apex:define>
+	    <apex:define name="search">
+	    	<c:Search module="team" />
+	    </apex:define>
+    </apex:composition>
+	<!-- Validator -->
+	<div style="background-color: #E0E0E0">
+		<div id="warning_to_user" class="message_to_user" style="display:none;">
+			<img src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/WidgetConfig/infoBig.gif')}" />
+			<div style="margin-top:10px;" id="text_validator"></div>
+		</div>	
+	</div>	
+	<!-- BreadCrumbs -->
+	<apex:form id="form_content" onsubmit="getInputValue(); if(!isCloneAction){if(validator('{!$Component.form_content}', 'warning_to_user'))return false;};">
+		<div class="breadcrumbs">
+			<div style="{!IF(IsTeamAdminMember, 'display:block', 'display:none')};" class="crudButtons">							
+				<apex:commandButton id="save_top" rendered="{!(section != 'view')}" styleClass="inputButton" action="{!saveTeamProfile}" value="Save" />
+				<a id="cancel_top" href="javascript:createOverlay('','cancelOverlay','140');" class="blackbutton" style="display:block;">
+					<span>Cancel</span>
+				</a>
+				<apex:outputpanel rendered="{!AND(hasMember, (section == 'view'))}">
+					<a id="delete_top"  class="blackbutton" onclick="getCountMembersForTeamProfile('{!TeamProfile.Id}', '{!TeamProfile.Name}');">
+						<span>Delete</span>
+					</a>
+				</apex:outputpanel>
+				<apex:outputpanel rendered="{!AND(NOT(hasMember), (section == 'view'))}">
+					<apex:commandLink action="{!removeTeamProfileNoMembers}" styleclass="blackbutton">
+						<span>Delete</span>
+                    	<apex:param name="idRmvTP" value="{!TeamProfile.Id}" />
+                    </apex:commandLink>
+				</apex:outputpanel>
+				<apex:commandLink id="clone_top" rendered="{!(section == 'view')}" oncomplete="show('clone');isClone();" action="{!asignSection}" styleClass="blackbutton" rerender="form_content" onclick="isClone();" >
+					<apex:param name="section" value="clone"/>
+					<span>Clone</span>
+				</apex:commandLink>
+				<apex:commandLink id="edit_top" rendered="{!(section == 'view')}" oncomplete="show('edit'); isClone();" action="{!asignSection}" styleClass="blackbutton" rerender="form_content" onclick="isClone();">
+					<apex:param name="section" value="edit"/>
+					<span>Edit</span>
+				</apex:commandLink>									
+			</div>
+		</div> 
+		<!-- ### Overlay's Includes ### -->
+    	<apex:include pageName="AdminOverlayNewTeamType" />
+		<apex:include pageName="AdminOverlayNewProfile" />
+		<apex:include pageName="TeamsOverlayCancel"/>
+		<!-- Quick links sidebar -->
+		<div class="sidebar">
+			<c:TeamAdminQuickLinks />	 
+		</div>		
+		<!-- Main Content Div -->
+		<div class="main_content">		
+			<div class="holder">
+				<!-- Start Main Content -->
+				<!-- Section Title -->
+				<div class="teamsTitleBlue" id="titleSection">
+					New {!$ObjectType.Team__c.label} Profile - {!TeamProfile.Name}
+				</div>
+				<!-- Form Begin -->
+				<div class="formContainer">
+					<!-- Profile Edition -->
+					<div id="prueba"></div>
+					<div id="edit" style="display:none;">						
+						<div class="requiredLegend">
+							<div> = Required Input</div>						
+						</div>
+						<!-- Team Profile name and description -->
+						<div class="field">
+							<label>{!$ObjectType.Team__c.label} Profile</label>
+							<div class="required">&nbsp;</div>
+							<apex:inputField id="input_profileName" styleClass="medium RQ_uniqueProfile" value="{!teamProfile.Name}" />
+						</div>
+						<div class="field">
+							<label>Description</label>
+							<div class="required" style="border-left-color: #FFFFFF;">&nbsp;</div>
+							<apex:inputtextarea styleClass="large" value="{!teamProfile.Description__c}" rows="5"></apex:inputtextarea>						
+						</div>
+					</div>
+					<!-- Profile View -->
+					<div id="view" style="display:none;">						
+						<table class="profileInfo" >
+							<tr>
+								<td width="25%" align="right"><strong>{!$ObjectType.Team__c.label} Profile Name:</strong></td>
+								<td width="25%" align="left" class="padding">{!teamProfile.Name}</td>
+								<td width="25%" align="right"><strong>Created By:</strong></td>
+								<td width="25%" align="left" class="padding"><a href="/apex/PeopleProfileDisplay?id={!teamProfile.CreatedById}">{!teamProfile.CreatedBy.Name}</a>, {!teamProfile.CreatedDate}</td>
+							</tr>
+							<tr>
+								<td width="25%" align="right"><strong>Description:</strong></td>
+								<td width="25%" align="left" class="padding">{!teamProfile.Description__c}</td>
+								<td width="25%" align="right"><strong>Modified By:</strong></td>
+								<td width="25%" align="left" class="padding"><a href="/apex/PeopleProfileDisplay?id={!teamProfile.CreatedById}">{!teamProfile.LastModifiedBy.Name}</a>, {!teamProfile.LastModifiedDate}</td>
+							</tr>
+						</table>
+					</div>
+					<!-- Team Checkboxes Section -->
+					<div class="fieldSection">
+						{!$ObjectType.Team__c.label}
+					</div>
+					<table cellpadding="0" cellspacing="0" class="checkboxEdition">
+						<tr>
+							<td width="190px"><label>Manage {!$ObjectType.Team__c.label}</label></td>
+							<td>
+								<img src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/checkbox_unchecked.gif')}" class='imgCheckbox' style="display:none;"/>
+								<apex:inputCheckbox value="{!teamProfile.ManageTeams__c}"/>
+								<img class="infoIcon" style="float:left;" src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/info_icon.png')}" onmouseover="tooltip(this, '<b>Manage {!$ObjectType.Team__c.label} allow user to...</b><br> - Edit {!$ObjectType.Team__c.label} <br> - Delete {!$ObjectType.Team__c.label} <br> - Edit members {!$ObjectType.Team__c.label} profile <br> - Remove member from {!$ObjectType.Team__c.label}');" onmouseout="tooltipoff();" />
+							</td>
+						</tr>
+					</table>
+					<!-- Attachments Checkboxes Section -->
+					<div class="fieldSection">
+						Attachments
+					</div>
+					<table cellpadding="0" cellspacing="0" class="checkboxEdition">
+						<tr>
+							<td width="190px"><label>Manage Attachments</label></td>
+							<td>
+								<img src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/checkbox_unchecked.gif')}" class='imgCheckbox' style="display:none;"/>
+								<apex:inputCheckbox value="{!teamProfile.ManageAttachments__c}"/>
+								<img class="infoIcon" style="float:left;" src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/info_icon.png')}" onmouseover="tooltip(this, '<b>Manage Attachments allow user to...</b><br> - Add attachments <br> - Delete attachments');" onmouseout="tooltipoff();" />
+							</td>
+						</tr>
+					</table>
+					<!-- discussion Checkboxes Section -->
+					<div class="fieldSection">
+						Discussions
+					</div>
+					<table cellpadding="0" cellspacing="0"  class="checkboxEdition">
+						<tr>
+							<td width="190px"><label>Post topic replies</label></td>
+							<td><apex:inputCheckbox value="{!teamProfile.PostDiscussionTopicReplies__c}"/>
+								<img src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/checkbox_unchecked.gif')}" class='imgCheckbox' style="display:none;"/>
+							</td>
+						</tr>
+						<tr>
+							<td><label>Create discussion topics</label></td>
+							<td>
+								<img src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/checkbox_unchecked.gif')}" class='imgCheckbox' style="display:none;"/>
+								<apex:inputCheckbox value="{!teamProfile.CreateDiscussionTopics__c}"/>
+								<img class="infoIcon" style="float:left;" src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/info_icon.png')}" onmouseover="tooltip(this, '<b>Create discussion topics allow user to...</b><br> - if you can create discussion topic you can reply');" onmouseout="tooltipoff();" />
+							</td>
+						</tr>
+						<tr>
+							<td><label>Manage discussion forums</label></td>
+							<td>
+								<img src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/checkbox_unchecked.gif')}" class='imgCheckbox' style="display:none;"/>
+								<apex:inputCheckbox value="{!teamProfile.ManageDiscussionForums__c}"/>
+								<img class="infoIcon" style="float:left;" src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/info_icon.png')}" onmouseover="tooltip(this, '<b>Manage discussion forums allow user to...</b><br> - Edit topics<br> - Delete topics<br> - Edit reply <br> - Delete reply <br> - Create comments');" onmouseout="tooltipoff();" />
+							</td>
+						</tr>
+					</table>
+					<!-- Wiki Checkboxes Section -->						
+					<div class="fieldSection">
+						Wiki
+					</div>
+					<table cellpadding="0" cellspacing="0"  class="checkboxEdition">
+						<tr>
+							<td width="190px"><label>Post wiki comments</label></td>
+							<td><apex:inputCheckbox value="{!teamProfile.PostWikiComments__c}"/>
+								<img src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/checkbox_unchecked.gif')}" class='imgCheckbox' style="display:none;"/>	
+							</td>
+						</tr>
+						<tr>
+							<td><label>Create wiki pages</label></td>
+							<td>
+								<img src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/checkbox_unchecked.gif')}" class='imgCheckbox' style="display:none;"/>
+								<apex:inputCheckbox value="{!teamProfile.CreateWikiPages__c}"/>
+								<img class="infoIcon" style="float:left;" src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/info_icon.png')}" onmouseover="tooltip(this, '<b>Create wiki pages allow user to...</b><br> - Edit a page<br> - Create comments');" onmouseout="tooltipoff();"/>
+							</td>
+						</tr>
+						<tr>
+							<td><label>Manage wiki</label></td>
+							<td>
+								<img src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/checkbox_unchecked.gif')}" class='imgCheckbox' style="display:none;"/>
+								<apex:inputCheckbox value="{!teamProfile.ManageWikis__c}"/>
+								<img class="infoIcon" style="float:left;" src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/info_icon.png')}" onmouseover="tooltip(this, '<b>Manage wiki pages allow user to...</b><br> - Edit any page<br> - Delete any page<br> - Edit any comment <br> - Delete any comment <br> - Edit attachments <br> - Delete attachments <br> - Edit page info <br> - Delete page info');" onmouseout="tooltipoff();"/>
+							</td>
+						</tr>
+					</table>
+					<!-- Project Checkboxes Section -->
+					<div class="fieldSection clear">
+						Projects
+					</div>
+					<table cellpadding="0" cellspacing="0"  class="checkboxEdition">
+						<tr>
+							<td width="190"><label>Create project tasks</label></td>
+							<td>
+								<img src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/checkbox_unchecked.gif')}" class='imgCheckbox' style="display:none;"/>
+								<apex:inputCheckbox value="{!teamProfile.CreateProjectTasks__c}"/>
+								<img class="infoIcon" style="float:left;" src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/info_icon.png')}" onmouseover="tooltip(this, '<b>Create project tasks allow user to...</b><br> - if you own the task is assigned to you can edit');" onmouseout="tooltipoff();" />
+							</td>
+						</tr>
+						<tr>
+							<td><label>Manage project tasks</label></td>
+							<td>
+								<img src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/checkbox_unchecked.gif')}" class='imgCheckbox' style="display:none;"/>
+								<apex:inputCheckbox value="{!teamProfile.ManageProjectTasks__c}"/>
+								<img class="infoIcon" style="float:left;" src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/info_icon.png')}" onmouseover="tooltip(this, '<b>Manage project tasks allow user to...</b><br> - Edit any task<br> - Delete any task');" onmouseout="tooltipoff();"/>
+							</td>
+						</tr>
+					</table>
+				</div>
+				<!-- End Form container -->
+			</div>
+			<!-- End Main Content -->
+		</div>
+		<!-- BreadCrumbs -->
+		<div class="breadcrumbs" style="margin-bottom: 20px;">
+			<div style="{!IF(IsTeamAdminMember, 'display:block', 'display:none')};" class="crudButtons">							
+				<apex:commandButton id="save_bottom" rendered="{!(section != 'view')}" styleClass="inputButton" action="{!saveTeamProfile}" value="Save" />
+				<a id="cancel_bottom" href="javascript:createOverlay('','cancelOverlay','140');" class="blackbutton" style="display:block;">
+					<span>Cancel</span>
+				</a>
+				<apex:outputpanel rendered="{!AND(hasMember, (section == 'view'))}">
+					<a id="delete_bottom"  class="blackbutton" onclick="getCountMembersForTeamProfile('{!TeamProfile.Id}', '{!TeamProfile.Name}');">
+						<span>Delete</span>
+					</a>
+				</apex:outputpanel>
+				<apex:outputpanel rendered="{!AND(NOT(hasMember), (section == 'view'))}">
+					<apex:commandLink action="{!removeTeamProfileNoMembers}" styleclass="blackbutton">
+						<span>Delete</span>
+                    	<apex:param name="idRmvTP" value="{!TeamProfile.Id}" />
+                    </apex:commandLink>
+				</apex:outputpanel>
+				<apex:commandLink id="clone_bottom" rendered="{!(section == 'view')}" oncomplete="show('clone');isClone();" action="{!asignSection}" styleClass="blackbutton" rerender="form_content" onclick="isClone();" >
+					<apex:param name="section" value="clone"/>
+					<span>Clone</span>
+				</apex:commandLink>
+				<apex:commandLink id="edit_bottom" rendered="{!(section == 'view')}" oncomplete="show('edit');isClone();" action="{!asignSection}" styleClass="blackbutton" rerender="form_content" onclick="isClone();">
+					<apex:param name="section" value="edit"/>
+					<span>Edit</span>
+				</apex:commandLink>							
+			</div>
+		</div>
+	</apex:form>
+	<script>
+		var profileListMode = 'false';
+		readPortalCSSRules();
+	</script>
+	<apex:include pageName="AdminOverlayRemoveTeamProfile" /> 
+</apex:page>

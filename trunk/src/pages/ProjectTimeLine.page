@@ -1,0 +1,61 @@
+<apex:page sidebar="false" controller="ProjectTimelineController" tabStyle="Team__c">
+    
+    <!-- ### Common Stylesheet & JS Include ### -->     
+    <apex:stylesheet value="{!URLFOR($Resource.TeamsResources, 'inc/css/commonLayout.css')}" />
+    <apex:includeScript value="{!URLFOR($Resource.TeamsResources, 'inc/js/common.js')}"/> 
+	
+	<!-- Portal Support -->
+	<apex:includeScript value="{!$Resource.portalSupport}"/>
+    
+    <!-- ### SWFObject Include ### -->  
+    <apex:includeScript value="{!URLFOR($Resource.commonResources, 'inc/js/swfobject.js')}"/>  
+    
+    <!-- ### Ajax Toolkit Include ### -->
+    <apex:includeScript value="/soap/ajax/12.0/connection.js"/>
+    
+    <!-- CSS styles for Portal Integration -->
+    <apex:stylesheet value="{!URLFOR($Resource.portalStyles, 'portal.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.TeamsResources, 'inc/css/headerTeams.css')}" />
+	
+	<!-- Scriptaculous / Prototype -->
+	<apex:includeScript value="{!URLFOR($Resource.Script_aculo_us, 'prototype.js')}"/>
+	<apex:includeScript value="{!URLFOR($Resource.Script_aculo_us, 'scriptaculous.js')}"/>
+	<apex:includeScript value="{!URLFOR($Resource.Script_aculo_us, 'effects.js')}"/>
+   
+	<!-- ProjectTimeLine CSS -->   
+    <apex:stylesheet value="{!URLFOR($Resource.ProjectResources, 'inc/css/projectTimeLine.css')}" />
+	
+	<!-- ProjectTimeLine JS -->
+	<apex:includeScript value="{!URLFOR($Resource.ProjectResources, 'inc/js/projectTimeLine.js')}" />
+    
+    <!-- Header -->
+    <apex:composition template="HeaderTemplate">
+		<apex:define name="moduleId"><apex:variable var="moduleId" value="headerProject"/></apex:define>
+	    <apex:define name="module">{!$ObjectType.Team__c.label}</apex:define>
+	    <apex:define name="title">Timeline</apex:define>
+	    <apex:define name="search">
+	    	<c:Search module="team" />
+	    </apex:define>
+    </apex:composition>
+    
+    <div class="ganttWrapper" id="gantWrapper">
+       <a id="topGantt" style="display:none;"></a>
+        <embed  src="{!$Resource.Gantt}" 
+                play="true" 
+                bgcolor="#f3f3ec" 
+                width="100%" 
+                height="550"
+                name="FlexSalesforce" 
+                align="middle"
+                flashvars="session_id={!$Api.Session_ID}&server_url={!$Api.Partner_Server_URL_130}&Project={!project.Id}&Team={!team.Id}"
+                loop="false"
+                id="ganttEmbed" 
+                allowScriptAccess="always"
+                type="application/x-shockwave-flash"
+                pluginspage="http://www.adobe.com/go/getflashplayer" /> 
+    </div>
+	<script>
+		setTimeout('centerGantt()', 1500);		
+		readPortalCSSRules();		
+	</script>
+</apex:page>

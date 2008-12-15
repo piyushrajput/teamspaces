@@ -1,0 +1,23 @@
+<apex:page sidebar="false" showHeader="false" controller="ProjectLookupController" >
+
+	<!-- PeopleProfileDisplay css -->
+    <apex:stylesheet value="{!URLFOR($Resource.ProjectResources, 'inc/css/projectLookup.css')}" />
+ 	
+	<!-- PeopleProfileDisplay JS  -->
+	<apex:includeScript value="{!URLFOR($Resource.ProjectResources, 'inc/js/projectLookup.js')}" />
+	
+	
+	<div class="lookup">
+		<img title="" class="pageTitleIcon" alt="" src="{!URLFOR($Resource.ProjectResources, '/images/layout/lookup32.png')}"/>
+		<h1>Lookup</h1>	
+		<div class="clear"></div>
+	</div>
+	<div class="content_result">
+		<apex:dataTable value="{!Task}" var="t" styleClass="result" >
+			<apex:column >
+				<apex:facet name="header">Project Task Name</apex:facet>
+				<a href="javascript:selectProject('{!t.id}','{!t.Name}' )">{!t.Name}</a>
+			</apex:column> 
+		</apex:dataTable>
+	</div>
+</apex:page>

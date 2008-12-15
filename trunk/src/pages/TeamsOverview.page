@@ -1,0 +1,298 @@
+<apex:page sidebar="false" tabStyle="Team__c" controller="TeamsOverviewController"  action="{!profileExist}" >
+	
+	<!-- Prototype / Scriptaculous Framework -->
+	<apex:includeScript value="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/prototype.js')}"/>
+	<apex:includeScript value="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/scriptaculous.js')}"/>
+	<apex:includeScript value="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/effects.js')}"/>
+	<apex:includeScript value="{!URLFOR($Resource.commonResources, 'inc/js/modal.js')}"/>
+	
+	<!-- Portal Support -->
+	<apex:includeScript value="{!$Resource.portalSupport}"/>
+	
+	<!-- Common Js to all people Sections -->
+	<apex:includeScript value="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/common.js')}"/>
+	
+	<!-- CSS de TS -->
+	<link rel="stylesheet"  href="{!URLFOR($Resource.TeamsResources, '/inc/css/teamOverlyManage.css')}" />
+	
+	<!-- Common CSS Styling  -->
+	<apex:stylesheet value="{!URLFOR($Resource.TeamsResources, 'inc/css/commonLayout.css')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.commonResources, 'inc/css/fonts.css')}" />
+	<link rel="stylesheet" media="screen" href="{!URLFOR($Resource.commonResources, 'inc/css/modal.css')}" />
+	
+	<!-- Overview CSS Styling  -->
+	<apex:stylesheet value="{!URLFOR($Resource.TeamsResources, 'inc/css/teamOverview.css')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.TeamsResources, 'inc/css/miniFeeds.css')}" />	
+    
+    <!-- CSS styles for Portal Integration -->
+    <apex:stylesheet value="{!URLFOR($Resource.portalStyles, 'portal.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.TeamsResources, 'inc/css/headerTeams.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.TeamsResources, 'inc/css/widgetTeam.css')}" />
+	
+	<apex:stylesheet value="{!URLFOR($Resource.TeamsResources, 'inc/css/teamsOverview.css')}" />
+	
+	<apex:includeScript value="{!URLFOR($Resource.TeamsResources, 'inc/js/teamOverview.js')}" />
+	
+	<style>
+		div.rightWidget div.rightWidgetContent a.DiscussionNewTopic
+		{
+			background: url( {!URLFOR($Resource.TeamsResources, 'images/layout/icons/help_icon.gif')} ) no-repeat;
+		}	
+		
+		ul.tabsgray li {
+			background: url({!URLFOR($Resource.TeamsResources, 'images/tabs/gray.png')}) repeat-x bottom;
+		}
+		
+		ul.tabsgray li b {
+			background: url({!URLFOR($Resource.TeamsResources, 'images/tabs/right_gray.png')}) no-repeat right;
+		}
+		
+		ul.tabsgray li a{
+			background: url({!URLFOR($Resource.TeamsResources, 'images/tabs/left_gray.png')}) no-repeat left;
+		}
+		ul.tabsgray li.selected {
+			background: url({!URLFOR($Resource.TeamsResources, 'images/tabs/blue.png')}) repeat-x bottom;
+		}
+		
+		ul.tabsgray li.selected b{
+			background: url({!URLFOR($Resource.TeamsResources, 'images/tabs/right_blue.png')}) no-repeat right;
+		}
+		
+		ul.tabsgray li.selected a{
+			background: url({!URLFOR($Resource.TeamsResources, 'images/tabs/left_blue.png')}) no-repeat left;
+		}
+		
+		#holderNew div.loader{
+			background: #fff url({!URLFOR($Resource.discussionResourceFiles, 'images/common/layout/big-loader.gif')}) no-repeat center 200px;
+		}
+		
+		.header_blue_top {
+			background: #fff url({!URLFOR($Resource.TeamsResources, 'images/layout/back_header.png')}) repeat-x left top;
+		}
+		
+		.create_new {
+			background:  url({!URLFOR($Resource.TeamsResources, 'images/layout/right_border.png')}) no-repeat scroll right center;
+		}
+		
+		.create_new b {
+			background: url({!URLFOR($Resource.TeamsResources, 'images/layout/left_border.png')}) no-repeat left center;
+		}	
+	
+	</style>
+	
+	<script>
+	
+		var API_SESSION_ID = '{!$Api.Session_ID}';
+		document.observe('dom:loaded', footerBug);
+
+	</script>
+	
+	<!-- Initialize the overlay box for modal.js -->
+	<a href="#modal_container" id="initializeModal" style="display:none;"></a>
+	<div id="modal_container"></div>
+	<script>createOverlay('initializeModal')</script>
+	<!-- Header -->
+	<apex:composition template="HeaderTemplate">
+		<apex:define name="moduleId"><apex:variable var="moduleId" value="headerTeams"/></apex:define>
+	    <apex:define name="module">{!$ObjectType.Team__c.labelPlural}</apex:define>
+	    <apex:define name="title">Overview</apex:define>
+	    <apex:define name="search">
+	    	<c:Search module="team" />
+	    </apex:define>
+    </apex:composition>
+	
+	<!-- Sidebar -->
+	<div class="sidebar">
+		<!-- MyTeams Widget -->
+		<c:TeamsSidebarProfile />
+		
+		<!-- Meet People Widget -->
+		<c:TeamsSidebarMeetPeople />
+		
+		<!-- Quick links & Admin widget -->
+		<c:TeamAdminQuickLinks /> 
+	</div>
+	<!-- Main Content Div -->
+	<div class="main_content" >		
+		<div class="header_blue_top">
+			<div class="cont_image">
+				<img src="{!URLFOR($Resource.TeamsResources, 'images/layout/people_header.png')}" alt="" />
+			</div>
+			<div class="cont_button auto">
+				<a href="/apex/TeamsCreateNewTeam" class="create_new">
+					<b></b>Create New {!$ObjectType.Team__c.label}
+				</a>
+			</div>
+		</div>
+		<div class="centerCol CenterOverview">
+			<!-- Tabs -->
+			<div class="tabContainer">
+				<apex:form >
+					<ul class="tabsgray">
+						<li class="selected" id="myTeams">
+							<apex:commandLink value="My {!$ObjectType.Team__c.labelPlural}" 
+												onclick="newSwitchTab('myTeams');"
+												rerender="content_teams, filter" 
+												action="{!teamsForTabs}"
+												onComplete="finish(true);"
+												>								
+								<apex:param name="filter" value="myTeams" />
+							</apex:commandLink>
+							<b>&nbsp;</b>
+						</li>
+						<li id="newTeams">
+							<apex:commandLink value="New {!$ObjectType.Team__c.labelPlural}" onclick="newSwitchTab('newTeams');" rerender="content_teams, filter" action="{!teamsForTabs}" onComplete="finish(true);" >
+								<apex:param name="filter" value="newTeams" />
+							</apex:commandLink>
+							<b>&nbsp;</b>
+						</li>
+						<li id="recommendedTeams">
+							<apex:commandLink value="Recommended {!$ObjectType.Team__c.labelPlural}" onclick="newSwitchTab('recommendedTeams');" rerender="content_teams, filter" action="{!teamsForTabs}" onComplete="finish(true);" >
+								<apex:param name="filter" value="recommendedTeams" />
+							</apex:commandLink>
+							<b>&nbsp;</b>
+						</li>
+						<li id="allTeams">
+							<apex:commandLink value="All {!$ObjectType.Team__c.labelPlural}" onclick="newSwitchTab('allTeams');" rerender="content_teams, filter" action="{!teamsForTabs}" onComplete="finish(true); ">
+								<apex:param name="filter" value="allTeams" />
+							</apex:commandLink>
+							<b>&nbsp;</b>
+						</li>
+					</ul>
+				</apex:form>
+			</div>
+			<div class="tabBorderBlue">&nbsp;</div>
+			<!-- Content Teams -->
+			<div id="holderNew">
+				<div class="loader" style="display:none;" id="load_"></div>
+				<apex:outputPanel id="content_teams" layout="block" styleClass="content_teams">
+					<!-- FILTER -->
+					<apex:outputPanel layout="block" id="filter" rendered="{!isAllTeams}">
+						<div class="filter" id="filterDiv"  style="">
+							<div class="letterFilterWrapper">
+								<apex:form id="filterForm">
+									<div class="letterFilterTitle">Filter</div>
+									<div class="letterFilterContainer">
+										<ul class="letterFilter">
+											<li>
+												<apex:commandLink id="ALL" 
+																  action="{!filterTeams}" 
+																  value="ALL" 
+																  onclick="showLoaderForTabs(); setFilterLetter(this);"
+																  oncomplete="markSelectedLetter();"
+																  rerender="content_teams" 
+																  styleClass="AllBtnSet"> 												
+													<apex:param name="ltr" value="ALL" />
+												</apex:commandLink>
+											</li>
+											<apex:repeat id="letterFilterRepeat" value="{!letterFilter}" var="item">
+												<li>
+													<apex:outputpanel rendered="{!item.containSites}">
+														<apex:commandLink styleclass="contains"
+															onclick="showLoaderForTabs(); setFilterLetter(this);"
+															oncomplete="markSelectedLetter();"
+															action="{!filterTeams}"
+															value="{!item.letter}"
+															rerender="content_teams">
+															<apex:param name="ltr" value="{!item.letter}" />
+														</apex:commandLink>
+													</apex:outputpanel>
+													<apex:outputpanel rendered="{!NOT(item.containSites)}">
+														{!item.letter}
+													</apex:outputpanel>
+												</li>
+											</apex:repeat>
+										</ul>
+									</div><br style="clear:both; font-size:3px;" />
+								</apex:form>
+							</div>
+						</div>
+						<hr class="filterHR" />
+					</apex:outputPanel>
+					<!-- PAGINATION -->
+					<apex:outputPanel layout="block" id="pagination" rendered="{!isAllTeams}" styleClass="navigatorContainer">
+						<div class="navigation">
+							<apex:form >
+								<ul>
+									<li>
+										<apex:commandLink action="{!paginator.firstPage}" rerender="content_teams" rendered="{!paginator.prevPageLinkShow}" onclick="showLoaderForTabs();" oncomplete="finish(false);" >
+											<img src="{!URLFOR($Resource.TeamsResources, 'images/layout/navigator_left.gif')}" alt="" />
+										</apex:commandLink>
+										<apex:outputpanel rendered="{!NOT(paginator.prevPageLinkShow)}">
+											<img class="disabled" src="{!URLFOR($Resource.TeamsResources, 'images/layout/navigator_left_disabled.gif')}" alt="" />
+										</apex:outputpanel>
+									</li>
+									<li>
+										<apex:commandLink styleclass="prevPage" action="{!paginator.prevPage}" value="Previous" rerender="content_teams" rendered="{!paginator.prevPageLinkShow}" onclick="showLoaderForTabs();" oncomplete="finish(false);" />	
+										<apex:outputpanel rendered="{!paginator.prevPageShow}">
+											<a href="javascript:;" class="prevPageDisabled">Previous</a>
+										</apex:outputpanel>
+									</li>
+									<li> ({!paginator.currentPagination} - {!paginator.cntPagination}) </li>
+									<li>
+										<apex:commandLink styleclass="nextPage" action="{!paginator.nextPage}" value="Next" rerender="content_teams" rendered="{!paginator.nextPageLinkShow}" onclick="showLoaderForTabs();" oncomplete="finish(false);" />	
+										<apex:outputPanel rendered="{!paginator.nextPageShow}">
+											<a href="javascript:;" class="nextPageDisabled">Next</a>
+										</apex:outputPanel>
+									</li>
+									<li>
+										<apex:commandLink action="{!paginator.lastPage}" rerender="content_teams" rendered="{!paginator.nextPageLinkShow}" onclick="showLoaderForTabs();" oncomplete="finish(false);" >
+											<img src="{!URLFOR($Resource.TeamsResources, 'images/layout/navigator_right.gif')}" alt="" />
+										</apex:commandLink>
+										<apex:outputpanel rendered="{!NOT(paginator.nextPageLinkShow)}">
+											<img class="disabled" src="{!URLFOR($Resource.TeamsResources, 'images/layout/navigator_right_disabled.gif')}" alt="" />
+										</apex:outputpanel>
+									</li>
+								</ul>	
+							</apex:form>						
+						</div>
+					</apex:outputPanel>								
+					<!-- TEAMS LIST -->
+					<div class="content_teams">
+						<div style="{!IF(teamsForTabsSize > 0, 'display:none', '')}; ">
+							<div class="grayColor noitems" >No {!$ObjectType.Team__c.labelPlural} Yet</div>
+						</div>
+						<div style="{!IF(teamsForTabsSize > 0, '', 'display:none')}; ">
+							<apex:repeat value="{!TeamsForTabs}" var="t" first="{!paginator.firstItem}" rows="{!paginator.numberOfItemsToShow}">	
+								<!-- item -->		
+								<div class="item">
+									<div class="imageTeams">
+										<a href="/apex/TeamsRedirect?id={!t.Id}">
+											<img alt="" width="47" height="47" src="{!IF(t.image == 'null',(URLFOR($Resource.commonResources, '/images/placeholders/default_team_100x100.png')) ,t.image)}"  />
+										</a>
+									</div>
+									<div class="detailTeams">
+										<h4><a href="/apex/TeamsRedirect?id={!t.Id}">{!t.Name}</a></h4>
+										<div>
+											<span>{!t.members}</span>
+											<a href="/apex/TeamsMembersList?id={!t.Id}">Members</a> | 
+											<span>{!t.tasks}</span> 
+											<a href="/apex/ProjectTaskList?id={!t.Id}">Tasks</a> | 
+											<span>{!t.discussions}</span> 
+											<a href="/apex/DiscussionTopics?id={!t.Id}">Discussions</a>
+											<br/>
+											{!t.createDate}
+										</div>
+									</div>
+									<div class="clear"></div>
+								</div>
+							</apex:repeat>
+						</div> 
+					</div>
+				</apex:outputPanel> 
+			</div>
+			<!-- Widget Col -->
+			<div class="rightCol RightOverview" style="top:238px;">
+				<!-- My Upcoming Tasks & Milestones -->	
+				<c:TeamsWidgetMyTasksAndMilestones />  
+				<!-- Popular Discussions -->
+				<c:TeamsWidgetPopularDiscussions />  
+				<!-- Activity Feed -->	
+				<c:TeamsWidgetActivityFeed />  	
+			</div>		
+		</div>
+	</div>
+	<script>
+		readPortalCSSRules();
+	</script>
+</apex:page>

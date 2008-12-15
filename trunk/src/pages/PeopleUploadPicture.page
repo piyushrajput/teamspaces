@@ -1,0 +1,107 @@
+<apex:page tabStyle="PeopleProfile__c" sidebar="false" controller="PeopleOverviewController" action="{!initAttachmentCheck}" >
+
+	<!-- Prototype / Scriptaculous Framework -->
+	<apex:includeScript value="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/prototype.js')}"/>
+	<apex:includeScript value="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/scriptaculous.js')}"/>
+	<apex:includeScript value="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/effects.js')}"/>
+
+	<!-- Portal Support -->
+	<apex:includeScript value="{!$Resource.portalSupport}"/>
+
+	<!-- Common Js to aClick the "Add Imagell people Sections -->
+	<apex:includeScript value="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/common.js')}"/>
+
+    <!-- CSS styles for Portal Integration -->
+    <apex:stylesheet value="{!URLFOR($Resource.portalStyles, 'portal.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.TeamsResources, 'inc/css/headerTeams.css')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.TeamsResources, 'inc/css/widgetTeam.css')}" />
+
+	<!-- Common CSS Styling  -->
+	<apex:stylesheet value="{!URLFOR($Resource.PeopleResourceFiles, 'inc/css/commonLayout.css')}" />
+	<apex:includeScript value="/soap/ajax/11.1/connection.js"/>
+
+<apex:includeScript value="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/peopleUploadPicture.js')}"/>
+
+	<!-- ### Upload File [UPF] ### -->
+	<script>
+		/**
+        * Namespace Prefix Getter
+        */
+        var namespace = "{!namespace}";		
+        var globalApiSessionId = "{!$Api.Session_ID}";
+	</script>
+	
+	<!-- Page Begin  -->
+	
+	
+	<!-- Header -->
+	<apex:composition template="HeaderTemplate">
+		<apex:define name="moduleId"><apex:variable var="moduleId" value="headerPeople"/></apex:define>
+	    <apex:define name="module">People</apex:define>
+	    <apex:define name="title">Overview</apex:define>
+	    <apex:define name="search">
+	    	<c:Search module="people_keyword" />
+	    </apex:define>
+    </apex:composition>
+    
+	<div class="leftBar">
+		<!-- Sidebar -->
+		<div class="sidebar">
+			<apex:include pageName="PeopleSidebarProfile" />	
+		</div>
+	</div>
+	<!-- /Left Column container -->
+	<!-- Contain All -->
+	<div class="two_colsContainer">		
+		<!--  Central content -->
+		<div class="content">
+			<!-- The center div at content -->
+			<div class="main_form_holder">
+				<div class="main_form_header">
+					<a href="Javascript:;" onclick="goBackPhotoGallery();">< Go back to Photo Gallery</a>
+					<h1>Edit Profile</h1>
+					<h2>Upload Picture</h2>
+				</div>
+				<div class="main_form">	
+					<input type="hidden" name="pid" id="done_pid" value="{!$CurrentPage.parameters.pid}" />	
+					<input type="hidden" name="upc" id="done_count" value="{!$CurrentPage.parameters.upc}"/>
+					<div id='msjError' class="message_to_user" style="{!IF(displayError,'','display:none;')}" >
+						<p>The file cannot be uploaded <br />
+						Please check if is a valid image type and the file size is smaller than 5Mb.</p>
+					</div>
+					<div id='msjSuccess' class="message_to_user" style="{!IF(successMessage,'','display:none;')}" >
+						<p>File uploaded!<br /></p>
+					</div>
+					<apex:form > 
+						<div class="form_fields">
+							<div class="field">
+								<label class="uploader">Upload</label><br />
+								<span class="info">Select the file to upload.</span><br />
+								<apex:inputFile value="{!peopleAttach.Body}" id="peopleAttach" filename="{!peopleAttach.Name}" contentType="{!ContentType}" fileSize="{!AttachmentSize}"/>
+							</div>							
+							<div class="field">
+								<label class="uploader">Click the "Add Image" button to upload the file.</label><br />
+								<span class="info">Repeat steps 1 and 2 to attach multiple files.</span><br/>
+								<span class="info">(When the upload is completed the file information will appear below.)</span><br/>
+								<apex:commandButton action="{!savePeopleAttach}" value="Add Image" />								
+							</div>
+							<div class="field">
+								<label class="uploader">Click done to go back to the photo gallery.</label><br />
+								<span class="info">(This will cancel an in-progress upload.)</span><br/>
+								<input type="button" value="Done" onclick="goBackPhotoGallery();"/>
+							</div>
+						</div>
+					</apex:form>
+					<div id='uploadOutput'></div>
+					<iframe name="iframeUpload" style="display:none;" ></iframe>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script>
+		//Initialize
+		init();
+		UPF__showInfo__();
+		readPortalCSSRules();
+	</script>
+</apex:page>

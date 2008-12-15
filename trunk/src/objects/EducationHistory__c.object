@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <deploymentStatus>Deployed</deploymentStatus>
+    <enableHistory>true</enableHistory>
+    <fields>
+        <fullName>Activities__c</fullName>
+        <label>Activities and Societies</label>
+        <length>32000</length>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
+        <fullName>AdditionalNotes__c</fullName>
+        <label>Additional Notes</label>
+        <length>32000</length>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
+        <fullName>AttendedFor__c</fullName>
+        <label>Attended For</label>
+        <picklist>
+            <picklistValues>
+                <fullName>College</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Graduate</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>ClassYear__c</fullName>
+        <label>Class Year</label>
+        <length>4</length>
+        <type>Text</type>
+    </fields>
+    <fields>
+        <fullName>Concentration__c</fullName>
+        <label>Concentration</label>
+        <length>255</length>
+        <type>Text</type>
+    </fields>
+    <fields>
+        <fullName>DateAttendedFrom__c</fullName>
+        <label>Date Attended From</label>
+        <precision>18</precision>
+        <scale>0</scale>
+        <type>Number</type>
+    </fields>
+    <fields>
+        <fullName>DateAttendedTo__c</fullName>
+        <label>Date Attended To</label>
+        <precision>18</precision>
+        <scale>0</scale>
+        <type>Number</type>
+    </fields>
+    <fields>
+        <fullName>Degree__c</fullName>
+        <label>Degree</label>
+        <length>100</length>
+        <type>Text</type>
+    </fields>
+    <fields>
+        <fullName>FieldsOfStudy__c</fullName>
+        <label>Field(s) of Study</label>
+        <length>100</length>
+        <type>Text</type>
+    </fields>
+    <fields>
+        <fullName>SchoolOld__c</fullName>
+        <label>SchoolOld</label>
+        <length>255</length>
+        <type>Text</type>
+    </fields>
+    <fields>
+        <fullName>School__c</fullName>
+        <description>School</description>
+        <inlineHelpText>School</inlineHelpText>
+        <label>School</label>
+        <referenceTo>School__c</referenceTo>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>SecondConcentration__c</fullName>
+        <label>Second Concentration</label>
+        <length>255</length>
+        <type>Text</type>
+    </fields>
+    <fields>
+        <fullName>Status__c</fullName>
+        <label>Status</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Attending</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>On-Leave</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Graduated</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>User__c</fullName>
+        <label>User</label>
+        <referenceTo>User</referenceTo>
+        <type>Lookup</type>
+    </fields>
+    <label>Education History</label>
+    <nameField>
+        <label>School Name</label>
+        <type>Text</type>
+    </nameField>
+    <pluralLabel>Education History</pluralLabel>
+    <sharingModel>Read</sharingModel>
+</CustomObject>

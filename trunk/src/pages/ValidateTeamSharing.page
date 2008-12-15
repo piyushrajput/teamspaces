@@ -1,0 +1,40 @@
+<apex:page controller="ValidateTeamSharingController" tabStyle="Team__c" sidebar="false">
+    
+    <apex:stylesheet value="{!URLFOR($Resource.ValidateTeamSharingResources, 'inc/css/validateTeamSharing.css')}" />
+    
+    <style>
+       	.goodResult {
+      		background: url({!URLFOR($Resource.ValidateTeamSharingResources, 'images/check.jpg')}) no-repeat left top;
+      	}
+      
+      	.badResult {
+      		background: url({!URLFOR($Resource.ValidateTeamSharingResources, 'images/error.gif')}) no-repeat left top;
+      	}
+      
+		.identAction {
+      		background: url({!URLFOR($Resource.ValidateTeamSharingResources, 'images/bandPatch.gif')}) no-repeat left top;
+      	}
+
+    <apex:sectionHeader title="Team Sharing Validation" description="Clicking the &quot;Validate&quot; button executes a process to ensure that all {!$ObjectType.Team__c.labelPlural} data structures are properly set up."/>
+    <apex:form >
+    	<apex:pageBlock id="block">
+			<apex:actionPoller action="{!processValidation}" enabled="{!processing}" rerender="block" interval="8"/>
+    		<apex:pageBlockButtons location="top">
+            	<apex:commandButton action="{!startValidation}" value="Validate" disabled="{!processing}" styleClass="{!IF(processing,'btnDisabled','btn')}" rerender="block"/>
+       		</apex:pageBlockButtons>
+ 	       	<apex:pageBlockSection title="Status" rendered="{!processing}">
+				<apex:outputPanel layout="block" style="text-align:left">
+					{!remainingTeams} {!$ObjectType.Team__c.labelPlural} Remaining To Be Processed<br/>
+					<apex:outputPanel layout="block" styleClass="progressContainer">
+						<apex:outputpanel layout="block" style="width:{!496 * progressPercent}px; height:24px;overflow: hidden; position:relative; background: url({!URLFOR($Resource.ValidateTeamSharingResources, 'images/progressBar.gif')}) left top" />
+					</apex:outputPanel>
+				</apex:outputPanel>
+	    	</apex:pageBlockSection>
+			<apex:pageBlockSection title="Execution Log">
+				<apex:repeat value="{!results}" var="result">
+					<apex:outputText escape="false" value="{!result}"/><br>
+				</apex:repeat>
+			</apex:pageBlockSection>
+		</apex:pageBlock>
+    </apex:form>
+</apex:page>

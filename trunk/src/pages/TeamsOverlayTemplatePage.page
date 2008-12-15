@@ -1,0 +1,12 @@
+<apex:page sidebar="false" tabStyle="Team__c">
+	<!-- Scriptaculous / Prototype -->
+	<apex:includeScript value="{!URLFOR($Resource.Script_aculo_us, 'prototype.js')}"/>
+	<apex:includeScript value="{!URLFOR($Resource.Script_aculo_us, 'scriptaculous.js')}"/>
+	<apex:includeScript value="{!URLFOR($Resource.Script_aculo_us, 'effects.js')}"/>
+	<apex:includeScript value="{!$Resource.portalSupport}"/>
+	<script>
+		readPortalCSSRules(); 
+	</script>
+	<c:TeamsOverlayTemplate />
+	<a href="javascript:;" onclick="createOverlay('','overlayFormId','305','');">Show Overlay</a>
+</apex:page>

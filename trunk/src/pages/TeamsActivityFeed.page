@@ -1,0 +1,188 @@
+<apex:page sidebar="false" tabStyle="Team__c" controller="TeamsActivityFeedController">
+	
+	<!-- Javascript -->
+	<!-- Prototype + Scriptaculous -->
+	<apex:includeScript value="{!URLFOR($Resource.Script_aculo_us, 'prototype.js')}"/>
+	<apex:includeScript value="{!URLFOR($Resource.Script_aculo_us, 'scriptaculous.js')}"/>
+	<apex:includeScript value="{!URLFOR($Resource.Script_aculo_us, 'effects.js')}"/>
+	
+	<!-- Portal Support -->
+	<apex:includeScript value="{!$Resource.portalSupport}"/>
+	
+	<!-- Common Js for All Sections -->
+	<apex:includeScript value="{!URLFOR($Resource.commonResources, 'inc/js/common.js')}"/>
+	<apex:includeScript value="{!URLFOR($Resource.commonResources, 'inc/js/modal.js')}"/>
+	
+	<!-- Common css for modal -->
+	<link rel="stylesheet" media="screen" href="{!URLFOR($Resource.commonResources, 'inc/css/modal.css')}" />	
+	
+	<!-- CSS de TS -->
+	<link rel="stylesheet"  href="{!URLFOR($Resource.TeamsResources, '/inc/css/commonLayout.css')}" />	
+	<link rel="stylesheet"  href="{!URLFOR($Resource.TeamsResources, '/inc/css/teamDetailEdit.css')}" />	
+	<link rel="stylesheet"  href="{!URLFOR($Resource.TeamsResources, '/inc/css/teamOverlyManage.css')}" />	
+	<link rel="stylesheet"  href="{!URLFOR($Resource.TeamsResources, '/inc/css/teamMemberList.css')}" />	
+    
+    <!-- CSS styles for Portal Integration -->
+    <apex:stylesheet value="{!URLFOR($Resource.portalStyles, 'portal.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.TeamsResources, 'inc/css/headerTeams.css')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.TeamsResources, 'inc/css/widgetTeam.css')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.commonResources, 'inc/css/fonts.css')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.TeamsResources, 'inc/css/miniFeeds.css')}" />	
+	
+	<!-- TeamsActivityFeed CSS -->
+	<apex:stylesheet value="{!URLFOR($Resource.TeamsResources, 'inc/css/teamsActivityFeed.css')}" />
+	
+	<!-- TeamsActivityFeed JS -->
+	<apex:includeScript value="{!URLFOR($Resource.TeamsResources, 'inc/js/teamsActivityFeed.js')}" />
+	
+	<style>
+		.box_round div.header_blue {
+			background: #297B9C url({!URLFOR($Resource.TeamsResources, 'images/layout/rc_boxes/rc_header_topborder_blue.gif')}) repeat-x scroll center top!important;
+		}
+		div.box_round div.header_blue div {
+			background:url({!URLFOR($Resource.TeamsResources, 'images/layout/rc_boxes/rc_header_leftborder_lightblue.gif')}) no-repeat scroll left top!important;
+		}
+		div.box_round div.header_blue div div {
+			background:url({!URLFOR($Resource.TeamsResources, 'images/layout/rc_boxes/rc_header_rightborder_lightblue.gif')})  no-repeat scroll right top!important;
+		}
+	
+	</style>
+	
+	<!-- Header -->
+	<apex:composition template="HeaderTemplate">
+		<apex:define name="moduleId"><apex:variable var="moduleId" value="headerTeams"/></apex:define>
+	    <apex:define name="module">{!$ObjectType.Team__c.label}</apex:define>
+	    <apex:define name="title">Activity Feed</apex:define>
+	    <apex:define name="search">
+	    	<c:Search module="team" />
+	    </apex:define>
+    </apex:composition>
+    
+	<!-- Header End -->
+	
+	<!-- Sidebar -->
+	<div class="sidebar">
+	
+		<!-- Quick links & Admin widget -->
+		<c:TeamAdminQuickLinks />
+	
+		<!-- MyTeams Widget -->
+		<c:TeamsMyTeamsWidget />
+	</div>
+	
+	<!-- Main Content Div -->
+	<div class="main_content">		
+		<div class="centerCol">
+			<div class="holder">
+		
+			<!-- Start Main Content -->
+			
+				<!-- Section Title -->
+				<div class="teamsTitleBlue">Recent Activity</div> 
+				<apex:outputPanel layout="block" id="theFeeds">
+					<table class="minifeeds activity_page" cellpadding="0" cellspacing="0">
+						<apex:repeat value="{!feedsList}" var="miniFeed" >
+							<tr style="{!IF((miniFeed.FeedDateClass == 'miniFeedDate_empty'),'display:none', '' )}">
+								<td class="date blue weight_bold" colspan="2">{!miniFeed.FeedDateString}</td>
+							</tr>
+							<tr>
+								<td class="feed_type {!miniFeed.TypeOfFeed}"></td>
+								<td>
+									<a href="/apex/PeopleProfileDisplay?id={!miniFeed.User}" class="weight_bold">
+										<apex:outputText escape="false" value="{!miniFeed.Name}" />
+									</a>&nbsp;<apex:outputText escape="false" value="{!miniFeed.Message}" />
+								</td>						
+							</tr>				 
+						</apex:repeat>
+					</table>
+				</apex:outputPanel>
+		
+			<!-- End Main Content -->
+			</div>
+		</div>
+	</div>
+	
+	<!-- Right Col -->
+	<div class="rightCol">		
+		
+		<!-- Activity Feeds filter BOX -->
+		<div class="box_round forwidget mySmallWidget" style="width: 216px;">
+		
+			<!-- Header -->
+			<div class="header_blue">
+				<div><div><h4>Filter</h4></div></div>
+			</div>
+		
+			<!-- Rounded Box Content -->
+			<div class="box_content">
+				<div class="small_links">
+					<a href="javascript:;" onclick="markCheckboxes(true)">Show All</a>
+					&nbsp;|&nbsp;
+					<a href="javascript:;" onclick="markCheckboxes('')">None</a>
+				</div>
+				<div class="minifeeds_container">
+					<apex:form >
+						<table class="minifeeds" cellpadding="0" cellspacing="0">
+							<tr>
+								<td>
+									<apex:inputCheckbox value="{!filterStatus}" onclick="reloadEvent.onclick();" />
+								</td>
+								<td class="feed_type status"><a class="status" href="javascript:;">&nbsp;</a>&nbsp;</td><td align="left"><a href="javascript:;" class="weight_bold">Status Updates</a></td>
+							</tr>
+							<tr>
+								<td>
+									<apex:inputCheckbox value="{!filterFollow}" onclick="reloadEvent.onclick();" />
+								</td>
+								<td class="feed_type following"><a class="following" href="javascript:;">&nbsp;</a>&nbsp;</td><td align="left"><a href="javascript:;" class="weight_bold">Following</a></td>
+							</tr>
+							<tr>
+								<td>
+									<apex:inputCheckbox value="{!filterEducation}" onclick="reloadEvent.onclick();" />
+								</td>
+								<td class="feed_type education"><a class="education" href="javascript:;">&nbsp;</a>&nbsp;</td><td align="left"><a href="javascript:;" class="weight_bold">Education History</a></td>
+							</tr>
+							<tr>
+								<td>
+									<apex:inputCheckbox value="{!filterCompetencies}" onclick="reloadEvent.onclick();" />
+								</td>
+								<td class="feed_type competency"><a class="competency" href="javascript:;">&nbsp;</a>&nbsp;</td><td align="left"><a href="javascript:;" class="weight_bold">Competencies</a></td>
+							</tr>
+							<tr>
+								<td>
+									<apex:inputCheckbox value="{!filterMember}" onclick="reloadEvent.onclick();" />
+								</td>
+								<td class="feed_type teamspace"><a class="teamspace" href="javascript:;">&nbsp;</a>&nbsp;</td><td align="left"><a href="javascript:;" class="weight_bold">Teamspace Member</a></td>
+							</tr>
+							<tr>
+								<td>
+									<apex:inputCheckbox value="{!filterDiscussion}" onclick="reloadEvent.onclick();" />
+								</td>
+								<td class="feed_type DiscussionNewTopic"><a class="discussion" href="javascript:;"></a>&nbsp;</td><td align="left"><a href="javascript:;" class="weight_bold">Discussion Thread</a></td>
+							</tr>
+							<tr>
+								<td>
+									<apex:inputCheckbox value="{!filterAnnoncements}" onclick="reloadEvent.onclick();" />
+								</td>
+								<td class="feed_type announcement"><a class="announcement" href="javascript:;">&nbsp;</a>&nbsp;</td><td align="left"><a href="javascript:;" class="weight_bold">Annoncements</a></td>
+							</tr>
+							<tr>
+								<td>
+									<apex:inputCheckbox value="{!filterProject}" onclick="reloadEvent.onclick();" />
+								</td>
+								<td class="feed_type project_task"><a class="project_task" href="javascript:;">&nbsp;</a>&nbsp;</td><td align="left"><a href="javascript:;" class="weight_bold">Project Task</a></td>
+							</tr>
+						</table>
+						<apex:commandButton action="{!getMiniFeeds}" rerender="theFeeds" id="refreshFeeds" value="Refresh" style="display:none;" />
+						<script>
+							var reloadEvent = $('{!$Component.refreshFeeds}');
+						</script>
+					</apex:form>
+				</div>
+			</div>
+			<div class="bottom_borders"><div><div></div></div></div>
+		</div>	
+	</div>
+	<script>
+		readPortalCSSRules();
+	</script>
+</apex:page>

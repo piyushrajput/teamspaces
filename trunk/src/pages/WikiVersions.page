@@ -1,0 +1,216 @@
+<apex:page controller="WikiVersionsController" id="WikiEdit" sidebar="false">
+	<apex:includeScript value="{!URLFOR($Resource.Script_aculo_us, 'prototype.js')}"/>
+	<apex:includeScript value="{!URLFOR($Resource.Script_aculo_us, 'scriptaculous.js')}"/>
+	<apex:includeScript value="{!URLFOR($Resource.Script_aculo_us, 'effects.js')}"/>
+	<apex:includeScript value="/soap/ajax/11.1/connection.js"/>
+	<apex:includeScript value="{!$Resource.DiffString}"/>
+	
+	<apex:stylesheet value="{!URLFOR($Resource.WikiResource, 'inc/css/wikiVersions.css')}" />
+		
+	<apex:includeScript value="{!URLFOR($Resource.WikiResource, 'inc/js/wikiVersions.js')}" />
+	
+	<!-- ### Overlay ### -->
+	<div class="UPF__overlay__" id="UPF__overlay__" style="display:none;">
+	</div>
+	<!-- ### Overlay ### -->
+	<!-- ### Loader ### -->
+	<div class="loader__" id="loader__" style="display:none;"><center></center><br />Loading...</div>
+	<!-- ### Loader ### -->
+	<apex:sectionHeader title="Wiki Versions" subtitle="Welcome {!$User.FirstName}"></apex:sectionHeader>
+	<apex:outputpanel id="WikiVersionsPanel">
+		<apex:pageblock id="WikiVersionsPageBlock">
+			<apex:facet name="header">
+				<apex:outputpanel id="WikiVersionsHeader">
+					<apex:outputtext style="font-weight:bold;font-size:20px;" value="{!wikiInfo.Name}" />&nbsp;&nbsp;
+				</apex:outputpanel>
+			</apex:facet>
+			<table border="0" style="width:100%">
+				<tr>
+					<td valign="top" width="50%">
+						<apex:form id="revisionLeftForm">
+							<table border="0" style="width:100%">
+								<tr>
+									<td>
+										<apex:outputpanel id="revisionLeftPanel">
+											<apex:outputpanel id="leftListLeftTable" rendered="{!NOT(goLeft)}">
+												<apex:datatable id="revisionsListTable"
+													value="{!revisionsList}" 
+													var="item" 
+													styleClass="list">
+													<apex:column > 
+														<apex:commandLink action="{!getWikiLeft}" 
+															onclick="switchOverlay(true);"
+															oncomplete="switchOverlay(false);"	
+															value="Revision v{!item.revisionCount}" 
+															rerender="revisionLeftPanel,diffPanel">
+															<apex:param name="idRevL" value="{!item.Id}" />
+														</apex:commandLink>
+													</apex:column>
+													<apex:column >
+														<apex:outputtext style="color:#999999;" value=" @ {!item.LastModifiedDate}" />
+													</apex:column>
+													<apex:column >
+														<apex:outputtext style="color:#999999;" value="by {!item.ModifiedBy}" />
+													</apex:column>
+												</apex:datatable>
+											</apex:outputpanel>
+											<apex:outputpanel id="leftRevisionBody" rendered="{!goLeft}">
+												<div align="center">
+													<apex:commandButton action="{!hideLeftBody}" 
+														onclick="switchOverlay(true);"
+														oncomplete="switchOverlay(false);"														
+														rerender="revisionLeftPanel,diffPanel" 
+														value="Show List" />
+												</div>
+												<br />
+												<div align="center">
+													<apex:outputtext style="font-weight: bold;font-size:17px;" value="Revision v{!revLeftBody.revisionCount}" />
+												</div>
+												<div style="overflow: auto; height:400px; background-color:white;border:solid 1px #AAAAAA;">
+													<apex:outputtext escape="false" value="{!revLeftBody.body}" />
+												</div>
+												<br />
+												<div align="center">
+													<apex:commandButton value="Save as Current" action="{!saveLeft}" styleClass="btn" />
+												</div>
+											</apex:outputpanel>
+										</apex:outputpanel>
+									</td>
+								</tr>
+							</table>
+						</apex:form>
+					</td>
+					<td valign="top" width="50%">
+						<apex:form id="revisionRightForm">
+							<table border="0" style="width:100%">
+								<tr>
+									<td>
+										<apex:outputpanel id="revisionRightPanel">
+											<apex:outputpanel id="RightListTable" rendered="{!NOT(goRight)}">
+												<apex:datatable id="revisionsListRightTable"
+													value="{!revisionsList}" 
+													var="item" 
+													styleClass="list">
+													<apex:column > 
+														<apex:commandLink action="{!getWikiRight}" 
+															onclick="switchOverlay(true);"
+															oncomplete="switchOverlay(false);"	
+															value="Revision v{!item.revisionCount}" 
+															rerender="revisionRightPanel,diffPanel">
+															<apex:param name="idRevR" value="{!item.Id}" />
+														</apex:commandLink>
+													</apex:column>
+													<apex:column >
+														<apex:outputtext style="color:#999999;" value="@ {!item.LastModifiedDate}" />
+													</apex:column>
+													<apex:column >
+														<apex:outputtext style="color:#999999;" value="by {!item.ModifiedBy}" />
+													</apex:column>
+												</apex:datatable>
+											</apex:outputpanel>
+											<apex:outputpanel id="RightRevisionBody" rendered="{!goRight}">
+												<div align="center">
+													<apex:commandButton action="{!hideRightBody}" 
+														onclick="switchOverlay(true);"
+														oncomplete="switchOverlay(false);"												
+														rerender="revisionRightPanel,diffPanel"  
+														value="Show List" />
+												</div>
+												<br />
+												<div align="center">
+													<apex:outputtext style="font-weight: bold;font-size:17px;" value="Revision v{!revRightBody.revisionCount}" />
+												</div>
+												<div style="overflow: auto; height:400px; background-color:white;border:solid 1px #AAAAAA;">
+													<apex:outputtext escape="false" value="{!revRightBody.body}" />
+												</div>
+												<br />
+												<div align="center">
+													<apex:commandButton value="Save as Current" action="{!saveRight}" styleClass="btn" />
+												</div>
+											</apex:outputpanel>
+										</apex:outputpanel>
+									</td>
+								</tr>
+							</table>
+						</apex:form>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="2">
+						<table border="0" style="width:100%;">
+							<tr>
+								<td style="width:100%;">
+									<apex:outputpanel id="diffPanel">
+										<apex:form id="diffForm">
+											<div align="center">
+												<apex:commandButton id="diffButton" value="Diff" rerender="aux" rendered="{!goDiff}" onclick="diffGen();" />	
+											</div>
+											<table border="0" style="width:100%;">
+												<tr>
+													<td style="width:50%;">
+														<div class="section" id="diffDivLeft" style="overflow: auto;background-color:white;border:solid 1px #AAAAAA;">
+														</div>
+													</td>
+													<td style="width:50%;">
+														<div class="section" id="diffDivRight" style="overflow: auto;background-color:white;border:solid 1px #AAAAAA;">
+															<span id="item_2" class="lineitem">This is item 2</span>
+														</div>
+													</td>
+												</tr>
+											</table>
+											<apex:outputpanel id="javascriptPanel" rendered="{!goDiff}">
+												<script>
+													function diffGen () {
+														var left = "{!revLeftBody.body}";
+														var right = "{!revRightBody.body}";
+														var diffResultRight = diffString(left,right);
+														diffResultRight = diffResultRight.replace(/&amp;/gi, "&");
+														diffResultRight = diffResultRight.replace(/&lt;/gi, "<");
+														diffResultRight = diffResultRight.replace(/&gt;/gi, ">");
+														diffResultRight = diffResultRight.replace(/&quot;/gi, '"');
+														
+														var diffResultLeft = diffString(right,left);
+														diffResultLeft = diffResultLeft.replace(/&amp;/gi, "&");
+														diffResultLeft = diffResultLeft.replace(/&lt;/gi, "<");
+														diffResultLeft = diffResultLeft.replace(/&gt;/gi, ">");
+														diffResultLeft = diffResultLeft.replace(/&quot;/gi, '"');
+														
+														document.getElementById('diffDivRight').innerHTML = diffResultRight;
+														document.getElementById('diffDivRight').style.height = '400px'; 
+														document.getElementById('diffDivLeft').innerHTML = diffResultLeft;
+														document.getElementById('diffDivLeft').style.height = '400px'; 
+														
+														document.getElementById('{!$Component.diffButton}').style.display = 'none';
+													
+													}
+													
+													switchOverlay(false);
+												</script>
+											</apex:outputpanel>
+										</apex:form>
+									</apex:outputpanel>
+								</td>
+							</tr>
+						</table>						
+						<br />
+						<div align="center">
+							<apex:form id="cancelRevisionForm">
+								<apex:commandButton value="Cancel" action="{!cancelRevision}" />
+							</apex:form>
+						</div>
+					</td>
+				</tr>
+			</table>
+		</apex:pageblock>
+	</apex:outputpanel>
+	<apex:outputpanel id="aux">
+	</apex:outputpanel>
+	<script type="text/javascript">
+	// <![CDATA[
+	    sections = [ 'diffDivLeft','diffDivRight' ];
+	
+	    Sortable.create( 'diffDivLeft', { tag:'span', dropOnEmpty: true, containment: sections, constraint: false, only:'lineitem' } );
+	    Sortable.create( 'diffDivRight', { tag:'span', dropOnEmpty: true, containment: sections, constraint: false, only:'lineitem' } );
+	// ]]>
+	</script>	 	
+</apex:page>
