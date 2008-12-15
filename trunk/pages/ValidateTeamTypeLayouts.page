@@ -1,6 +1,0 @@
-<apex:page controller="ValidateTeamTypeLayoutsController">
-	<h1>{!$ObjectType.Team__c.label} Type Layouts:</h1>
-	<apex:repeat value="{!types}" var="t">
-		{!t.Name}<br />
-	</apex:repeat>
-</apex:page>
