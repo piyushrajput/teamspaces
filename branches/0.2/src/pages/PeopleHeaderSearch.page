@@ -1,0 +1,23 @@
+<apex:page sidebar="false" showHeader="false" controller="PeopleHeaderSearchController">
+
+<div>
+	<div>
+		<!-- Search Form -->
+		<apex:form >			
+			<div class="search_box_input f_left">
+				<div class="legend">Find People</div>
+				<apex:inputText value="{!peopleSearchObj.keyword}" id="people_search_keyword" onclick="ActionSearchInput();"  onfocus="setValue('');" onblur="if(this.value == ''){setValue('Enter keyword, name, company or title');}"/>								
+			</div>
+			<apex:commandButton value="Search" styleClass="search_btn f_left" action="{!findPeople}"/> 								
+		</apex:form> 
+		<!-- Advanced Search Link -->
+		<div class="advanced_search_cont">							
+			<a href="javascript:;" >Advanced Search</a>
+		</div>	
+		<!-- /Search Form -->						
+	</div>
+</div>	
+<script>
+	resetSearchInput();
+</script>	
+</apex:page>

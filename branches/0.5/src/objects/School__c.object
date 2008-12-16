@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <deploymentStatus>Deployed</deploymentStatus>
+    <enableHistory>true</enableHistory>
+    <fields>
+        <fullName>City__c</fullName>
+        <label>City</label>
+        <length>255</length>
+        <type>Text</type>
+    </fields>
+    <fields>
+        <fullName>Count__c</fullName>
+        <label>Count</label>
+        <precision>18</precision>
+        <scale>0</scale>
+        <type>Number</type>
+    </fields>
+    <fields>
+        <fullName>State__c</fullName>
+        <label>State</label>
+        <length>255</length>
+        <type>Text</type>
+    </fields>
+    <label>School</label>
+    <nameField>
+        <label>School Name</label>
+        <type>Text</type>
+    </nameField>
+    <pluralLabel>School</pluralLabel>
+    <sharingModel>Read</sharingModel>
+</CustomObject>

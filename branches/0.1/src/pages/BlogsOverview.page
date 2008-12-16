@@ -1,0 +1,288 @@
+<apex:page sidebar="false" tabStyle="BlogEntry__c" controller="BlogsOverviewController">
+	<!-- Javascript -->
+	<!-- Prototype + Scriptaculous -->
+	<script type="text/javascript" src="{!URLFOR($Resource.Script_aculo_us, 'prototype.js')}"></script>
+	<script type="text/javascript" src="{!URLFOR($Resource.Script_aculo_us, 'scriptaculous.js')}"></script>
+	<script type="text/javascript" src="{!URLFOR($Resource.Script_aculo_us, 'effects.js')}"></script>
+	<!-- FCK Editor -->
+	<script type="text/javascript" src="{!URLFOR($Resource.FCKeditor, 'fckeditor/fckeditor.js')}"></script>
+	<!-- Common Js for Announcements Sections -->
+	<script>
+		FCK_BASEPATH = '{!URLFOR($Resource.FCKeditor,'fckeditor/')}';
+	</script>	
+	<script type="text/javascript" src="{!URLFOR($Resource.BlogsResources, 'inc/js/common.js')}"></script>
+	<script src="{!URLFOR($Resource.BookmarkResources, 'inc/js/overlayFunction.js')}" />
+	<!-- Common Js for All Sections -->
+	<script type="text/javascript" src="{!URLFOR($Resource.commonResources, 'inc/js/common.js')}"></script>
+	<script type="text/javascript" src="{!URLFOR($Resource.commonResources, 'inc/js/modal.js')}"></script>
+	<!-- Common Layout -->
+	<link rel="stylesheet" media="screen" href="{!URLFOR($Resource.BlogsResources, 'inc/css/commonLayout.css')}" />	
+	<link rel="stylesheet" media="screen" href="{!URLFOR($Resource.BlogsResources, 'inc/css/overview.css')}" />	
+	<!-- Initialize the overlay box for modal.js -->	
+	<a href="#modal_container" id="initializeModal" style="display:none;"></a>
+	<div id="modal_container"></div>
+	<script>createOverlay('initializeModal')</script>
+
+	<!-- Overlay New Blog -->	
+	<apex:include pageName="BlogOverlayNew" ></apex:include>
+	<!-- Page Begin -->
+	
+	<style>
+	
+	div.rightCol {
+		position:absolute;
+		right:15px;
+		top:158px;
+		width:210px;
+	}
+	
+	.UPF__overlay__{
+		position: absolute;	
+		z-index: 10000;
+		width: 100%;
+		height: 100%;
+		background: #666666;					
+	}
+	
+	.loader__{
+		position: fixed;
+		z-index: 10001;
+		overflow: hidden;
+		top: 50%;
+		left: 50%;
+		color: #FFFFFF;
+	}
+	ul li a{
+		text-decoration:none;
+	}
+	</style>
+	
+	<script>
+		
+	
+		function viewOverlayFormNew (formId) {
+			
+			viewLoader();			
+			switchOverlayB();	
+			setTimeout('viewTheForm(\'' + formId + '\')', 1400);	
+		}
+			
+		var inputSearch;
+					
+		// Begin the search box with the text:
+		// "Enter keyword or name" at top search box
+		////////////////////////////////////////////
+		function resetSearchInput(){
+			
+			var inputs = $$('.search_box_input input');
+			inputSearch = inputs[0];		
+			inputSearch.style.color = '#999999';
+			inputSearch.value = 'Enter keyword or name';
+		}
+		
+		// Once a user begins to type at top search box, change the font color to   #333333. 
+		function ActionSearchInput(){
+			inputSearch.style.color = '#333333';
+			inputSearch.value = '';
+		}	
+	</script>
+
+
+	<!-- 		  Overlay		-->
+	<div class="UPF__overlay__" id="UPF__overlay__" style="display:none;">
+	</div>
+	<!-- 		  Overlay		-->
+	
+	<!-- 		  Loader		-->
+	<div class="loader__" id="loader__" style="display:none;"><center><img src="{!URLFOR($Resource.commonResources, 'images/loaders/bigLoader.gif')}" /></center><br />Loading...</div>
+	<!-- 		  Loader		-->
+	<div>
+	<div class="BodyPage">
+		<!-- 
+		############
+		# Header 
+		################
+		-->
+		<div class="breadcrumbHeader header">
+			<!-- Page Section -->
+			<div class="page_section">
+			    <div>
+				<h1 class="arial_black">Blogs</h1>
+				<h2 class="arial_black">Overview</h2>
+			    </div>  
+			</div>
+			<!-- SearchBox -->
+			<div class="searchBox">
+				<div>
+					<div>
+						<div class="search_box_input f_left">
+							<div class="legend">Find Blog Posts</div>
+								<input onclick="ActionSearchInput();" value="Enter keyword or name" name="" type="text"  onfocus="setValue('');" onblur="setValue('Enter keyword or name');"/>        
+							</div>
+						<input value="Search" class="search_btn f_left" type="button" />         
+				
+						<div class="advanced_search_cont">       
+							<a href="javascript:;">Advanced Search</a>
+						</div>       
+					</div>
+				</div>
+			</div>
+			<!-- Help -->
+			<div class="help">
+				<div>
+					<a href="javascript:;">Help for this page</a>&nbsp; <img src="{!URLFOR($Resource.BlogsResources, 'images/common/icons/help_icon.gif')}" alt="" />
+				</div>
+			</div>
+			<!-- BreadCrumbs -->
+			<div class="breadcrumbs" >
+				<div class="map">				
+				</div>
+				<div class="buttons">							
+					<a class="blackbutton" onclick="createOverlay('','NewBlogOverlay','','createFCKEditor(\'NewBlog\')');" >
+						<span>New blog</span>
+					</a>				
+				</div>
+			</div>
+		</div>
+		<!-- 
+		############
+		# Sidebar 
+		################
+		-->		
+		<div class="sidebar" id="sidebar">
+			
+		<!-- THIS WEEK'S MOST COMMENTED -->
+		<apex:include pageName="BlogWidgets"></apex:include>
+
+		</div>	
+	<!-- 
+	################
+	# Center Column 
+	################
+	-->	
+		<div class="main_content" id="main_content">  
+			<div class="centerCol">
+				<div class="holder">
+					<!-- Tab container -->
+					<div class="tabContainer">
+						<ul class="tabs">
+							<li class="{!IF((tabControl == 'RecentBlogs'),'selected','')}" >
+								<apex:outputLink value="?Blo=true" id="RecentBlogs">Recent Blogs</apex:outputLink>
+							</li>	
+							<li class="{!IF((tabControl == 'Drafts'),'selected','')}">
+								<apex:outputLink value="?Dra=true" id="Drafts">Drafts ({!CountDraft})</apex:outputLink>
+							</li>								
+						</ul>
+					</div>
+			
+					<!-- ################ Pagination ########### -->
+				<apex:outputPanel id="blogss">			
+					<apex:outputpanel styleClass="pagination" layout="block" rendered="{!IF(AND(prevPageShow,nextPageShow),false,true)}">
+						<div class="pages">
+								<apex:form>                              
+									<ul>
+					            	<li class="prev {!IF(prevPageShow,'disabled','')}">
+					                  	<apex:commandLink  action="{!prevPage}" value="Previous Page" rerender="blogss" rendered="{!prevPageLinkShow}"/>
+					                  	<apex:outputText value="Previous Page" rendered="{!prevPageShow}" />
+					             	 </li>
+					             	 <li>({!currentPagination}</li>
+					             	 <li>-</li>
+					             	 <li>{!cntPagination})</li>
+					             	 <li class="next {!IF(nextPageShow,'disabled','')}">
+					              	    <apex:commandLink  action="{!nextPage}" value="Next Page" rerender="blogss" rendered="{!nextPageLinkShow}"/>
+					              	    <apex:outputText value="Next Page" rendered="{!nextPageShow}" />
+					              	</li>
+			          			</ul> 
+	                       	</apex:form>  
+	                   	</div>
+					</apex:outputpanel>							
+						
+					<div class="rss_title_right" style="float:right" >
+						<img src="{!URLFOR($Resource.BlogsResources, 'images/overview/rss.gif')}" />
+					</div>
+					
+					<apex:repeat  value="{!AllTeam}" var="entry" rows="{!numberOfItemsToShow}" first="{!firstRow}"  >
+	
+							<!-- Title -->
+							<div class="announcementTitleContainer">					
+								 <div class="announcement_actualDate" style="{!IF((entry.DateClass == 'Date_empty'),'display:none', '' )}">	{!entry.Date}	
+								</div> 
+							</div>
+					
+							<div class="announcement_content" >
+							<h2 class="announcement_detail_title"><a href="/apex/BlogDetails?id={!entry.IdBlog}">{!entry.Title}</a></h2>
+								<div class="announcement_detail">
+									<apex:image styleClass="f_left" url="{!entry.ImageURL}" alt="" />
+										{!entry.Message}			
+								</div>
+								<div class="announcement_detail_line"></div>
+								<div class="announcement_footer">
+									<div class="announcement_info">
+										Saved on <span class="announcement_user"> <a href="/apex/PeopleProfileDisplay?id={!entry.IdUser}" >{!entry.User}</a></span>
+										on  {!entry.Date} <br />
+										[ team: <span class="announcement_team"><a href="/apex/TeamsDetail?id={!entry.IdTeam}" >{!entry.Name}</a></span> ]
+									</div>
+									<div class="footer_links" >
+										<a class="comments" href="/apex/BlogDetails?id={!entry.IdBlog}"> {!entry.Comments} Comments </a>
+											<a class="email" href="mailto:{!entry.Mail}"> Email </a>
+										</div>							
+								</div>
+							</div>
+						</apex:repeat>
+						
+						<apex:outputpanel styleClass="pagination" layout="block" rendered="{!IF(AND(prevPageShow,nextPageShow),false,true)}">
+						<div class="pages">
+								<apex:form>                              
+									<ul>
+					            	<li class="prev {!IF(prevPageShow,'disabled','')}">
+					                  	<apex:commandLink  action="{!prevPage}" value="Previous Page" rerender="blogss" rendered="{!prevPageLinkShow}"/>
+					                  	<apex:outputText value="Previous Page" rendered="{!prevPageShow}" />
+					             	 </li>
+					             	 <li>({!currentPagination}</li>
+					             	 <li>-</li>
+					             	 <li>{!cntPagination})</li>
+					             	 <li class="next {!IF(nextPageShow,'disabled','')}">
+					              	    <apex:commandLink  action="{!nextPage}" value="Next Page" rerender="blogss" rendered="{!nextPageLinkShow}"/>
+					              	    <apex:outputText value="Next Page" rendered="{!nextPageShow}" />
+					              	</li>
+			          			</ul> 
+	                       	</apex:form>  
+	                   	</div>
+					</apex:outputpanel>		
+					</apex:outputPanel>
+				</div>	
+			</div><!-- Holder End -->			
+		</div>
+
+	<!-- 
+	############
+	# Right Column 
+	################
+	-->	
+	<div class="rightSideBarWrapper">
+		<div class="rightSideBar">
+		
+		<!--  ARCHIVES MY TEAMS -->
+			<apex:include pageName="BlogsTeamsWidget"></apex:include>
+			
+		<!--  ARCHIVES WIDGET -->
+			<apex:include pageName="BlogsArchivesWidget"></apex:include>
+			
+		</div> 
+	</div>				
+	<script>
+		if (Prototype.Browser.IE){
+			resizeAnnouncements();
+		}		
+	</script>	
+	<!-- BreadCrumbs -->
+	<div class="breadcrumbs" >
+		<div class="map">		
+		</div>
+		<div class="buttons">							
+			<a class="blackbutton" onclick="createOverlay('','NewBlogOverlay','','createFCKEditor(\'NewBlog\')');" >
+				<span>New Blog</span>
+			</a>				
+		</div>
+	</div>
+</apex:page>

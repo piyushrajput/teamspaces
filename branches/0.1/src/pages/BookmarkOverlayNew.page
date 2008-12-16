@@ -1,0 +1,970 @@
+<apex:page id="Discussion" sidebar="false" controller="BookmarkOverlayNewController">
+	<apex:stylesheet value="{!URLFOR($Resource.BookmarkResources, 'inc/css/bookmark.css')}" />
+	<script src="{!URLFOR($Resource.FCKeditor, 'fckeditor/fckeditor.js')}"></script>
+	<script src="{!URLFOR($Resource.OverlayFunctions, 'js/overlayFunction.js')}"></script>
+	<script src="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/Validator.js')}" />
+    
+	<script type="text/javascript" src="/js/functions.js"></script>
+    <!-- Remote Connection -->
+    <script src="/soap/ajax/12.0/connection.js"></script>
+	
+	
+	<style>
+	
+		message_to_userNew
+		
+		{
+			background-color:#FCFAEF;
+			border:1px solid #989999;
+			font-size:12px;
+			margin:10px;
+			padding:10px;
+			position:relative;
+		}
+	
+	</style>
+	
+	
+<script>
+	// VARS			
+	var sizeimages  = 0;        // size of list of images
+	var index       = 0;        // index of list of images
+	var idimg       = 'img0';   // init id image
+	var hide        = false;    // show/hide image in new post
+	var imageurl    = '';       // url of image in post
+	// VARS Elements
+	var url;
+	var title = '';
+	var description = '';
+	var postimageurl;
+	var postvideourl;
+	var counterImages;
+	var bimage; 
+	var postimage;
+	var postLink; 
+	var buttonNext;
+	var urlToDelete = 'http://na1.salesforce.com';
+	var frameSrc;
+     
+
+
+function parseUrlFormat()
+{
+	var url = document.getElementById('{!$Component.postForm.postLink}').value;
+	var splitUrl = url.split('www');
+	var urlInFormat;
+	
+	urlInFormat = 'http://www' + splitUrl[1];
+	
+	return urlInFormat;
+	
+}
+
+function parseUrlFormatInit(url)
+{
+	var splitUrl = url.split('www');
+	var urlInFormat;
+	urlInFormat = 'http://www' + splitUrl[1];
+	
+	return urlInFormat;
+	
+}
+
+
+function hasFrames(response)
+{
+	var allFrames = getAllFrameSrc(response);
+	var ret = false;
+	
+	if (allFrames.length > 0)
+	{
+		ret = true;
+	}
+	
+	return ret;
+}
+
+//Get all frames url 
+
+function getAllFrameSrc(response)
+{
+
+	//Hold on all iframe just in case
+	
+	var contentFrame = document.getElementById('contentFrame');
+	contentFrame.src = '';
+	
+	contentFrame.innerHTML = response;
+	contentFrame.contentWindow.document.write(response);
+	var frameSrc = new Array();
+	
+	
+	var allFrames = contentFrame.contentWindow.document.getElementsByTagName('frame');
+	
+
+	 for(i=0; i<allFrames.length; i++) 
+	 {
+	 	currentFrame = allFrames[i];
+	 	
+	 	if (currentFrame.src != '')
+	 	{
+			var parseUrl = currentFrame.src.split(urlToDelete);
+
+	 		frameSrc.push(parseUrl[1].substring(1,parseUrl[1].length));
+	 		
+	 	
+	 	}
+
+	 }
+	 
+	 return frameSrc;
+}
+
+function loadData(response) {
+
+
+    document.getElementById('sendpostpage').innerHTML = response;
+    var pagePost = document.getElementById('sendpostpage');
+    
+    // no over write styles
+    var pageStyles = pagePost.getElementsByTagName("link");
+    for(i=0; i<pageStyles.length; i++) {
+        if (pageStyles[i].rel == 'stylesheet' ||
+                pageStyles[i].rel == 'Stylesheet') {
+            pageStyles[i].href='';
+        }
+        else {
+            if (pageStyles[i].rel == 'shortcut icon') {
+                pageStyles[i].href='';
+                var links = document.getElementsByTagName("link");
+                for (i=0; i<links.length; i++) {
+                    if (links[i].rel == 'shortcut icon')
+                       links[i].href='https://na1.salesforce.com/favicon.ico';
+                }
+            }
+        }
+    }
+    
+    // Title and Description
+    var pagePostElement = pagePost.getElementsByTagName("meta");
+    for (i=0; i<pagePostElement.length; i++) {
+        if (pagePostElement[i].name == 'title' || 
+                pagePostElement[i].name == 'TITLE' ||
+                pagePostElement[i].name == 'Headline'){
+           title = pagePostElement[i].content;
+        }
+        else {
+            if (pagePostElement[i].name == 'description' ||
+                    pagePostElement[i].name == 'Description')
+                description = pagePostElement[i].content;
+        }        
+    } 
+    if (title == ''){
+        title = pagePost.getElementsByTagName("title")[0].innerHTML;
+    }
+    if (title.indexOf('400 ') == 0)
+        document.getElementById('errorLabel').innerHTML = title;
+
+    // Images
+    var images = new Array();
+    // Get video from id
+    // if have video then add to images  
+    var pagePostVideo;
+    var links = pagePost.getElementsByTagName('link');
+    for (i=0; i<links.length; i++){
+        var link = links[i];
+        if (link.rel == 'image_src'){
+            postimageurl.value = link.href;
+        } else {
+            if (link.rel == 'video_src'){
+                postvideourl.value = link.href;
+                if (postvideourl.value.indexOf('/autoPlay/') > 0) {  // http://www.metacafe.com/
+                    var indexstr = postvideourl.value.indexOf('autoPlay/');
+                    postvideourl.value = postvideourl.value.substring(0, indexstr) + postvideourl.value.substring(indexstr+9, postvideourl.value.length);
+                }
+            }
+        }
+    }   
+    
+    if (postvideourl == null || postvideourl.value == '') {
+        if (pagePostVideo == null) 
+            pagePostVideo = document.getElementById('embed_code'); //youTube
+        if (pagePostVideo == null)
+            pagePostVideo = document.getElementById('gflash_embed'); //revver
+            
+        if (pagePostVideo == null) {
+            var pattern = /<noscript>(.*?)<\/noscript>/;                        
+            var match = pagePost.innerHTML.match(pattern);
+            
+            if (match != null && match.length > 0) {
+                pattern = /<embed\b[^>]*>(.*?)<\/embed>/;
+                var match2 = match[1].match(pattern);
+                if (match2 != null && match2.length > 0)
+                   pagePostVideo = match2[0];
+               
+            }
+        }
+
+        if (pagePostVideo != null && pagePostVideo.value != null) {                            
+            var str = pagePostVideo.value;
+            var pattern = /<object\b[^>]*>(.*?)<\/object>/;
+            var match = str.match(pattern);
+            if (match != null && match.length > 0) {
+                images[0] = "<object id='videoresize' style='max-width=60; max-height=60;'>"+match[1]+"</object>";
+            } 
+        }
+        
+        //Function to show the array elements from Javascript                
+        if (pagePostVideo != null) {
+            document.getElementById('video').innerHTML = images[0];                    
+            
+            var object = document.getElementById('videoresize');
+            if (object != null) {
+                var embed = object.getElementsByTagName('embed');
+                    
+                if (embed.length > 0) {
+                    embed[0].width = '60';
+                    embed[0].height = '60';
+                    embed[0].setAttribute('width', '60');
+                    embed[0].setAttribute('height', '60');
+                    imageurl = embed[0].src;                        
+                }
+                else
+                    imageurl = '';
+                
+                postvideourl.value = imageurl; 
+                
+                var page = postvideourl.value.substring(7, postvideourl.value.length);
+                page = postvideourl.value.substring(0, page.indexOf('/')+7);
+                if (page == 'http://www.youtube.com') { //for youtube
+                    if (postvideourl.value.indexOf('&') > 0)
+                        postimageurl.value = 'http://i.ytimg.com/vi/' + postvideourl.value.substring(postvideourl.value.lastIndexOf('/')+1, postvideourl.value.indexOf('&')) + '/default.jpg';
+                    else
+                        postimageurl.value = 'http://i.ytimg.com/vi/' + postvideourl.value.substring(postvideourl.value.lastIndexOf('/')+1, postvideourl.value.length) + '/default.jpg';
+                }
+            }
+            else {
+                 document.getElementById('video').innerHTML = 'No Image Available';
+            }
+        } else {
+            // select images to hide
+            var j = 0;
+            if (pagePostVideo == null) {
+                for (i=0; i<pagePost.getElementsByTagName("img").length; i++){
+                    var str = pagePost.getElementsByTagName("img")[i].src;
+                  
+                    // Check image
+                    var point = str.substring(str.length-4, str.length-3);
+                    if (point == '.') {
+                        // Check not gif                    
+                        var ext = str.substring(str.length-3, str.length);
+                        if (ext != 'gif') {    
+                            var urlsales = str.substring(7, str.length); // 'http://'
+                            urlsales = str.substring(7, urlsales.indexOf('/') + 7);
+                            
+                            if (urlsales.indexOf('salesforce') > 0) {
+                                images[j] = str.replace(urlsales, url);  
+                            }
+                            else
+                                images[j] = str;
+                            j++;
+                        }
+                    }
+                }
+            }
+                
+            var image = document.getElementById("image");
+            var imageArr = document.getElementById("imageOne");
+            for (var i in images) {
+                if (i == 0){
+                    image.style.display ="block";
+                }
+                else {
+                    image.style.display ="none";
+                }
+                var div = imageArr.cloneNode(false);                        
+                var img = image.cloneNode(false);                    
+                img.id = 'img' + i;
+                img.src = images[i];
+          
+                if (img.src.indexOf('http://http//') != -1)
+                {
+                	var ari = img.src.split('/');
+                	var imgName = ari[ari.length - 1];
+                
+
+                	img.src = document.getElementById('{!$Component.postForm.postLink}').value + '/' + frameSrc + imgName;
+                
+                }
+                div.appendChild(img);          
+                document.getElementById("images").appendChild(div);             
+            }              
+        }        
+                    
+    } else {
+        if (postvideourl != null) {
+            images[j] = "<object id='videoresize' width='60' height='60'><embed id='postvideo' width='60' height='60' wmode='transparent' type='application/x-shockwave-flash' src='"+postvideourl.value+"'></embed></object>";
+        }
+        document.getElementById('video').innerHTML = images[j]
+    }
+    
+    // Set sizeimages & index
+    sizeimages = images.length; 
+    if (sizeimages > 0)
+        index = 1;
+    else
+        index = 0;                     
+                            
+}
+
+
+// actually show image
+function getShowImage(imageDivs){
+    var imageDiv = 'NaN';
+    for (var i=2; i<imageDivs.length; i++) {
+        var imageSelected = imageDivs[i].firstChild;      
+        if (imageSelected.style.display == 'block') {
+            imageDiv = i;  
+            break;
+        }
+    }
+    
+    return imageDiv;
+}
+
+// arrow prev image
+function previousImage(){
+    if (!hide) {
+        var divs = document.getElementById("images");
+        var imageDivs = divs.getElementsByTagName("div");
+        var imageDiv = getShowImage(imageDivs);
+        var image;
+
+        if (imageDiv > 2) {
+            imageDivs[imageDiv].firstChild.style.display ="none";
+            image = imageDivs[imageDiv - 1].firstChild;
+            image.style.display = "block";
+            index--;
+            
+            imageurl = image.src;
+            postimageurl.value = imageurl;
+            counterImages.innerHTML = index + ' of ' + sizeimages;
+        }       
+    }
+}
+
+// arrow next image
+function nextImage(){
+    if (!hide) {
+        var divs = document.getElementById("images");
+        var imageDivs = divs.getElementsByTagName("div");
+        var imageDiv = getShowImage(imageDivs);
+        var image;
+        
+        if (imageDiv <= sizeimages) {
+            imageDivs[imageDiv].firstChild.style.display ="none";
+            image = imageDivs[imageDiv + 1].firstChild;
+            image.style.display = "block";
+            index++;
+            
+            imageurl = image.src;
+            postimageurl.value = imageurl;
+            counterImages.innerHTML = index + ' of ' + sizeimages;
+        }       
+    }
+}
+
+// show/hide image
+function showHidePicture(){
+    // Edit
+    var postvideo = document.getElementById('postvideo');
+    var videoresize = document.getElementById('video');
+    
+    if (videoresize.childNodes.length > 0){ // video
+        if (bimage.checked) {
+            videoresize.style.display = "none";
+            postvideo.type = '';
+            imageurl = postimageurl.value;    
+            postimageurl.value = '';                      
+        } else {
+            videoresize.style.display = "block";  
+            postvideo.type = "application/x-shockwave-flash"     
+            postimageurl.value = imageurl;                       
+        } 
+    } else { //image
+        /*postimage = document.getElementById("{!$Component.postForm.postimage}");
+        if (postimage != null && postimage.src != ""){
+            if (bimage.checked) {
+                postimage.style.display = "none";
+                imageurl = postimageurl.value;    
+                postimageurl.value = ''; 
+            } else {
+                postimage.style.display = "block"; 
+                videoresize.style.display = "none";   
+                postimageurl.value = imageurl;      
+            } 
+        } else { */
+            // New
+            var divs = document.getElementById("images");
+            var imageDivs = divs.getElementsByTagName("div");
+            var imageDiv = getShowImage(imageDivs);
+            
+            if (bimage.checked) {
+                if (imageDiv != 'NaN') {
+                    // hidepicture
+                    imageDivs[parseInt(imageDiv)].firstChild.style.display = "none";
+                    postimageurl.value = '';  
+                    hide = true;          
+                }
+            }
+            else {
+                // showpicture
+                var img = document.getElementById(idimg); // first image
+                img.style.display = "block";
+                imageurl = img.src;
+                postimageurl.value = imageurl;  
+                hide = false;   
+            }
+        //}
+    }
+}
+	   
+// OVERLAY FUNCTIONS		
+function hideShowSelects(){
+	var selects = $$('select');
+	for (var i = 0; i < selects.length; i++) {
+		if (selects[i].id != 'postType') {
+			if (selects[i].style.visibility == 'hidden') {
+				selects[i].style.visibility = 'visible';
+			}
+			else {
+				selects[i].style.visibility = 'hidden';
+			}
+		}
+	}
+}
+	
+function ClearForm()
+{
+	var form = document.getElementById('{!$Component.postForm}');
+
+	form.clear();
+}
+function switchOverlayB()
+{
+	var pageSize = getPageSize();
+	var overlay = $('UPF__overlay__');
+	overlay.style.height = pageSize[1] + 'px';
+	overlay.style.width = '102%'; 
+	//overlay.style.width = (pageSize[0] - 7) + 'px';
+	overlay.style.marginLeft = '-10px';
+	overlay.style.marginTop = '-100px'; 
+	if(overlay.style.display == 'none'){
+		if (loader) {
+			Effect.Appear('UPF__overlay__', {from: 0.0, to: 0.8, afterFinish:function(){}});
+		}
+		else {
+			Effect.Appear('UPF__overlay__', {from: 0.0, to: 0.8, afterFinish:function(){}});
+		}
+	}else{
+		
+		Effect.Fade('UPF__overlay__');
+	}
+	
+	var version;
+	if (navigator.appName == "Microsoft Internet Explorer") {
+		//try { version = ScriptEngineMajorVersion() + "." + ScriptEngineMinorVersion() + "." + ScriptEngineBuildVersion(); } catch(e) {}
+		version = navigator.appVersion;
+		//alert(version);
+		if (version.indexOf("MSIE 6") != -1) {	
+			setTimeout('hideShowSelects()',500);
+		}
+	}
+}
+
+function switchOverlayBookmark (formId) {
+			
+		ClearForm();
+		
+		switchOverlayB();
+	
+		
+		setTimeout('viewTheForm(\'' + formId + '\')', 1400);
+	
+	}
+
+
+
+function NextStep(keyCode)
+{
+	if (keyCode == 13)
+	{
+		if(!(validator('{!$Component.urlForm}', 'warning_to_user_url')))
+		{ 
+			
+		
+			var button = document.getElementById('j_id0:j_id28:Discussion:urlForm:nextStep');
+			
+			button.click();
+			
+			return true;
+		}
+		
+	}
+	
+	return false;
+}
+
+function ClearUrl()
+{
+	$('url').value = '';
+//	$('{!$Component.postForm.postComment}').value = '';
+	
+}
+	
+// load images and data from post url, remote site 
+function init() {   
+	
+    postimageurl = document.getElementById("{!$Component.postForm.postimageurl}");
+    postvideourl = document.getElementById("{!$Component.postForm.postvideourl}");
+    counterImages = document.getElementById('{!$Component.postForm.counterImages}');
+    bimage = document.getElementById("{!$Component.postForm.bImage}"); 
+    postLink = document.getElementById('{!$Component.postForm.postLink}'); 
+    buttonNext = document.getElementById('{!$Component.urlForm.nextStep}');
+	
+    if (url != '') {
+
+		url = parseUrlFormat();
+		
+		
+        var l = window.location;
+      
+        
+        if ( l.protocol == 'https:' ) {
+        
+      
+            // This code replaces the iframe protocol to match google
+            l.href = l.href.replace(/https/,'http');
+            return;
+        }
+        
+        sforce.connection.remoteFunction({
+            url : url, 
+            onSuccess : function(response) {
+        
+        		
+        	    if (! hasFrames(response))
+        	    {
+	                loadData(response);
+	                
+	                var img = document.getElementById(idimg);                    
+				    if (img != null){
+				        imageurl = img.src;
+				        document.getElementById("{!$Component.postForm.postimageurl}").value = imageurl;
+				    }
+				    document.getElementById('{!$Component.postForm.counterImages}').innerHTML = index + ' of ' + sizeimages;
+				                                 
+				    // Print & assign
+				    document.getElementById("{!$Component.postForm.postTitle}").value = title;
+				    document.getElementById("{!$Component.postForm.postDescription}").value = description;
+				 }
+				 else
+				 {
+				 	var frames = getAllFrameSrc(response);
+				 	
+				 	//Get the first frame width src
+				 	
+				 	var urlToPost = parseUrlFormat() + "/" +  frames[0];
+				 	frameSrc = frames[0];
+				 	
+					sforce.connection.remoteFunction({
+		            url : urlToPost, 
+		            onSuccess : function(response) {
+		       
+		                loadData(response);
+		                
+		                var img = document.getElementById(idimg);                    
+					    if (img != null){
+					        imageurl = img.src;
+					        document.getElementById("{!$Component.postForm.postimageurl}").value = imageurl;
+					    }
+					    document.getElementById('{!$Component.postForm.counterImages}').innerHTML = index + ' of ' + sizeimages;
+					                                 
+					    // Print & assign
+					    document.getElementById("{!$Component.postForm.postTitle}").value = title;
+					    document.getElementById("{!$Component.postForm.postDescription}").value = description;
+					
+					           
+		            },            
+		            onFailure : function(response) {
+		            
+		                document.getElementById('sendpostpage').innerHTML = response;
+		            }
+		        });   
+			  }
+			                
+            },            
+            onFailure : function(response) {
+            
+                document.getElementById('sendpostpage').innerHTML = response;
+            }
+        });   
+    } else {
+        var imageurl = '{!bookmark.imageUrl__c}';
+        var point = imageurl.substring(imageurl.length-4, imageurl.length-3);
+        var ext = imageurl.substring(imageurl.length-3, imageurl.length);
+        if (point == '.' && ext != 'swf') { // image
+            //postimage = document.getElementById("{!$Component.postForm.postimage}");
+            postimage.src = '{!bookmark.imageUrl__c}';
+        } else { // video
+            var postvideo = document.getElementById("postvideo");
+          
+            postvideo.src = '{!bookmark.imageUrl__c}';            
+        }
+    }
+   	$('modal_container').innerHTML = $('step2Form').innerHTML;
+}
+
+function copyURL () {       
+    var step1Url = document.getElementById('url').value;        
+    document.getElementById('{!$Component.postForm.postLink}').value = parseUrlFormatInit(step1Url); 
+    document.getElementById('step1Url').value = parseUrlFormatInit(step1Url); 
+    init();
+}   
+			
+</script>
+	
+<style>
+    .UPF__overlay__{
+        position: absolute; 
+        z-index: 10000;
+        width: 100%;
+        height: 100%;
+        background: #666666;                    
+    }
+
+    .forms__Overlay {
+        position: fixed;
+        margin-top:-80px;
+        z-index: 10001;
+        overflow: hidden;
+        background: white;
+        padding: 6px;
+        width: 510px; 
+        left: 50%;
+        xheight:510px;
+    }
+    
+    .formsIE6__Overlay {
+        postion: absolute;
+        z-index: 10001;
+        overflow: hidden;
+        background: white;
+        padding: 6px;
+        width: 510px; 
+        left: 50%;
+        height:510px;
+        top: expression( ( 20 + ( ignoreMe = document.documentElement.scrollTop ? document.documentElement.scrollTop : document.body.scrollTop ) ) + 'px' );
+    }
+    
+    .smallForm__Overlay {
+        position: fixed;
+        z-index: 10001;
+        overflow: hidden;
+        background: white;
+        padding: 6px;
+        width: 510px;
+        margin-top: 0px; 
+        left: 50%;
+        xheight:175px;
+    }
+    
+    .smallFormIE6__Overlay {
+        position: absolute;
+        z-index: 10001;
+        overflow: hidden;
+        background: white;
+        padding: 6px;
+        width: 510px;
+        margin-top: 0px; 
+        left: 50%;
+        height:175px;
+        top: expression( ( 125 + ( ignoreMe = document.documentElement.scrollTop ? document.documentElement.scrollTop : document.body.scrollTop ) ) + 'px' );
+    }       
+</style>	
+
+	
+	<!-- 		Step 1 Form 		-->
+	<div class="smallForm__Overlay" id="step1Form" style="display:none;">	
+		<div class="formsHeader">
+			<table border="0" style="width:100%">
+				<tr>
+					<td style="color:#FFFFFF">Create new bookmark</td>
+					<td align="right"><img style="cursor:pointer;vertical-align:center;" src="{!URLFOR($Resource.BookmarkResources, 'images/layout/close_dialog.gif')}" onclick="switchOverlayB(false); Effect.Fade('step1Form');" /></td>
+				</tr>
+			</table>
+		</div>
+		<span style="font-size:10px;">
+			<table border="0" style="width:100%;">
+				<tr>
+					<td><span class="inputInfo">Step 1 of 2</span></td>
+					<td align="right" style="width:4px;"><span style="display:block;width:4px; height:12px; background-color: #C0272D;"></span></td>
+					<td style="width:25%" align="right"><span style="color:#989999;">= &nbsp;&nbsp; Required Information</span></td>
+				</tr>
+			</table>
+		</span>
+		<div id="warning_to_user_url" class="message_to_userNew" style="display:none;">
+            <img src="{!URLFOR($Resource.PeopleResourceFiles, 'images/layout/warning.gif')}" />
+            Some required fields are empty or its format is incorrect.<br />
+            Please enter the data correctly.
+        </div>
+        <apex:form id="urlForm" onsubmit="if(validator('{!$Component.urlForm}', 'warning_to_user_url')) return false;">
+			<div style="margin-left:25px;">
+				<br>
+				<table border="0" style="width:95%;">
+					<tr>
+						<td style="width:85px;"><span class="inputInfo">Link / URL</span></td>
+						<td style="width:4px;"><span style="display:block;width:4px; height:21px; background-color: #C0272D;"></span></td>
+						<td><input id="url" type="text" style="width:98%" onkeyPress="if (NextStep(event.keyCode)) return false;" class="RQ_String"/></td>
+					</tr>
+				</table>
+				<br><br>
+			</div>
+			<hr color="#999999" size="1px">
+			<div align="center">
+				<apex:commandButton id="nextStep" action="{!copyUrl}" value="Next" styleClass="saveBookmarkBtn" onclick="if(!(validator('{!$Component.urlForm}', 'warning_to_user_url'))){ copyURL();createOverlay('','step2Form');}" />
+                <input class="cancelBookmarkBtn" type="button" value="Cancel" onclick="modal.close();" />
+			</div>
+		</apex:form>
+	</div>
+
+	<!-- 		Step 2 Form 		-->
+	<div class="forms__Overlay" id="step2Form" style="display:none;">	
+		<div class="formsHeader">
+			<table border="0" style="width:100%">
+				<tr>
+					<td style="color:#FFFFFF">Create new bookmark</td>
+					<td align="right"><img style="cursor:pointer;vertical-align:center;" src="{!URLFOR($Resource.BookmarkResources, 'images/layout/close_dialog.gif')}" onclick="modal.close()" /></td>
+				</tr>
+			</table>
+		</div>
+		<span style="color:#989999; font-size:10px;">
+			<table border="0" style="width:100%;">
+				<tr>
+					<td><b>Step 2 of 2</b></td>
+					<td align="right" style="width:4px;"><span style="display:block;width:4px; height:12px; background-color: #C0272D;"></span></td>
+					<td style="width:25%" align="right">= &nbsp;&nbsp; Required Information</td>
+				</tr>
+			</table>
+		</span>
+		<div id="warning_to_user_comment" class="message_to_user" style="display:none;">
+	        <img src="{!URLFOR($Resource.PeopleResourceFiles, 'images/layout/warning.gif')}" />
+	        Some required fields are empty or its format is incorrect.<br />
+	        Please enter the data correctly.
+        </div>
+		<apex:form id="postForm" onsubmit="if(validator('{!$Component.postForm}', 'warning_to_user_comment')) return false;">
+			<div style="margin-left:25px;">
+				<br>
+				<table border="0" style="width:95%;" cellspacing="0" cellpadding="0">
+					<tr>
+						<td style="width:109px;" colspan="2"><span class="inputInfo">Link / URL</span></td>
+						<td>
+						    <apex:inputhidden value="{!bookmark.BookmarkURL__c}" id="postLink"/>
+						    <input id="step1Url" type="text" style="background-color:#EBEBE4; width:98%" readonly /> 
+					    </td>
+					</tr>
+					<tr>
+						<td valign="top"><span class="inputInfo">Your comment</span></td>
+						<td valign="top" style="width:4px;"><span style="display:block;width:4px; height:88px; background-color: #C0272D;"></span></td>
+						<td valign="top" style="height:88px;">
+						    <apex:inputTextArea id="postComment" value="{!bookmark.SiteDescription__c}" style="width:98%;height:83px;" styleClass="RQ_String"/>
+						</td>
+					</tr>
+					<tr>
+						<td valign="top" colspan="2"><apex:outputText value="Choose an image" styleClass="inputInfo"/></td>
+                        <td valign="top" style="height:63px">
+                            <div id="images"> 
+                                <div id="video" style="position:absolute;"></div>
+                                <div id="imageOne"><img id="image" style="position:absolute; max-width:60px; max-height:60px;"/></div>                                
+                            </div>
+                            <!-- <apex:image id="postimage" style="{!IF((UrlPost==NULL), '', 'display:none')}; max-width=60px; max-height:60px;"/> -->
+                            <object id="videoresize" width="60" height="60" style="{!IF((UrlPost==NULL), '', 'display:none')}">
+                                <embed id="postvideo" width="60" height="60" wmode="transparent"></embed>
+                            </object>
+                            <apex:inputhidden id="postimageurl" value="{!bookmark.imageUrl__c}"/>
+                            <apex:inputhidden id="postvideourl" value="{!bookmark.VideoURL__c}"/> 
+                            
+                            <div style="margin-left:85px">
+                                <apex:outputLink value="#" onClick="previousImage()" style="text-decoration: none">&nbsp; <img style="vertical-align:middle;" src="{!URLFOR($Resource.PeopleResource, 'images/layout/pagination_arrow_prev.gif')}" /> </apex:outputLink>
+                                <apex:outputText value="" id="counterImages" styleClass="inputInfo"/> 
+                                <apex:outputLink value="#" onClick="nextImage()" style="text-decoration: none"> <img style="vertical-align:middle;" src="{!URLFOR($Resource.PeopleResource, 'images/layout/pagination_arrow_next.gif')}" /> &nbsp;</apex:outputLink>
+                                <br><br>
+                                <apex:inputCheckbox id="bImage" value="{!noImage}" onChange="showHidePicture()"/><span class="inputInfo">No image</span>
+	                            <script>
+	                                var bimage = document.getElementById("{!$Component.postForm.bImage}");
+	                                if (bimage.checked)
+	                                    bimage.disabled = true;
+	                            </script>
+                            </div>
+                        </td>
+					</tr>
+					<tr>
+						<td valign="top" colspan="2"><span class="inputInfo">Post title</span></td>
+						<td><apex:inputField id="postTitle" value="{!bookmark.Title__c}" style="width:98%;"/></td>
+					</tr>
+					<tr>
+						<td valign="top" colspan="2"><span class="inputInfo">Post Body</span></td>
+						<td valign="top" style="height:88px;">
+						    <apex:inputField id="postDescription" value="{!bookmark.Body__c}" style="width:98%;height:83px;"/>
+						</td>
+					</tr>
+					<tr>
+						<td valign="top" colspan="2"><span class="inputInfo">Post type</span></td>
+						<td valign="top"><apex:inputField id="postType" value="{!bookmark.Type__c}"/>
+							<br>
+							<apex:inputCheckbox value="{!emailTeamspace}"/>&nbsp; <span class="inputInfo">Send email to all team members</span>
+						</td>
+					</tr>
+					<tr>
+		                <td colspan="3"><apex:outputLabel id="errorLabel" value="{!error}" rendered="{!showError}" styleClass="error"/></td>
+		            </tr> 
+				</table>
+				<br></br>
+			</div>
+			<hr color="#999999" size="1px">
+			<div align="center">
+				<apex:commandButton action="{!save}" value="Post" reRender="widgetRecentBookmarks" id="postButton" styleClass="saveBookmarkBtn" onclick="if(!(validator('{!$Component.postForm}', 'warning_to_user_comment'))){ modal.close(); }"/>
+				<input class="backBookmarkBtn" type="button" value="Back" onclick="modal.close();createOverlay('','step1Form', '196');" />
+				<input class="cancelBookmarkBtn" type="button" value="Cancel" onclick="modal.close();" />
+			</div>
+		</apex:form>
+	</div>
+
+	
+	<!-- 		EditBookmark Form 		-->
+	<div class="forms__Overlay" id="editBookmarkForm" style="display:none;">	
+		<div class="formsBookmarkHeader">
+			<table border="0" style="width:100%">
+				<tr>
+					<td style="color:#FFFFFF">Edit Bookmark</td>
+					<td align="right"><img style="cursor:pointer;vertical-align:center;" src="{!URLFOR($Resource.BookmarkResources, 'images/layout/close_dialog.gif')}" onclick="switchOverlayB(false); Effect.Fade('editBookmarkForm');" /></td>
+				</tr>
+			</table>
+		</div>
+		<span style="color:#989999; font-size:10px;">
+			<table border="0" style="width:100%;">
+				<tr>
+					<td></td>
+					<td align="right" style="width:4px;"><span style="display:block;width:4px; height:12px; background-color: #C0272D;"></span></td>
+					<td style="width:25%" align="right">= &nbsp;&nbsp; Required Information</td>
+				</tr>
+			</table>
+		</span>
+		<div id="warning_to_user_commentEdit" class="message_to_user" style="display:none;">
+	        <img src="{!URLFOR($Resource.PeopleResourceFiles, 'images/layout/warning.gif')}" />
+	        Some required fields are empty or its format is incorrect.<br />
+	        Please enter the data correctly.
+        </div>
+		<apex:form id="postFormEdit" onsubmit="if(validator('{!$Component.postFormEdit}', 'warning_to_user_commentEdit')) return false;">
+			<div style="margin-left:25px;">
+				<br>
+				<table border="0" style="width:95%;" cellspacing="0" cellpadding="0">
+					<tr>
+						<td style="width:109px;" colspan="2"><span class="inputInfo">Link / URL</span></td>
+						<td>
+						    <apex:inputhidden value="{!bookmark.BookmarkURL__c}" id="postLinkEdit"/>
+						    <input id="step1UrlEdit" type="text" style="background-color:#EBEBE4; width:98%" readonly /> 
+					    </td>
+					</tr>
+					<tr>
+						<td valign="top"><span class="inputInfo">Your comment</span></td>
+						<td valign="top" style="width:4px;"><span style="display:block;width:4px; height:88px; background-color: #C0272D;"></span></td>
+						<td valign="top" style="height:88px;">
+						    <textarea style="width:98%;height:83px;" id="postCommentEdit" class="RQ_String">Mar 31 - U.S stocks ended a brutal quarter with a rally sparked by encouraging economic data.The Dow rose 46 points on Monday to 12,262.89, but fell 7.6 perc...</textarea>
+							<!-- <apex:inputTextArea id="postComment" value="{!bookmark.SiteDescription__c}" style="width:98%;height:83px;" styleClass="RQ_String"/> -->
+						</td>
+					</tr>
+					<tr>
+						<td valign="top" colspan="2">
+							<span class="inputInfo">Choose an image </span>
+							<!-- <apex:outputText value="Choose an image" styleClass="inputInfo"/> -->
+						</td>
+						<td valign="top" style="height:63px">
+						    <div id="imagesEdit"> 
+							<div id="videoEdit" style="position:absolute;"></div>
+							<div id="imageOneEdit"><img id="imageEdit" style="position:absolute; max-width:60px; max-height:60px;"/></div>                                
+						    </div>
+						    <object id="videoresizeEdit" width="60" height="60" style="{!IF((UrlPost==NULL), '', 'display:none')}">
+							<embed id="postvideoEdit" width="60" height="60" wmode="transparent"></embed>
+						    </object>
+										<apex:inputhidden id="postimageurlEdit" value="{!bookmark.imageUrl__c}"/>
+						    <apex:inputhidden id="postvideourlEdit" value="{!bookmark.VideoURL__c}"/> 
+						    
+						    <div style="margin-left:85px">
+							<apex:outputLink value="#" onClick="previousImage()" style="text-decoration: none">&nbsp; <img style="vertical-align:middle;" src="{!URLFOR($Resource.PeopleResource, 'images/layout/pagination_arrow_prev.gif')}" /> </apex:outputLink>
+							<apex:outputText value="" id="counterImagesEdit" styleClass="inputInfo"/> 
+							<apex:outputLink value="#" onClick="nextImage()" style="text-decoration: none"> <img style="vertical-align:middle;" src="{!URLFOR($Resource.PeopleResource, 'images/layout/pagination_arrow_next.gif')}" /> &nbsp;</apex:outputLink>
+							<br><br>
+							<apex:inputCheckbox id="bImageEdit" value="{!noImage}" onChange="showHidePicture()"/><span class="inputInfo">No image</span>
+							    <script>
+								var bimageEdit = document.getElementById("{!$Component.postFormEdit.bImageEdit}");
+								if (bimageEdit.checked)
+								    bimageEdit.disabled = true;
+							    </script>
+						    </div>
+						</td>
+					</tr>
+					<tr>
+						<td valign="top" colspan="2"><span class="inputInfo">Post title</span></td>
+						<td>
+							<input type="text" value="Lorem ipsum dolor sit amet" />
+							<!-- <apex:inputField id="postTitle" value="{!bookmark.Title__c}" style="width:98%;"/>-->
+						</td>
+					</tr>
+					<tr>
+						<td valign="top" colspan="2"><span class="inputInfo">Post Body</span></td>
+						<td valign="top" style="height:88px;">
+							<textarea style="width:98%;height:83px;">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</textarea>
+						    <!-- <apex:inputField id="postDescription" value="{!bookmark.Body__c}" style="width:98%;height:83px;"/> -->
+						</td>
+					</tr>
+					<tr>
+						<td valign="top" colspan="2"><span class="inputInfo">Page type</span></td>
+						<td valign="top">
+							<apex:inputField id="postTypeEdit" value="{!bookmark.Type__c}"/>
+						</td>
+					</tr>
+					<tr>
+		                <td colspan="3"><apex:outputLabel id="errorLabelEdit" value="{!error}" rendered="{!showError}" styleClass="error"/></td>
+		            </tr> 
+				</table>
+				<br></br>
+			</div>
+			<hr color="#999999" size="1px">
+			<div align="center">
+				<apex:commandButton action="{!save}" value="Save" reRender="widgetRecentBookmarks" id="postButtonEdit" styleClass="saveBookmarkBtn" onclick="if(!(validator('{!$Component.postFormEdit}', 'warning_to_user_commentEdit'))){ modal.close(); }"/>
+				<input class="cancelBookmarkBtn" type="button" value="Cancel" onclick="modal.close()" />
+			</div>
+		</apex:form>
+	</div>
+	
+	<script>
+		var version;
+		if (navigator.appName == "Microsoft Internet Explorer") {
+			version = navigator.appVersion;
+			if (version.indexOf("MSIE 6") != -1) {
+				document.getElementById('step1Form').className = 'smallFormIE6__Overlay';
+				document.getElementById('step1Form').style.position = 'absolute';
+				document.getElementById('step2Form').className = 'formsIE6__Overlay';
+				document.getElementById('step2Form').style.position = 'absolute';
+				document.getElementById('editBookmarkForm').className = 'formsIE6__Overlay';
+				document.getElementById('editBookmarkForm').style.position = 'absolute';
+			}
+		}
+	</script>
+
+	
+	
+	<div id="sendpostpage" style="display:none"></div>
+	<iframe style="display:none" id="contentFrame"></iframe>
+</apex:page>

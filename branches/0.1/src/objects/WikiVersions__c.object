@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <deploymentStatus>Deployed</deploymentStatus>
+    <fields>
+        <fullName>Body__c</fullName>
+        <label>Body</label>
+        <length>32000</length>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
+        <fullName>WikiPageId__c</fullName>
+        <label>WikiPageId</label>
+        <referenceTo>WikiPage__c</referenceTo>
+        <relationshipName>WikiVersions1</relationshipName>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>revisionCount__c</fullName>
+        <defaultValue>1</defaultValue>
+        <label>revisionCount</label>
+        <precision>15</precision>
+        <scale>0</scale>
+        <type>Number</type>
+    </fields>
+    <label>Wiki Version</label>
+    <nameField>
+        <label>WikiVersions Name</label>
+        <type>Text</type>
+    </nameField>
+    <pluralLabel>WikiVersions</pluralLabel>
+    <sharingModel>ReadWrite</sharingModel>
+</CustomObject>

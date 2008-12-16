@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <deploymentStatus>Deployed</deploymentStatus>
+    <fields>
+        <fullName>Competency__c</fullName>
+        <label>Competency</label>
+        <referenceTo>Competency__c</referenceTo>
+        <relationshipName>UserCompetencies</relationshipName>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>InterestedInLearning__c</fullName>
+        <defaultValue>false</defaultValue>
+        <label>Interested in learning</label>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>InterestedInProvidingAssistance__c</fullName>
+        <defaultValue>false</defaultValue>
+        <label>Interested in providing assistance</label>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Rating__c</fullName>
+        <label>Rating</label>
+        <precision>10</precision>
+        <required>true</required>
+        <scale>0</scale>
+        <type>Number</type>
+    </fields>
+    <fields>
+        <fullName>User__c</fullName>
+        <label>User</label>
+        <referenceTo>User</referenceTo>
+        <relationshipName>UserCompetencies</relationshipName>
+        <type>Lookup</type>
+    </fields>
+    <label>User Competencies</label>
+    <nameField>
+        <label>Competency Name</label>
+        <type>Text</type>
+    </nameField>
+    <pluralLabel>User Competencies</pluralLabel>
+    <sharingModel>ReadWrite</sharingModel>
+</CustomObject>

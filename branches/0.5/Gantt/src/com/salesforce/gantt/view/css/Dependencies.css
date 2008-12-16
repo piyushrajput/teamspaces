@@ -1,0 +1,97 @@
+
+.columnDataGrid
+{
+	color : #666666;
+	background-color : #ffffff;
+	background-alpha: 0;
+	font-family : Arial Narrow, Arial, Trebuchet MS, Verdana;
+	text-align : left;
+	font-weight : bold;
+	font-size:10;
+}
+/*setea el dataGrid de la clase Dependencies*/
+.dataGrid  
+{
+	headerColors : white, white;
+	horizontalGridLines : true;
+	alternatingItemColors : white, white;
+	font-family : verdana, arial;
+	border-Thickness : 1;
+	border-Sides : bottom;
+	border-Style : solid;
+	border-Color : #C0C0C0;		 
+}
+ /*setea el NumericStepper de la clase Dependencies*/
+.NumericStepperText 
+{
+	border-style : none; 
+	font-size : 10pt;
+	margin : none;  
+	padding : none; 
+	text-Align : right;  
+}
+.headerDependencies
+{
+	font-family : verdana, arial;
+	vertical-align : middle;
+	background-Color : #cccccc; 
+	height : 26; 
+	border-Color : 999999;
+	border-Thickness : 1; 
+	border-Style : solid; 
+	border-Sides : bottom;
+}
+.headerLabelDependencies
+{
+	font-family : verdana, arial;
+	color : #666666;
+	font-weight : bold;
+	text-align : center;
+	font-size : 11px;
+}
+.labelLinkDependencies
+{
+	font-family : verdana, arial;
+	color : #666666;
+	text-Decoration: underline;
+}
+
+.dependenciesGrid {
+	alternatingItemColors : white, white;
+	roll-over-color:white;
+	
+}
+
+.gridheaders {
+	font-family : Arial Narrow, Arial, Trebuchet MS;
+	font-size:10;
+	background-color:#FFFFFF;
+	color: #666666;
+	font-weight:bold;
+	border-style:none;
+	border-thickness:0;
+	padding-left:0;
+	padding-right:0;
+	
+}
+
+.gridheaderActions {
+	font-family : Arial Narrow, Arial, Trebuchet MS;
+	font-size:10;
+	background-color:#FFFFFF;
+	color: #666666;
+	font-weight:bold;
+	border-style:none;
+	border-thickness:0;
+	padding-left:0;
+	padding-right:0;
+	text-align:center;
+}
+
+.footerbuttons {
+
+	padding-top:10;
+	
+}
+
+

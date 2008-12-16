@@ -1,0 +1,316 @@
+<apex:page id="DiscussionTopics" sidebar="false" tabStyle="DiscussionForum__c" controller="DiscussionTopicsController" >
+	<!-- INTERNET EXPLORER FIREBUG -->
+	<script src="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/firebug/firebug.js')}"></script>
+	
+	<!-- Prototype + Scriptaculous -->
+	<script type="text/javascript" src="{!URLFOR($Resource.Script_aculo_us, 'prototype.js')}"></script>
+	<script type="text/javascript" src="{!URLFOR($Resource.Script_aculo_us, 'scriptaculous.js')}"></script>
+	<script type="text/javascript" src="{!URLFOR($Resource.Script_aculo_us, 'effects.js')}"></script>
+
+		<!-- Portal Support -->
+	<script src="{!$Resource.portalSupport}" />
+
+	<!-- Common Js -->
+	<script type="text/javascript" src="{!URLFOR($Resource.discussionResourceFiles, 'inc/js/common.js')}"></script>
+	<script type="text/javascript" src="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/common.js')}"></script>
+
+	<!-- FCKEditor Include  -->
+	<script type="text/javascript" src="{!URLFOR($Resource.discussionResourceFiles, 'inc/js/fckeditor/fckeditor.js')}"></script>
+	<script type="text/javascript" src="{!URLFOR($Resource.discussionResourceFiles, 'inc/js/createFCKEditor.js')}"></script>
+	<apex:stylesheet value="{!URLFOR($Resource.commonResources, 'inc/css/fonts.css')}" />
+
+    <!-- CSS styles for Portal Integration -->
+    <apex:stylesheet value="{!URLFOR($Resource.portalStyles, 'portal.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.TeamsResources, 'inc/css/headerTeams.css')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.TeamsResources, 'inc/css/widgetTeam.css')}" />
+
+	<!-- Common Layout -->
+	<link rel="stylesheet" media="screen" href="{!URLFOR($Resource.discussionResourceFiles, 'inc/css/commonLayout.css')}" /> 
+	<link rel="stylesheet" media="screen" href="{!URLFOR($Resource.discussionResourceFiles, 'inc/css/discussionOverview.css')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.TeamsResources, 'inc/css/widgets/TeamMemberWidget.css')}" />		
+	<apex:stylesheet value="{!URLFOR($Resource.TeamsResources, 'inc/css/teamsOverlaysTemplate.css')}" />
+	
+	<!-- Modal JS -->
+	<script type="text/javascript" src="{!URLFOR($Resource.commonResources, 'inc/js/modal.js')}"></script>
+	<link rel="stylesheet" media="screen" href="{!URLFOR($Resource.commonResources, 'inc/css/modal.css')}" />
+	
+	<!-- Common CSS -->
+	<apex:stylesheet value="{!URLFOR($Resource.discussionResources, 'inc/css/discussionTopics.css')}" />
+	
+	<!-- Common JS -->
+	<apex:includeScript value="{!URLFOR($Resource.discussionResources, 'inc/js/discussionTopics.js')}" />
+
+	<!-- Ajax Toolkit SDFC -->
+	<script src="/soap/ajax/11.1/connection.js" type="text/javascript"></script>
+	<script>	
+		var API_SESSION_ID = '{!$Api.Session_ID}';
+		var inputHiddenTopicId = '';	
+		var isInDetail = false;	
+
+		var FCK_BASEPATH = '{!URLFOR($Resource.FCKeditor,'fckeditor/')}';
+		
+		var globalInfoBig = '{!URLFOR($Resource.TeamsResources, 'images/layout/icons/WidgetConfig/infoBig.gif')}';
+		var globalCheckNew = '{!URLFOR($Resource.TeamsResources, 'images/layout/icons/WidgetConfig/checkNew.gif')}';
+		
+		document.observe("dom:loaded", fixAll);
+		document.observe("dom:loaded", showActionSuccess);
+
+	</script>
+
+	<a href="#modal_container" id="initializeModal" style="display:none;"></a>
+	<div id="modal_container"></div>
+	<script>createOverlay('initializeModal')</script>
+	
+	<!-- Overlay New topic -->	
+	<apex:include pageName="DiscussionOverlayNewTopic" />
+	
+	<!-- Overlay Delete Topic -->	
+	<apex:include pageName="DiscussionOverlayDeleteTopic" />
+	
+	<!-- Header -->
+	<apex:composition template="HeaderTemplate">
+		<apex:define name="moduleId"><apex:variable var="moduleId" value="headerDiscussion"/></apex:define>
+	    <apex:define name="module">Discussions</apex:define>
+	    <apex:define name="title">{!forumData}</apex:define>
+	    <apex:define name="search">
+	    	<c:Search module="discussion" />
+	    </apex:define>
+    </apex:composition>
+
+	<!-- BreadCrumbs -->
+	<div class="breadcrumbs" >
+		<div class="map">
+			<apex:outputlink value="DiscussionOverview">Discussion Overview </apex:outputlink> &nbsp;> <strong>  Topics </strong>
+		</div>
+		<apex:outputpanel styleClass="buttonsTopic" layout="block" rendered="{!IF(OR(userPermissions.canCreate, userPermissions.canManage),true ,false)}">
+		 	<a class="blackbutton" onclick="createOverlay('','NewTopicForm','390','createFCKEditor(\'messageTextArea\', 230)',''); relocateOverlay('50'); $('infoToUser').fade();" >
+				<span>New Topic</span>
+			</a>
+		</apex:outputpanel>	
+	</div>
+	<div class="leftBar">
+			<!-- Sidebar -->
+			<div class="sidebar">	
+				 <!-- Sub Teams Widget -->
+				  <apex:include pageName="DiscussionWidgetSubTeams" />		
+				  <!-- New Discussions Widget -->
+				  <apex:include pageName="DiscussionWidgetNewDiscussions" />
+				  <!-- Most Active People Widget -->
+				  <apex:include pageName="DiscussionWidgetActivePeople" />		
+			</div><!-- /Left Column container -->
+		<!-- 
+		############
+		# Center Column 
+		################
+		-->	
+		<div class="main_content" id="main_content">  
+			<div class="holder">										
+				<!-- Discussion -->
+				<div class="discussion_content" >
+					<div class="informationPanel clear" id="infoToUser" style="display:none;"></div>
+					<div id="paginationOverlay" style="display:none;" >
+				 		<div class="loader">
+				 			<img src="{!URLFOR($Resource.discussionResourceFiles, 'images/common/layout/big-loader.gif')}" alt="Loading..." title="Loading..." />
+				 		</div>
+					</div>					
+					<apex:outputPanel id="noTopicList"> 
+						<apex:outputpanel rendered="{!noTopics}" >
+						<div style="text-align:center;">
+							This {!$ObjectType.Team__c.label} has no topic yet. <apex:outputpanel rendered="{!IF((userPermissions.canCreate || userPermissions.canManage),true ,false)}"><a href="javascript:;" onclick="createOverlay('','NewTopicForm','390','createFCKEditor(\'messageTextArea\', 230)','');relocateOverlay('50');">[Create one]</a></apex:outputpanel>
+						</div>
+						</apex:outputpanel> 
+					</apex:outputPanel>  
+					<!-- Topic List -->
+					<apex:form >
+						<apex:actionFunction name="refreshList" action="{!refreshList}" rerender="topicList, noTopicList" oncomplete="showHideOverlay(); showMessageToUser('New topic has been created.', 'success');" />	
+						<apex:actionFunction name="rerenderPaginators" action="{!refreshPaginator}" rerender="pagBot, pagTop"  />		
+						<apex:actionFunction name="refreshUpdateList" action="{!refreshList}" rerender="topicList, noTopicList" oncomplete="showMessageToUser('Topic has been updated.', 'success');" />				
+						<apex:actionFunction name="refreshDeleteList" action="{!refreshList}" rerender="topicList, noTopicList" oncomplete="showHideOverlay(); showMessageToUser('The topic has been deleted.', 'success');" />
+					</apex:form>
+					<apex:outputPanel id="topicList" >
+						<apex:outputpanel rendered="{!NOT(noTopics)}">
+						<!-- Pagination -->
+					 	<apex:outputpanel styleClass="pagination" id="pagTop" layout="block" rendered="{!IF(AND(prevPageShow,nextPageShow),false,true)}">
+					 		<div class="discussion_content" >
+								<h2 class="discussion_detail_title clear">Discussion Topics</h2>					
+							</div>
+					 		<div class="pages" style="width:39%"> 
+								 <apex:form >					 
+									<ul>
+										<li class="prev {!IF(prevPageShow,'prev_disabled','')}">
+											<apex:commandLink action="{!prevPage}" value="Previous Page" rerender="topicList" rendered="{!prevPageLinkShow}"  onclick="showHideOverlay();" oncomplete="showHideOverlay();"/>
+											<apex:outputText value="Previous Page" rendered="{!prevPageShow}" />
+										</li>
+										<li>({!currentPagination}</li>
+										<li>-</li>
+										<li>{!cntPagination})</li>
+										<li class="next {!IF(nextPageShow,'next_disabled','')}">
+											<apex:commandLink action="{!nextPage}" value="Next Page" rerender="topicList" rendered="{!nextPageLinkShow}"  onclick="showHideOverlay();" oncomplete=" showHideOverlay();"/>										
+											<apex:outputText value="Next Page" rendered="{!nextPageShow}" />
+										</li>
+									</ul>								
+								</apex:form>								
+							</div>
+						</apex:outputpanel>
+						
+						<!-- End Pagination controls -->
+						<apex:form >					
+							<div class="clear"></div>
+							<div class="discussion_title_line"></div>					
+							<table class="topicsOverview" width="100%">
+								<!-- Title -->
+								<thead>
+									<tr class="topicsGridHeader" >
+										<td class="leftPadding" width="35px">Action</td>									
+										<td width="100px">
+											<apex:commandLink styleclass="member_title_description" onclick="showHideOverlay();" oncomplete="showHideOverlay();" action="{!sortList}" value="Topic" rerender="topicList">
+												<apex:param name="sb" value="Name" />
+											</apex:commandLink>&nbsp;
+											<apex:outputpanel rendered="{!IF(sortBy == 'topic',true,false)}">
+												<apex:outputpanel rendered="{!sortByDesc}">
+													<img src="{!URLFOR($Resource.commonResources, 'images/arrows/arrow_down.gif')}" />
+												</apex:outputpanel>
+												<apex:outputpanel rendered="{!NOT(sortByDesc)}">
+													<img src="{!URLFOR($Resource.commonResources, 'images/arrows/arrow_top.gif')}" />
+												</apex:outputpanel>
+											</apex:outputpanel>
+										</td>
+										<td width="150px">
+											<apex:commandLink styleclass="member_title_description" action="{!sortList}" onclick="showHideOverlay();" oncomplete="showHideOverlay();"  value="Author" rerender="topicList">
+												<apex:param name="sb" value="PostedBy__r.Name" />
+											</apex:commandLink>&nbsp;
+											<apex:outputpanel rendered="{!IF(sortBy == 'author',true,false)}">
+												<apex:outputpanel rendered="{!sortByDesc}">
+													<img src="{!URLFOR($Resource.commonResources, 'images/arrows/arrow_down.gif')}" />
+												</apex:outputpanel>
+												<apex:outputpanel rendered="{!NOT(sortByDesc)}">
+													<img src="{!URLFOR($Resource.commonResources, 'images/arrows/arrow_top.gif')}" />
+												</apex:outputpanel>
+											</apex:outputpanel>
+										</td>
+										<td width="20px" >
+											<apex:commandLink styleclass="member_title_description" onclick="showHideOverlay();" oncomplete="showHideOverlay();" action="{!sortList}" value="View" rerender="topicList">
+												<apex:param name="sb" value="ViewCount__c" />
+											</apex:commandLink>&nbsp;
+											<apex:outputpanel rendered="{!IF(sortBy == 'view',true,false)}">
+												<apex:outputpanel rendered="{!sortByDesc}">
+													<img src="{!URLFOR($Resource.commonResources, 'images/arrows/arrow_down.gif')}" />
+												</apex:outputpanel>
+												<apex:outputpanel rendered="{!NOT(sortByDesc)}">
+													<img src="{!URLFOR($Resource.commonResources, 'images/arrows/arrow_top.gif')}" />
+												</apex:outputpanel>
+											</apex:outputpanel>
+										</td>								
+										<td width="20px">
+											<apex:commandLink styleclass="member_title_description" action="{!sortList}" onclick="showHideOverlay();" oncomplete="showHideOverlay();" value="Replies" rerender="topicList">
+												<apex:param name="sb" value="MessageCount__c" />
+											</apex:commandLink>&nbsp;
+											<apex:outputpanel rendered="{!IF(sortBy == 'replies',true,false)}">
+												<apex:outputpanel rendered="{!sortByDesc}">
+													<img src="{!URLFOR($Resource.commonResources, 'images/arrows/arrow_down.gif')}" />
+												</apex:outputpanel>
+												<apex:outputpanel rendered="{!NOT(sortByDesc)}">
+													<img src="{!URLFOR($Resource.commonResources, 'images/arrows/arrow_top.gif')}" />
+												</apex:outputpanel>
+											</apex:outputpanel>
+										</td>
+										<td width="116px">
+											<apex:commandLink styleclass="member_title_description" action="{!sortList}" onclick="showHideOverlay();" oncomplete="showHideOverlay();" value="Last Reply" rerender="topicList">
+												<apex:param name="sb" value="LastPostedMessage__c" />
+											</apex:commandLink>&nbsp;
+											<apex:outputpanel rendered="{!IF(sortBy == 'lastReplies',true,false)}">
+												<apex:outputpanel rendered="{!sortByDesc}">
+													<img src="{!URLFOR($Resource.commonResources, 'images/arrows/arrow_down.gif')}" />
+												</apex:outputpanel>
+												<apex:outputpanel rendered="{!NOT(sortByDesc)}">
+													<img src="{!URLFOR($Resource.commonResources, 'images/arrows/arrow_top.gif')}" />
+												</apex:outputpanel>
+											</apex:outputpanel>
+										</td>
+									</tr>										
+								</thead>
+							</apex:form>
+								<!-- Description discussion -->
+								<tbody>
+									<tr>
+										<td colspan="6" height="10">
+											<div class="discussion_title_line"></div>
+										</td>
+									</tr>
+									<apex:repeat value="{!topicList}" var="topic"  rows="{!numberOfItemsToShow}" first="{!firstRow}" >
+										<tr id="row-{!topic.Id}">
+											<td class="actionHolder" >
+												<apex:outputpanel layout="block" style="float:left;" rendered="{!topic.EnableActions}">
+													<a href="Javascript:;" onclick="createOverlay('','NewTopicForm','390','getTopicToEdit(\'{!topic.Id}\',\'{!topic.FirstMessageId}\', \'topics\')','');relocateOverlay('50');" >Edit</a> | 
+													<a href="Javascript:;" onclick="deleteTopicOverlay('{!topic.Id}'); ">Del</a>
+												</apex:outputpanel>
+											</td>
+											<td class="topicTitle">
+												<span id="topicTitle-{!topic.Id}" style="display:none;">{!topic.Name}</span>
+												<span id="topicMessage-{!topic.Id}" style="display:none;"><apex:outputText value="{!topic.FirstMessageCreated}" escape="false" /></span>
+												<apex:outputLink value="DiscussionDetail?id={!topic.Id}" id="theLink">{!topic.ShortName}</apex:outputLink>
+											</td>
+											<td class="userInfo" style="width:23%" >
+												<apex:outputpanel >
+												<div class="photoWrapper_32px">
+													<img alt="{!topic.AuthorName}" title="{!topic.AuthorName}" src="{!IF((topic.AuthorPicture != ''), '/servlet/servlet.FileDownload?file='+topic.AuthorPicture, URLFOR($Resource.commonResources, 'images/placeholders/unknownperson32x32.jpg'))}"  width="32" class="f_left" />
+												</div>
+												</apex:outputpanel>	
+												<div  style="margin-left:5px;vertical-align:center">
+													<apex:outputLink value="/apex/PeopleProfileDisplay?id={!topic.AuthorId}">{!topic.AuthorName}</apex:outputLink>
+												</div>
+											</td>
+											<td ><div class="number" >{!topic.NumberOfViews}</div></td>
+											<td ><div class="number" style="margin-right:10px;">{!topic.NumberOfMessages}</div></td>								
+											<td class="discussion_description_DateNoUnderline" >{!topic.LastPostMessage}</td>								
+										</tr>
+										<tr id="subrow-{!topic.Id}">
+											<td colspan="6"><div class="discussion_detail_line"></div></td>
+										</tr>							
+									</apex:repeat>
+								</tbody>
+							</table>
+						
+						<!-- Pagination -->					
+					 	<apex:outputpanel styleClass="pagination" id="pagBot" layout="block" rendered="{!IF(AND(prevPageShow,nextPageShow),false,true)}">
+					 		<div class="pages"> 
+								 <apex:form >					 
+									<ul>
+										<li class="prev {!IF(prevPageShow,'prev_disabled','')}">
+											<apex:commandLink action="{!prevPage}" value="Previous Page" rerender="topicList" rendered="{!prevPageLinkShow}"  onclick="showHideOverlay();" oncomplete="showHideOverlay();"/>
+											<apex:outputText value="Previous Page" rendered="{!prevPageShow}" />
+										</li>
+										<li>({!currentPagination}</li>
+										<li>-</li>
+										<li>{!cntPagination})</li>
+										<li class="next {!IF(nextPageShow,'next_disabled','')}">
+											<apex:commandLink action="{!nextPage}" value="Next Page" rerender="topicList" rendered="{!nextPageLinkShow}"  onclick="showHideOverlay();" oncomplete="showHideOverlay();"/>										
+											<apex:outputText value="Next Page" rendered="{!nextPageShow}" />
+										</li>
+									</ul>
+								</apex:form>								
+							</div>
+						</apex:outputpanel>					
+						<!-- End Pagination controls -->
+					</apex:outputpanel>
+				</apex:outputPanel>				
+			</div>							
+		</div>			
+	</div>		
+	<apex:outputpanel styleClass="buttonsTopic" layout="block" rendered="{!IF((userPermissions.canCreate || userPermissions.canManage),true ,false)}">
+	 	<a class="blackbutton" onclick="createOverlay('','NewTopicForm','390','createFCKEditor(\'messageTextArea\', 230)',''); relocateOverlay('50'); $('infoToUser').fade();" >
+			<span>New Topic</span>
+		</a>
+	</apex:outputpanel>	
+</div>
+<apex:form id="auxForm" style="border:none;">
+	<apex:commandButton value="auxLink" id="auxLink" styleclass="auxLinkClass" style="visibility:hidden;margin-top: 350px;" action="{!saveTopic}" reRender="topicList, noTopicList, mostActivePeople" />
+</apex:form>
+	<script>
+		document.observe('dom:loaded', loadFunctions);
+		function loadFunctions(){
+			readPortalCSSRules();
+			trunkTitle();
+		}
+	</script>
+</apex:page>

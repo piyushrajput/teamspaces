@@ -1,0 +1,38 @@
+<apex:page sidebar="false" showHeader="false">
+<div class="editCommentOverlay" id="EditCommentForm" style="display:none;">	
+	<div class="formsHeader">
+		<table border="0" style="width:100%">
+			<tr>
+				<td style="color:#FFFFFF">Edit Comment</td>
+				<td align="right"><img style="cursor:pointer;vertical-align:center;" src="{!URLFOR($Resource.BookmarkResources, 'images/layout/close_dialog.gif')}" onclick="modal.close();" /></td>
+			</tr>
+		</table>
+	</div>
+	<form action="" >
+		<div style="margin-left:25px;">
+			<div class="require_reference" >
+				<span class="reference">&nbsp;</span>
+				<span> = Required Information</span>
+			</div>
+			<div class="colLabel" >
+				<span>Comments</span>
+			</div>
+			<div class="colInput" >
+				<div class="requiredInput" >
+					<textarea style="width:389px;height:123px;">Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Proin commodo placerat odio. Sed pretium elit et felis. Mauris lacinia. Sed malesuada euismod purus. Praesent a purus sed nibh commodo auctor. Nunc neque lectus, semper nec, bibendum vitae, adipiscing id, justo.</textarea><br />
+				</div>
+				<span> 1000 character limit </span>
+			</div>
+		</div>
+		<hr color="#999999" size="1px">
+		<div align="center">
+			<input type="button" class="saveBtn" value="Save" onclick="modal.close();">
+			<input type="button" class="cancelBtn" value="Cancel" onclick="modal.close();">
+			<br>
+			<div class="delCommentLink">
+				<a href="javascript:;" style="" >Delete Comment</a>
+			</div>
+		</div>
+	</form>
+</div>	
+</apex:page>

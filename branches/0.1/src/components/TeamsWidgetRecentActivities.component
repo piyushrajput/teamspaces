@@ -1,0 +1,81 @@
+<apex:component controller="TeamsWidgetRecentActivitiesController" >
+	<apex:attribute name="team" description="The team ID" type="String" required="true" assignTo="{!teamId}" />
+	<!-- MiniFeeds CSS Styling  -->
+		<apex:stylesheet value="{!URLFOR($Resource.TeamsResources, 'inc/css/miniFeeds.css')}" />
+		
+	
+		<div class="myBigWidget">	
+			<div class="teamBlockTitle">
+			<h4>Recent Activity</h4> 
+			</div>
+			<div class="linkAction">
+				<a href="TeamsActivityFeed" class="topRightLinks">See More&#187;</a>
+			</div>
+			
+			<table class="minifeeds" cellpadding="0" cellspacing="0">
+				<apex:repeat value="{!miniFeeds}" var="miniFeed"> 
+					<tr style="{!IF((miniFeed.FeedDateClass == 'miniFeedDate_empty'),'display:none', '' )}">
+						<td class="date blue weight_bold" colspan="2">{!miniFeed.FeedDateString}</td>
+					</tr>
+					<tr>
+						<td class="feed_type {!miniFeed.TypeOfFeed}"></td><td><a href="/apex/PeopleProfileDisplay?id={!miniFeed.User}" class="weight_bold"><apex:outputText escape="false" value="{!miniFeed.Name}" /> </a> <apex:outputText escape="false" value="{!miniFeed.Message}" /></td>						
+					</tr>				 
+				</apex:repeat>
+			</table>	
+			
+		
+		</div>
+		<!-- Recent Activity Widget -->
+			 
+		
+		<!-- small widget -->
+	
+	<div class="box_round forwidget mySmallWidget" style="width: 216px;">
+		<div class="header_blue">
+    		<div><div><h4>Recent Activities </h4></div></div>
+   		</div>
+   		<div class="box_content">
+    		<div class="back_gray">
+     			<a href="TeamsActivityFeed">See More&#187;</a>
+    		</div>  
+    		 
+			<div>
+				<table class="minifeeds" cellpadding="0" cellspacing="0" >
+				<apex:repeat value="{!miniFeeds}" var="miniFeed" rows="5"> 
+
+					<tr>
+						<td class="feed_type  {!miniFeed.TypeOfFeed}" style="border: none;"></td><td style="border: none;"><a href="/apex/PeopleProfileDisplay?id={!miniFeed.User}" class="weight_bold"><apex:outputText escape="false" value="{!miniFeed.Name}" /> </a> <apex:outputText escape="false" value="{!miniFeed.Message}" /></td>						
+					</tr>				 
+				</apex:repeat>
+				
+				</table>
+			</div>   
+   		</div>
+	  	<div class="bottom_borders"><div><div/></div>
+	</div>
+	</div>	
+	<script type="text/javascript">
+	
+		widgetPosition();
+		function widgetPosition() {
+			var widSmall = $$('.mySmallWidget');
+			var widBig = $$('.myBigWidget');
+			
+			for(var i =0; i<widSmall.length; i++) {
+				if(widSmall[i].ancestors()[1].hasClassName('holder')){
+					widSmall[i].remove();
+				}
+			}
+			
+			for(var i =0; i<widBig.length; i++) {
+				if(widBig[i].ancestors()[1].hasClassName('rightCol')){
+					widBig[i].remove();
+				}
+			}
+			
+			
+		}
+	</script>
+	
+		
+</apex:component>

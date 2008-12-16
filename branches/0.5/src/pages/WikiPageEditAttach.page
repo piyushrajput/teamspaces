@@ -1,0 +1,38 @@
+<apex:page id="WikiPageEditAttach" controller="WikiPageEditAttachController" tabstyle="WikiPage__c" sidebar="false">
+	<script>
+		var imagePath = '';
+	
+		function processAttachmentList (inputFileId) {
+			var inputFile = document.getElementByName(inputFileId);
+			if (imagePath != '') {
+				inputFile.value = imagePath;
+			}
+		}
+	</script> 
+	
+	<apex:form >
+		<apex:commandButton value="Proccess" action="{!proccessHtml}" rerender="resultConteiner" oncomplete="processAttachmentList('WikiPageEditAttach:attachForm:newAttach:inputFile:file')" /><br>
+		<apex:commandButton value="Refresh" action="{!dummyRefresh}" rerender="resultConteiner" oncomplete="processAttachmentList('WikiPageEditAttach:attachForm:newAttach:inputFile:file')" /><br>
+		<br>
+		<apex:inputTextArea style="width:100%; height: 200px;" value="{!html}"></apex:inputTextArea>
+		<br>
+		
+		<apex:outputpanel id="resultConteiner">
+			<apex:repeat value="{!imagePathList}" var="iter">
+				<apex:outputText value="{!iter}" /><br>
+			</apex:repeat>
+			
+			<script>
+				imagePath = '{!imagePath}';
+			</script>
+			
+		</apex:outputpanel>
+	</apex:form>
+	
+	<apex:form id="attachForm">
+		<apex:outputpanel id="inputFileConteiner">
+			<apex:actionFunction name="insertAttach" action="{!createAttach}" rerender="inputFileConteiner"/>
+			<apex:inputFile value="{!attach.Body}" id="newAttach" contentType="{!attach.ContentType}" filename="{!attach.Name}"/><br>
+		</apex:outputpanel>
+	</apex:form>
+</apex:page>

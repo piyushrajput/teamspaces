@@ -1,0 +1,53 @@
+<apex:page controller="InitializeTeamspacesController" sidebar="false" tabStyle="Team__c">
+	
+	<script>
+		function initActionButton(command){
+			if(!command.disabled){
+				command.disabled = true;
+				command.className = 'btnDisabled';
+			}
+		}
+	</script>
+	
+	<style>
+		div.initEvent{
+			margin: 10px 10px 10px 0px;
+			height: 150px;
+		}
+		
+		div.initActionLegend{
+			margin-bottom: 20px;
+			font-size: 14px;
+		}
+		
+		div.initSuccess{
+			color: green;
+			font-weight: bold;
+			margin: 5px 5px 3px 0px;
+			width: 500px;
+		}
+	</style>
+	
+	
+	<apex:pageBlock title="Initialize {!$ObjectType.Team__c.labelPlural}">
+		<apex:form >
+			<div class="initEvent">
+				<div class="initActionLegend">Clicking the initialize button executes a process.</div>
+				<apex:outputPanel id="initSuccess" layout="block">
+					<apex:outputPanel styleClass="initSuccess" layout="block" rendered="{!alreadyRun}">
+						{!IF(!insertWidget && !insertProfiles, 'This org has been already initialized organization', 'Initialization complete')}
+					</apex:outputPanel>
+				</apex:outputPanel>
+				<apex:actionStatus id="initTeams">
+					<apex:facet name="start">
+						<apex:outputText value="Working..." />
+					</apex:facet>
+	                <apex:facet name="stop">					
+						<apex:commandButton onclick="initActionButton(this)" action="{!initialize}" value="Initialize Now" status="initTeams" rerender="initSuccess" oncomplete="initActionButton(this)" />
+					</apex:facet>
+				</apex:actionStatus>
+			</div>
+			<a href="/apex/AdminMainSetup">&laquo; Back to main setup</a>
+		</apex:form>
+	</apex:pageBlock>
+</apex:page>

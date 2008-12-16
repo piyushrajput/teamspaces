@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <deploymentStatus>Deployed</deploymentStatus>
+    <fields>
+        <fullName>Body__c</fullName>
+        <label>Body</label>
+        <type>TextArea</type>
+    </fields>
+    <fields>
+        <fullName>BookmarkURL__c</fullName>
+        <label>Bookmark Url</label>
+        <required>true</required>
+        <type>Url</type>
+    </fields>
+    <fields>
+        <fullName>Comments__c</fullName>
+        <defaultValue>0</defaultValue>
+        <label>Comment Count</label>
+        <precision>18</precision>
+        <scale>0</scale>
+        <type>Number</type>
+    </fields>
+    <fields>
+        <fullName>PostedBy__c</fullName>
+        <label>Posted By</label>
+        <referenceTo>User</referenceTo>
+        <relationshipName>Bookmarks</relationshipName>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>PostedDate__c</fullName>
+        <label>Posted Date</label>
+        <type>DateTime</type>
+    </fields>
+    <fields>
+        <fullName>SiteDescription__c</fullName>
+        <label>Site Desciption</label>
+        <length>32000</length>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Team__c</fullName>
+        <label>Team</label>
+        <referenceTo>Team__c</referenceTo>
+        <relationshipLabel>Bookmarks</relationshipLabel>
+        <relationshipName>Bookmarks</relationshipName>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Title__c</fullName>
+        <label>Title</label>
+        <length>255</length>
+        <type>Text</type>
+    </fields>
+    <fields>
+        <fullName>Type__c</fullName>
+        <label>Type</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Article</fullName>
+                <default>true</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Movie</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>News</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Pictures</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>VideoURL__c</fullName>
+        <label>Video URL</label>
+        <type>Url</type>
+    </fields>
+    <fields>
+        <fullName>imageUrl__c</fullName>
+        <label>imageUrl</label>
+        <type>Url</type>
+    </fields>
+    <label>Bookmark</label>
+    <nameField>
+        <label>Bookmark Name</label>
+        <type>Text</type>
+    </nameField>
+    <pluralLabel>Bookmarks</pluralLabel>
+    <sharingModel>Private</sharingModel>
+</CustomObject>

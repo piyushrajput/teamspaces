@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <deploymentStatus>Deployed</deploymentStatus>
+    <fields>
+        <fullName>Notify__c</fullName>
+        <defaultValue>false</defaultValue>
+        <label>Notify</label>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>PercentDedicated__c</fullName>
+        <label>Percent Dedicated</label>
+        <precision>18</precision>
+        <scale>0</scale>
+        <type>Percent</type>
+    </fields>
+    <fields>
+        <fullName>ProjectIssue__c</fullName>
+        <label>Project Issue</label>
+        <referenceTo>ProjectIssue__c</referenceTo>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>ProjectRisk__c</fullName>
+        <label>Project Risk</label>
+        <referenceTo>ProjectRisk__c</referenceTo>
+        <relationshipName>ProjectAssignee</relationshipName>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>ProjectTask__c</fullName>
+        <label>Project Task</label>
+        <referenceTo>ProjectTask__c</referenceTo>
+        <relationshipName>ProjectAssignee</relationshipName>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>User__c</fullName>
+        <label>User</label>
+        <referenceTo>User</referenceTo>
+        <relationshipName>ProjectAssignee</relationshipName>
+        <type>Lookup</type>
+    </fields>
+    <label>Project Assignee</label>
+    <nameField>
+        <label>Project Issue Name</label>
+        <type>Text</type>
+    </nameField>
+    <pluralLabel>ProjectAssignee</pluralLabel>
+    <sharingModel>ReadWrite</sharingModel>
+</CustomObject>

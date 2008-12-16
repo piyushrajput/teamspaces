@@ -1,0 +1,266 @@
+/* CSS file */
+
+global {
+	modal-transparency-color:#000000;
+	modal-transparency-blur:0;
+	modal-transparency-duration:500;
+	modal-transparency:0.5;
+}
+
+/*setea el estilo del VBox que contiene todo en el main */
+.VBoxContentAll
+{
+	top : 0;
+	bottom : 0;
+	font-Family : verdana, arial;
+	paddingRight : 0;	
+}
+
+/* le setea el estilo al HBox al principio del mxml*/
+.HBoxMain  
+{
+	vertical-align : middle;
+	font-family : verdana, arial;
+	right: 8px;
+}
+/*le setea el estilo al dragPanel que contiene al TaskList*/
+.dragPanelTaskList  
+{
+	top : 0;
+	padding-Left : 0;
+	padding-Right : 0; 
+    padding-Top : 0; 
+	padding-Bottom : 0;
+	borderThicknessBottom : 0;
+	borderThicknessLeft : 0;
+	borderThicknessRight : 1;
+	borderThicknessTop : 0;
+	font-family : verdana, arial;
+}
+/*le setea el estilo al DragPanel que contiene al editTaskPanel y al TaskResources*/
+.dragPanelDetailsAndResources
+{
+	
+	top : 0;
+	borderAlpha : 0; 
+	right : 0;
+	headerHeight : 0;
+	font-family : verdana, arial;
+	padding-Left : 0;
+	padding-Right : 0; 
+    padding-Top : 0; 
+	padding-Bottom : 0;
+	borderThicknessBottom : 0;
+	borderThicknessLeft : 0;
+	borderThicknessRight : 0;
+	borderThicknessTop : 0;
+}
+
+
+.tabbedOverlay {
+	background-color:white;	
+	border-color:#FFFFFF;
+	border-thickness:3;
+	border-style:solid;
+	
+}
+
+/*le setea el estilo al DragPanel de usuarios*/
+
+
+.dragPanelUsers 
+{ 
+	border-color : black;
+	border-style : solid;
+	headerHeight : 0;
+	bottom : 0px;			
+	borderAlpha : 0;
+	font-family : verdana, arial;
+	paddingLeft : 0; 
+	paddingRight : 0; 
+	paddingTop : 0; 
+	paddingBottom  : 0;
+	borderThicknessBottom : 0; 
+	borderThicknessLeft : 0; 
+	borderThicknessRight : 0; 
+	borderThicknessTop : 0;
+}
+/*le setea el estilo al DragPanel de taskPreview*/
+.dragPanelTaskPreview 
+{ 
+	border-color : black;
+	border-style : solid;
+	headerHeight : 0;			
+	borderAlpha : 0;
+	font-family : verdana, arial;
+	paddingLeft : 0; 
+	paddingRight : 0; 
+	paddingTop : 0; 
+	paddingBottom  : 0;
+	borderThicknessBottom : 0; 
+	borderThicknessLeft : 0; 
+	borderThicknessRight : 0; 
+	borderThicknessTop : 0;
+}
+.FontCornerRadius
+{
+	border-style : solid; 
+	border-sides : bottom, right, left, top;
+	border-thickness:2;
+	corner-radius:5;
+}
+TextField{
+	border-style : solid; 
+	border-color : #eaeaea;
+	border-sides : right, left;
+}
+/*le setea el estilo al canvas de usuarios*/
+.labelCanvasUsers  
+{
+	right : 10;
+	verticalCenter : 0;
+	font-family : verdana, arial;
+	top : 5px;
+}
+ /* le setea el estilo a la lista que aparece al final creo que es la lista de usuarios*/
+.usersList    
+{
+	font-family : verdana, arial;
+	top : 25;
+}
+/*setea el estilo del canvas que contiene al titulo y demas lo pone en verde*/
+.canvasTitle
+{
+	background-color : #f3f3ec;
+	backgroundAlpha:.0;
+	text-align : left;
+}
+.canvasTitleTopBorder
+{
+	background-Color : #77b900;
+	vertical-align: bottom;
+}
+
+/*setea el estilo de la letra del titulo (Test Project....)*/
+.labelTitle
+{
+	font-weight : bold;
+	text-decoration:underline;
+	cursor:pointer;
+	color : #333333;
+	font-family : verdana, arial;
+	font-size : 12;
+	left : 6px;
+}
+/*setea el estilo de la letra del subtitulo (Profile imagecaching....)*/
+.labelSubTitle
+{
+	font-weight : bold;
+	color : white;
+	font-family : verdana, arial;
+	font-size : 10;
+}
+/*setea el hbox del titulo donde se encuentra el logo de la hoja*/
+.HBoxLeave
+{
+	top : 5px;
+}
+/*le crea un borde a los paneles de task resources y editTaskPanel*/
+.VBoxResourceEditTaskPanel
+{
+	border-Style : solid;
+	border-Color : #d6d3ce;
+}
+/*es el canvas que abarca la lista de usuarios y el canvas del titulo*/
+.canvasList
+{
+	borderStyle : solid;
+	borderColor : black;
+}
+.userCanvas
+{
+	backgroundColor : #efebef;
+	fontFamily : verdana, arial;
+	borderStyle : none;
+}
+.labelCurrentUser
+{
+	font-size : 12;
+	color : #9E9799;
+	font-weight : bold;
+	font-family : verdana, arial;
+	text-align : center;
+	top : 3;
+	left : 0;
+	verticalCenter : 2;
+}
+
+.bottomNav
+{
+	background-Color : #f3f3ec;
+	text-align : center;	
+	top : 0; 
+	bottom : 0;
+	verticalAlign : middle;
+	textAlign : center; 
+	horizontalAlign : center; 
+	paddingBottom : 0;
+	paddingTop : 0;
+}
+.headerPopUp
+{
+	font-family : verdana, arial;
+	vertical-align : middle;
+	background-Color : #e3deb8; 
+	height : 26; 
+	border-Color : 999999;
+	border-Thickness : 1; 
+	border-Style : solid; 
+	border-Sides : bottom;
+}
+.headerPopUpLabel
+{
+	font-family : verdana, arial;
+	color : #666666;
+	font-weight : bold;
+	text-align : center;
+	font-size : 11px;
+}
+.dataGridPopUp
+{
+	alternatingItemColors : white, white;
+	headerColors : #f3f3ec, #f3f3ec;
+	horizontalGridLineColor : #000000; 
+	horizontalGridLines : true; 
+	font-family : verdana, arial;
+	horizontal-grid-line-color : #666666;
+	border-style : none;
+	
+}
+.labelLoading{
+	font-family : verdana, arial;
+	color : #666666;
+	font-weight : bold;
+	text-align : center;
+	font-size : 11px;
+}
+.topDateButtons {
+	margin:0;
+	margin-left:-10px;	
+}
+
+
+/* Delete Dialog Styles */
+
+.deleteDialog {
+	background-color:#ffffff;	
+}
+
+.deleteDialogButtons {
+	border-style:solid;
+	border-sides: top;
+	border-color: #989897;
+}
+
+
+

@@ -1,0 +1,405 @@
+<apex:page sidebar="false" id="TeamsTaskList" controller="ProjectTaskListController" tabstyle="Team__c">
+    
+    <apex:includeScript value="{!URLFOR($Resource.TeamsResources, 'inc/js/common.js')}"/> 
+    <apex:stylesheet value="{!URLFOR($Resource.TeamsResources, 'inc/css/commonLayout.css')}" />
+    
+    <!-- Prototype / Scriptaculous Framework -->   
+    <apex:includeScript value="{!URLFOR($Resource.Script_aculo_us, 'prototype.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.Script_aculo_us, 'scriptaculous.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.Script_aculo_us, 'effects.js')}"/>  
+	<apex:stylesheet value="{!URLFOR($Resource.ProjectResources, 'inc/css/projectLayout.css')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.ProjectResources, 'inc/css/projectTaskList.css')}" />	
+	<apex:stylesheet value="{!URLFOR($Resource.commonResources, 'inc/css/fonts.css')}" /> 
+	
+	<!-- Portal Support -->
+	<apex:includeScript value="{!$Resource.portalSupport}"/>  
+    
+    <!-- CSS styles for Portal Integration -->
+    <apex:stylesheet value="{!URLFOR($Resource.portalStyles, 'portal.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.TeamsResources, 'inc/css/headerTeams.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.commonResources, 'inc/css/teamsTable.css')}" />
+    
+    <!-- ### Styles ### -->
+	<apex:stylesheet value="{!URLFOR($Resource.TeamsResources, 'inc/css/widgets/TeamsOverlayNewTask.css')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.TeamsResources, 'inc/css/teamsOverlaysTemplate.css')}" />		
+	
+    <!-- ProjectTaskList CSS -->
+    <apex:stylesheet value="{!URLFOR($Resource.ProjectResources, 'inc/css/projectTaskList.css')}" />
+    
+	<!-- ProjectTaskList JS -->
+	<apex:includeScript value="{!URLFOR($Resource.ProjectResources, 'inc/js/projectTaskList.js')}"/>
+    
+	<script>
+		var currentSortCriteria = 'EndDate__c';
+	 	var isProjectTaskList = true;
+	 	
+	 	var globalInfoBig = '{!URLFOR($Resource.TeamsResources, 'images/layout/icons/WidgetConfig/infoBig.gif')}';
+		var globalCheckNew = '{!URLFOR($Resource.TeamsResources, 'images/layout/icons/WidgetConfig/checkNew.gif')}';
+	 	
+	 	document.observe("dom:loaded", documentLoad ); 
+	</script>
+ 	
+ 	<apex:form >
+		<apex:actionFunction action="{!sortlist}" name="refreshListSort" rerender="taskListPanel">
+			<apex:param name="criteria" value="" />
+			<apex:param name="sb" value="refresh" />
+		</apex:actionFunction>		
+	</apex:form>
+	
+	</style>
+	<c:TeamsOverlayNewTask />
+	<c:TeamsOverlayNewMilestone />
+	<c:ProjectDeleteTaskOverlay />
+	<div class="confirmation" id="confirmation" style="display:none;">
+   		The selected tasks have been marked complete
+    </div>
+	<!-- Teams overlay new task (quick task)  -->
+	<!-- Header -->
+	<apex:composition template="HeaderTemplate">
+		<apex:define name="moduleId"><apex:variable var="moduleId" value="headerProject"/></apex:define>
+	    <apex:define name="module">{!$ObjectType.Team__c.label}</apex:define>
+	    <apex:define name="title">Tasks & Milestones</apex:define>
+	    <apex:define name="search">
+	    	<c:Search module="team" />
+	    </apex:define>
+    </apex:composition>
+    
+    <!-- Main Content Div -->
+    <div class="main_content_projectList"> 
+    	<!-- BreadCrumb and buttons -->     
+        <div align="center" class="breadCrumbAndButtons">
+          <div class="breadCrumbs">
+          	<a  href="/apex/TeamsRedirect?id={!TeamId}" title="{!NameTeam}"><script>trunkText('{!NameTeam}',24);</script> </a> Tasks and Milestones
+          </div>
+         	<apex:outputpanel styleClass="buttons"  layout="block" style="width:450px;" >
+        		<apex:outputpanel rendered="{!userPermissions.canCreate}" layout="block">
+                	<a class="blackbutton"  onclick="fixedModalNewTask.open();">
+		        		<span>New Task</span>
+		        	</a>
+                </apex:outputpanel>
+	       		<apex:outputpanel rendered="{!userPermissions.canCreate}" layout="block">
+                   	<a class="blackbutton"  onclick="fixedModalNewMilestone.open();">
+		        		<span>New Milestone</span>
+		        	</a>
+                </apex:outputpanel>
+	        	<apex:outputpanel rendered="{!IF(editDeletePer ,true,false)}" layout="block">
+                   	<apex:form >
+                   		<apex:commandLink action="{!markComplete}" oncomplete="fadeUpdating();" rerender="auxProjectTaskListPanel" styleclass="blackbutton" onclick="bulkTaskCompleted('{!$Component.auxInputTextTop}');">
+			        		<span>Mark Complete</span>  
+			        	</apex:commandLink>
+			        	<apex:inputText id="auxInputTextTop" style="display:none;" value="{!idTaskToComplete}" />
+		        	</apex:form>
+                </apex:outputpanel>
+                <apex:outputpanel rendered="{!userPermissions.canCreate}" layout="block">
+                	<a class="blackbutton" href="/apex/ProjectTimeLine?id={!TeamId}">
+		        		<span>Timeline</span>
+		        	</a>
+                </apex:outputpanel>
+	        	<apex:outputpanel rendered="{!IF(editDeletePer ,true,false)}" layout="block">
+                  	<apex:form >
+                   		<a class="blackbutton" onclick="bulkTaskDelete();">
+			        		<span>Delete</span>
+			        	</a>
+			        </apex:form>
+                </apex:outputpanel>
+	         </apex:outputpanel>
+        </div>
+        <!-- Holder -->  
+        <div class="informationPanel clear" id="infoToUser" style="display:none;"></div>
+        <div class="holder" style="position:relative;overflow:hidden;">
+        	<!-- Overlay -->
+        	<div id="paginationOverlay" style="display:none;">
+		 		<div class="loader">
+		 			<img src="{!URLFOR($Resource.discussionResourceFiles, 'images/common/layout/big-loader.gif')}" alt="Loading..." title="Loading..." />
+		 		</div>
+			</div>  
+			<apex:outputpanel id="taskListPanel" layout="block" >
+            	<apex:form id="ref"> 
+            		<apex:actionFunction action="{!getSortListOption}" oncomplete="showHideOverlay();" name="sortListEvent" rerender="ref" />
+	            	<div class="tableTopContainer" >             
+		                <div class="filterContainer">  
+	                		<apex:selectList id="chooseOption" value="{!option}" onchange="option()" size="1">
+	                		   	<apex:selectOption itemValue="all" itemLabel="All Tasks"/>
+								<apex:selectOption itemValue="my" itemLabel="My Tasks"/>
+								<apex:selectOption itemValue="complete" itemLabel="100% Complete Tasks"/>
+								<apex:selectOption itemValue="oTask" itemLabel="Overdue Tasks"/>
+								<apex:selectOption itemValue="oMiles" itemLabel="Overdue Milestones"/>
+								<apex:selectOption itemValue="allMilestones" itemLabel="All Milestones"/>
+							</apex:selectList>
+						</div>
+		                <!-- top pagination BEGIN -->
+		                <apex:outputpanel styleClass="pagination" layout="block" rendered="{!IF(AND(prevPageShow,nextPageShow),false,true)}">
+					 		<div class="pages"> 
+								<ul>
+									<li class="prev {!IF(prevPageShow,'prev_disabled','')}">
+										<apex:commandLink action="{!prevPage}" value="Previous Page" rerender="taskListPanel" rendered="{!prevPageLinkShow}"  onclick="showHideOverlay();" oncomplete="showHideOverlay();" />
+										<apex:outputText value="Previous Page" rendered="{!prevPageShow}" />
+									</li>
+									<li>({!currentPagination}</li>
+									<li>-</li>
+									<li>{!cntPagination})</li>
+									<li class="next {!IF(nextPageShow,'next_disabled','')}">
+										<apex:commandLink action="{!nextPage}" value="Next Page" rerender="taskListPanel" rendered="{!nextPageLinkShow}"   onclick="showHideOverlay();" oncomplete="showHideOverlay();" />										
+										<apex:outputText value="Next Page" rendered="{!nextPageShow}" />
+									</li>
+								</ul>								
+							</div>
+						</apex:outputpanel>
+					</div> 
+	                <!-- top pagination END -->            
+	                <!-- task list BEGIN -->
+	                <div class="teamProjectTasks">
+		         		<!-- Overlay -->
+		                <table class="pageList" >
+		                	<!-- Table Head -->
+		                    <thead>
+		                        <tr>
+		                        	<th width="4%">
+		                        		<apex:outputpanel layout="block">
+		                               		<input type="checkbox" onclick="markCheckboxes(this);" id="checkMaster"/>
+		                            	</apex:outputpanel>
+		                        	</th>
+		                   			<th width="8%" style="padding:3px 0px;"> Action </th>							 
+		                           	<th width="5%" style="text-align: center">
+		                                   <apex:commandLink styleclass="member_title_description" action="{!sortList}" value="Type" rerender="taskListPanel" onclick="showHideOverlay();currentSortCriteria = 'Milestone__c';" oncomplete="showHideOverlay();">
+											<apex:param name="sb" value="Milestone__c" /> 
+										</apex:commandLink>&nbsp;
+										<apex:outputpanel rendered="{!IF(sortBy == 'type',true,false)}">
+											<apex:outputpanel rendered="{!sortByDesc}">
+												<img src="{!URLFOR($Resource.commonResources, 'images/arrows/arrow_down.gif')}" />
+											</apex:outputpanel>
+											<apex:outputpanel rendered="{!NOT(sortByDesc)}">
+												<img src="{!URLFOR($Resource.commonResources, 'images/arrows/arrow_top.gif')}" />
+											</apex:outputpanel>
+										</apex:outputpanel>
+		                            </th>
+									<th width="7%" style="text-align: center">
+		                                   <apex:commandLink styleclass="member_title_description" action="{!sortList}" value="Priority" rerender="taskListPanel" onclick="showHideOverlay();currentSortCriteria = 'Priority__c';" oncomplete="showHideOverlay();">
+											<apex:param name="sb" value="Priority__c" />
+										</apex:commandLink>&nbsp;
+										<apex:outputpanel rendered="{!IF(sortBy == 'priority',true,false)}">
+											<apex:outputpanel rendered="{!sortByDesc}">
+												<img src="{!URLFOR($Resource.commonResources, 'images/arrows/arrow_down.gif')}" />
+											</apex:outputpanel>
+											<apex:outputpanel rendered="{!NOT(sortByDesc)}">
+												<img src="{!URLFOR($Resource.commonResources, 'images/arrows/arrow_top.gif')}" />
+											</apex:outputpanel>
+										</apex:outputpanel>
+									</th>
+		                            <th width="25%" >
+			                            <apex:commandLink styleclass="member_title_description" action="{!sortList}" value="Name" rerender="taskListPanel" onclick="showHideOverlay();currentSortCriteria = 'Name';" oncomplete="showHideOverlay();">
+											<apex:param name="sb" value="Name" />
+										</apex:commandLink>&nbsp;
+										<apex:outputpanel rendered="{!IF(sortBy == 'name',true,false)}">
+											<apex:outputpanel rendered="{!sortByDesc}">
+												<img src="{!URLFOR($Resource.commonResources, 'images/arrows/arrow_down.gif')}" />
+											</apex:outputpanel>
+											<apex:outputpanel rendered="{!NOT(sortByDesc)}">
+												<img src="{!URLFOR($Resource.commonResources, 'images/arrows/arrow_top.gif')}" />
+											</apex:outputpanel>
+										</apex:outputpanel>
+		                            </th>
+									<th width="20%" >
+									    <apex:commandLink styleclass="member_title_description" action="{!sortList}" value="Assigned to" rerender="taskListPanel" onclick="showHideOverlay();currentSortCriteria = 'User__c.Name';" oncomplete="showHideOverlay();">
+											<apex:param name="sb" value="User__c.Name" />
+										</apex:commandLink>&nbsp;
+										<apex:outputpanel rendered="{!IF(sortBy == 'assigned',true,false)}">
+											<apex:outputpanel rendered="{!sortByDesc}">
+												<img src="{!URLFOR($Resource.commonResources, 'images/arrows/arrow_down.gif')}" />
+											</apex:outputpanel>
+											<apex:outputpanel rendered="{!NOT(sortByDesc)}">
+												<img src="{!URLFOR($Resource.commonResources, 'images/arrows/arrow_top.gif')}" />
+											</apex:outputpanel>
+										</apex:outputpanel>
+									</th>
+									<th width="15%" >
+		                            	<apex:commandLink styleclass="member_title_description" action="{!sortList}" value="% Completed" rerender="taskListPanel" onclick="showHideOverlay();currentSortCriteria = 'Percent_Completed__c';" oncomplete="showHideOverlay();">
+											<apex:param name="sb" value="Percent_Completed__c" />
+										</apex:commandLink>&nbsp;
+										<apex:outputpanel rendered="{!IF(sortBy == 'completed',true,false)}">
+											<apex:outputpanel rendered="{!sortByDesc}">
+												<img src="{!URLFOR($Resource.commonResources, 'images/arrows/arrow_down.gif')}" />
+											</apex:outputpanel>
+											<apex:outputpanel rendered="{!NOT(sortByDesc)}">
+												<img src="{!URLFOR($Resource.commonResources, 'images/arrows/arrow_top.gif')}" />
+											</apex:outputpanel>
+										</apex:outputpanel>
+									</th> 
+		                            <th width="5%" style="text-align: center">
+		                            	<apex:commandLink styleclass="member_title_description" action="{!sortList}" value="Est Hrs" rerender="taskListPanel" onclick="showHideOverlay();currentSortCriteria = 'Duration__c';" oncomplete="showHideOverlay();">
+											<apex:param name="sb" value="Duration__c" />
+										</apex:commandLink>&nbsp;
+										<apex:outputpanel rendered="{!IF(sortBy == 'est',true,false)}">
+											<apex:outputpanel rendered="{!sortByDesc}">
+												<img src="{!URLFOR($Resource.commonResources, 'images/arrows/arrow_down.gif')}" />
+											</apex:outputpanel>
+											<apex:outputpanel rendered="{!NOT(sortByDesc)}">
+												<img src="{!URLFOR($Resource.commonResources, 'images/arrows/arrow_top.gif')}" />
+											</apex:outputpanel>
+										</apex:outputpanel>
+		                            </th> 
+		                            <th width="10%" style="text-align: right">
+		                            	<apex:commandLink styleclass="member_title_description" action="{!sortList}" value="Due date" rerender="taskListPanel" onclick="showHideOverlay();currentSortCriteria = 'EndDate__c';" oncomplete="showHideOverlay();">
+											<apex:param name="sb" value="EndDate__c" />
+										</apex:commandLink>&nbsp;
+										<apex:outputpanel rendered="{!IF(sortBy == 'date',true,false)}">
+											<apex:outputpanel rendered="{!sortByDesc}">
+												<img src="{!URLFOR($Resource.commonResources, 'images/arrows/arrow_down.gif')}" />
+											</apex:outputpanel>
+											<apex:outputpanel rendered="{!NOT(sortByDesc)}">
+												<img src="{!URLFOR($Resource.commonResources, 'images/arrows/arrow_top.gif')}" />
+											</apex:outputpanel>
+										</apex:outputpanel>
+		                        	</th>
+		                   		</tr>
+		                   	</thead>
+		                    <!-- Table Head ENd -->         
+		                    <tbody> 
+		                    	<!-- item START -->           
+		                        <apex:repeat var="task" value="{!taskList}" rows="{!numberOfItemsToShow}" first="{!firstRow}" id="taskList">
+			                        <tr {!IF(task.comparoFecha ,'class=\"red\"','')} >
+			                        	<td align="center">
+			                        		<apex:outputpanel rendered="{!IF(OR(editDeletePer,task.canEditAndDelete) ,true,false)}" layout="block">
+			                               		 <input type="checkbox" value="{!task.Id}"/>
+			                            	</apex:outputpanel> 
+			                            </td>
+			                            <td>
+			                            	<apex:outputpanel rendered="{!IF(OR(editDeletePer,task.canEditAndDelete) ,true,false)}" layout="block">
+			                                	<div><a href="/apex/TeamsCreateNewTask?id={!TeamId}&task={!task.id}">Edit</a> | <a href="javascript:;" onclick="showDeleteEvent('{!task.Id}', false, {!task.Milestone});">Del</a></div>     
+			                            	</apex:outputpanel> 
+			                            </td> 
+			                            <td class="imgColumns"  align="center"> 
+			                            	<apex:outputpanel rendered="{!IF(task.Milestone ,false,true)}" layout="block" styleClass="center">
+			                            		<img alt="" src="{!URLFOR($Resource.ProjectResources, '/images/layout/icons/task.gif')}"/>
+			                            	</apex:outputpanel>
+			                               	<apex:outputpanel rendered="{!IF(task.Milestone,true,false)}" layout="block" styleClass="center">                               	  
+			                               		<img  src="{!URLFOR($Resource.ProjectResources, '/images/layout/icons/flag_green.gif')}"  />
+			                               	</apex:outputpanel>
+			                            </td>
+			                            <!-- Task Priority -->
+			                            <td class="imgColumns" align="center">
+				                            <apex:outputpanel rendered="{!IF(task.Priority == 'High',true,false)}" layout="block">
+				                               	<div style="" class="center" >
+													<img alt="" src="{!URLFOR($Resource.ProjectResources, '/images/layout/icons/highPriority.gif')}"/>
+												</div>
+											</apex:outputpanel>
+										    <apex:outputpanel rendered="{!IF(task.Priority == 'Low',true,false)}" layout="block">
+												<div style="" class="center" >
+													<img alt="" src="{!URLFOR($Resource.ProjectResources, '/images/layout/icons/lowPriority.gif')}"/>
+												</div>
+											</apex:outputpanel>
+			                            </td>  
+			                            <!-- Task Name -->                          
+			                            <td class="proj_task_title">
+			                                <div><a href="projecttaskdetail?id={!task.id}" class="">{!task.Name}</a></div>
+			                            </td> 
+			                            <!-- Task Asignee -->
+			                            <td class="proj_task_assigned"> 
+			                                <a href="javascript:;">
+												<apex:outputpanel styleClass="photoWrapper_32px photo" layout="block" style="" rendered="{!IF(task.AsigneeName != null,true,false)}" >	
+													<img alt="Username" src="/servlet/servlet.FileDownload?file={!task.AsigneeName}" width="32" />
+												</apex:outputpanel>
+												<apex:outputpanel rendered="" styleClass="photoWrapper_32px photo" layout="block" rendered="{!IF(task.AsigneeName == null,true,false)}" >												
+													<img  src="{!URLFOR($Resource.commonResources, 'images/placeholders/unknownperson32x32.jpg')}"  width="32" />
+												</apex:outputpanel>
+											</a>
+											<div class="username" >		   					
+												<a href="PeopleProfileDisplay?id={!task.userTask}">{!task.userTask.name}</a>
+											</div>
+			                            </td>
+			                            <td class="proj_percent_complete">
+			                            	<div class="percent" id="percentNumber-{!task.id}">{!task.Percent_Completed}%</div>
+			                                <div class="proj_percent_complete_outline {!IF((task.Percent_Completed == 0),'zero','')}" id="track-{!task.id}">
+			                                    <div class="proj_percent_complete_value" style="width:{!task.percent_Completed}%;" id="percentBar-{!task.id}"></div>
+			                                </div> 
+			                                <div id="actualPercent-{!task.id}" style="display:none;">{!task.Percent_Completed}</div>                                      
+			                            </td>
+			                            <td class="imgColumns" align="center">
+			                                {!task.Estimate}
+			                            </td>
+			                            <td class="proj_task_end_date" style="text-align: right;" > 
+											{!task.DueDate} 
+											<apex:outputpanel rendered="{!IF(task.comparoFecha ,true,false)}" layout="block">
+												{!task.cantDias} day late
+											</apex:outputpanel>
+			                            </td>
+			                        </tr>
+		                    	<!-- item END -->    
+								</apex:repeat>
+		                    </tbody>
+		                </table><br style="clear:both;" />
+	                </div>
+	                <!-- task list END -->
+	                <!-- Pagination -->
+	                <div class="tableTopContainer" >
+					 	<apex:outputpanel styleClass="pagination" layout="block" rendered="{!IF(AND(prevPageShow,nextPageShow),false,true)}">
+					 		<div class="pages" >
+				 				<ul>
+									<li class="prev {!IF(prevPageShow,'prev_disabled','')}">
+										<apex:commandLink action="{!prevPage}" value="Previous Page" rerender="taskListPanel" rendered="{!prevPageLinkShow}"  onclick="showHideOverlay();" oncomplete="showHideOverlay();" />
+										<apex:outputText value="Previous Page" rendered="{!prevPageShow}" />
+									</li>
+									<li>({!currentPagination}</li>
+									<li>-</li>
+									<li>{!cntPagination})</li>
+									<li class="next {!IF(nextPageShow,'next_disabled','')}">
+										<apex:commandLink action="{!nextPage}" value="Next Page" rerender="taskListPanel" rendered="{!nextPageLinkShow}"  onclick="showHideOverlay();" oncomplete="showHideOverlay();" />										
+										<apex:outputText value="Next Page" rendered="{!nextPageShow}" />
+									</li>
+								</ul>								
+							</div>
+						</apex:outputpanel>
+					</div>
+	                <!-- bottom pagination END -->
+				</apex:form>
+			</apex:outputpanel>    
+        </div>   
+        <!-- BreadCrumb and buttons -->     
+        <div align="center" class="breadCrumbAndButtons">
+        	<apex:outputpanel styleClass="buttons"  layout="block" style="width:450px;" >
+	        	<apex:outputpanel rendered="{!userPermissions.canCreate}" layout="block">
+                   	<a class="blackbutton"  onclick="fixedModalNewTask.open();">
+		        		<span>New Task</span>
+		        	</a>
+                </apex:outputpanel>
+	       		<apex:outputpanel rendered="{!userPermissions.canCreate}" layout="block">
+                   	<a class="blackbutton"  onclick="fixedModalNewMilestone.open();"><span>New Milestone</span></a>
+                </apex:outputpanel>
+	        	<apex:outputpanel rendered="{!IF(editDeletePer ,true,false)}" layout="block">
+                 	<apex:form >
+                  		<apex:commandLink action="{!markComplete}" oncomplete="fadeUpdating();" rerender="auxProjectTaskListPanel" styleclass="blackbutton" onclick="bulkTaskCompleted('{!$Component.auxInputTextBotton}');">
+		        			<span>Mark Complete</span>  
+		        		</apex:commandLink>
+		        		<apex:inputText id="auxInputTextBotton" style="display:none;" value="{!idTaskToComplete}" />
+	        		</apex:form>
+                </apex:outputpanel>
+	        	<apex:outputpanel rendered="{!userPermissions.canCreate}" layout="block">
+                	<a class="blackbutton" href="/apex/ProjectTimeLine?id={!TeamId}">
+		        		<span>Timeline</span>
+		        	</a>
+                </apex:outputpanel>
+	        	<apex:outputpanel rendered="{!IF(editDeletePer ,true,false)}" layout="block">
+	                <a class="blackbutton" onclick="bulkTaskDelete();">
+		        		<span>Delete</span>
+		        	</a>
+				</apex:outputpanel>
+			</apex:outputpanel>
+		</div>   
+	</div>   
+	<apex:form >
+		<apex:commandbutton action="{!sortList}" id="getList" rerender="taskListPanel" style="display:none;">
+			<apex:param name="sb" value="Name" />
+		</apex:commandbutton>
+		<script>  
+			rerender = '{!$Component.getList}';			
+		</script>
+		<apex:actionFunction name="taskListRefresh" action="{!refresh}" rerender="taskListPanel" >			
+		</apex:actionFunction>	
+			
+	</apex:form>
+	<script>
+		showActionSuccess();
+		readPortalCSSRules();
+	</script>
+	<apex:outputpanel id="auxProjectTaskListPanel" />
+</apex:page>

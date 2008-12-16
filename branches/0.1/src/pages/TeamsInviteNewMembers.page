@@ -1,0 +1,331 @@
+<apex:page sidebar="false" id="TeamsNewMember" tabStyle="Team__c" controller="TeamsNewMemberController">
+	<script src="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/prototype.js')}" />
+	<script src="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/scriptaculous.js')}" />
+	<script src="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/effects.js')}" />
+	<script src="{!URLFOR($Resource.TeamsResources, 'inc/js/autocomplete.js')}" />
+	<!-- Ajax Toolkit SDFC -->
+	<script src="/soap/ajax/11.1/connection.js" type="text/javascript"></script>
+	<script>
+		var API_SESSION_ID = '{!$Api.Session_ID}';
+		var stopRecursivity = false;
+	</script>		
+	<!-- Common CSS Styling  -->
+	<link rel="stylesheet" href="{!URLFOR($Resource.PeopleResourceFiles, 'inc/css/autocomplete.css')}" type="text/css" media="screen" charset="utf-8" />
+	<link rel="stylesheet" href="{!URLFOR($Resource.TeamsResources, 'inc/css/teamOverlyInviteNewMember.css')}" type="text/css" />
+	
+	<style>
+		.bubble_2 {
+			z-index:999999;
+			position:absolute;
+			width:221px;
+			overflow:visible;
+			display:none;
+			top:10px;
+			left:10px;				
+		}
+		
+		.bubble_2 .content {
+			width:221px;
+			clear:both;
+			position:relative;
+			background:url({!URLFOR($Resource.TeamsResources, 'images/bubbleNewTeam/bubble_bg.png')}) repeat-y;
+			background-position: top right;
+		}
+
+		* html .bubble_2 .content {background:none;}
+		* html .bubble_2 .content {filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src="{!URLFOR($Resource.TeamsResources, 'images/bubbleNewTeam/bubble_bg.png')}", sizingMethod="scale")}
+		
+		.bubble_2 .bottom_border {
+			width:221px;
+			height: 24px;			
+			overflow:hidden;
+			position:relative;
+			background:url({!URLFOR($Resource.TeamsResources, 'images/bubbleNewTeam/bubble_bottom.png')}) no-repeat;
+			background-position:  bottom right;
+		}
+
+		* html .bubble_2 .bottom_border {background:none;}
+		* html .bubble_2 .bottom_border {filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src="{!URLFOR($Resource.TeamsResources, 'images/bubbleNewTeam/bubble_bottom.png')}", sizingMethod="scale")}			
+		
+		.bubble_2 .top_border {
+			width:221px;
+			height: 25px;
+			overflow:hidden;
+			position:relative;
+			background:url({!URLFOR($Resource.TeamsResources, 'images/bubbleNewTeam/bubble_top.png')}) no-repeat;
+			background-position:  bottom right;
+		}
+		
+		* html .bubble_2 .top_border {background:none;}
+		* html .bubble_2 .top_border {filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src="{!URLFOR($Resource.TeamsResources, 'images/bubbleNewTeam/bubble_top.png')}", sizingMethod="scale")}			
+
+		
+		.bubble_2 .content .innerContbubble_2 {
+			position:relative;
+			margin:0px 20px 0px 20px;
+		}
+		
+		.bubble_2 .arrowbubble_2 {
+			position:absolute;
+			top:20px;
+			left:6px;					
+		}
+		
+		div.autocomplete{
+			z-index: 9999999 !important;
+			visibility: visible;
+			display: block;
+		}	    
+	</style>
+	
+	<script src="{!URLFOR($Resource.TeamsResources, 'inc/js/TeamsInviteNewMember.js')}" />
+	
+	<script>
+/**
+		* Initialize toolkit connection
+		*@void
+		*/
+		function init(){
+			sforce.connection.sessionId = '{!$Api.Session_ID}';
+		}
+		
+		/* ### bubble_2 ###*/
+		
+		/**
+		* Get XY position for current element
+		*@param Object element
+		*@return Object position
+		*/
+		function getXY(obj){				
+			var pos = Position.cumulativeOffset(obj)
+			var y = pos[1];
+			var x = pos[0];
+			var x2 = x + parseInt(obj.offsetWidth);
+			var y2 = y + parseInt(obj.offsetHeight);
+			return {'x':x, 'y':y, 'x2':x2, 'y2':y2};
+		}
+		
+		/**
+		* Show bubble_2 overlay
+		*@param Object element
+		*@param String selectId
+		*/
+		var isShowbubble_2 = false;
+		function showbubble_2(currentElement, selectId){
+			isShowbubble_2 = true;
+			var container = $('bubble_2');
+			var position = getXY(currentElement);
+			var selectValue = $F(selectId);
+			container.style.display = 'block';	
+			init();
+			queryString ="Select Id, Description__c from TeamProfile__c where Id = '" + selectValue + "'";
+			result = sforce.connection.query(queryString);
+			records = result.getArray("records");			
+			container.style.top = position.y2 + 'px';
+			container.style.left = position.x2 + 'px';
+			$('innerContbubble_2').innerHTML = records[0].Description__c;
+			
+			if(Prototype.Browser.IE){
+				topPosition = position.y2 - 150;	
+				leftPosition = position.x2 - 70;
+				container.style.top = topPosition + 'px';												
+				container.style.left = leftPosition + 'px';
+			}else{
+				// For mozilla
+				topPosition = position.y2 - 155;	
+				container.style.top = topPosition + 'px';												
+			}
+		}
+		
+		/**
+		* Hide bubble_2
+		*@void
+		*/
+		function hidebubble_2(){
+			isShowbubble_2 = false;
+			setTimeout('if(!isShowbubble_2){Effect.Fade(\'bubble_2\');}', 1500);
+		}
+	</script>
+	
+	<div id="bubble_2" class="bubble_2">
+		<div class="top_border">&nbsp;</div>		
+		<div class="content">
+			<img class="arrowbubble_2" src="{!URLFOR($Resource.TeamsResources, 'images/bubbleNewTeam/bubble_arrow.gif')}" />				
+			<!-- Content here -->
+			<div class="innerContbubble_2" id="innerContbubble_2"></div>	
+		</div>
+		<div class="bottom_border">&nbsp;</div>				
+	</div>
+				
+	<!-- Content  -->
+	<div class="modalContent">
+		<div id="inviteTeam" style="display:none;">
+			<!-- Title of Dialog -->
+			<div class="modalTitle">
+				<div class="title">
+					Add new member to {!teamName}
+				</div>
+				<div class="closeEvent">
+					<a href="Javascript:;" onclick="modal.close();">
+					<img src="{!URLFOR($Resource.TeamsResources, 'images/layout/close.gif')}" alt="Close Window" title="Close Window" /></a>
+				</div>
+			</div>
+			  
+			<div>
+				<apex:form id="newMemberForm">
+					<div align="right">
+						<table border="0" style="margin:5px 0px 5px 0px;">
+							<tr>
+								<td style="width:4px;">
+									<span style="display:block;width:4px; height:12px; background-color: #C0272D;"></span>
+								</td>
+								<td>
+									<span class="infoText" style="font-size:9px;font-family:Arial,Helvetica,sans-serif;">= &nbsp;&nbsp; Required Information </span>
+								</td>
+							</tr>
+						</table>
+					</div>
+					<div class="div_Body">
+						<table cellpadding="0" cellspacing="0" style="margin:0px; padding:0px:">
+							<tr>
+								<td class="inputInfoTitle">
+									<span class="inputInfoTitle">Add colleagues</span><br /><span class="explainBottom">(enter name or email)</span>
+								</td>
+								<td style="width:4px;">
+									
+									<span style="display:block;width:4px; height:67px; background-color: #C0272D;"></span>
+								</td>
+								<td>
+									<div id="ajaxResult" style="display:none;"></div>	   								
+									<script>
+										function hideSuggest(){
+											var resultDiv = $('ac_{!$Component.colleaguesNames}');
+											if (resultDiv != null) {
+												Effect.Fade('ac_{!$Component.colleaguesNames}',{duration: 0.2});
+											}
+										}
+										
+										function selectFixIE6 () {
+											if (navigator.appName == "Microsoft Internet Explorer") {
+												if (!stopRecursivity) {
+													var resultDiv = $('ac_{!$Component.colleaguesNames}');
+													var hideSelect = $('{!$Component.newTeamProfile}'); 
+														
+													if (resultDiv != null) {
+														var listItems = $('ac_ul');
+														var countItem = listItems.getElementsByTagName('li');
+														if (countItem.length > 3) {
+															hideSelect.style.visibility = 'hidden';
+														}
+													
+													}
+													else {
+														hideSelect.style.visibility = 'visible';
+													}
+													
+													setTimeout('selectFixIE6()',200);
+												
+												}
+											}
+											else {
+												stopRecursivity = true;
+											}
+										}
+										
+										function stopFunction () {
+											stopRecursivity = true;
+										}
+										
+										function startFunction () {
+											stopRecursivity = false;
+										}
+									</script>
+									&nbsp;
+									<apex:inputTextArea id="colleaguesNames" style="width:310px; height:63px;"value="{!newMemberVars.colleagueNames}" onFocus="javascript:
+										var options = {
+												script: function (input) { return ('SuggestDispatcher?input='+input+'&class=colleagueNames&teamId={!teamId}'); },
+										        callback: function (obj) {}    
+												};
+												xml = new AutoComplete('{!$Component.colleaguesNames}',options);return true;" onBlur="hideSuggest();" />								
+								</td>
+							</tr>
+							<tr>
+								<td></td>
+								<td></td>
+								<td>
+									&nbsp;<span class="explain">(comma separated)</span>
+									<br/>
+								</td>
+							</tr>
+							<tr>
+								<td height="10px"></td>
+							</tr>
+							<tr>
+								<td class="inputInfoTitle">
+									<span class="inputInfoTitle">Message</span>
+								</td>
+								<td></td>
+								<td>
+									&nbsp;
+									<apex:inputTextArea style="height:83px;width:310px" value="{!newMemberVars.message}" />
+									<!-- <textarea cols="50" rows="5" style="height:83px;width:310px"></textarea> -->
+								</td>
+							</tr>
+							<tr>
+								<td height="7px"></td>
+							</tr>
+							<tr>
+								<td class="inputInfoTitle">
+									<span class="inputInfoTitle">Team profile</span>
+								</td>
+								<td></td>
+								<td>
+									&nbsp;
+									<apex:selectList style="width: 200px;" id="newTeamProfile" value="{!newMemberVars.profileId}" multiselect="false" size="1">
+										<apex:selectOptions value="{!profilesOptions}"/>
+									</apex:selectList>
+									&nbsp;
+									<a href="Javascript:;" onclick="showbubble_2(this, '{!$Component.newTeamProfile}');">
+										<img class="imgAlign" onmouseover="showbubble_2(this, '{!$Component.newTeamProfile}');" onmouseout="hidebubble_2();" src="{!URLFOR($Resource.TeamsResources, '/images/layout/icons/infoWhite.gif')}" border="0" />
+									</a>
+									<!-- <img alt="" class="imgAlign" src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/info.gif')}" /> -->
+								</td>
+							</tr>	
+							<tr>
+								<td height="7px"></td>
+							</tr>
+							<tr>
+								<td class="inputInfoTitle">
+									<span class="inputInfoTitle">Team Role</span>
+								</td>
+								<td></td>
+								<td>
+									&nbsp;
+									<apex:inputText style="width:310px;" value="{!newMemberVars.teamRole}" />  
+								</td>                                
+							</tr>							
+							<tr> 
+								<td></td>
+								<td></td>
+								<td>
+									<input type="checkbox" /><span class="inputInfoDescription">Save message for future use</span>
+								</td>                                
+							</tr>
+							<tr>
+								<td height="15px"></td>
+							</tr>	
+						</table>
+					
+						<div class="title_line_btn"></div> 
+						<div align="center">
+							<apex:commandButton action="{!saveMembers}" oncomplete="modal.close();stopFunction();" styleclass="InviteBtn" value="Send" rerender="membersList"/> 
+							<apex:commandButton action="{!saveMembersNew}" oncomplete="$('{!$Component.newMemberForm}').reset();" styleclass="InviteAndAddBtn" value="Send & add more members" rerender="membersList"/>
+							<input class="cancelBtn" type="button" value="Cancel" onclick="modal.close();stopFunction();"/>
+							<!-- <input class="InviteBtn" type="button" value="Send"/> <input class="InviteAndAddBtn" type="button" value="Send & add more members"/><input class="cancelBtn" type="button" value="Cancel" onclick="modal.close();"/> -->
+						</div>
+					</div>
+				</apex:form>
+			</div>
+		</div>
+	</div>
+</apex:page>

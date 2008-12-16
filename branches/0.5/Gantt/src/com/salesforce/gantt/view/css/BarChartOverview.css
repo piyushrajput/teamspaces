@@ -1,0 +1,68 @@
+/* CSS file */
+.textInput1   /* setea el estilo del primer TextInput en la clase BarChartOverview*/
+{
+	border-style : none;  
+	font-size : 10pt; 
+	font-family : Arial;  
+	margin-top : 0; 
+	margin-middle : 0; 
+	margin-left : 0; 
+	margin-right : 0; 
+	padding-top : 0; 
+	padding-middle : 0; 
+	padding-left : -5; 
+	padding-right : -5; 
+	border-thickness : 0; 
+	border-collapse : -5; 
+	border-spacing : -5; 
+    letter-spacing : 0;
+    background-Color : #000000;
+}
+.textInput2   /*setea el segundo o ultimo TextInput en la clase BarChartOverview*/
+{
+	border-style : none;  
+	font-size : 10pt; 
+	font-family : Arial;  
+	margin-top : 0; 
+	margin-middle : 0; 
+	margin-left : 0; 
+	margin-right : 0; 
+	padding-top : 0; 
+	padding-middle : 0; 
+	padding-left : -5; 
+	padding-right : -5; 
+	border-thickness : 0; 
+	border-collapse : -5; 
+	border-spacing : -5; 
+    letter-spacing : 0;
+    background-Color : #7EAEFF;
+}
+.VBoxBarChartOverview /* setea el estilo del VBox al principio del mxml*/
+{
+	font-family : verdana, arial;
+	background-Color : #FFFFFF;	
+}
+
+/*setea el estilo de la grilla en el que se encuentran las dependencias y las tareas dibujadas*/
+.BarChartOverviewGridTaskRenderer   
+{
+	alternatingItemColors : #FFFFFF, #FFFFFF;
+	/* verticalGridLineColor : #000000; 
+    border-thickness : 5; */
+    border-thickness: 0; 
+    verticalGridLines : false;
+	font-family : verdana, arial;
+	background-Alpha : .0;
+	alpha : .1;
+	top : 0;
+	right : 0;
+	bottom : 0;
+	rollOverColor : #FFFFFF;
+	selection-Color:#ffffff;
+}
+
+.gridDatesLines {
+
+
+}
+

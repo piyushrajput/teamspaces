@@ -1,0 +1,144 @@
+<apex:page sidebar="false" tabStyle="Team__c" controller="TeamMembersListController">
+	
+	<apex:includeScript value="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/prototype.js')}"/>
+	<apex:includeScript value="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/scriptaculous.js')}"/>
+	<apex:includeScript value="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/effects.js')}"/>	
+	
+	<!-- CSS de TS -->
+	<link rel="stylesheet"  href="{!URLFOR($Resource.TeamsResources, '/inc/css/MemberEditInfo.css')}" />
+	
+	<apex:stylesheet value="{!URLFOR($Resource.TeamsResources, 'inc/css/teamsOverlayMemberEditInfo.css')}" />
+	
+	<apex:includeScript value="{!URLFOR($Resource.TeamsResources, 'inc/js/teamsOverlayMemberEditInfo.js')}" />
+	
+	<!--[if IE 6]>
+	<style>
+		.tooltip3 {
+			bottom: 180px;
+		}
+	</style>
+	
+	<![endif]-->
+	 
+	<script>
+		/**
+        * Namespace Prefix Getter
+        */
+        var namespace = "{!namespace}";
+
+		/**
+		* Initialize toolkit connection
+		*@void
+		*/
+		function init(){
+			sforce.connection.sessionId = '{!$Api.Session_ID}';
+			sforce.connection.defaultNamespace = namespace;
+		}
+		
+		var globalTeamEditProfileSelect = '{!$Component.teamEditProfileSelect}';
+		var globalTeamEditProfileSelect2 = '{!$Component.teamEditProfileSelect2}';
+	</script>
+	
+	<div id="editMemberInfoLoading" style="display:none;" class="overlayForm">	
+		<!-- Overlay Title -->
+		<div class="overlayTitleContent">
+			<div class="overlayTitle">Edit member's team information</div>
+			<div class="overlayCloseEvent">
+				<a href="Javascript:;" onclick="modal.close();">
+					<img src="{!URLFOR($Resource.TeamsResources, 'images/layout/genericClose.gif')}" alt="Close Window" title="Close Window" />
+				</a>
+			</div>
+		</div>
+		<div class="overlayMainContent loadingMemberInfo" id="loadingMemberInfo">
+			Loading Member Info...
+		</div>
+	</div>
+	<!-- Edit Member Info -->
+	<div id="editMemberInfo" style="display:none;" class="overlayForm">	
+		<!-- Overlay Title -->
+		<div class="overlayTitleContent">
+			<div class="overlayTitle">Edit member's team information</div>
+			<div class="overlayCloseEvent">
+				<a href="Javascript:;" onclick="modal.close();">
+					<img src="{!URLFOR($Resource.TeamsResources, 'images/layout/genericClose.gif')}" alt="Close Window" title="Close Window" />
+				</a>
+			</div>
+		</div>
+		<!-- Overlay Content -->
+		<div class="overlayMainContent">
+			<!-- Required Information -->
+			<span class="overlayRequiredInfo">= Required Information</span>
+			<div class="overlayFormStatus" id="savingMemberInfo" style="display: none;">
+				Saving...
+			</div>
+			<apex:form styleclass="editMemberInfoForm">	
+				<div class="overlayFormContent">
+					<!-- Dialog Body  -->
+					<div class="modalMessage padding_Tables">
+						<table border="0" class="editInfoTables">
+							<tr>
+								<td width="73px">
+									<apex:outputpanel rendered="{!IF(imgEditMember == '',true,false)}">
+										<img class="memberImg" src="{!URLFOR($Resource.commonResources, 'images/placeholders/unknownperson32x32.jpg')}" width="50" />
+									</apex:outputpanel>									 
+									<apex:outputpanel rendered="{!IF(imgEditMember == '',false,true)}">
+										<img class="memberImg" src="/servlet/servlet.FileDownload?file={!imgEditMember}" width="50"/>
+									</apex:outputpanel>
+								</td>
+								<td>
+									<apex:outputtext value="{!editMember.User__r.name}" /><br>
+									<span>Company:</span> <apex:outputtext value="{!editMember.User__r.companyName}" /><br>
+									<span>Title:</span> <apex:outputtext value="{!editMember.User__r.Title}" />
+								</td>
+							</tr>
+						</table>
+						<table border="0" class="editInfoTables">
+							<tr>
+								<td align="right" class="label">Team Profile</td>
+								<td><div class="requireInput"></div></td>
+								<td>
+									<apex:outputpanel rendered="{!NOT(itsLastAdmin)}">
+										<apex:selectList style="width: 200px;" id="teamEditProfileSelect" value="{!editMemberProfile}" multiselect="false" size="1">
+											<apex:selectOptions value="{!profilesOptions}"/>
+										</apex:selectList>
+										<a style="position: relative;" href="Javascript:;" onclick="tooltip3(this, '{!$Component.teamEditProfileSelect}');">
+											<img class="imgAlign" onmouseover="tooltip3(this, '{!$Component.teamEditProfileSelect}');" onmouseout="tooltipoff3();" src="{!URLFOR($Resource.TeamsResources, '/images/layout/icons/infoWhite.gif')}" border="0" />
+											<!-- info tooltip -->
+											<div id="divToolTip3" style="display: none;" class="tooltip3">
+												<div id="messageTooltip3" class="messageTooltip"></div>
+											</div>
+										</a>
+									</apex:outputpanel>
+									<apex:outputpanel rendered="{!itsLastAdmin}">
+										<apex:selectList style="width: 200px;" id="teamEditProfileSelect2" value="{!editMemberProfile}" multiselect="false" size="1">
+											<apex:selectOptions value="{!profilesOptionsFilter}"/>
+										</apex:selectList>
+										<a style="position: relative;" href="Javascript:;" onclick="tooltip3(this, '{!$Component.teamEditProfileSelect2}');">
+											<img class="imgAlign" onmouseover="tooltip3(this, '{!$Component.teamEditProfileSelect2}');" onmouseout="tooltipoff3();" src="{!URLFOR($Resource.TeamsResources, '/images/layout/icons/info.gif')}" border="0" />
+											<div id="divToolTip3" style="display: none;" class="tooltip3">
+												<div id="messageTooltip3" class="messageTooltip"></div>
+											</div>
+										</a>
+									</apex:outputpanel>
+								</td>
+							</tr>
+							<tr>
+								<td align="right" class="label">Team Role</td>
+								<td></td>
+								<td>
+									<apex:inputText value="{!editMemberRole}" styleclass="teamRoleInput" />
+								</td>
+							</tr>
+						</table>	
+					</div>
+				</div>
+				<div class="overlaySeparateLine"></div>
+				<!-- Saven and Cancel Buttons -->
+				<div class="overlayFromButtons" align="center">
+					<apex:commandButton action="{!editMemberAction}" onclick="showSaving();" oncomplete="modal.close();" value="Save" styleclass="overlaySaveBtn" rerender="auxPanel" />
+					<input type="button" onclick="modal.close();" class="overlayCancelBtn" value="Cancel" />
+				</div>
+			</apex:form>
+		</div><!-- END Modal Content -->
+	</div><!-- END announcement delete -->   
+</apex:page>

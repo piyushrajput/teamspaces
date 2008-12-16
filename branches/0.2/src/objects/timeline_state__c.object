@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <deploymentStatus>Deployed</deploymentStatus>
+    <fields>
+        <fullName>Project__c</fullName>
+        <label>Project</label>
+        <referenceTo>Project2__c</referenceTo>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>User__c</fullName>
+        <label>User</label>
+        <referenceTo>User</referenceTo>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>date__c</fullName>
+        <label>date</label>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>scale__c</fullName>
+        <label>scale</label>
+        <precision>18</precision>
+        <scale>0</scale>
+        <type>Number</type>
+    </fields>
+    <fields>
+        <fullName>y__c</fullName>
+        <label>y</label>
+        <precision>18</precision>
+        <scale>0</scale>
+        <type>Number</type>
+    </fields>
+    <label>timeline state</label>
+    <nameField>
+        <label>Timeline State Name</label>
+        <type>Text</type>
+    </nameField>
+    <pluralLabel>timeline states</pluralLabel>
+    <sharingModel>Read</sharingModel>
+</CustomObject>

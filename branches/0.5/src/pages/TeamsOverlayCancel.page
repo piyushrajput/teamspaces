@@ -1,0 +1,26 @@
+<apex:page sidebar="false" showHeader="false">
+<div id="cancelOverlay" style="display:none;" class="overlayForm">	
+		<!-- Overlay Title -->
+		<div class="overlayTitleContent">
+			<div class="overlayTitle">Cancel</div>
+			<div class="overlayCloseEvent">
+				<a href="Javascript:;" onclick="modal.close();">
+					<img src="{!URLFOR($Resource.TeamsResources, 'images/layout/genericClose.gif')}" alt="Close Window" title="Close Window" />
+				</a>
+			</div>
+		</div>
+	<!-- Content  -->
+	<div class="overlayMainContent">
+		<!-- Dialog Body  -->
+		<div class="overlayFormContent" style="padding-bottom: 20px;">
+		 Are you sure you want to cancel? <br />
+		</div>
+		<div class="overlaySeparateLine" />
+		<!-- Saven and Cancel Buttons -->
+		<div class="overlayFromButtons" align="center">
+			<input type="button" class="overlaySaveBtn" onclick="history.go(-1); modal.close();" value="Ok" />
+			<input type="button" class="overlayCancelBtn" onclick="modal.close();" value="Cancel" />
+		</div>
+	</div><!-- END Modal Content -->
+</div>
+</apex:page>

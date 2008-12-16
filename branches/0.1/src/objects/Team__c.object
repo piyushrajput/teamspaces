@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <deploymentStatus>Deployed</deploymentStatus>
+    <fields>
+        <fullName>Description__c</fullName>
+        <label>Description</label>
+        <length>32000</length>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
+        <fullName>NewMemberProfile__c</fullName>
+        <label>NewMemberProfile</label>
+        <referenceTo>TeamProfile__c</referenceTo>
+        <relationshipLabel>Teams</relationshipLabel>
+        <relationshipName>Teams</relationshipName>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>ParentTeam__c</fullName>
+        <label>Parent Team</label>
+        <referenceTo>Team__c</referenceTo>
+        <relationshipLabel>ParentTeam</relationshipLabel>
+        <relationshipName>ParentTeam</relationshipName>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>PublicProfile__c</fullName>
+        <label>PublicProfile</label>
+        <referenceTo>TeamProfile__c</referenceTo>
+        <relationshipLabel>Teams (PublicProfile)</relationshipLabel>
+        <relationshipName>Teams1</relationshipName>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>TeamCreatedBy__c</fullName>
+        <label>TeamCreatedBy</label>
+        <referenceTo>User</referenceTo>
+        <relationshipName>Teams</relationshipName>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>TeamCreatedDate__c</fullName>
+        <label>TeamCreatedDate</label>
+        <type>DateTime</type>
+    </fields>
+    <fields>
+        <fullName>TeamType__c</fullName>
+        <label>Team Type</label>
+        <referenceTo>TeamType__c</referenceTo>
+        <relationshipLabel>Teams</relationshipLabel>
+        <relationshipName>Teams</relationshipName>
+        <type>Lookup</type>
+    </fields>
+    <label>Team</label>
+    <nameField>
+        <label>Team Name</label>
+        <type>Text</type>
+    </nameField>
+    <pluralLabel>Teams</pluralLabel>
+    <sharingModel>ReadWrite</sharingModel>
+</CustomObject>

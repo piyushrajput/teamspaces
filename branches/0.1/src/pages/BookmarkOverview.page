@@ -1,0 +1,266 @@
+<apex:page sidebar="false" controller="BookmarkOverviewController" tabStyle="Bookmark__c">
+	<script src="{!URLFOR($Resource.BookmarkResources, 'inc/js/prototype.js')}" />
+	<script src="{!URLFOR($Resource.BookmarkResources, 'inc/js/scriptaculous.js')}" />
+	<script src="{!URLFOR($Resource.BookmarkResources, 'inc/js/effects.js')}" />
+	<script src="{!URLFOR($Resource.BookmarkResources, 'inc/js/common.js')}" />
+	<script src="{!URLFOR($Resource.BookmarkResources, 'inc/js/overlayFunction.js')}" />
+	
+	<apex:stylesheet value="{!URLFOR($Resource.BookmarkResources, 'inc/css/commonLayout.css')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.BookmarkResources, 'inc/css/bookmarkOverview.css')}" />
+	
+	<style>
+	
+	div.rightCol {
+		position:absolute;
+		right:15px;
+		top:158px;
+		width:210px; 
+	}
+	
+	.UPF__overlay__{
+		position: absolute;	
+		z-index: 10000;
+		width: 100%;
+		height: 100%;
+		background: #666666;					
+	}
+	
+	.loader__{
+		position: fixed;
+		z-index: 10001;
+		overflow: hidden;
+		top: 50%;
+		left: 50%;
+		color: #FFFFFF;
+	}
+	</style>
+	
+	<script>
+		
+	
+		function viewOverlayFormNew (formId) {
+			
+			viewLoader();			
+			switchOverlayB();	
+			setTimeout('viewTheForm(\'' + formId + '\')', 1400);	
+		}
+			
+		var inputSearch;
+					
+		// Begin the search box with the text:
+		// "Enter keyword or name" at top search box
+		////////////////////////////////////////////
+		function resetSearchInput(){
+			
+			var inputs = $$('.search_box_input input');
+			inputSearch = inputs[0];		
+			inputSearch.style.color = '#999999';
+			inputSearch.value = 'Enter keyword or name';
+		}
+		
+		// Once a user begins to type at top search box, change the font color to   #333333. 
+		function ActionSearchInput(){
+			inputSearch.style.color = '#333333';
+			inputSearch.value = '';
+		}	
+	</script>
+
+
+	<!-- 		  Overlay		-->
+	<div class="UPF__overlay__" id="UPF__overlay__" style="display:none;">
+	</div>
+	<!-- 		  Overlay		-->
+	
+	<!-- 		  Loader		-->
+	<div class="loader__" id="loader__" style="display:none;"><center><img src="{!URLFOR($Resource.commonResources, 'images/loaders/bigLoader.gif')}" /></center><br />Loading...</div>
+	<!-- 		  Loader		-->
+		<div>
+			<div class="BodyPage">
+				<div class="header">
+					<div class="page_section">
+					    <div>
+					    	<h1 class="arial_black">Bookmarks</h1>
+					    	<h2 class="arial_black">Overview</h2>
+					    </div>  
+				  	</div>
+					<div class="searchBox">
+				   		<div>
+				    		<div>
+				    			<form action="">
+					      			<div class="search_box_input f_left">
+					       				<div class="legend">Find Bookmarks</div>
+						      			 <input onclick="ActionSearchInput();" value="Enter keyword or name" name="" type="text"  onfocus="setValue('');" onblur="setValue('Enter keyword or name');"/>        
+									</div>
+					      			<input value="Search" class="search_btn f_left" type="button" />         
+				     			</form>
+								<div class="advanced_search_cont">       
+				      				<a href="javascript:;">Advanced Search</a>
+				     			</div>       
+				   			</div>
+				   		</div>
+					</div>
+					<div class="help">
+				   		<div>
+					   		<a href="javascript:;">Help for this page</a>&nbsp; <img src="{!URLFOR($Resource.BookmarkResourceFiles, 'images/common/icons/help_icon.gif')}" alt="" />
+					   </div>
+					</div>
+				</div>
+
+				<div class="sidebar" id="sidebar">
+					<!-- THIS WEEK'S MOST COMMENTED -->
+						<apex:include pageName="BookmarkMostCommentedWidget"></apex:include>
+						
+					<!-- THIS WEEK'S MOST ACTIVE PEOPLE -->
+						<apex:include pageName="BookmarkActiveUsersWidget"></apex:include>
+						
+					<!-- THIS WEEK'S MY RECENT ANNOUNCEMENTS -->
+						<apex:include pageName="BookmarkMyRecentWidget"></apex:include>
+					
+					<!-- CONTENT INFO -->
+			
+						
+							<div class="main_content" id="main_content">  
+								<div class="centerCol">
+									<div class="holder">
+										<div class="tabContainer">
+											<div class="tabBorder">
+											</div>
+												<ul class="tabs">
+													<li class="{!IF((tabControl == 'myBookmarks'),'selected','')}">
+														<apex:outputLink value="?my=true" id="My_teams">My Teams</apex:outputLink>
+													</li>
+													<li class="{!IF((tabControl == 'allBookmarks'),'selected','')}">
+														<apex:outputLink value="?all=true" id="all_teams">All Teams</apex:outputLink>
+													</li>
+												</ul>
+										</div>
+										
+										<apex:outputpanel id="myTeamsPanel">
+											<apex:outputpanel styleClass="pagination" layout="block" rendered="{!IF(AND(prevPageShow,nextPageShow),false,true)}">
+												<div class="pages">
+													<apex:form>		
+														<ul>
+															<li class="prev {!IF(prevPageShow,'disabled','')}">
+																<apex:commandLink  action="{!prevPage}" value="Previous Page" rerender="myTeamsPanel" rendered="{!prevPageLinkShow}"/>
+																<apex:outputText value="Previous Page" rendered="{!prevPageShow}" />
+															</li>
+															<li>({!currentPagination}</li>
+															<li>-</li>
+															<li>{!cntPagination})</li>
+															<li class="next {!IF(nextPageShow,'disabled','')}">
+																<apex:commandLink  action="{!nextPage}" value="Next Page" rerender="myTeamsPanel" rendered="{!nextPageLinkShow}"/>
+																<apex:outputText value="Next Page" rendered="{!nextPageShow}" />
+															</li>
+														</ul>
+													</apex:form>
+												</div>
+											</apex:outputPanel>
+											
+											<apex:outputPanel id="bookmarkPanel">
+												<div style="{!IF(BookmarkGroupsSize == 0, 'display:block', 'display:none')}; text-align:center; width:100%; margin-top:30px;">
+													<span> There are no bookmarks to this filter</span>
+												</div>
+												<apex:repeat rows="{!numberOfItemsToShow}" first="{!firstRow}" value="{!bookmarkGroups}" var="bookmarkGroup">
+													<div class="bookmark_actualDate" style="{!IF((bookmarkGroup.DateClass == 'Date_empty'),'display:none', '' )}; position:relative;">
+														<apex:outputText value="{!bookmarkGroup.formatedPostDate}"/>
+														<div class="rssImg">
+															<img src="{!URLFOR($Resource.BookmarkResources, 'images/bookmark_overview/rss.gif')}" />
+														</div>
+													</div> 
+													<!-- <apex:repeat value="{!bookmarkGroup.bookmarks}" var="bookmark">-->
+														<div class="bookmark_content_top" style="overflow:hidden;">
+														
+															<h2 class="bookmark_detail_title"><a href="/{!bookmarkGroup.Id}"><apex:outputText value="{!bookmarkGroup.Title}"/></a></h2>
+														 	
+															<div class="bookmark_detail" style="width:100%;">
+																<table border="0">
+																	<tr>
+																		<td valign="top">
+																			<span class="bookmark_detail_description">
+																	 			<apex:outputText value="{!bookmarkGroup.Body}" escape="false"/>
+																			</span>
+																		</td>
+																		<td valign="top">
+																			<a href="{!bookmarkGroup.BookmarkURL}" class="bookmarkLink"><img src="{!bookmarkGroup.ImageUrl}"></a>
+																		</td>
+																	</tr>
+																</table>
+															</div>
+															<div class="bookmark_detail_line"></div>
+															<div class="bookmark_detail_wraperoverflow">
+																<div class="bookmark_detail_postInfo">
+																	<span>Posted by </span>
+																	<span class="bookmark_detail_postBy"><apex:outputText value="{!bookmarkGroup.PostedByName}"/></span>
+																	<span>on&nbsp;<apex:outputText value="{!bookmarkGroup.PostedDate}"/></span>
+																</div>
+																<div class="commentEmailImg">
+																	<a class= "commentLink" href="apex/BookmarkDetails?id={!bookmarkGroup.Id}"><apex:outputText value="{!bookmarkGroup.CommentsCount}"/>&nbsp;Comments</a>							
+																	<a class= "emailLink" href="mailto:someone@salesforce.com">Email</a>
+																</div>
+																
+															</div>
+															<div class="bookmark_detail_teamName">
+																	<span class='bookmark_detail_team'>[ team: </span>
+																	<span class='bookmark_detail_postBy'><apex:outputText value="{!bookmarkGroup.TeamName}"/></span>
+																	<span class='bookmark_detail_team'>]</span>
+															</div>
+														</div>
+														
+													<!-- </apex:repeat>-->
+												</apex:repeat>
+										
+										</apex:outputPanel>
+									
+										<apex:outputpanel styleClass="pagination" layout="block" rendered="{!IF(AND(prevPageShow,nextPageShow),false,true)}">
+											<div class="pages">
+												<apex:form>		
+													<ul>
+														<li class="prev {!IF(prevPageShow,'disabled','')}">
+															<apex:commandLink  action="{!prevPage}" value="Previous Page" rerender="myTeamsPanel" rendered="{!prevPageLinkShow}"/>
+															<apex:outputText value="Previous Page" rendered="{!prevPageShow}" />
+														</li>
+														<li>({!currentPagination}</li>
+														<li>-</li>
+														<li>{!cntPagination})</li>
+														<li class="next {!IF(nextPageShow,'disabled','')}">
+															<apex:commandLink  action="{!nextPage}" value="Next Page" rerender="myTeamsPanel" rendered="{!nextPageLinkShow}"/>
+															<apex:outputText value="Next Page" rendered="{!nextPageShow}" />
+														</li>
+													</ul>
+												</apex:form>
+											</div>
+										</apex:outputPanel>
+									</apex:outputpanel>	
+									</div>
+								</div>
+							
+						
+								<div class="rightCol">
+								
+								<!-- MY TEAMS WIDGET -->
+								<apex:include pageName="BookmarkMyTeamsWidget"></apex:include>
+								 
+								<!--  TAGS WIDGET  -->
+								<!--  Wait to the new release -->
+								<!-- <apex:include pageName="BookmarkTagsWidget"></apex:include>-->
+								
+								<!--  ARCHIVES WIDGET -->
+								<apex:include pageName="BookmarkArchivesWidget"></apex:include>
+							</div>
+						</div>
+			</div>
+		</div>
+		<script>
+			resetSearchInput();
+			/*function changeBackgroundImage () {
+				var myTeamsDiv = $('myTeamsDiv');
+				var divDimensions = myTeamsDiv.getDimensions();
+				var divHeight = divDimensions.height;
+				if (divHeight < 255) {
+					myTeamsDiv.style.background = "transparent url({!URLFOR($Resource.BookmarkResources, 'images/bookmark_overview/rc_boxes/rc_bgSmall.gif')}) repeat-x scroll center bottom";
+				}
+			}
+			changeBackgroundImage();
+			*/
+		</script>	
+</apex:page>

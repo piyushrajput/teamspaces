@@ -1,0 +1,880 @@
+<apex:page id="Discussion" sidebar="false" controller="TeamsDetailController" >
+
+	<script src="{!URLFOR($Resource.Script_aculo_us, 'prototype.js')}"></script>
+	<script src="{!URLFOR($Resource.Script_aculo_us, 'scriptaculous.js')}"></script>
+	<script src="{!URLFOR($Resource.Script_aculo_us, 'effects.js')}"></script>	
+	<script src="{!URLFOR($Resource.FCKeditor, 'fckeditor/fckeditor.js')}"></script>
+	
+	<script>
+	
+	
+	var rootResource = "{!URLFOR($Resource.TeamsResources)}";
+	
+	var hideBubbleTimeout;
+	var lastUserId = '';
+	var form;
+	var currentIdObject;
+	
+
+	
+	
+	function setTimeoutToHide(){
+		hideBubbleTimeout = setTimeout ( 'hideBubble()' , 1000 );
+	}
+	
+	function hideBubble(){
+		// Get Hover Container
+		var container = $('bubble');
+		//container.style.display = 'none';
+		Effect.Fade(container,{duration: 0.5});
+	}
+			
+	// Get X and Y						
+	function getXY(obj){				
+		var pos = Position.cumulativeOffset(obj)
+		var y = pos[1];
+		var x = pos[0];
+		var x2 = x + parseInt(obj.offsetWidth);
+		var y2 = y + parseInt(obj.offsetHeight);
+		return {'x':x, 'y':y, 'x2':x2, 'y2':y2};
+	}
+	///////////////////////////////////
+	///////////////////////////////////
+	
+	// Toolkit Connection
+	function initSession(){
+			sforce.connection.sessionId = '{!$Api.Session_ID}';
+		}
+		
+	function showLoader(){
+		$('overDiv').innerHTML = 'Loading...';
+	}
+	
+	
+	function showError()
+	{
+		$('memberInfo').innerHTML = 'Error';
+	}
+	
+	function parseValue(value)
+	{
+		if(value != null) return value;
+		else return '';
+	}
+		
+		
+
+	
+	//End Function Bookmarks
+		
+		
+		
+
+	function NotImplemented()
+	{
+		alert('This is not implemented yet');
+	}
+			
+	//FCK editor	 
+	
+		var oFCKeditorDiscussion;
+		
+		function initDiscussion() {
+		
+		
+			
+			oFCKeditorDiscussion = new FCKeditor( 'message' ) ;
+			oFCKeditorDiscussion.ToolbarSet = 'DiscussionNewTopic' ;
+			oFCKeditorDiscussion.Height = '200';
+			oFCKeditorDiscussion.BasePath = "{!URLFOR($Resource.FCKeditor, 'fckeditor/')}"; /* "/fckeditor/" ; */
+			oFCKeditorDiscussion.ReplaceTextarea() ;
+			
+			
+			
+		}		
+		
+		
+		
+		//Get Param//
+		function UPF__getURLParam(strParamName){
+		  var strReturn = '';
+		  var strHref = window.location.href;
+		  if ( strHref.indexOf('?') > -1 ){
+		    var strQueryString = strHref.substr(strHref.indexOf('?'));
+		    var aQueryString = strQueryString.split('&');
+		    for ( var iParam = 0; iParam < aQueryString.length; iParam++ ){
+		      if (aQueryString[iParam].indexOf(strParamName + '=') > -1 ){
+		        var aParam = aQueryString[iParam].split('=');
+		        strReturn = aParam[1];
+		        break;
+		      }
+		    }
+		  }
+		  return unescape(strReturn);
+		}		
+		
+	
+		
+		//Confirm Upload//
+		function UPF__success__Dis(){
+		
+			var la = document.getElementById('uploadP__discussion');
+			var test = document.getElementById('iframeUpload__Ann');
+			
+			if(iframeUpload.document.getElementById('ep')){
+				var ifrDiv = iframeUpload.document.getElementById('ep');
+				var pNode = ifrDiv.parentNode;
+				pNode.removeChild(ifrDiv);
+				
+				la.innerHTML = '<strong style="color:green;">Success !</strong>';
+				
+				var file = document.getElementById('file_discussion').value;
+				file.type = 'text';
+				file.value = '';
+				
+				//Hide overlay
+				
+				var loader = document.getElementById('loader__');
+				loader.setAttribute('style','display:none;text-align:center;');
+				loader.style.display = 'none';
+				
+				switchOverlay(false); 
+				Effect.Fade('NewTopicForm');
+				
+			}else{
+				setTimeout('UPF__success__Dis(); UPF__CheckError__()',2000);
+			}
+		}
+		
+	
+			//View Loader//
+		function UPF__loader__Dis(){
+	
+			
+			if (document.getElementById('file_discussion').value != '')
+			{
+				
+				
+				var la = document.getElementById('uploadP__discussion');
+				la.innerHTML = 'Uploading...';
+			}
+		}
+		
+	
+		
+		function ClearFieldsDiscussion()
+		{
+			//Clear file input
+			var file = document.getElementById('file_discussion');
+			file.value = '';
+			
+			//Clear name input
+			
+			var threadName = document.getElementById('threadName');
+			threadName.value = '';
+			
+			//Clear FCK editor
+			clearFCKHTMLDiscussion();
+			
+			//Clear upload status
+			
+			var upStatus = document.getElementById('uploadP__discussion');
+			upStatus.innerHTML = '';
+			
+		}
+	 
+		function AttachOtherFile(link,overlay)
+		{
+			var file;
+			
+			if (overlay == 'announcement')
+			{
+				file = document.getElementById('file_announcement');
+			}
+			else
+			{
+				file = document.getElementById('file_discussion');
+			}
+	
+			if (file.value != '')
+			{
+		
+				var inpt;
+				
+				if (overlay == 'announcement')
+				{
+				 	inpt =  document.getElementById('done_pid_announcement');
+				}
+				else
+				{
+					inpt =  document.getElementById('done_pid_discussion');
+				}
+				
+				inpt.value = currentIdObject;
+				
+				var existFile;
+				
+				if (overlay == 'announcement')
+				{
+					existFile = document.getElementById('file_announcement');
+				}
+				if (overlay == 'discussion')
+				{
+					existFile = document.getElementById('file_discussion');
+				}
+				
+				if (existFile.value != '')
+				{
+					if (overlay == 'announcement')
+					{
+						$('editPage_NewAnnouncement').submit();
+					}
+					if (overlay == 'discussion')
+					{
+					
+						$('editPage_NewDiscussion').submit();
+					}
+				}
+				
+			}
+			else
+			{
+				alert('You must enter a file to upload');
+				return false;
+			
+			}
+		
+		return true;
+	}
+	
+	
+	
+	function CancelNewThread()
+	{
+		//Delete message added 
+		
+		if (currentIdObject != null)
+		{
+			sforce.connection.sessionId = '{!$Api.Session_ID}';
+			
+			var loader = document.getElementById('loader__');
+			
+			loader.setAttribute('style','display:block;text-align:center;');
+			loader.style.display = 'block';
+		
+			sforce.connection.deleteIds([currentIdObject] , {
+			
+				onSuccess:function(result)
+				{
+					loader.setAttribute('style','display:none;text-align:center;');
+					loader.style.display = 'none';
+			
+					switchOverlay(false);
+				},
+				
+				onFailure:function(error)
+				{
+					alert(error);
+				}});
+		}
+	}
+	
+	
+		
+		
+		function getFCKHTMLDiscussion()
+		{
+			var b = document.getElementsByTagName('iframe');
+			for(var it = 0; it < b.length; it++){
+				var aux = b[it].src.split('FCKeditor');
+				if(aux.length > 1){
+					var iframes = b[it].contentWindow.document.getElementsByTagName('iframe');
+					var markup = iframes[0].contentWindow.document.body.innerHTML;	
+								
+				}
+			}
+			return markup;
+		}
+	
+	
+	function getIframeDiscussion()
+	{
+		var b = document.getElementsByTagName('iframe');
+		for(var it = 0; it < b.length; it++){
+			var aux = b[it].src.split('FCKeditor');
+			if(aux.length > 1){
+				var iframes = b[it].contentWindow.document.getElementsByTagName('iframe');						
+			}
+		}
+		return iframes;
+	}
+
+	
+	
+	
+	
+		function clearFCKHTMLDiscussion()
+		{
+			var frame = getIframeDiscussion();
+			frame[0].contentWindow.document.body.innerHTML = '';
+		}
+	
+	
+	
+	
+	
+	
+	
+	function CheckRequieredDiscussion()
+	{
+		var threadName = document.getElementById('threadName').value;
+		var message = getFCKHTMLDiscussion();
+		
+		message = message.replace(/<br>/gi , '');
+		message = message.replace(/<[^>]*>/gi, '');
+		
+		var ret = true;
+		
+		if (threadName == '')
+		{
+			alert('You must enter the topic');
+			ret = false;
+		}
+		
+	
+		
+		if (message == '')
+		{
+			alert('You must enter the message');
+			ret = false;
+		}
+		
+		return ret;
+	}
+
+	function saveThread()
+	{
+		//Get the connection to salesforce's api
+		
+		var iframe = $('iframeUpload__Ann');
+		iframe.src = '';
+				
+		if (CheckRequieredDiscussion())
+		{
+	
+		sforce.connection.sessionId = '{!$Api.Session_ID}';
+		
+		//Show wait message
+		
+		var loader = document.getElementById('loader__');
+		
+		loader.setAttribute('style','display:block;text-align:center;');
+		loader.style.display = 'block';
+	
+		
+		
+		var sql = "Select Id, Subject__c,FirstMessageText__c FROM DiscussionThread__c WHERE Id = '" + currentIdObject + "'";
+		
+		
+		var result = sforce.connection.query(sql, {
+					  		
+			//Save Thread
+						
+			onSuccess:function(result)
+			{
+				
+				
+				result = result.getArray("records"); 
+				
+				discussionThread = result[0];
+				
+				
+				var threadName = document.getElementById('threadName').value;
+				var message = getFCKHTMLDiscussion();
+			
+				var notifyUsers = document.getElementById('emailNewDiscussion').value;
+			    
+				discussionThread.Subject__c = threadName;
+				discussionThread.FirstMessageText__c = message;
+				messageText = message;
+				threadSubject = threadName;
+				
+				result = sforce.connection.update([discussionThread], {
+				
+					onSuccess:function(result)
+					{
+						
+						
+						var discussionMessage= new sforce.SObject("DiscussionMessage__c");
+          	    		 
+	         	    	discussionMessage.DiscussionThread__c = currentIdObject;      
+			  			discussionMessage.Header__c = threadSubject;
+			  			discussionMessage.Message__c = messageText;
+			  			 
+			  			sforce.connection.create([discussionMessage], {
+					  		
+						//Save Thread
+									
+						onSuccess:function(result)
+						{
+							
+							currentIdObject = null;
+							
+							loader.style.display = 'none';
+							loader.style.textAlign = 'center';
+							
+							var inpt = document.getElementById('done_pid_discussion');
+							inpt.value = currentIdObject;
+					
+							var existFile = document.getElementById('file_discussion');
+							
+							/*
+							if (existFile.value != '')
+							{
+								$('editPage_NewDiscussion').submit();
+							}
+							else
+							{
+							*/
+								loader.setAttribute('style','display:none;text-align:center;');
+								loader.style.display= 'none';
+								
+								switchOverlay(false); 
+								Effect.Fade('NewTopicForm');
+							//}
+							
+							
+						},
+						
+						onFailure:function(error)
+						{
+							alert(error);
+						}});
+						
+						
+					},
+					onFailure:function(error)
+					{
+						alert(error);
+					}});
+					
+	
+				
+			}
+			,
+			onFailure:function(error)
+			{
+				alert(error);
+			}});
+		}
+	}
+	
+	
+	
+		
+		
+		
+		function UPF__success2__Dis(){
+	
+			var la = document.getElementById('uploadP__discussion');
+			var test = document.getElementById('iframeUpload__Ann');
+			
+			
+			
+			
+			if(iframeUpload.document.getElementById('ep')){
+				var ifrDiv = iframeUpload.document.getElementById('ep');
+				var pNode = ifrDiv.parentNode;
+				pNode.removeChild(ifrDiv);
+				
+				la.innerHTML = '<strong style="color:green;">Success !</strong>';
+			
+				var file = document.getElementById('file_discussion');
+				var cloneFile = file.cloneNode(true);
+				cloneFile.value = "";
+				var parent = document.getElementById('theFile_discussion');
+			
+				
+				parent.appendChild(cloneFile);
+				file.parentNode.removeChild(file);
+				
+				
+			
+		}else{
+			setTimeout('UPF__success2__Dis(); UPF__CheckError__()',2000);
+		}
+	}
+		
+		
+		//Check Errors//
+		function UPF__CheckError__(){
+		
+			var divs = iframeUpload.document.getElementsByTagName('DIV');
+			if (divs[43]){
+				if(divs[43].className == 'errorMsg'){
+					var la = document.getElementById('uploadP__');
+					la.innerHTML = '<strong style="color:red;font-size:10px;">Error: file not found.</strong>';
+					divs[43].className = '';
+				}
+			}
+		}
+	
+
+			
+	// OVERLAY FUNCTIONS
+		
+		function hideShowSelects(){
+			var selects = $$('select');
+			for (var i = 0; i < selects.length; i++) {
+				if (selects[i].style.visibility == 'hidden') {
+					selects[i].style.visibility = 'visible';
+				}
+				else {
+					selects[i].style.visibility = 'hidden';
+				}
+			}
+		}
+		
+        //getPageSize()//
+		function getPageSize(){
+			var xScroll, yScroll;
+			if (window.innerHeight && window.scrollMaxY) {	
+				xScroll = document.body.scrollWidth;
+				yScroll = window.innerHeight + window.scrollMaxY;
+			} else if (document.body.scrollHeight > document.body.offsetHeight){
+				xScroll = document.body.scrollWidth;
+				yScroll = document.body.scrollHeight;
+			} else {
+				xScroll = document.body.offsetWidth;
+				yScroll = document.body.offsetHeight;
+			}
+			var windowWidth, windowHeight;
+			if (self.innerHeight) {	
+				windowWidth = self.innerWidth;
+				windowHeight = self.innerHeight;
+			} else if (document.documentElement && document.documentElement.clientHeight) {
+				windowWidth = document.documentElement.clientWidth;
+				windowHeight = document.documentElement.clientHeight;
+			} else if (document.body) {
+				windowWidth = document.body.clientWidth;
+				windowHeight = document.body.clientHeight;
+			}		
+			if(yScroll < windowHeight){
+				pageHeight = windowHeight;
+			} else { 
+				pageHeight = yScroll;
+			}
+			if(xScroll < windowWidth){	
+			pageWidth = windowWidth;
+			} else {
+		
+				pageWidth = xScroll;
+			}
+			arrayPageSize = new Array(pageWidth,pageHeight,windowWidth,windowHeight) 
+			return arrayPageSize;
+		}
+				
+		//SwitchOverlay()
+		function switchOverlay(loader){
+			var pageSize = getPageSize();
+			var overlay = $('UPF__overlay__');
+			overlay.style.height = pageSize[1] + 'px';
+			overlay.style.width = '102%'; 
+			//overlay.style.width = (pageSize[0] - 7) + 'px';
+			overlay.style.marginLeft = '-10px';
+			overlay.style.marginTop = '-105px'; 
+			if(overlay.style.display == 'none'){
+				if (loader) {
+					Effect.Appear('UPF__overlay__', {from: 0.0, to: 0.8, afterFinish:function(){viewLoader(loader);}});
+				}
+				else {
+					Effect.Appear('UPF__overlay__', {from: 0.0, to: 0.8, afterFinish:function(){}});
+				}
+			}else{
+				Effect.Fade('loader__');
+				Effect.Fade('UPF__overlay__');
+			}
+			
+			var version;
+			if (navigator.appName == "Microsoft Internet Explorer") {
+				//try { version = ScriptEngineMajorVersion() + "." + ScriptEngineMinorVersion() + "." + ScriptEngineBuildVersion(); } catch(e) {}
+				version = navigator.appVersion;
+				//alert(version);
+				if (version.indexOf("MSIE 6") != -1) {	
+					setTimeout('hideShowSelects()',500);
+				}
+			}
+		}
+		
+			//SwitchOverlay()
+	
+		
+		
+			//View Loader()
+		function viewLoaderDiscussion(loader){
+			if(!loader)
+				return;
+			var loader = $('loader__Discussion');
+			mWin = loader.getDimensions();
+			loader.style.marginLeft = '-' + ((mWin.width/2)) + 'px';
+			loader.style.marginTop = '-' + ((mWin.height/2)) + 'px';
+			location.href = '#';
+			Effect.Appear('loader__Discussion__',{from: 0.0, to: 0.8});
+		}
+		
+		
+		//View Loader()
+		function viewLoader(loader){
+			if(!loader)
+				return;
+			var loader = $('loader__');
+			mWin = loader.getDimensions();
+			loader.style.marginLeft = '-' + ((mWin.width/2)) + 'px';
+			loader.style.marginTop = '-' + ((mWin.height/2)) + 'px';
+			location.href = '#';
+			Effect.Appear('loader__',{from: 0.0, to: 0.8});
+		}
+		
+	
+		
+		
+		function viewTheForm (formId) {
+			var frm = $(formId);
+			mWin = frm.getDimensions();
+			frm.style.marginLeft = '-' + ((mWin.width/2)) + 'px';				
+			Effect.Appear(formId);
+		}
+		
+		
+	function getTeamspaceDiscussion()
+	{
+		//Get the default discussion group for teamspace.
+		
+		//Get the connection to salesforce's api
+		
+		sforce.connection.sessionId = '{!$Api.Session_ID}';
+		
+		var sql = "SELECT Id From DiscussionForum__c WHERE Teamspace__c =  '{!Teamspace}' ORDER BY CreatedDate DESC";
+		
+		result = sforce.connection.query(sql);
+		
+ 		results = result.getArray("records");
+ 		
+ 		var discussionForum = results[0];
+ 	    		 
+ 	    return discussionForum.Id;
+   	    		
+	}
+	
+	function SaveNewObjectThread()
+	{
+
+		ClearFieldsDiscussion();
+		
+		//Get the connection to salesforce's api
+
+		sforce.connection.sessionId = '{!$Api.Session_ID}';
+		
+		//Show wait message
+		
+		var loader = document.getElementById('loader__');
+		loader.style.display = 'block';
+		loader.style.textAlign = 'center';
+		loader.setAttribute('style','display:block;text-align:center;');
+		
+		
+		var discussionThread = new sforce.SObject("DiscussionThread__c");
+		
+		var parentForum = getTeamspaceDiscussion();
+	
+		
+
+		discussionThread.DiscussionForum__c = parentForum;
+		discussionThread.FirstMessageText__c = '';
+		
+		sforce.connection.create([discussionThread], {
+					  		
+			//Save Thread
+						
+			onSuccess:function(result)
+			{
+				currentIdObject = result[0].id
+				var loader = document.getElementById('loader__');
+				loader.style.display = 'none';
+				loader.style.textAlign = 'center';
+				loader.setAttribute('style','display:none;text-align:center;');
+			}
+			,
+			onFailure:function(error)
+			{
+				alert(error);
+			}});
+	}
+			
+	</script>
+	
+	<style>
+		.UPF__overlay__{
+			position: absolute;	
+			z-index: 10000;
+			width: 100%;
+			height: 100%;
+			background: #666666;					
+		}
+
+		.forms__Overlay {
+			position: fixed;
+  			margin-top:-28px;
+			z-index: 10001;
+			overflow: hidden;
+			background: white;
+			padding: 6px;
+			width: 510px; 
+			left: 50%;
+			height:449px;
+		}
+		
+		.formsIE6__Overlay {
+		 	postion: absolute;
+		  	z-index: 10001;
+			overflow: hidden;
+			background: white;
+			padding: 6px;
+			width: 510px; 
+			left: 50%;
+			height:449px;
+			top: expression( ( 50 + ( ignoreMe = document.documentElement.scrollTop ? document.documentElement.scrollTop : document.body.scrollTop ) ) + 'px' );
+		}
+				
+		.infoText {
+			color:#989999;
+		}
+		
+		.saveBtn {
+			background:#636563 none repeat scroll 0%;
+			border:0px solid;
+			color:#FFFFFF;
+			cursor:pointer;
+			font-size:74% !important;
+			height:22px;
+			margin-top:0px;
+			text-align:center;
+			width:56px;
+			font-weight:bold;
+		}	
+		
+		.cancelBtn {
+			background:#999999 none repeat scroll 0%;
+			border:0px solid;
+			color:#FFFFFF;
+			cursor:pointer;
+			font-size:74% !important;
+			height:22px;
+			margin-top:0px;
+			text-align:center;
+			font-weight:bold;
+			width:56px;
+		}
+		
+		.formsHeader {
+			background-color:#636563;
+			margin-bottom:5px;
+			font-weight:bold;
+			font-size:16px;
+			width:495px;
+			padding:7px;
+			color: #FFFFFF;
+		}
+		
+		.inputInfo {
+			color:#676667;
+			font-weight:bold;
+		}
+								
+	</style>	
+
+	<div class="forms__Overlay" id="NewTopicForm" style="visibility:hidden;">
+		<div class="formsHeader">
+			<table border="0" style="width:100%">
+				<tr>
+					<td style="color:#FFFFFF">Create New Topic</td>
+					<td align="right"><img style="cursor:pointer;vertical-align:center;" src="{!URLFOR($Resource.AnnoucementResourceFiles, 'images/announcement_overview/close.gif')}" onclick="CancelNewThread(); Effect.Fade('NewTopicForm');" /></td>
+				</tr>
+			</table>
+		</div>
+		<div>
+			<form   action="/p/attach/NoteAttach" enctype="multipart/form-data" onsubmit="if (window.ffInAlert) { return false; }" name="editPage" method="post" id="editPage_NewDiscussion"  target="iframeUpload">
+				<br>
+				<div id='loader' style='display:none;width:100%;text-align:center;'>
+
+				</div>
+				<div  align="right">
+					<table border="0">
+						<tr>
+							<td style="width:4px;"><span style="display:block;width:4px; height:12px; background-color: #C0272D;"></span></td>
+							<td><span class="infoText" style="font-size:10px;"> = &nbsp;&nbsp; Required Information </span></td>
+						</tr>
+					</table>
+				</div>
+				<table border="0" style="width:95%;">
+					<tr>
+						<td style="width:85px;text-align:right;"><span class="inputInfo">Topic</span></td>
+						<td style="width:4px;"><span style="display:block;width:4px; height:21px; background-color: #C0272D;"></span></td>
+						<td><input id="threadName" type="text" style="width:98%" /></td>
+					</tr>
+					<tr>
+						<td valign="top" style=text-align:right;><span class="inputInfo">Message</span></td>
+						<td valign="top" style="width:4px;"><span style="display:block;width:4px; height:199px; background-color: #C0272D;"></span></td>
+						<td style="height:130px;">
+							<textarea id="message" style="width:98%;height:110px;"></textarea>
+							<input type="checkbox" id="emailNewDiscussion" name="email" /><span class="inputInfo">Email new team members about new discussion topic</span>
+						</td>
+					</tr>
+				</table>
+				<hr color="#999999" size="1px">
+				
+				<div style="margin-left:10px;">
+						<apex:image id="twistImageDisc" style="vertical-align:middle;" styleclass="twistImg" onclick="hideSection('{!$Component.twistImageDisc}','advOptionsDivDis')" value="{!URLFOR($Resource.AnnoucementResourceFiles, 'images/announcement_overview/arrow_up.gif')}" title="Show Section" alt="Show Section" />
+						&nbsp;<a  href="javascript:;" onclick="hideSection('{!$Component.twistImageDisc}','advOptionsDivDis')" style="text-decoration:none;"><span class="inputInfoOptions">Advanced Options...</span></a>
+					
+						<div id="advOptionsDivDis" style="display:none;margin-top:5px;">
+						
+							<input type="hidden" name="added" id="done_added_discussion" value="1" />
+							<input type="hidden" name="pid" id="done_pid_discussion" value="" />
+							<span class="inputInfo" style="margin-left:27px; margin-right:20px;margin-bottom:0px;">Add Image</span>
+							<div id="theFile_discussion" style="display:inline">
+								<input id="file_discussion" name="file" size="26" title="Type the path of the file or click the Browse button to find the file." type="file" />
+							</div>
+							
+							<br>
+							<span style="margin-left:110px;"><a id="linkAttach" class="AttachImage" href="javascript:AttachOtherFile(this, 'discussion');UPF__loader__Dis();UPF__success2__Dis();" style="font-size:11px;"><b>Attach</b></a></span>
+							
+							<span id="uploadP__discussion"></span>
+						</div>
+				</div>
+
+				<br>
+				<hr color="#999999" size="1px"> 
+				<div align="center">
+					<input class="saveBtn" type="button" value="Save" onclick="saveThread();" />
+					<input class="cancelBtn" type="button" value="Cancel" onclick="CancelNewThread(); Effect.Fade('NewTopicForm');" />
+				</div>   
+			</form>
+		</div>
+	</div>
+	
+	<script>
+	
+		var version;
+		if (navigator.appName == "Microsoft Internet Explorer") {
+			version = navigator.appVersion;
+			if (version.indexOf("MSIE 6") != -1) {
+				var overlayId = new Array();
+				document.getElementById('NewTopicForm').className = 'formsIE6__Overlay';
+				document.getElementById('NewTopicForm').style.position = 'absolute';
+			}
+		}
+		
+	</script>
+		
+</apex:page>

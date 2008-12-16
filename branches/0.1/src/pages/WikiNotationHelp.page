@@ -1,0 +1,15 @@
+<apex:page id="WikiNotationHelp" controller="WikiNotationHelpController" tabStyle="WikiPage__c" sidebar="false">	
+	
+	
+	<c:WikiNewPageWidget />
+	<a href="javascript:;" onclick="createOverlay('','AddChildForm','315','');">New Wiki page</a><br>
+	
+	<apex:outputpanel id="theFeeds">
+		<apex:repeat value="{!wikiHomes}" var="item">
+			<apex:outputtext value="{!item.id}" />
+			 - 
+			<apex:outputtext value="{!item.name}" />
+			<br>
+		</apex:repeat>
+	</apex:outputpanel>
+</apex:page>

@@ -1,0 +1,31 @@
+<apex:component >
+	<!-- CSS de TS -->
+    <apex:stylesheet value="{!URLFOR($Resource.TeamsResources, 'inc/css/commonLayout.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.TeamsResources, 'inc/css/teamDetailEdit.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.TeamsResources, 'inc/css/adminMainSetUp.css')}" />
+	
+	<div class="teamWidget mySmallWidget" >
+		<!-- Widget Title -->		
+		<div class="thinHeader">
+			<div><div><h4>Validate</h4></div></div>
+		</div>
+		<!-- Widget Container -->   		
+		<div class="box_content">
+			<div class="thinBody">
+				<div class="team_detail_commentedItemLeftProfile">					    
+				    <img class="imgSmallLeft" src="{!URLFOR($Resource.TeamsResources, '/images/layout/icons/star.gif')}"  />	
+				    <div>
+				    	<span class="text_link_underlineColorPaddRight">
+				    	  	<a href="/apex/ValidateTeamSharing">Validate {!$ObjectType.Team__c.label} Sharing</a>
+				    	</span>
+				   	</div>
+				</div>
+			</div>				
+		</div>
+		<!-- Widget Holder Foot -->
+		<div class="bottom_borders">
+			<div><div></div></div>
+		</div>
+	</div>
+	<div class="clear"></div>
+</apex:component>

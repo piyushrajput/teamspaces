@@ -1,0 +1,18 @@
+<apex:page id="TeamDetailMarkupBottom" controller="TeamsDetailController">
+	
+	<iframe name="iframeUpload" id = 'iframeUpload__Ann' style="display:none;position:absolute;"></iframe>
+	
+	<!-- End Announcement Overlay  -->
+	<apex:outputpanel rendered="{!userPermissionsWiki.canCreate}">
+		<c:WikiNewPageWidget />
+	</apex:outputpanel>
+	
+	<!-- TeamDetailMarkupBottom JS -->
+	<apex:includeScript value="{!URLFOR($Resource.TeamsResources, 'inc/js/teamDetailMarkupBottom.js')}"/>
+	
+	<script>
+		$(document).observe('dom:loaded', footerBug);
+		$(document).observe('dom:loaded', Done);
+	</script>
+
+</apex:page>

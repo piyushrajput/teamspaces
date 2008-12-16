@@ -1,0 +1,61 @@
+<apex:component controller="SearchController">
+	<script>
+		/**
+		* Change input value
+		*@param String action
+		*/
+		function changeInputValue(action){
+			if(action == 'focus' && keyImput.value == "{!defaultText}"){
+				keyImput.value = '';
+			}else if(action == 'blur' && keyImput.value == '') {
+				keyImput.value = "{!defaultText}";
+			}
+		}
+		
+		document.observe('dom:loaded',bindText); 
+		
+		function bindText(){
+			$$('.key_imput')[0].observe('keypress',function(e){
+				if(e.keyCode == '13'){
+    				alert('getHere');
+    				serch();
+				}
+			});
+		}
+		
+		function validateSearchLenght(){
+			if($$('.key_imput')[0].value.length < 2){
+				alert('Please enter a valid value.');
+				return false;
+			}
+			return true;
+		}	
+	</script>
+	
+	<apex:form >
+		<apex:actionFunction name="serch" action="{!searchKey}" />
+	</apex:form>
+	<apex:attribute name="module" description="Type of search" type="String" required="true" assignTo="{!module}" />	
+	<apex:attribute name="teamId" description="Id for team detail search" type="String" required="false" assignTo="{!teamId}" />
+	<div class="searchBox">
+		<div>
+			<div>
+				<div class="center_gray">
+					<apex:form onsubmit="if(!validateSearchLenght()) return false;">
+						<div class="search_box_input f_left">
+							<div class="legend_portal">
+								<span><img class="f_left" alt="" src="{!URLFOR($Resource.TeamsResources, 'images/layout/magnifier.gif')}" />Find&nbsp;{!label}</span>
+							</div>
+							<apex:inputText value="{!key}" styleClass="key_imput" onfocus="changeInputValue('focus');" onblur="changeInputValue('blur');"/>
+						</div>
+						<apex:commandButton value="Search" action="{!searchKey}" styleClass="search_btn f_left" style="background-image: none !important;" />
+					</apex:form>
+					<script>
+						var keyImput = $$('.key_imput')[0];
+						keyImput.value = "{!defaultText}";
+					</script>
+				</div>
+			</div>
+		</div>
+	</div> 
+</apex:component>

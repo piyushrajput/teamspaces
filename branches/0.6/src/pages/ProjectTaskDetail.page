@@ -1,0 +1,194 @@
+<apex:page sidebar="false" controller="ProjectTaskDetailController" tabStyle="Team__c" >
+	
+	<!-- Ajax Toolkit SDFC -->
+	<apex:includeScript value="/soap/ajax/11.1/connection.js"/>
+	
+	<!-- Prototype + Scriptaculous -->
+	<apex:includeScript value="{!URLFOR($Resource.Script_aculo_us, 'prototype.js')}"/>
+	<apex:includeScript value="{!URLFOR($Resource.Script_aculo_us, 'scriptaculous.js')}"/>
+	<apex:includeScript value="{!URLFOR($Resource.Script_aculo_us, 'effects.js')}"/>
+	<apex:includeScript value="{!URLFOR($Resource.TeamsResources, 'inc/js/common.js')}"/> 
+	<apex:stylesheet value="{!URLFOR($Resource.TeamsResources, 'inc/css/commonLayout.css')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.ProjectResources, 'inc/css/projectLayout.css')}" />	
+	<apex:stylesheet value="{!URLFOR($Resource.ProjectResources, 'inc/css/projectTaskDetail.css')}" /> 
+	<apex:stylesheet value="{!URLFOR($Resource.commonResources, 'inc/css/fonts.css')}" /> 
+	
+	<!-- Portal Support -->
+	<apex:includeScript value="{!$Resource.portalSupport}"/>
+    
+    <!-- CSS styles for Portal Integration -->
+    <apex:stylesheet value="{!URLFOR($Resource.portalStyles, 'portal.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.TeamsResources, 'inc/css/headerTeams.css')}" />
+
+	<!-- ProjectTaskDetail CSS --> 
+   	<apex:stylesheet value="{!URLFOR($Resource.ProjectResources, 'inc/css/projectTaskDetails.css')}" />
+	 
+	
+	<!-- ProjectTaskDetail JS -->
+	<apex:includeScript value="{!URLFOR($Resource.ProjectResources, 'inc/js/projectTaskDetail.js')}" />
+  	
+ 	
+ 	<script>
+ 	
+ 		document.observe("dom:loaded", documentLoad);
+ 		var currentTeam = '{!Task.TeamId}';	
+ 		
+ 	</script>
+
+ 	<style>
+		.btn{
+			display:none
+		}
+
+  	</style>
+  
+
+	<div class="confirmation" id="confirmation" style="display:none;">
+   		This task has been marked complete
+    </div>
+	<!-- Delete Task Overlay -->
+	<c:ProjectDeleteTaskOverlay />
+	<!-- Header -->
+	<apex:composition template="HeaderTemplate">
+		<apex:define name="moduleId"><apex:variable var="moduleId" value="headerProject"/></apex:define>
+	    <apex:define name="module">{!$ObjectType.Team__c.label}</apex:define>
+	    <apex:define name="title">Tasks</apex:define>
+	    <apex:define name="search">
+	    	<c:Search module="team" />
+	    </apex:define>
+    </apex:composition>
+	
+    <!-- Main Content Div -->
+    <div class="main_content_projectList"> 
+    	<!-- BreadCrumb and buttons -->     
+        <div align="center" class="breadCrumbAndButtons">
+		<div class="breadCrumbs">
+			<a  href="/apex/TeamsRedirect?id={!Task.TeamId}">{!Task.TeamName} Home</a> > <a  href="/apex/projectTasklist?id={!Task.TeamId}">Tasks</a> > {!Task.Name}
+		</div>
+        <div class="buttons" style="{!IF(Task.IsTaskOwner,'width:262px;','')}">
+			<apex:outputpanel rendered="{!OR(userPermissions.canManage,Task.IsTaskOwner)}" layout="block">
+	        	<a class="blackbutton" href="TeamsCreateNewTask?id={!Task.TeamId}&task={!Task.id}"><span>Edit Task</span></a>
+	        	<apex:form id="quickMilestoneForm" styleclass="quickMilestoneForm" onsubmit="if(isCompleted){alert('The task percent is already completed.');return false}"  >	
+					<apex:actionStatus id="taskStatus">
+						<apex:facet name="start">
+							<a class="blackbutton" href="Javascript:;" >
+					        	<span>Mark Complete...</span>
+					        </a>
+						</apex:facet>
+	                	<apex:facet name="stop">	
+	                		<apex:outputPanel id="TaskPanel">		
+								<apex:commandLink action="{!markComplete}" 										 										
+									rerender="TaskPanel"
+									status="taskStatus"
+									styleClass="blackbutton completeButton" 
+									oncomplete="completed();">
+									<span>Mark Complete</span>
+								</apex:commandLink>
+							</apex:outputPanel>
+						</apex:facet>
+					</apex:actionStatus>
+				</apex:form>		        	
+		        <a class="blackbutton" href="Javascript:;" onclick="showDeleteEvent('{!Task.id}', true, {!Task.Milestone});">
+		        	<span>Delete</span>
+		        </a>		        	
+	        </apex:outputpanel>
+          </div>
+        </div>       
+        <!-- Holder -->      
+        <div class="holder" style="overflow:hidden;clear:both;">
+        	<apex:outputpanel rendered="{!IF(!detailsOk,true,false)}"  layout="block">
+        		<p>No Id given , no id to look for</p>
+        	</apex:outputpanel>
+			<apex:outputpanel styleClass="projectTaskDetail" rendered="{!detailsOk}" layout="block" style="overflow:hidden;position:relative;clear:both;" >
+				<apex:detail relatedList="false"  title="false">			
+				</apex:detail>
+				<div class="bPageBlock">
+					<table class="detailList">
+						<tbody>
+							<tr>
+								<td class="labelCol">
+									Status
+								</td>
+								<td class="dataCol">
+									<span class="taskStatus" style="display:none;" id="">In Progress</span>
+									<span class="taskPercent" id="completedPercentNumber">{!Task.PercentCompleted}%</span>
+									<div class="proj_percent_complete_outline" id="completedTrack">
+				                    	<div class="proj_percent_complete_value" style="width: {!Task.PercentCompleted}%;" id="completedPercent"></div>
+				                    	<script>var isCompleted = {!IF(Task.PercentCompleted == 100, true, false)};</script>
+				                	</div>
+								</td>
+								<td class="labelCol">
+									Parent Task
+								</td>
+								<td class="dataCol">
+									<span class="textDisabled" >
+										{!IF((Task.ParentTaskName == ''),'none','')}
+									</span>
+										{!Task.ParentTaskName}
+								</td>			
+							</tr>			 
+							<tr >
+								<td class="labelCol vTop">Files</td>
+								<td class="dataCol">
+									<apex:repeat value="{!Task.Files}" var="item" >
+											<img style="vertical-align:bottom;" src="{!URLFOR($Resource.FileTypeIcons, item.attachImage)}"/> &nbsp;
+											<a href="javascript:;" onclick="window.open('/servlet/servlet.FileDownload?file={!item.Id}')" >{!item.Name}</a><br>
+									</apex:repeat>							
+								</td>			
+							</tr>
+							<tr>
+								<td class="labelCol vTop">
+		                              Assigned To
+		                      	</td>
+		                      <td class="dataCol">
+		                          <apex:outputpanel rendered="{!Task.HasAsignee}" >
+		                              <table class="assignedToTable">
+		                                  <apex:repeat value="{!Task.Asignee}" var="item">
+		                                      <tr>
+		                                          <td><a href="PeopleProfileDisplay?id={!item.Id}">{!item.Name}</a></td>
+		                                          <td class="percent">{!item.percent}%</td>
+		                                      </tr>                                     </apex:repeat>
+		                              </table>
+		                          </apex:outputpanel>
+		                          <apex:outputpanel rendered="{!IF(!Task.HasAsignee,true,false)}" >
+		                              Nobody Asigned to this task.
+		                          </apex:outputpanel>
+		                      </td>
+		                   </tr>
+						</tbody>					
+					</table>
+				</div><br style="clear:both;" />				
+			</apex:outputpanel><br style="clear:both;" />
+		</div>
+        <div align="center" class="breadCrumbAndButtons">
+        	<div class="buttons" style="{!IF(Task.IsTaskOwner,'width:262px;','')}">
+	        	<apex:outputpanel rendered="{!OR(userPermissions.canManage,Task.IsTaskOwner)}" layout="block">
+		        	<a class="blackbutton" href="TeamsCreateNewTask?id={!Task.TeamId}&task={!Task.id}"><span>Edit Task</span></a>
+			        <apex:form id="quickMilestoneForm2" styleclass="quickMilestoneForm" onsubmit="if(isCompleted){alert('The task percent is already completed.');return false}" >	
+						<apex:actionStatus id="taskStatus2">
+							<apex:facet name="start">
+								<a class="blackbutton" href="Javascript:;" ><span>Mark Complete...</span></a>
+							</apex:facet>
+		                	<apex:facet name="stop">	
+		                		<apex:outputPanel id="TaskPanel2">		
+									<apex:commandLink action="{!markComplete}" 										 										
+										rerender="TaskPanel2"
+										status="taskStatus2"
+										styleClass="blackbutton completeButton" 
+										oncomplete="completed();">
+										<span>Mark Complete</span>
+									</apex:commandLink>
+								</apex:outputPanel>
+							</apex:facet>
+						</apex:actionStatus>
+					</apex:form>		   
+			       	<a class="blackbutton" href="Javascript:;" onclick="showDeleteEvent('{!Task.id}', false, {!Task.Milestone});"><span>Delete</span></a>		     
+		    	</apex:outputpanel>
+        	</div>
+        </div>      		
+	</div>   
+	<script>
+		readPortalCSSRules();
+		clearTableDetail();
+	</script>
+</apex:page>

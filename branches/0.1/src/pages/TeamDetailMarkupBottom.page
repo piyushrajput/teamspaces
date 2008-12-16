@@ -1,0 +1,12 @@
+<apex:page id="TeamDetailMarkupBottom" controller="TeamsDetailController">
+</div>
+	 <iframe name="iframeUpload" id = 'iframeUpload__Ann' style="display:none;position:absolute;"></iframe>
+	<!-- End Announcement Overlay  -->
+	<script>
+		if (Prototype.Browser.IE){
+			resizeAnnouncements();
+		}
+	</script>
+	<c:WikiNewPageWidget />
+	
+</apex:page>

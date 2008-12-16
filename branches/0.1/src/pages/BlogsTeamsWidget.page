@@ -1,0 +1,35 @@
+<apex:page sidebar="false" controller="BlogsOverviewController" tabStyle="BlogEntry__c">
+		<apex:stylesheet value="{!URLFOR($Resource.BookmarkResources, 'inc/css/commonLayout.css')}" />
+		<apex:stylesheet value="{!URLFOR($Resource.BookmarkResources, 'inc/css/bookmarkOverview.css')}" />
+		
+		<div class="box_round_orange">
+				<div class="header"  >
+					<div>
+					  <div  style="padding-top:10px; ">
+							<h3 >Teams</h3>			
+					  </div>
+					</div>
+				</div>			
+			<!-- Rounded Box Content -->
+			<div class="box_content">
+				<table class="tableInfo" cellspacing="0" cellpadding="0" width="97%" style="margin:0px 3px 3px 3px; ">
+					<thead>
+						<tr>
+							<th width="98%"><a href="javascript:;" class="seeMore" style="color:#9D9D9D" >See More&#187;</a></th>
+						</tr>
+					</thead>
+					<apex:repeat value="{!MyTeamsWidget}" var="team">	
+						<tr>
+							<td>
+								<ul class="archives teamsList">
+									<li style="list-style-type:disc"><a href="javascript:;" class="">{!team.Name}</a></li>
+								</ul>	
+							</td>
+						</tr>
+					</apex:repeat>
+				</table>
+				</div>
+				<div class="bottom_borders"><div><div></div></div></div>
+			</div> 
+			
+</apex:page>

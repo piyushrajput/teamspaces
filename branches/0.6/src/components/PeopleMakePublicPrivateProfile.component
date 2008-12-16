@@ -1,0 +1,40 @@
+<apex:component allowDML="true" controller="PeopleMakePublicPrivateProfileController" >
+	
+	<!-- Styles of component-->
+	<apex:stylesheet value="{!URLFOR($Resource.PeopleResource, 'inc/css/PeopleMakePublicPrivateProfile.css')}" />
+	
+	<!-- Fixed Styles of component -->
+	<style>
+		.compView a.private {
+			background: url({!URLFOR($Resource.PeopleResource, 'images/people_profile/icons/lock.png')}) no-repeat left center;
+		}
+		
+		.compView a.public {
+			background: url({!URLFOR($Resource.PeopleResource, 'images/people_profile/icons/lock_open.png')}) no-repeat left center;
+		}
+		
+		.loaderStatus {
+			background: url({!URLFOR($Resource.PeopleResource, 'images/people_profile/icons/load.gif')}) no-repeat left center;
+		}
+	</style>
+
+
+	 
+	<apex:outputpanel layout="block" styleClass="compView">
+		<apex:form >
+			<apex:actionStatus id="profileStatus">
+				<apex:facet name="start"><apex:outputText styleClass="loaderStatus" value="Updating Profile..." /></apex:facet>
+                <apex:facet name="stop">
+	                <apex:outputPanel id="panelLinkProfile">
+	                	<apex:commandLink action="{!updateProfile}"
+	                		styleClass="{!IF(isPrivate ,'public','private')}"
+							rerender="panelLinkProfile"
+							status="profileStatus"
+							value="{!IF(isPrivate ,'Make Profile Public','Make Profile Private')}" >
+						</apex:commandLink>
+	                </apex:outputPanel>
+                </apex:facet>
+	        </apex:actionStatus>
+		</apex:form>
+	</apex:outputpanel>	
+</apex:component>

@@ -1,0 +1,472 @@
+<?xml version = "1.0" encoding = "utf-8"?>
+<mx:Panel xmlns:mx = "http://www.adobe.com/2006/mxml" styleName="panelResource" 
+	width="470" height="400" dropShadowEnabled="false"
+	mouseOver="parentDocument.barChart.defaultCursor()"	>
+<mx:Script>
+	<![CDATA[
+	
+	import flash.sampler.getInvocationCount;
+	import mx.controls.Alert;
+	import mx.events.CloseEvent;
+	import com.salesforce.gantt.controller.Constants;
+	import com.salesforce.gantt.model.TaskResource;
+	import com.salesforce.gantt.controller.Components;
+	import com.salesforce.gantt.model.UiTask;
+	import flash.events.Event;
+	import flash.events.EventDispatcher;
+	import mx.events.ListEvent; 
+	import mx.collections.ArrayCollection;
+	import com.salesforce.gantt.model.Resource;
+	import com.salesforce.gantt.controller.Tasks;
+	import com.salesforce.gantt.model.Task;
+	
+	
+	[Bindable]
+	public var selectedTask : UiTask;
+	
+	[Bindable]
+ 	public var tempTaskResources : ArrayCollection = new ArrayCollection(); 
+ 	
+ 	[Bindable]
+ 	public var availableResources : ArrayCollection = new ArrayCollection();
+ 	
+ 	
+ 	/**
+ 	* Clone the task resources to a temp array
+ 	* And build all the variables
+ 	*/
+ 	
+ 	public var selectedResources : ArrayCollection = new ArrayCollection();
+ 	 	
+ 	public function buildTempResources() : void { 		
+ 		
+ 		// build a temp array of resources during the edition of the task
+ 		var tempAvailableResources : ArrayCollection = new ArrayCollection (); 		
+ 		tempAvailableResources = Components.instance.resources.getAvailabreResources(Task(selectedTask));
+ 		
+ 		var currentTaskResources = selectedTask.taskResources;
+ 		
+ 		//availableResources.removeAll();
+ 		availableResources.removeAll(); 		
+	    selectedResources.removeAll();
+	    
+	    for (var i : int = 0;i < tempAvailableResources.length; i=i+1 )
+	    {	             	
+	    	var data = tempAvailableResources[i];
+	    	var isNotAvailable = 0;
+	    	// Check if the resources are in use 		 	
+ 		 	for(var ind : int = 0;ind < currentTaskResources.length; ind= ind +1 ){
+ 		 		if(currentTaskResources[ind].resource == data.name){
+ 		 				isNotAvailable = isNotAvailable + 1;
+ 		 		}	 	
+ 		 	}  
+ 		 	if(isNotAvailable > 0){
+ 		 		trace('This resource is selected: '+ data.name);
+ 		 		selectedResources.addItem({id:data.id}); 
+ 		 	}			             	
+     	}
+     	
+     	// Add the available resources
+     	 for (var i : int = 0;i < tempAvailableResources.length; i=i+1 )
+	    {	   
+	    	var data = tempAvailableResources[i];          	
+	    	availableResources.addItem({label:data.name ,data:data.id});   
+	    }
+	    
+ 		tempTaskResources.removeAll(); 		
+ 				
+ 		for (var i : int = 0;i < currentTaskResources.length; i=i+1 ){
+ 		 	tempTaskResources.addItem({
+ 		 			resource: currentTaskResources[i].resource ,
+ 		 			dedicated: currentTaskResources[i].dedicated.toString(),
+ 		 			index: i
+ 		 	});
+ 		 }
+ 		 
+ 		 //tempTaskResources.refresh();
+ 		 
+ 		 gridTaskResource.dataProvider = tempTaskResources;
+ 		 
+ 		 trace('This are the selected tempTaskResources: '+ tempTaskResources);
+ 		 
+ 	}
+
+	/**
+	* Initialization Methods
+	*/
+	public function initializeArrays () : void {				
+		tempTaskResources  = new ArrayCollection();
+		availableResources  = new ArrayCollection();
+		percentCollection = new ArrayCollection();		
+	}
+	
+	public function refreshData () : void {	
+				
+		tempTaskResources.refresh();
+		availableResources.refresh();
+	}	
+		
+	/**
+	* Array col that have the 1 to 100 ints	
+	*/	
+    import mx.collections.ArrayCollection;
+
+    [Bindable]
+    public var percentCollection = new ArrayCollection();
+
+ 	public function fillPercentArray(): void 
+ 	{
+ 		
+ 		if(percentCollection.length < 100){
+ 			percentCollection.removeAllChildren();
+		     for (var i : int = 0;i < 101; i=i+5 ){	             	
+	     			percentCollection.addItem({label:i+' %',data:i});	             	
+	     		}				     	
+     	}
+ 	}
+ 	
+ 	 
+ 	 /**
+ 	 *	Rebuild the task assignee list only
+ 	 */
+ 	 public function rebuildAssignees() : void
+ 	 {
+ 	 	//selectedTask.taskResources.removeAll(); 	 	
+ 	 	//Components.instance.salesforceService.taskResourceOperation.loadTasksResources();
+ 	 	
+ 	 	var currentTaskResources = selectedTask.taskResources;
+ 		
+ 		tempTaskResources = new ArrayCollection();
+ 		
+ 		 for (var i : int = 0;i < currentTaskResources.length; i=i+1 ){ 		 	
+ 		 	tempTaskResources.addItem({
+ 		 			resource: currentTaskResources[i].resource ,
+ 		 			dedicated: currentTaskResources[i].dedicated,
+ 		 			index: i
+ 		 	}); 		 	 		 	
+ 		 } 		 
+ 		 gridTaskResource.dataProvider = tempTaskResources;
+ 	 }
+ 	 
+ 	/**
+ 	* Add another row to the Datagrid.
+ 	*/
+ 	public function addTempResourceToGrid():void 
+ 	{
+ 		var index: int = tempTaskResources.length;
+ 		var res : Resource = new Resource('Choose a team member...'); 			
+ 		 		
+ 		tempTaskResources.addItem({
+ 		 			resource: res,
+ 		 			dedicated: 0,
+ 		 			index: index
+ 		 	});		 		
+ 		 		
+ 		refreshDatagridIndex();		
+ 	}
+ 	
+
+		
+	/**
+	 * Delete a task resource ROW at the datagrid.
+	 */
+	public function deleteTaskResource(index : int, resourceId : String) : void
+	{
+		if(tempTaskResources.length == 1){
+			Alert.show('You cannot remove all resources!');
+		} else {
+			tempTaskResources.removeItemAt(index);
+			//rebuildAvailableAssignees(tempTaskResources[index].resource.id, 'delete');
+			
+			for (var i : int = 0;i < selectedResources.length; i=i+1 ){
+ 				if(selectedResources[i].id == resourceId){ selectedResources.removeItemAt(i);	}
+	 		}
+			
+			refreshDatagridIndex();
+		}		
+	}
+	
+	/**
+	* refresh the index control of the datagrid
+	*/
+	
+	public function refreshDatagridIndex () : void 
+	{
+		 for (var i : int = 0;i < tempTaskResources.length; i=i+1 ){ 	
+		 	tempTaskResources[i].index = i;
+		 }
+	}	
+	
+	/**
+	* Llamada por evento change de la caja de texto dedicated
+	* Utilizada para validar que se edite solo si camio el dato
+	*
+	* @param data  Indica el dato que habia anteriormente
+	* @param event Indica el nuevo dato
+	* (!!!OLD!!!)
+	*/
+	public function updateDedicated(dedicated : int, data : Object) : void
+	{
+		if(selectedTask.id != '')
+		{
+			if(data.dedicated != dedicated)
+			{
+				var taskResource : TaskResource = new TaskResource(data.id);
+				taskResource.dedicated = dedicated;
+				Components.instance.controller.updateTaskResource(taskResource);
+				parentDocument.taskList.filter();
+			}
+		}
+		gridTaskResource.setFocus();
+	}
+	
+ 	/**
+ 	* Add the selected resource to the temp array and delete from the available resources list
+ 	*/
+ 	public function setTempResource(resourceIndex: int , resourceId: String, combo :  Event) : void 
+ 	{
+ 		var alreadySet: int = 0;
+	 	
+	 	for (var i : int = 0;i < selectedResources.length; i=i+1 ){
+ 			if(selectedResources[i].id == resourceId){ alreadySet = alreadySet + 1;	}
+	 	}
+ 			
+ 		if(alreadySet > 0){
+ 			Alert.show('Please select another resource.'); 			
+ 			combo.target.text = 'Choose a team member...';
+ 		} else { 			
+ 			var resourceAvailable  = Components.instance.resources.getResource(resourceId);
+	 		tempTaskResources[resourceIndex].resource = resourceAvailable; 			
+	 		tempTaskResources[resourceIndex].index = resourceIndex;
+	 		selectedResources.addItem({id: resourceId});
+ 		}
+	 	 	
+	 	// Remove from available resources :
+	 	// rebuildAvailableAssignees(resourceId, 'set');
+ 	}
+ 	
+ 	/**
+ 	* Set the Dedicated percent of the selected resource at the temp array
+ 	*/ 	
+ 	public function setTempDedicated(resourceIndex: int, dedicatedPercent: int)
+ 	{
+ 		tempTaskResources[resourceIndex].dedicated =  dedicatedPercent;
+ 	}
+ 		
+ 	/**
+ 	* Save the task resources
+ 	* This method remove all resources and add the new ones
+ 	*/
+ 	public function saveTaskResources() : void 
+ 	{
+ 		// Current Task Resources
+ 		var currentResources = selectedTask.taskResources;
+ 		// New Task Resources 
+ 		var  newTaskResources : ArrayCollection = new ArrayCollection();
+ 		// Updated Task Resources
+ 		var updatedTaskResources : ArrayCollection = new ArrayCollection();
+ 		// Deleted Task Resources
+ 		var deletedTaskResources : ArrayCollection = new ArrayCollection();
+ 		 		
+ 		// Build the first list of task resources
+ 		for (var i : int = 0;i < tempTaskResources.length; i=i+1 ){ 
+ 			if(tempTaskResources[i].resource == 'Choose a team member...'){
+ 				tempTaskResources.removeItemAt(i);
+ 			} else {
+	 		 	var taskResourceItem : TaskResource = new TaskResource();
+	 		 	taskResourceItem.dedicated = tempTaskResources[i].dedicated;
+	 		 	taskResourceItem.resource =  tempTaskResources[i].resource;
+				newTaskResources.addItem(taskResourceItem);
+			}				 	
+ 		 }	
+ 	 		
+ 		// Look for updated task resources or deleted
+ 		for (var i : int = 0;i < currentResources.length; i=i+1){
+ 			var taskResourceExistent : TaskResource = currentResources[i]; 			
+ 			var updateCount = 0;
+ 			// Check if that resource already exists 
+ 			for (var ind : int = 0;ind < newTaskResources.length; ind=ind+1 ){
+ 				if(newTaskResources[ind].resource.id == taskResourceExistent.resource.id){
+ 					// If the percent has changed, ad it to the updated array, if not , remove it from the newtask array and keep rolling.
+ 					if(newTaskResources[ind].dedicated != taskResourceExistent.dedicated){
+ 						var tru : TaskResource = new TaskResource(taskResourceExistent.id,taskResourceExistent.resource,newTaskResources[ind].dedicated);
+ 						updatedTaskResources.addItem(tru);
+ 					} 					
+ 					newTaskResources.removeItemAt(ind);
+ 					updateCount = updateCount + 1;
+ 				} 
+ 			}
+ 			// If the resource does not exist and does not have to be updated, delete it.
+ 			if(updateCount == 0){
+ 				deletedTaskResources.addItem(taskResourceExistent);
+ 			} 			 			 	
+ 		} 		 		
+ 		
+		
+ 		// Delete the removed resources
+ 		if(deletedTaskResources.length > 0){
+	 		for (var i : int = 0;i < deletedTaskResources.length; i=i+1){
+	 		 	 Components.instance.controller.deleteTaskResource(deletedTaskResources[i]);
+	 		 }	
+ 		}
+ 		 
+ 		// Update the existing resources
+ 		if(updatedTaskResources.length > 0){
+	 		for (var i : int = 0;i < updatedTaskResources.length; i=i+1){
+	 		 	Components.instance.controller.updateTaskResource(updatedTaskResources[i]);
+	 		 }	
+ 		}
+ 		 
+ 		 // Add  the new  resources
+ 		 if(newTaskResources.length > 0){ 	
+	 		 Components.instance.controller.addTaskResource(newTaskResources);	
+ 		 }
+ 		 
+ 		 tempTaskResources.removeAll();
+ 		 tempTaskResources = new ArrayCollection();
+ 		 
+ 		 dispatchEvent(new Event(Constants.TASKS_FILTERS));
+ 		 
+ 		parentDocument.closeEditTaskOverlay(); 		 		
+ 	}
+ 	
+ 
+ 	
+	]]>
+</mx:Script>
+<mx:Style source="css/TaskResources.css"/>
+<mx:VBox height="225" width="470" horizontalScrollPolicy="off" verticalScrollPolicy="off">
+	<mx:Grid width="460" paddingTop="20" paddingLeft="40" horizontalScrollPolicy="off" verticalScrollPolicy="off">
+		<mx:GridRow>
+			<mx:GridItem width="180">
+				<mx:Label text="Assignee" styleName="gridheadersTaskResources" />
+			</mx:GridItem>
+			<mx:GridItem width="80">
+				<mx:Label text="% Dedicated"  styleName="gridheadersTaskResources" />
+			</mx:GridItem>
+			<mx:GridItem width="40">			
+			</mx:GridItem>
+		</mx:GridRow>
+	</mx:Grid>
+	<mx:HBox paddingLeft="40" width="470" horizontalScrollPolicy="off" verticalScrollPolicy="off" height="205">
+		<mx:DataGrid styleName="dataGridResources"				
+				id="gridTaskResource"			
+				dataProvider="{tempTaskResources}"
+				width="400" 
+				rowHeight = "25" variableRowHeight = "false" 
+				selectionColor="white"			
+				rollOverColor="white"
+				height="175"
+				sortableColumns = "false"
+				verticalScrollPolicy="auto"			
+				headerHeight="0">	
+			<mx:columns>	   
+			    <mx:DataGridColumn id="gridColumnTaskResourceName" headerText=""  width="180">
+			      <mx:itemRenderer >
+			            <mx:Component>
+				            <mx:HBox horizontalScrollPolicy = "off" horizontalAlign="left" height="25">
+				            	<mx:ComboBox 
+									dataProvider="{outerDocument.availableResources}"
+									text="{data.resource.name}"						
+									width="190"	  
+							 		color="#000000"
+							 		borderColor="#CBCBCB"
+							 		iconColor="#CBCBCB" 
+			 						themeColor="#FFFFFF"
+			 						fillColors="false"		 						
+			  						fillAlphas="false"
+			  						opaqueBackground="0xFFFFFF"
+							 		height="20"
+							 		selectionColor="0xFFFFFF"
+							    	rollOverColor="0xF9F8CD"
+							 		cornerRadius="0" 
+							 		focusRoundedCorners="0"						 							 		
+							 		change="outerDocument.setTempResource(data.index, event.target.selectedItem.data, event);"	/>						 	
+							 </mx:HBox>
+			          	</mx:Component>
+		          </mx:itemRenderer>
+		        </mx:DataGridColumn>
+			    <mx:DataGridColumn id="gridColumnTaskResourceDedicated" headerText=""  width="80">
+			        <mx:itemRenderer >
+			            <mx:Component>
+				            <mx:HBox horizontalScrollPolicy = "off" horizontalAlign="left" height="25">
+				            	<mx:ComboBox
+									dataProvider="{outerDocument.percentCollection}"						 		
+							 		id="numericStepperDedicated" 				
+							 		text="{data.dedicated} %"
+							 		width="64"	 
+							 		color="#000000"
+							 		height="20"
+							 		selectionColor="0xFFFFFF"
+							    	rollOverColor="0xF9F8CD"
+							 		cornerRadius="0" 
+							 		focusRoundedCorners="0" 	
+							 		change="outerDocument.setTempDedicated(data.index, event.target.selectedItem.data);"
+							 		downSkin="@Embed(source='imgs/drop_down_skin.png')" 
+							 		skin="@Embed(source='imgs/drop_down_skin.png')"/>
+							</mx:HBox>		
+			            </mx:Component>	
+			        </mx:itemRenderer>
+		        </mx:DataGridColumn>
+		         <mx:DataGridColumn  id="gridColumnTaskResourceDelete" width="40">
+			        <mx:itemRenderer>
+			            <mx:Component>
+				            <mx:HBox horizontalScrollPolicy = "off" styleName="HBoxItemRenderer"  >
+				            	<mx:Image click="outerDocument.deleteTaskResource(data.index,data.resource.id)" source="@Embed(source='imgs/delete_icon.png')" 
+				            		useHandCursor="true" buttonMode="true" />			           			            		 	
+				            </mx:HBox>
+			            </mx:Component>
+			        </mx:itemRenderer>
+		        </mx:DataGridColumn> 
+		    </mx:columns>
+		</mx:DataGrid>
+	</mx:HBox>	
+</mx:VBox>
+<mx:VBox height="20" width="470">
+	<mx:Grid horizontalGap="0">
+		<mx:GridRow>
+			<mx:GridItem paddingLeft="10" paddingTop="3">
+				<mx:Image 
+					id="addAssignee_icon" 
+				 	source="@Embed(source='imgs/add_assignee_icon.png')"  
+				 	useHandCursor="true" buttonMode="true" mouseChildren="false"	/>			
+			</mx:GridItem>
+			<mx:GridItem paddingTop="3">
+				<mx:Label 
+					text="Add Another Assignee"
+					textDecoration="underline"
+					click="addTempResourceToGrid();"
+					fontSize="11"/>
+			</mx:GridItem>
+		</mx:GridRow>
+	</mx:Grid>
+</mx:VBox>
+<!-- 
+	Save and Cancel buttons
+-->
+<mx:VBox height="50" width="470">
+	<mx:Canvas 
+		top="5"
+		width="470"
+		horizontalScrollPolicy="off" verticalScrollPolicy="off">
+		<mx:VBox width="470" height="1" paddingBottom="5">
+			<mx:Image source="@Embed(source='imgs/line_hr.png')" />	
+		</mx:VBox>		
+		<mx:VBox horizontalAlign="center" width="100%">
+			<mx:Grid verticalGap="5">
+				<mx:GridRow>
+					<mx:GridItem height="9" verticalAlign="middle" horizontalAlign="center" colSpan="2"></mx:GridItem>
+				</mx:GridRow>
+				<mx:GridRow>
+					<mx:GridItem backgroundColor="0x7D8DA2" width="65" height="27" verticalAlign="middle" horizontalAlign="center">
+						<mx:Label id="saveBtn" click="parentDocument.SaveTask()" 	useHandCursor="true"  buttonMode="true"  mouseChildren="false" text="Save" color="white" fontSize="12" fontWeight="bold"  fontFamily="Arial"/>						
+					</mx:GridItem>
+					<mx:GridItem backgroundColor="0x999999"  width="55" height="27" verticalAlign="middle" horizontalAlign="center">
+						<mx:Label id="cancelBtn" click="parentDocument.closeEditTaskOverlay();" useHandCursor="true" buttonMode="true"  mouseChildren="false"  text="Cancel" color="white" fontSize="12" fontWeight="bold"  fontFamily="Arial"/>
+					</mx:GridItem>
+				</mx:GridRow>
+			</mx:Grid>
+		</mx:VBox>	
+	</mx:Canvas>
+</mx:VBox>	
+</mx:Panel>

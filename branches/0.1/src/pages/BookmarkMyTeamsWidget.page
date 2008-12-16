@@ -1,0 +1,48 @@
+<apex:page sidebar="false" controller="BookmarkOverviewController">
+	<!-- <div id="myTeamsDiv" class="rightSideBar">
+		<div class="box_round">
+			<div class="top_borders"><div><div></div></div></div>
+			<div class="box_content">
+				<div class="contentHolder">
+					<div class="contentHolderHeader">My Teams</div>		
+					<ul class="teams teamsList">
+						<apex:repeat value="{!teams}" var="team">
+							<li><a href="/apex/BookmarkTeamOverview?id={!team.Team__c}" class=""><apex:outputText value="{!team.Team__r.Name}"/></a></li>
+						</apex:repeat>
+					</ul>
+				</div>
+				<div class="bottom_borders"><div><div></div></div></div>
+			</div> 
+		</div>						
+	</div>
+	-->
+	
+	<div class="box_round">
+		<!-- Header -->
+		<div class="header edition">
+			<div><div><h4>My Teams</h4></div></div>
+		</div>
+		<!-- Rounded Box Content -->
+		<div class="box_content">
+			<div class="table_conteiner">
+				<table class="tableInfo" cellspacing="0" cellpadding="0" width="100%">
+					<thead>
+						<tr>
+							<th width="100%"><a href="javascript:;" class="seeMore" style="color:#9D9D9D" >See More&#187;</a></th>
+						</tr>
+					</thead>
+					<apex:repeat value="{!teams}" var="team">
+						<tr>
+							<td>
+								<ul class="teams teamsList">
+									<li><a href="/apex/BookmarkTeamOverview?id={!team.Team__c}" class=""><apex:outputText value="{!team.Team__r.Name}"/></a></li>
+								</ul>	
+							</td>
+						</tr>	
+					</apex:repeat>	
+				</table>
+			</div>
+		</div>
+		<div class="bottom_borders"><div><div></div></div></div>
+	</div>	
+</apex:page>

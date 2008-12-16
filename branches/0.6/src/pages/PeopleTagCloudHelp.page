@@ -1,0 +1,75 @@
+<apex:page sidebar="false" showHeader="false">
+<!-- 
+<style>
+	div.title h4{
+		color:#3A4972;
+		border-bottom:1px solid #CBCBCB;
+		font-family:'Arial','Helvetica',sans-serif;
+		font-size:20px;
+		font-weight:bold;
+		margin-top:15px;
+	}
+	div.content{
+		border: 1px solid #CACACA;
+		background: #F8F8F7;
+		padding:5px;
+	}
+	
+	
+	div.content p{
+		color:#555555;
+		font-family:'Trebuchet','Helvetica',sans-serif;
+		font-size: 75%;
+	}
+	div.content h5{
+		color:#3A4972;
+		border-bottom:1px solid #CBCBCB;
+		font-family:'Arial','Helvetica',sans-serif;
+		font-size:14px;
+		font-weight:bold;
+		margin-top:1px;
+	
+	}
+	div.footer{
+		text-align:right;
+	}
+	div.footer a{
+		color:#6E7D88;
+		font-size:14px;
+		font-weight:bold;
+		text-decoration:underline;
+	}
+	body{
+		margin: 40px;	
+	}
+</style>
+ -->
+	<!-- PeopleTagCloudHelp CSS -->
+    <apex:stylesheet value="{!URLFOR($Resource.PeopleResourceFiles, 'inc/css/peopleTagCloudHelp.css')}"/>
+    
+    
+	<div  class="title">
+		<h4>Tag Cloud Help Content</h4>
+	</div> 
+	<div class="content">
+		<p>A tag cloud or word cloud (or weighted list in visual design) is a visual depiction of user-generated tags, 
+		   or simply the word content of a site, used typically to describe the content of web sites. 
+		   Tags are usually single words and are typically listed alphabetically, and the importance of a tag is shown with font size or color. 
+		   Thus both finding a tag by alphabet and by popularity is possible. The tags are usually hyperlinks that lead to a collection of items 
+		   that are associated with a tag.
+		</p>
+	</div>
+	<br />
+	<div class="content">
+		<h5>Definition</h5>
+		<p>A tag cloud is a set of related tags with corresponding weights. Typical tag clouds have between 30 and 150 tags. 
+		The weights are represented using font sizes or other visual clues. Meanwhile, histograms or pie charts are most commonly 
+		used to represent approximately a dozen different weights. Hence, tag clouds can represent many more weights, though less accurately so. 
+		Also, frequently, tag clouds are interactive: tags are hyperlinks typically allowing the user to drill down on the data.
+		</p>
+	</div>
+	<br />
+	<div class="footer">
+		<a href="javascript:;" onclick="window.close();">Close Help Window</a>
+	</div>
+</apex:page>

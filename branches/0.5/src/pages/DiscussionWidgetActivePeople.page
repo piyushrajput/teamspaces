@@ -1,0 +1,108 @@
+<apex:page controller="DiscussionWidgetActivePeopleController">
+	<style>
+	
+		div.box_round_blue.no_subtitle .content_image {
+			float: left;
+			margin-right: 3px;
+		}	
+		div.teamWidget.mySmallWidget .content_image {
+			float: left;
+			margin-right: 3px;
+		}	
+		
+		div.box_round_blue.no_subtitle .content_image img{
+			margin-top: 2px;
+		}
+		div.teamWidget.mySmallWidget .content_image img{
+			margin-top: 2px;
+		}
+		
+		div.box_round_blue.no_subtitle .info {
+			float: left;
+			width: 141px;
+		}
+		div.teamWidget.mySmallWidget .info {
+			float: left;
+			width: 141px;
+		}
+		
+		div.box_round_blue.no_subtitle .info .post {
+			color: #999;
+			font-size: 10px;
+		}
+		div.teamWidget.mySmallWidget .info .post {
+			color: #999;
+			font-size: 10px;
+		}
+		
+		div.box_round_blue.no_subtitle .sideBarItemLeft {
+			float: left;
+			width: 180px;
+			margin-bottom: 5px;
+		}
+		div.teamWidget.mySmallWidget .sideBarItemLeft {
+			float: left;
+			width: 180px;
+			margin-bottom: 5px;
+		}
+
+		div.no_subtitle div.header div div h3 {
+			padding: 5px 5px 0px 13px!important;
+		}	
+
+		div.no_subtitle div.header div div, div.no_subtitle div.header div, div.no_subtitle div.header {
+			height: 23px!important;
+		}
+	
+	</style>
+
+	<div class="teamWidget mySmallWidget" >
+		<!-- Widget Title -->		
+		<div class="thinHeader">
+			<div><div><h4>Most Active People</h4></div></div>
+		</div>
+		<!-- Widget Container -->   		
+		<div class="box_content" id="mostActivePeople">
+			<div class="thinBody">
+				<!-- Item -->
+				<apex:outputPanel id="activePeoplePanel" layout="block">
+					<apex:form >
+						<apex:actionFunction name="refreshActivePeople" action="{!refreshActivePeople}" rerender="activePeoplePanel"/>
+					</apex:form>
+					<apex:repeat value="{!ActivePeople}" var="Actives" >
+						<div class="sideBarItemLeft">
+							<apex:outputpanel rendered="{!IF(Actives.Picture == '',true,false)}">
+								<div class="content_image">
+									<div class="photoWrapper_32px">
+										<a href="/apex/PeopleProfileDisplay?id={!Actives.UserId}"><img alt="{!Actives.Name}" src="{!URLFOR($Resource.commonResources, 'images/placeholders/unknownperson32x32.jpg')}" width="32"></a>
+									</div>
+								</div>
+							</apex:outputpanel>
+							<apex:outputpanel rendered="{!IF(Actives.Picture == '',false,true)}">
+								<div class="content_image">
+									<div class="photoWrapper_32px">
+										<a href="/apex/PeopleProfileDisplay?id={!Actives.UserId}"><img alt="{!Actives.Name}" src="/servlet/servlet.FileDownload?file={!Actives.Picture}" width="32"></a>
+									</div>
+								</div>
+							</apex:outputpanel>
+							<div class="info" >
+								<a href="/apex/PeopleProfileDisplay?id={!Actives.UserId}">{!Actives.Name}</a><br/>
+								<a class="post" href="/apex/DiscussionDetail?id={!Actives.Id}">{!Actives.Subject}</a>
+							</div>
+						</div>
+					</apex:repeat>
+					<apex:outputpanel rendered="{!IF(ActivePeopleSizeList == 0,true,false)}">
+						<div style="margin: 15px 0px 15px 15px">
+							 There are no active people.
+						</div>
+					</apex:outputpanel>
+				</apex:outputPanel>
+			</div>				
+		</div>
+		<!-- Widget Holder Foot -->
+		<div class="bottom_borders">
+			<div><div></div></div>
+		</div>
+	</div>
+	<div class="clear"></div>
+</apex:page>

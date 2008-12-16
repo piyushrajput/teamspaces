@@ -1,0 +1,574 @@
+<apex:page sidebar="false" standardController="Bookmark__c" tabstyle="Bookmark__c">
+	
+		<apex:stylesheet value="{!URLFOR($Resource.BookmarkResources, 'inc/css/commonLayout.css')}" />
+		<link href="inc/css/commonSalesforce.css" type="text/css" rel="stylesheet" />
+		<link href="inc/css/commonSalesforce2.css" type="text/css" rel="stylesheet" />
+		<apex:stylesheet value="{!URLFOR($Resource.BookmarkResources, 'inc/css/bookmarkOverview.css')}" />
+		<apex:stylesheet value="{!URLFOR($Resource.BookmarkResources, 'inc/css/bookmarkComment.css')}" />
+		
+		<script type="text/javascript" src="{!URLFOR($Resource.Script_aculo_us, 'prototype.js')}"></script>
+		<script type="text/javascript" src="{!URLFOR($Resource.Script_aculo_us, 'scriptaculous.js')}"></script>
+		<script type="text/javascript" src="{!URLFOR($Resource.Script_aculo_us, 'effects.js')}"></script>
+		<script src="{!URLFOR($Resource.BookmarkResources, 'inc/js/common.js')}" /
+		<script src="{!URLFOR($Resource.BookmarkResources, 'inc/js/overlayFunction.js')}" ></script>
+	
+	<style>
+	.textArea_comment{
+		height:120px;
+		margin-bottom:0px;
+		margin-left:2px;
+		margin-top:0px;
+		width:500px;
+	}
+	</style>
+	<script>
+			
+	// OVERLAY FUNCTIONS
+		
+		function hideShowSelects(){
+			var selects = $$('select');
+			for (var i = 0; i < selects.length; i++) {
+				if (selects[i].id != 'postType') {
+					if (selects[i].style.visibility == 'hidden') {
+						selects[i].style.visibility = 'visible';
+					}
+					else {
+						selects[i].style.visibility = 'hidden';
+					}
+				}
+			}
+		}
+	// ----------------------------------
+
+	
+		function viewOverlayFormNew (formId) {
+			
+			viewLoader();
+			
+			switchOverlayB();
+			
+			
+			setTimeout('viewTheForm(\'' + formId + '\')', 1400);
+	
+		}
+			
+		var inputSearch;
+					
+		// Begin the search box with the text:
+		// "Enter keyword or name" at top search box
+		////////////////////////////////////////////
+		function resetSearchInput(){
+			
+			var inputs = $$('.search_box_input input');
+			inputSearch = inputs[0];		
+			inputSearch.style.color = '#999999';
+			inputSearch.value = 'Enter keyword or name';
+		}
+		
+		// Once a user begins to type at top search box, change the font color to   #333333. 
+		function ActionSearchInput(){
+			inputSearch.style.color = '#333333';
+			inputSearch.value = '';
+		}	
+	</script>
+	
+		
+		<!-- 		  Overlay		-->
+		<div class="UPF__overlay__" id="UPF__overlay__" style="display:none;">
+		</div>
+		<!-- 		  Overlay		-->
+
+		<!-- 		  Loader		-->
+		 <div class="loader__" id="loader__" style="display:none;"><center><img src="" /></center><br />Loading...</div>
+		<!-- 		  Loader		-->
+		
+		<!-- 		 Delete Comment Form 		-->
+		<div class="deleteCommentOverlay" id="DeleteComment" style="display:none;">	
+			<div class="formsHeader">
+				<table border="0" style="width:100%">
+					<tr>
+						<td style="color:#FFFFFF">Detele Comment</td>
+						<td align="right"><img style="cursor:pointer;vertical-align:center;" src="{!URLFOR($Resource.BookmarkResources, 'images/layout/close_dialog.gif')}" onclick="switchOverlay(false); Effect.Fade('DeleteComment');" /></td>
+					</tr>
+				</table>
+			</div>
+			<form action="" id="deleteCommentForm">
+				<div style="margin-left:25px;">
+					<br><br>
+					<b>Are you sure you want to delete this comment?</b><br>
+					<span class="infoText">Once a comment is deleted, it is not recoverable.</span><br>
+					<br><br>
+				</div>
+				<hr color="#999999" size="1px">
+				<div align="center">
+					<input type="button" class="deleteBtn" value="Continue and delete" onclick="switchOverlay(false); Effect.Fade('DeleteComment');">
+					<input type="button" class="cancelBtn" value="Cancel" onclick="switchOverlay(false); Effect.Fade('DeleteComment');">
+				</div>
+			</form>
+		</div>
+
+		<!-- 		 Edit Comment Form 		-->
+		<div class="editCommentOverlay" id="EditCommentForm" style="display:none;">	
+			<div class="formsHeader">
+				<table border="0" style="width:100%">
+					<tr>
+						<td style="color:#FFFFFF">Edit Comment</td>
+						<td align="right"><img style="cursor:pointer;vertical-align:center;" src="{!URLFOR($Resource.BookmarkResources, 'images/layout/close_dialog.gif')}" onclick="switchOverlay(false); Effect.Fade('EditCommentForm');" /></td>
+					</tr>
+				</table>
+			</div>
+			<form action="" id="submitComment">
+				<div style="margin-left:25px;">
+					<div class="require_reference" >
+						<span class="reference">&nbsp;</span>
+						<span> = Required Information</span>
+					</div>
+					<div class="colLabel" >
+						<span>Comments</span>
+					</div>
+					<div class="colInput" >
+						<div class="requiredInput" >
+							<textarea class="textArea_comment">Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Proin commodo placerat odio. Sed pretium elit et felis. Mauris lacinia. Sed malesuada euismod purus. Praesent a purus sed nibh commodo auctor. Nunc neque lectus, semper nec, bibendum vitae, adipiscing id, justo.</textarea><br />
+						</div>
+						<span> 1000 character limit </span>
+					</div>
+				</div>
+				<hr color="#999999" size="1px">
+				<div align="center">
+					<input type="button" class="saveBtn" value="Save" onclick="switchOverlay(false); Effect.Fade('EditCommentForm');">
+					<input type="button" class="cancelBtn" value="Cancel" onclick="switchOverlay(false); Effect.Fade('EditCommentForm');">
+					<br>
+					<div class="delCommentLink">
+						<a href="javascript:;" style="">Delete Comment</a>
+					</div>
+				</div>
+			</form>
+		</div>		
+		
+		
+		<!-- 		 Delete Bookmark Form 		-->
+		<div class="deleteBookmarkOverlay" id="DeleteBookmark" style="display:none;">	
+			<div class="formsHeader">
+				<table border="0" style="width:100%">
+					<tr>
+						<td style="color:#FFFFFF">Detele Bookmark</td>
+						<td align="right"><img style="cursor:pointer;vertical-align:center;" src="{!URLFOR($Resource.BookmarkResources, 'images/layout/close_dialog.gif')}" onclick="switchOverlay(false); Effect.Fade('DeleteBookmark');" /></td>
+					</tr>
+				</table>
+			</div>
+			<form action="" id="deleteBookmarkForm">
+				<div style="margin-left:25px;">
+					<br><br>
+					<b>Are you sure you want to delete this bookmark?</b><br>
+					<span class="infoText">Once a bookmark is deleted, the comments posted to this bookmark will not be recoverable.</span><br>
+					<br><br>
+				</div>
+				<hr color="#999999" size="1px">
+				<div align="center">
+					<input type="button" class="deleteBtn" value="Continue and delete" onclick="switchOverlay(false); Effect.Fade('DeleteBookmark');">
+					<input type="button" class="cancelBtn" value="Cancel" onclick="switchOverlay(false); Effect.Fade('DeleteBookmark');">
+				</div>
+			</form>
+		</div>		
+		
+		
+		<div>
+			<div class="BodyPage">
+				<!-- Header -->
+				<div class="header">
+					<div class="page_section">
+					    <div>
+					    	<h1 class="arial_black">Bookmarks</h1>
+					    	<h2 class="arial_black">Overview</h2>
+					    </div>  
+				  	</div>
+					<div class="searchBox">
+				   		<div>
+				    		<div>
+				    			<form action="">
+					      			<div class="search_box_input f_left">
+					       				<div class="legend">Find Bookmarks</div>
+						      			 <input onclick="ActionSearchInput();" value="Enter keyword or name" name="" onfocus="setValue('');" onblur="setValue('Enter keyword or name');" type="text" />        
+									</div>
+					      			<input value="Search" class="search_btn f_left" type="button" />         
+				     			</form>
+								<div class="advanced_search_cont">       
+				      				<a href="javascript:;">Advanced Search</a>
+				     			</div>       
+				   			</div>
+				   		</div>
+					</div>
+					<div class="help">
+				   		<div>
+					   		<a href="javascript:;">Help for this page</a>&nbsp; <img src="{!URLFOR($Resource.BookmarkResources, 'images/layout/icons/help_icon.gif')}" alt="" />
+					   </div>
+					</div>
+				</div>
+
+				<div style="margin:0px 0px 0px 0px; padding:0px 0px 10px 10px; background: #E0E0E0; width:100%;">
+					<span class="breadCrumbring"><a href="javascript:;">Patternforce 1.0 Home</a> > Bookmark</span>
+					
+					<div style="width:100%; text-align:center;">
+						<form action="">
+							<input class="btnEdit" type="button" value="Edit" onclick="viewOverlayForm('EditBookmarkForm');">&nbsp;&nbsp;
+							<input class="btnDelete" type="button"  onclick="viewOverlayForm('DeleteBookmark');" value="Delete">
+						</form>
+					</div>
+				</div>
+				
+				<div class="sidebar" id="sidebar">
+					<!-- THIS WEEK'S MOST COMMENTED -->
+					<apex:include pageName="BookmarkMostCommentedWidget"></apex:include>
+					
+					<!-- 
+					<div class="box_round_blue">
+						<div class="header"  >
+							<div>
+								<div>
+									<div class="subtitle">This Week's</div>
+									<h3>Most Commented</h3>					
+								</div>
+							</div>
+						</div>
+						<div class="box_content">
+							<div class="contentHolder">
+								<div class="sideBarItemLeft" >
+									<img class="f_left" src="{!URLFOR($Resource.BookmarkResources, 'images/bookmark_overview/pic_1.jpg')}" alt="" />
+									<div class="sideBoxLinks" >
+										<a href="javascript:;">Closed the deal today!</a> (94)
+									</div>
+									<div class="sideBoxUnderLink" >
+										Bank ABC project
+									</div>
+								</div>
+								<div class="sideBarItemLeft" >
+									<img class="f_left" src="{!URLFOR($Resource.BookmarkResources, 'images/bookmark_overview/pic_2.jpg')}" alt="" />
+									<div class="sideBoxLinks" >
+										<a href="javascript:;">Review the standards with the entire company</a> (43)
+									</div>
+									<div class="sideBoxUnderLink" >
+										Patternforce 1.0
+									</div>
+								</div>
+								<div class="sideBarItemLeft" >
+									<img class="f_left" src="{!URLFOR($Resource.BookmarkResources, 'images/bookmark_overview/pic_3.jpg')}" alt="" />
+									<div class="sideBoxLinks" >
+										<a href="javascript:;">Welcome Harry Thompson to the usability gro...</a> (42)
+									</div>
+									<div class="sideBoxUnderLink" >
+										Usability Testinge
+									</div>
+								</div>
+								<div class="sideBarItemLeft" >
+									<img class="f_left" src="{!URLFOR($Resource.BookmarkResources, 'images/bookmark_overview/pic_4.jpg')}" alt="" />
+									<div class="sideBoxLinks" >
+										<a href="javascript:;">New marketing collateral available</a> (39)
+									</div>
+									<div class="sideBoxUnderLink" >
+										GreenHog project
+									</div>
+								</div>
+								<div class="sideBarItemLeft" >
+									<img class="f_left" src="{!URLFOR($Resource.BookmarkResources, 'images/bookmark_overview/pic_5.jpg')}" alt="" />
+									<div class="sideBoxLinks" >
+										<a href="javascript:;" >Looking for BETA testers for the new shoppi...</a> (37)
+									</div>
+									<div class="sideBoxUnderLink" >
+										E-commerce initiative
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="bottom_borders"><div><div></div></div></div>
+					</div>
+					-->
+					<!-- THIS WEEK'S MOST ACTIVE PEOPLE -->
+					
+					<apex:include pageName="BookmarkActiveUsersWidget"></apex:include>
+					
+					<!-- 
+					<div class="box_round_blue">
+						<div class="header"  >
+							<div>
+								<div>
+									<div class="subtitle">This Week's</div>
+									<h3>Most Active People</h3>					
+								</div>
+							</div>
+						</div>
+						<!-- Rounded Box Content 
+						<div class="box_content">
+							<div class="contentHolder">
+								<div class="sideBarItemLeft" >
+									<img class="f_left" src="{!URLFOR($Resource.BookmarkResources, 'images/bookmark_overview/user_1.jpg')}" alt="" />
+									<div class="sideBoxLinks" >
+										<a href="javascript:;">Naomi Miller</a>
+									</div>
+									<div class="sideBoxUnderLink" >
+										12 posts | 83 comments
+									</div>
+								</div>
+								<div class="sideBarItemLeft" >
+									<img class="f_left" src="{!URLFOR($Resource.BookmarkResources, 'images/bookmark_overview/user_2.jpg')}" alt="" />
+									<div class="sideBoxLinks" >
+										<a href="javascript:;">Bob White</a>
+									</div>
+									<div class="sideBoxUnderLink" >
+										6 posts | 82 comments
+									</div>
+								</div>
+								<div class="sideBarItemLeft" >
+									<img class="f_left" src="{!URLFOR($Resource.BookmarkResources, 'images/bookmark_overview/user_3.jpg')}" alt="" />
+									<div class="sideBoxLinks" >
+										<a href="javascript:;">Henrietta Tong</a>
+									</div>
+									<div class="sideBoxUnderLink" >
+										4 posts | 79 comments
+									</div>
+								</div>
+								<div class="sideBarItemLeft" >
+									<img class="f_left" src="{!URLFOR($Resource.BookmarkResources, 'images/bookmark_overview/user_4.jpg')}" alt="" />
+									<div class="sideBoxLinks" >
+										<a href="javascript:;">Jamie Hall</a>
+									</div>
+									<div class="sideBoxUnderLink" >
+										1 post | 53 comments
+									</div>
+								</div>
+								<div class="sideBarItemLeft" >
+									<img class="f_left" src="{!URLFOR($Resource.BookmarkResources, 'images/bookmark_overview/user_5.jpg')}" alt="" />
+									<div class="sideBoxLinks" >
+										<a href="javascript:;">Rick Truman</a>
+									</div>
+									<div class="sideBoxUnderLink" >
+										1 post | 23 comments
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="bottom_borders"><div><div></div></div></div>
+					</div>
+					-->
+					<!-- THIS WEEK'S MY RECENT ANNOUNCEMENTS -->
+					
+					<apex:include pageName="BookmarkMyRecentWidget"></apex:include>
+					
+					<!-- 
+					<div class="box_round_blue">
+						<div class="header"  >
+							<div>
+								<div>
+									<h3 style="padding-top:4px;">
+										My Recent
+									</h3>
+									<h3 style="margin-top:-4px;">
+										Bookmarks
+									</h3>					
+								</div>
+							</div>
+						</div>
+						<!-- Rounded Box Content 
+						<div class="box_content">
+							<div class="contentHolder">
+								<div class="sideBarItemLeft" >
+									<img class="f_left" src="{!URLFOR($Resource.BookmarkResources, 'images/bookmark_overview/pic_1.jpg')}" alt="" />
+									<div class="sideBoxLinks" >
+										<a href="javascript:;">Closed the deal today!</a> (94)
+									</div>
+									<div class="sideBoxUnderLink" >
+										Bank ABC project
+									</div>
+								</div>
+								<div class="sideBarItemLeft" >
+									<img class="f_left" src="{!URLFOR($Resource.BookmarkResources, 'images/bookmark_overview/pic_2.jpg')}" alt="" />
+									<div class="sideBoxLinks" >
+										<a href="javascript:;">Review the standards with the entire company</a> (43)
+									</div>
+									<div class="sideBoxUnderLink" >
+										Patternforce 1.0
+									</div>
+								</div>
+								<div class="sideBarItemLeft" >
+									<img class="f_left" src="{!URLFOR($Resource.BookmarkResources, 'images/bookmark_overview/pic_3.jpg')}" alt="" />
+									<div class="sideBoxLinks" >
+										<a href="javascript:;">Welcome Harry Thompson to the usability gro...</a> (42)
+									</div>
+									<div class="sideBoxUnderLink" >
+										Usability Testinge
+									</div>
+								</div>
+								<div class="sideBarItemLeft" >
+									<img class="f_left" src="{!URLFOR($Resource.BookmarkResources, 'images/bookmark_overview/pic_4.jpg')}" alt="" />
+									<div class="sideBoxLinks" >
+										<a href="javascript:;">New marketing collateral available</a> (39)
+									</div>
+									<div class="sideBoxUnderLink" >
+										GreenHog project
+									</div>
+								</div>
+								<div class="sideBarItemLeft" >
+									<img class="f_left" src="{!URLFOR($Resource.BookmarkResources, 'images/bookmark_overview/pic_5.jpg')}" alt="" />
+									<div class="sideBoxLinks" >
+										<a href="javascript:;" >Looking for BETA testers for the new shoppi...</a> (37)
+									</div>
+									<div class="sideBoxUnderLink" >
+										E-commerce initiative
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="bottom_borders"><div><div></div></div></div>
+					</div>
+				</div>
+				-->
+				<table border="0" cellpadding="0" cellspacing="0" style="padding-top:10px; margin-right:8px; margin-left:200px;">
+					<tr>
+						<td valign="top">
+							<div class="main_content" id="main_content">  
+								<div class="centerCol">
+									<div class="holder">
+										<div class="bookmark_actualDate" style="position:relative;">
+											April 03, 2008
+										</div>
+										<div class="bookmark_content_top" style="overflow:hidden;">
+											<h2 class="bookmark_detail_title">Stocks rally, Q1 a downer</h2>
+											<div class="bookmark_detail" style="width:100%;">
+												<table border="0" style="width:100%;">
+													<tr>
+														<td valign="top">
+															<span class="bookmark_detail_description">
+																Mar 31 - U.S stocks ended a brutal quarter with a rally sparked by encouraging economic data.The Dow rose 46 points on Monday to 12,262.89, but fell 7.6 perc...  
+															</span>
+															<br>
+															<div class="tagsInfo">
+																tags: <a href="javascript:;">technology</a>&nbsp;<a href="javascript:;">software</a>&nbsp;<a href="javascript:;">enterprise</a><br>
+																<a href="javascript:;">http://www.nytimes.com/2008/04/15/business/15retail.html?_r=1&hp&oref=slogin</a>
+															
+															</div>
+														</td>
+														<td valign="top">
+															<a href="javascript:;" class="bookmarkLink"><img src="http://i.ytimg.com/vi/yKKlKJ5YF1M/default.jpg" style="max-width: 75px; max-height: 75px"></a>
+														</td>
+													</tr>
+												</table>
+											</div>
+											<div class="bookmark_detail_line"></div>
+											<div class="bookmark_detail_wraperoverflow">
+												<div class="bookmark_detail_postInfo">
+													<span>By </span>
+													<span class="bookmark_detail_postBy">Norman Foster</span>
+													<span>on&nbsp;April 03, 2008</span>
+												</div>
+												<div style="width:200px; overflow:hidden; position:relative; float:right;">
+													<a class= "emailLink" href="mailto:someone@salesforce.com">Email</a>
+												</div>
+											</div>
+										</div>
+										<br>
+										<div class="commentHeader" style="position:relative;">
+											<img src="{!URLFOR($Resource.BookmarkResources, 'images/bookmark_overview/comment.gif')}"> 12 Comment
+											
+											<div style='width:45px;right:0;top:0;overflow:hidden;position:absolute;text-align:right;' >
+												<img src="{!URLFOR($Resource.BookmarkResources, 'images/bookmark_overview/rss.gif')}" />
+											</div>
+										</div>
+										
+										
+										<div class="comments">
+											<div class="author">
+												<div class="picture">
+													<img src="{!URLFOR($Resource.BookmarkResources, 'images/layout/usersImg/user_1.jpg')}" alt="" />
+												</div>
+												<div class="data">
+													<h4>David Barron</h4>
+													<span class="title">Feb 02, 2008 at 4:10PM</span>
+												</div>
+											</div>
+											<div class="commentText">
+												<img src="{!URLFOR($Resource.BookmarkResources, 'images/layout/arrow_comment.gif')}" alt="" class="arrowTitle" />
+												<div class="content">
+													
+													<div class="message">
+														<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Proin commodo placerat odio. Sed pretium elit et felis. Mauris lacinia. Sed malesuada euismod purus. Praesent a purus sed nibh commodo auctor. Nunc neque lectus, semper nec, bibendum vitae, adipiscing id, justo.</p>
+													</div>
+													<div class="reply">
+														<a href="javascript:;" onclick="viewOverlayForm('EditCommentForm');">Edit</a> | <a href="javascript:;" onclick="viewOverlayForm('DeleteComment');">Delete</a>
+													</div>
+												</div>
+											</div>
+										</div>
+										<div class="comments">
+											<div class="author">
+												<div class="picture">
+													<img src="{!URLFOR($Resource.BookmarkResources, 'images/layout/usersImg/user_2.jpg')}" alt="" />
+												</div>
+												<div class="data">
+													<h4>David Barron</h4>
+													<span class="title">Feb 02, 2008 at 4:10PM</span>
+												</div>
+											</div>
+											<div class="commentText">
+												<img src="{!URLFOR($Resource.BookmarkResources, 'images/layout/arrow_comment.gif')}" alt="" class="arrowTitle" />
+												<div class="content">
+													
+													<div class="message">
+														<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Proin commodo placerat odio. Sed pretium elit et felis. Mauris lacinia. Sed malesuada euismod purus. Praesent a purus sed nibh commodo auctor. Nunc neque lectus, semper nec, bibendum vitae, adipiscing id, justo.</p>								
+													</div>
+													<div class="reply">
+														<a href="javascript:;" onclick="viewOverlayForm('EditCommentForm');">Edit</a> | <a href="javascript:;" onclick="viewOverlayForm('DeleteComment');">Delete</a>
+													</div>
+												</div>
+											</div>
+										</div>
+										
+										<div class="postComment" >
+											<h2> Post a Comment </h2>
+										</div>
+										<div class="commentPostForm" >
+											<div class="require_reference" >
+												<span class="reference">&nbsp;</span>
+												<span> = Required Information</span>
+											</div>
+											<div class="colLabel" >
+												<span>Comments</span>
+											</div>
+											<div class="colInput" >
+												<div class="requiredInput" >
+													<textarea class="textArea_comment"></textarea><br />
+												</div>
+												<span> 1000 character limit </span>
+											</div>
+											<div class="separator" ></div>
+											<div class="buttons" style="text-align:center;">
+												<input type="button" value="Post" class="Post" />
+											</div>
+										</div>
+										
+										
+									</div>
+								</div>
+							</div>
+						</td>
+					</tr>
+				</table>
+			</div>
+		</div>
+		<script>
+			resetSearchInput();
+			
+			var version;
+			if (navigator.appName == "Microsoft Internet Explorer") {
+				version = navigator.appVersion;
+				//if (version.indexOf("MSIE 6") != -1) {
+					document.getElementById('DeleteBookmark').className = 'deleteBookmarkOverlayIE6';
+					document.getElementById('DeleteBookmark').style.position = 'absolute';
+					document.getElementById('DeleteComment').className = 'deleteCommentOverlayIE6';
+					document.getElementById('DeleteComment').style.position = 'absolute';
+					document.getElementById('EditCommentForm').className = 'editCommentOverlayIE6';
+					document.getElementById('EditCommentForm').style.position = 'absolute';
+				//}
+			}
+			
+		</script>
+
+</apex:page>

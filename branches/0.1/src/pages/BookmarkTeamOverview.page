@@ -1,0 +1,522 @@
+<apex:page sidebar="false" controller="BookmarkTeamOverviewController" tabStyle="Bookmark__c">
+	<!-- Javascript -->
+	<!-- Prototype + Scriptaculous -->
+	<script type="text/javascript" src="{!URLFOR($Resource.Script_aculo_us, 'prototype.js')}"></script>
+	<script type="text/javascript" src="{!URLFOR($Resource.Script_aculo_us, 'scriptaculous.js')}"></script>
+	<script type="text/javascript" src="{!URLFOR($Resource.Script_aculo_us, 'effects.js')}"></script>
+	
+	<script src="{!URLFOR($Resource.BookmarkResources, 'inc/js/common.js')}" />
+	
+	<apex:stylesheet value="{!URLFOR($Resource.BookmarkResources, 'inc/css/commonLayout.css')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.BookmarkResources, 'inc/css/bookmarkOverview.css')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.BookmarkResources, 'inc/css/bookmarkComment.css')}" />
+	
+	<!-- Common Js for All Sections -->
+	<script type="text/javascript" src="{!URLFOR($Resource.commonResources, 'inc/js/common.js')}"></script>
+	
+	<style>
+	
+	div.rightCol {
+		position:absolute;
+		right:15px;
+		top:200px;
+		width:210px;
+	}
+	</style>
+	<script>
+			  
+		var inputSearch;
+					
+		// Begin the search box with the text:
+		// "Enter keyword or name" at top search box
+		////////////////////////////////////////////
+		function resetSearchInput(){
+			
+			var inputs = $$('.search_box_input input');
+			inputSearch = inputs[0];		
+			inputSearch.style.color = '#999999';
+			inputSearch.value = 'Enter keyword or name';
+		}
+		
+		// Once a user begins to type at top search box, change the font color to   #333333. 
+		function ActionSearchInput(){
+			inputSearch.style.color = '#333333';
+			inputSearch.value = '';
+		}	
+	</script>
+	<!-- Includes and Initialize the overlay box for modal.js -->
+	<script type="text/javascript" src="{!URLFOR($Resource.commonResources, 'inc/js/modal.js')}"></script>	
+	<apex:stylesheet value="{!URLFOR($Resource.commonResources, 'inc/css/modal.css')}" />
+	<a href="#modal_container" id="initializeModal" style="display:none;"></a>
+	<div id="modal_container"></div>
+	<script>createOverlay('initializeModal')</script>
+	
+	
+	<!-- Include bookmarkOverlayNew -->
+	<apex:include pageName="BookmarkOverlayNew" />
+	
+	
+		<div>
+			<div class="BodyPage">
+				<div class="header">
+					<div class="page_section">
+					    <div>
+					    	<h1 class="arial_black">Bookmarks</h1>
+					    	<h2 class="arial_black">Overview</h2>
+					    </div>  
+				  	</div>
+					<div class="searchBox">
+				   		<div>
+				    		<div>
+				    			<form action="">
+					      			<div class="search_box_input f_left">
+					       				<div class="legend">Find Bookmarks</div>
+						      			 <input onclick="ActionSearchInput();" value="Enter keyword or name" name="" type="text"  onfocus="setValue('');" onblur="setValue('Enter keyword or name');"/>        
+									</div>
+					      			<input value="Search" class="search_btn f_left" type="button" />         
+				     			</form>
+								<div class="advanced_search_cont">       
+				      				<a href="javascript:;">Advanced Search</a>
+				     			</div>       
+				   			</div>
+				   		</div>
+					</div>
+					<div class="help">
+				   		<div>
+					   		<a href="javascript:;">Help for this page</a>&nbsp; <img src="{!URLFOR($Resource.BookmarkResourceFiles, 'images/layout/icons/help_icon.gif')}" alt="" />
+					   </div>
+					</div>
+				</div>
+				
+					
+				<div class="breadCrumbringDiv">
+					<span class="breadCrumbring"><a href="/{!Teamspace.id}"><apex:outputText value="{!Teamspace.Name}"/></a> > Bookmark</span>
+					
+					<div class="headerButtons">
+						<form action="">
+							<input class="btn" type="button" value="New Bookmark" onclick="createOverlay('','step1Form', '220');" >
+						</form>
+					</div>
+				</div>
+							
+				
+				<div class="sidebar" id="sidebar">
+					<!-- THIS WEEK'S MOST COMMENTED -->
+					<div class="box_round_blue">
+						<div class="header"  >
+							<div>
+								<div>
+									<div class="subtitle">This Week's</div>
+									<h3>Most Commented</h3>					
+								</div>
+							</div>
+						</div>
+						<div class="box_content">
+							<div class="contentHolder">
+								<div class="sideBarItemLeft" >
+									<img class="f_left" src="{!URLFOR($Resource.BookmarkResources, 'images/bookmark_overview/pic_1.jpg')}" alt="" />
+									<div class="sideBoxLinks" >
+										<a href="javascript:;">Closed the deal today!</a> (94)
+									</div>
+									<div class="sideBoxUnderLink" >
+										Bank ABC project
+									</div>
+								</div>
+								<div class="sideBarItemLeft" >
+									<img class="f_left" src="{!URLFOR($Resource.BookmarkResources, 'images/bookmark_overview/pic_2.jpg')}" alt="" />
+									<div class="sideBoxLinks" >
+										<a href="javascript:;">Review the standards with the entire company</a> (43)
+									</div>
+									<div class="sideBoxUnderLink" >
+										Patternforce 1.0
+									</div>
+								</div>
+								<div class="sideBarItemLeft" >
+									<img class="f_left" src="{!URLFOR($Resource.BookmarkResources, 'images/bookmark_overview/pic_3.jpg')}" alt="" />
+									<div class="sideBoxLinks" >
+										<a href="javascript:;">Welcome Harry Thompson to the usability gro...</a> (42)
+									</div>
+									<div class="sideBoxUnderLink" >
+										Usability Testinge
+									</div>
+								</div>
+								<div class="sideBarItemLeft" >
+									<img class="f_left" src="{!URLFOR($Resource.BookmarkResources, 'images/bookmark_overview/pic_4.jpg')}" alt="" />
+									<div class="sideBoxLinks" >
+										<a href="javascript:;">New marketing collateral available</a> (39)
+									</div>
+									<div class="sideBoxUnderLink" >
+										GreenHog project
+									</div>
+								</div>
+								<div class="sideBarItemLeft" >
+									<img class="f_left" src="{!URLFOR($Resource.BookmarkResources, 'images/bookmark_overview/pic_5.jpg')}" alt="" />
+									<div class="sideBoxLinks" >
+										<a href="javascript:;" >Looking for BETA testers for the new shoppi...</a> (37)
+									</div>
+									<div class="sideBoxUnderLink" >
+										E-commerce initiative
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="bottom_borders"><div><div></div></div></div>
+					</div>
+					<!-- THIS WEEK'S MOST ACTIVE PEOPLE -->
+					<div class="box_round_blue">
+						<div class="header"  >
+							<div>
+								<div>
+									<div class="subtitle">This Week's</div>
+									<h3>Most Active People</h3>					
+								</div>
+							</div>
+						</div>
+						<!-- Rounded Box Content -->
+						<div class="box_content">
+							<div class="contentHolder">
+								<div class="sideBarItemLeft" >
+									<img class="f_left" src="{!URLFOR($Resource.BookmarkResources, 'images/bookmark_overview/user_1.jpg')}" alt="" />
+									<div class="sideBoxLinks" >
+										<a href="javascript:;">Naomi Miller</a>
+									</div>
+									<div class="sideBoxUnderLink" >
+										12 posts | 83 comments
+									</div>
+								</div>
+								<div class="sideBarItemLeft" >
+									<img class="f_left" src="{!URLFOR($Resource.BookmarkResources, 'images/bookmark_overview/user_2.jpg')}" alt="" />
+									<div class="sideBoxLinks" >
+										<a href="javascript:;">Bob White</a>
+									</div>
+									<div class="sideBoxUnderLink" >
+										6 posts | 82 comments
+									</div>
+								</div>
+								<div class="sideBarItemLeft" >
+									<img class="f_left" src="{!URLFOR($Resource.BookmarkResources, 'images/bookmark_overview/user_3.jpg')}" alt="" />
+									<div class="sideBoxLinks" >
+										<a href="javascript:;">Henrietta Tong</a>
+									</div>
+									<div class="sideBoxUnderLink" >
+										4 posts | 79 comments
+									</div>
+								</div>
+								<div class="sideBarItemLeft" >
+									<img class="f_left" src="{!URLFOR($Resource.BookmarkResources, 'images/bookmark_overview/user_4.jpg')}" alt="" />
+									<div class="sideBoxLinks" >
+										<a href="javascript:;">Jamie Hall</a>
+									</div>
+									<div class="sideBoxUnderLink" >
+										1 post | 53 comments
+									</div>
+								</div>
+								<div class="sideBarItemLeft" >
+									<img class="f_left" src="{!URLFOR($Resource.BookmarkResources, 'images/bookmark_overview/user_5.jpg')}" alt="" />
+									<div class="sideBoxLinks" >
+										<a href="javascript:;">Rick Truman</a>
+									</div>
+									<div class="sideBoxUnderLink" >
+										1 post | 23 comments
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="bottom_borders"><div><div></div></div></div>
+					</div>
+					<!-- THIS WEEK'S MY RECENT ANNOUNCEMENTS -->
+					<div class="box_round_blue">
+						<div class="header"  >
+							<div>
+								<div>
+									<h3 style="padding-top:4px;">
+										My Recent
+									</h3>
+									<h3 style="margin-top:-4px;">
+										Bookmarks
+									</h3>					
+								</div>
+							</div>
+						</div>
+						<!-- Rounded Box Content -->
+						<div class="box_content">
+							<div class="contentHolder">
+								<div class="sideBarItemLeft" >
+									<img class="f_left" src="{!URLFOR($Resource.BookmarkResources, 'images/bookmark_overview/pic_1.jpg')}" alt="" />
+									<div class="sideBoxLinks" >
+										<a href="javascript:;">Closed the deal today!</a> (94)
+									</div>
+									<div class="sideBoxUnderLink" >
+										Bank ABC project
+									</div>
+								</div>
+								<div class="sideBarItemLeft" >
+									<img class="f_left" src="{!URLFOR($Resource.BookmarkResources, 'images/bookmark_overview/pic_2.jpg')}" alt="" />
+									<div class="sideBoxLinks" >
+										<a href="javascript:;">Review the standards with the entire company</a> (43)
+									</div>
+									<div class="sideBoxUnderLink" >
+										Patternforce 1.0
+									</div>
+								</div>
+								<div class="sideBarItemLeft" >
+									<img class="f_left" src="{!URLFOR($Resource.BookmarkResources, 'images/bookmark_overview/pic_3.jpg')}" alt="" />
+									<div class="sideBoxLinks" >
+										<a href="javascript:;">Welcome Harry Thompson to the usability gro...</a> (42)
+									</div>
+									<div class="sideBoxUnderLink" >
+										Usability Testinge
+									</div>
+								</div>
+								<div class="sideBarItemLeft" >
+									<img class="f_left" src="{!URLFOR($Resource.BookmarkResources, 'images/bookmark_overview/pic_4.jpg')}" alt="" />
+									<div class="sideBoxLinks" >
+										<a href="javascript:;">New marketing collateral available</a> (39)
+									</div>
+									<div class="sideBoxUnderLink" >
+										GreenHog project
+									</div>
+								</div>
+								<div class="sideBarItemLeft" >
+									<img class="f_left" src="{!URLFOR($Resource.BookmarkResources, 'images/bookmark_overview/pic_5.jpg')}" alt="" />
+									<div class="sideBoxLinks" >
+										<a href="javascript:;" >Looking for BETA testers for the new shoppi...</a> (37)
+									</div>
+									<div class="sideBoxUnderLink" >
+										E-commerce initiative
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="bottom_borders"><div><div></div></div></div>
+					</div>
+				</div>
+				<!-- 
+				<table border="0" cellpadding="0" cellspacing="0" class="contentTable">
+					<tr>
+						<td valign="top">
+				-->		
+							<div class="main_content" id="main_content">  
+								<div class="centerCol">
+									<div class="holder">
+										<div class="tabContainer">
+											<div class="tabBorder">
+											</div>
+												<ul class="tabs">
+													<li class="selected">My Teams</li>
+													<li>All Teams</li>
+												</ul>
+											
+										</div>
+										<div class="pagination">
+											<div class="pages">
+												<ul>
+												<li class="prev">Previous Page</li>
+												<li>(1</li>
+												<li>-</li>
+												<li>5)</li>
+												<li class="next"><a href="javascript:;">Next Page</a></li>
+												</ul>
+											</div>
+										</div>
+										<apex:repeat value="{!myTeam}" var="bookmarkGroup">
+											<div class="bookmark_actualDate" style="position:relative;">
+												<apex:outputText value="{!bookmarkGroup.formatedPostDate}"/>
+												<div class="rssImg">
+													<img src="{!URLFOR($Resource.BookmarkResources, 'images/bookmark_overview/rss.gif')}" />
+												</div>
+											</div> 
+											<apex:repeat value="{!bookmarkGroup.bookmarks}" var="bookmark">
+												<div class="bookmark_content_top" style="overflow:hidden;">
+													<h2 class="bookmark_detail_title"><a href="/{!bookmark.Id}"><apex:outputText value="{!bookmark.Title__c}"/></a></h2>
+													<div class="bookmark_detail" style="width:100%;">
+														<table border="0">
+															<tr>
+																<td valign="top">
+																	<span class="bookmark_detail_description">
+																		<apex:outputText value="{!bookmark.Body__c}" escape="false"/>
+																	</span>
+																</td>
+																<td valign="top">
+																	<a href="{!bookmark.BookmarkURL__c}" class="bookmarkLink"><img src="{!bookmark.imageUrl__c}"></a>
+																</td>
+															</tr>
+														</table>
+													</div>
+													<div class="bookmark_detail_line"></div>
+													<div class="bookmark_detail_wraperoverflow">
+														<div class="bookmark_detail_postInfo">
+															<span>Posted by </span>
+															<span class="bookmark_detail_postBy"><apex:outputField value="{!bookmark.CreatedById}"/></span>
+															<span>on&nbsp;<apex:outputField value="{!bookmark.CreatedDate}"/></span>
+														</div>
+														<div class="commentEmailImg">
+															<a class= "commentLink" href="mailto:someone@salesforce.com"><apex:outputField value="{!bookmark.Comments__c}"/>&nbsp;Comments</a>										
+															<a class= "emailLink" href="mailto:someone@salesforce.com">Email</a>
+														</div>
+														
+													</div>
+													<div class="bookmark_detail_teamName">
+															<span class='bookmark_detail_team'>[ team: </span>
+															<span class='bookmark_detail_postBy'><apex:outputField value="{!bookmark.Team__c}"/></span>
+															<span class='bookmark_detail_team'>]</span>
+													</div>
+												</div>
+											</apex:repeat>
+										</apex:repeat>
+										
+										<!-- STATIC HTML -->
+										<div class="bookmark_actualDate">
+											April 02, 2008
+										</div> 
+										<div class="bookmark_content_top" style="overflow:hidden;">
+											<h2 class="bookmark_detail_title"><a href="javascript:;">Stocks rally, Q1 a downer</a></h2>
+											<div class="bookmark_detail" style="width:100%;">
+												<table border="0">
+													<tr>
+														<td valign="top">
+															<span class="bookmark_detail_description">
+																Mar 31 - U.S stocks ended a brutal quarter with a rally sparked by encouraging economic data.The Dow rose 46 points on Monday to 12,262.89, but fell 7.6 perc...  
+															</span>
+														</td>
+														<td valign="top">
+															<a href="javascript:;" class="bookmarkLink"><img src="http://i.ytimg.com/vi/yKKlKJ5YF1M/default.jpg"></a>
+														</td>
+													</tr>
+												</table>
+											</div>
+											<div class="bookmark_detail_line"></div>
+											<div class="bookmark_detail_wraperoverflow">
+												<div class="bookmark_detail_postInfo">
+													<span>Posted by </span>
+													<span class="bookmark_detail_postBy">Norman Foster</span>
+													<span>on&nbsp;April 02, 2008</span>
+												</div>
+												<div class="commentEmailImg">
+													<a class= "commentLink" href="mailto:someone@salesforce.com">12&nbsp;Comments</a>										
+													<a class= "emailLink" href="mailto:someone@salesforce.com">Email</a>
+												</div>
+												
+											</div>
+											<div class="bookmark_detail_teamName">
+													<span class='bookmark_detail_team'>[ team: </span>
+													<span class='bookmark_detail_postBy'>Patternforce 1.0</span>
+													<span class='bookmark_detail_team'>]</span>
+											</div>
+										</div>
+										<!-- STATIC HTML -->
+										
+										<div class="pagination">
+												<div class="pages">
+													<ul>
+													<li class="prev">Previous Page</li>
+													<li>(1</li>
+													<li>-</li>
+													<li>5)</li>
+													<li class="next"><a href="javascript:;">Next Page</a></li>
+													</ul>
+												</div>
+										</div>
+									</div>
+								</div>
+								<div class="rightCol">
+								<div class="rightSideBar">
+									<div class="box_round">
+										<div class="top_borders"><div><div></div></div></div>
+										<div class="box_content">
+											<div class="contentHolder">
+												<div class="contentHolderHeader">Tags</div>
+												<div class="tags">
+													<table border="0" cellpadding="0">
+														<tr>
+															<td align="right"><span>12</span></td><td><a href="javascript:;" class="link">technology</a></td>
+														</tr>
+														<tr>
+															<td align="right"><span>11</span></td><td><a href="javascript:;" class="link">design</a></td>
+														</tr>
+														<tr>
+															<td align="right"><span>3</span></td><td><a href="javascript:;" class="link">software</a></td>
+														</tr>
+														<tr>
+															<td align="right"><span>5</span></td><td><a href="javascript:;" class="link">enterprise</a></td>
+														</tr>
+														<tr>
+															<td align="right"><span>6</span></td><td><a href="javascript:;" class="link">collaboration</a></td>
+														</tr>
+														<tr>
+															<td align="right"><span>7</span></td><td><a href="javascript:;" class="link">wiki</a></td>
+														</tr>
+														<tr>
+															<td align="right"><span>12</span></td><td><a href="javascript:;" class="link">web2.0</a></td>
+														</tr>
+														<tr>
+															<td align="right"><span>1</span></td><td><a href="javascript:;" class="link">discussion</a></td>
+														</tr>
+														<tr>
+															<td align="right"><span>3</span></td><td><a href="javascript:;" class="link">links</a></td>
+														</tr>
+														<tr>
+															<td align="right"><span>4</span></td><td><a href="javascript:;" class="link">usability</a></td>
+														</tr>
+														<tr>
+															<td align="right"><span>56</span></td><td><a href="javascript:;" class="link">security</a></td>
+														</tr>
+														<tr>
+															<td align="right"><span>9</span></td><td><a href="javascript:;" class="link">crm</a></td>
+														</tr>
+													</table>
+													<br>
+													<a href="javascript:;" class="seeMore" >See More&#187;</a>
+													<br>
+												</div>
+											</div>
+											<div class="bottom_borders"><div><div></div></div></div>
+										</div> 
+									</div>						
+								</div>
+								<div class="rightSideBar">
+									<div class="box_round">
+										<div class="top_borders"><div><div></div></div></div>
+										<div class="box_content">
+											<div class="contentHolder">
+												<div class="contentHolderHeader">Archives</div>
+												<ul class="archives teamsList">
+													<li><a href="javascript:;" class="">March 2008</a></li>
+													<li><a href="javascript:;" class="">February 2008</a></li>
+													<li><a href="javascript:;" class="">January 2008</a></li>
+													<li><a href="javascript:;" class="">December 2007</a></li>
+													<li><a href="javascript:;" class="">Novemeber 2007</a></li>
+													<li><a href="javascript:;" class="">October 2007</a></li>
+													<li><a href="javascript:;" class="">September 2007</a></li>
+													<li><a href="javascript:;" class="">August 2007</a></li>
+													<li><a href="javascript:;" class="">July 2007</a></li>
+													<li><a href="javascript:;" class="">June 2007</a></li>
+													<li><a href="javascript:;" class="">May 2007</a></li>
+													<li><a href="javascript:;" class="">April 2007</a></li>
+												</ul>
+											</div>
+											<a href="javascript:;" class="seeMore" >See More&#187;</a>
+											<br>
+											<div class="bottom_borders"><div><div></div></div></div>
+										</div> 
+									</div>						
+								</div>
+							</div>
+						</div>
+						<!-- 	
+						</td>
+						<td valign="top">
+						-->
+							
+						<!-- 	
+						</td>
+					</tr>
+				</table>
+				-->
+			</div>
+		</div>
+		<script>
+		
+			resetSearchInput();
+		</script>	
+</apex:page>

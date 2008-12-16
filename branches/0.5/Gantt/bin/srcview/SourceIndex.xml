@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<index>
+	<title>Source of Gantt</title>
+	<nodes>
+		<node icon="packageIcon" label="bridge" expanded="true">
+			<node icon="actionScriptIcon" label="FABridge.as" url="source/bridge/FABridge.as.html"/>
+			<node label="FABridge.js" url="source/bridge/FABridge.js.txt"/>
+		</node>
+		<node label="lib">
+			<node label="generated">
+			</node>
+			<node label="as3Salesforce.swc" url="source/lib/as3Salesforce.swc"/>
+		</node>
+		<node label="locale">
+			<node icon="classpathIcon" label="en_US" expanded="true">
+				<node label="MainView.properties" url="source/locale/en_US/MainView.properties"/>
+			</node>
+			<node label="sp">
+				<node label="MainView.properties" url="source/locale/sp/MainView.properties"/>
+			</node>
+		</node>
+		<node icon="mxmlAppIcon" selected="true" label="Gantt.mxml" url="source/Gantt.mxml.html"/>
+	</nodes>
+	<zipfile label="Download source (ZIP, 64K)" url="Gantt.zip"/>
+	<sdklink label="Download Flex 2 SDK" url="http://www.adobe.com/go/flex2_sdk"/>
+</index>

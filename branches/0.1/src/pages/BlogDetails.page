@@ -1,0 +1,226 @@
+<apex:page sidebar="false" tabStyle="BlogEntry__c" standardController="BlogEntry__c" extensions="BlogDetailsController" >
+	
+	
+	<!-- Javascript -->
+	<!-- Prototype + Scriptaculous -->
+	<script type="text/javascript" src="{!URLFOR($Resource.Script_aculo_us, 'prototype.js')}"></script>
+	<script type="text/javascript" src="{!URLFOR($Resource.Script_aculo_us, 'scriptaculous.js')}"></script>
+	<script type="text/javascript" src="{!URLFOR($Resource.Script_aculo_us, 'effects.js')}"></script>
+	
+	<!-- FCK Editor -->
+	<script type="text/javascript" src="{!URLFOR($Resource.FCKeditor, 'fckeditor/fckeditor.js')}"></script>
+	
+	<!-- Common Js for Announcements Sections -->
+	<script>
+		FCK_BASEPATH = '{!URLFOR($Resource.FCKeditor,'fckeditor/')}';
+	</script>	
+	<script type="text/javascript" src="{!URLFOR($Resource.BlogsResources, 'inc/js/common.js')}"></script>
+	<!-- Common Js for All Sections -->
+	<script type="text/javascript" src="{!URLFOR($Resource.commonResources, 'inc/js/common.js')}"></script>
+	<script type="text/javascript" src="{!URLFOR($Resource.commonResources, 'inc/js/modal.js')}"></script>
+	
+	<!-- Common Layout -->
+	<link rel="stylesheet" media="screen" href="{!URLFOR($Resource.BlogsResources, 'inc/css/commonLayout.css')}" />	
+	<link rel="stylesheet" media="screen" href="{!URLFOR($Resource.BlogsResources, 'inc/css/comments.css')}" />
+	
+	<!-- Initialize the overlay box for modal.js -->
+	<a href="#modal_container" id="initializeModal" style="display:none;"></a>
+	<div id="modal_container"></div>
+	<script>createOverlay('initializeModal')</script>
+	
+	<!-- Blog Edition Overlay -->
+	<apex:include pageName="BlogOverlayEdit" />
+	
+	<!-- Blog Edit Comment Overlay -->
+	<apex:include pageName="BlogOverlayEditComment" />
+	
+	<!-- Blog Delete Comment Overlay -->
+	<apex:include pageName="BlogOverlayDeleteComment" />
+	
+	<!-- Blog Delete Overlay -->
+	<apex:include pageName="BlogOverlayDelete" />
+	
+	<!-- Body Start -->
+	<div class="BodyPage">
+		<!-- 
+		############
+		# Header 
+		################
+		-->
+		
+<style>
+	.requiredInputTest {
+		border-left:3px solid #CC0000;
+		float:left;
+		margin:0px;
+		overflow:hidden;
+		padding:0px;
+		position:relative;
+	}
+
+	.requiredInputTest div {
+		margin:0px 0px 0px 2px;
+		padding:0px;
+		height:155;
+	}
+
+	.requiredInputTest textarea {
+		height:155px;
+		width:444px;
+		margin:0px;
+		font-size:12px;
+	}
+</style>	
+		<div class="breadcrumbHeader header">
+			<!-- Page Section -->
+			<div class="page_section">
+			    <div>
+				<h1 class="arial_black">Blogs</h1>
+				<h2 class="arial_black">Overview</h2>
+			    </div>  
+			</div>
+			<!-- SearchBox -->
+			<div class="searchBox">
+				<div>
+					<div>
+						<form action="">
+							<div class="search_box_input f_left">
+								<div class="legend">Find Blog Posts</div>
+									<input onclick="ActionSearchInput();" value="Enter keyword or name" name="" type="text"  onfocus="setValue('');" onblur="setValue('Enter keyword or name');"/>        
+								</div>
+							<input value="Search" class="search_btn f_left" type="button" />         
+						</form>
+						<div class="advanced_search_cont">       
+							<a href="javascript:;">Advanced Search</a>
+						</div>       
+					</div>
+				</div>
+			</div>
+			<!-- Help -->
+			<div class="help">
+				<div>
+					<a href="javascript:;">Help for this page</a>&nbsp; <img src="{!URLFOR($Resource.BlogsResources, 'images/common/icons/help_icon.gif')}" alt="" />
+				</div>
+			</div>
+			<!-- BreadCrumbs -->
+			<div class="breadcrumbs" >
+				<div class="map">
+					<a href="BlogsOverview">Blogs</a> > Blog Details
+				</div>
+				<div class="buttons">							
+					<a class="btnEdit" href="javascript:;" onclick="createOverlay('','blogEditionOverlay','','createFCKEditor(\'blogEdition\')');" >Edit</a>&nbsp;&nbsp;
+					<a class="btnEdit" href="javascript:;" onclick="createOverlay('','deleteBlogOverlay','200');">Delete</a>				
+				</div>
+			</div>
+		</div>		
+		<!-- 
+		############
+		# Sidebar 
+		################
+		-->		
+		
+		
+	<div class="main_content" id="main_content">  
+		<div class="centerCol">
+			<div class="holder">
+				<div class="announcement_actualDate">
+					{!blogEntryCreatedDate}
+				</div>  
+				<div class="announcement_separator"></div>
+				<div class="announcement_content">
+					<h2 class="announcement_title">
+						{!blogEntryTitle}
+					</h2>
+					
+					<div class="announcement_detail">
+						{!blogEntryMessage}
+					</div>
+					
+					<div class="announcement_detail_separator"></div>
+					
+					<div class="announcement_footer">
+						<div class="announcement_info">
+							<span>Posted by </span>
+							<span class="announcement_user"> <a href="/apex/PeopleProfileDisplay?id={!BlogEntry.OwnerId}" >{!BlogEntry.Owner.Name}</a></span>
+							<span>on {!blogEntryCreatedDate}</span><br />
+							<apex:form><span>[ team: </span> <span class="announcement_team">
+								<apex:outputLink  value="/apex/TeamsRedirect?id={!BlogEntry.Team__c}" >
+									{!blogEntryTeamName}
+								</apex:outputLink>	
+							</span><span>]</span></apex:form>
+						</div>
+						<div class="footer_links" >
+							<a class="email" href="#"> E-mail </a>
+						</div>
+						
+					</div>
+				</div>
+				<div class='rss_title_right' >
+					<img src="{!URLFOR($Resource.BlogsResources, 'images/overview/rss.gif')}" />
+				</div>
+				<apex:outputpanel id="comments_panel" >
+					<div class="announcement_commentsTitle">{!CommentsSize} Comments </div>
+					<div class="announcement_separator"></div>	
+				
+					<!-- Repeat Comments -->				
+					<apex:repeat value="{!Comments}" var="comment">		
+						<div class="comments">
+							<div class="author">
+								<div class="picture">
+									<apex:image style="width:25px;" value="/servlet/servlet.FileDownload?file={!comment.Picture}" />
+								</div>
+								<div class="data">						
+									<h4>{!comment.Name}</h4>
+									<span class="title">{!comment.FormatedCommentDate} at {!comment.FormatedCommentTime}</span>
+								</div>
+							</div>
+							<div class="commentText">
+								<img src="{!URLFOR($Resource.BlogsResources, 'images/comments/arrow_comment.gif')}" alt="" class="arrowTitle" />
+								<div class="content">		
+									<div class="message">							
+										<p>{!comment.Message}</p>
+									</div>
+									<div class="reply">
+										<div style="{!IF(comment.IsUserOwner, 'display:block', 'display:none')}">
+											<a href="javascript:;" onclick="createOverlay('','editCommentOverlay','290');">Edit</a> | <a href="javascript:;" onclick="createOverlay('','deleteCommentOverlay','200');">Delete</a>
+										</div>	
+									</div>
+								</div>
+							</div>
+						</div>
+					</apex:repeat>
+				</apex:outputpanel>	
+			 <!-- /////////////////////////////////////////////////////// -->
+				<div class="postComment" >
+					<h2> Post a Comment </h2>
+				</div>
+				<div class="commentPostForm" >
+					<div class="require_reference" >
+						<span class="reference">&nbsp;</span>
+						<span> = Required Information</span>
+					</div>
+					<div class="colLabel" >
+						<span>Comments</span>
+					</div>
+					<div class="colInput" >
+						<apex:form>
+						<div class="requiredInputTest">
+							<apex:inputtextarea id="commentBody" style="textArea_comment" value="{!messageBody}"/>
+							<!-- <apex:inputtextarea id="commentBody" value="{!comment.message}" style="textArea_comment" /> -->
+						</div>	
+						<br/>
+						<span> 1000 character limit </span>
+						</div>
+						
+						<div class="separator" ></div>
+						<div class="buttons" style="text-align:center;">	
+							<apex:commandButton styleClass="Post"  action="{!savePost}" value="Post" rerender="comments_panel, commentBody"/>	
+						</apex:form>	
+					</div>
+					<div class="separator" ></div>
+					</div>					
+				</div>
+			</div>			
+		</div>
+	</div>
+</apex:page>

@@ -1,0 +1,53 @@
+<apex:component controller="TeamAdminQuickLinksController">	
+	<!-- CSS of TS -->
+    <apex:stylesheet value="{!URLFOR($Resource.TeamsResources, 'inc/css/commonLayout.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.TeamsResources, 'inc/css/teamDetailEdit.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.TeamsResources, 'inc/css/adminMainSetUp.css')}" />
+    <!-- End CSS of TS -->
+	<apex:outputPanel rendered="{!isTeamAdmin}">
+		<div class="teamWidget mySmallWidget" >
+			<!-- Widget Title -->		
+			<div class="thinHeader">
+				<div><div><h4>Admin Quick Links</h4></div></div>
+			</div>
+			<!-- Widget Container -->
+			<div class="box_content">
+				<div class="thinBody">
+					<div class="team_detail_commentedItemLeftProfile">					    
+					    <img class="imgSmallLeft" src="{!URLFOR($Resource.TeamsResources, '/images/layout/icons/star.gif')}"  />	
+					    <div>
+					    	<span class="text_link_underlineColorPaddRight">
+					    	  	<a href="/apex/AdminMainSetup">Setup</a>
+					    	</span>
+					   	</div>
+					</div>
+					<div class="team_detail_commentedItemLeftProfile">					    
+					    <img class="imgSmallLeft" src="{!URLFOR($Resource.TeamsResources, '/images/layout/icons/star.gif')}"  />	
+					    <div>
+					    	<span class="text_link_underlineColorPaddRight">
+					    	  	<a href="/apex/adminwidgetconfig">
+					    	  		Create a new {!$ObjectType.Team__c.label} type
+					    	  	</a>
+					    	</span>
+					   	</div>
+					</div>	
+					<div class="team_detail_commentedItemLeftProfile">					    
+					    <img class="imgSmallLeft" src="{!URLFOR($Resource.TeamsResources, '/images/layout/icons/star.gif')}"  />	
+					   	<div>
+							<span class="text_link_underlineColorPaddRight">
+					      		<a href="/apex/AdminProfile">
+					      			Create a new {!$ObjectType.Team__c.label} profile
+					      		</a>
+					    	</span>
+					    </div>
+					</div>
+				</div>				
+			</div>
+			<!-- Widget Holder Foot -->
+			<div class="bottom_borders">
+				<div><div></div></div>
+			</div>
+		</div>
+		<div class="clear"></div>
+	</apex:outputPanel>	
+</apex:component>
