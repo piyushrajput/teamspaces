@@ -2,6 +2,7 @@
 Copy and paste the url of the package into a browser's url window.
 Enter the username and password of the org in which you'd like to install the package.
 
+
 http://teamspaces.googlecode.com/svn/wiki/image/installation/step1.png
 
 
@@ -20,4 +21,17 @@ Click install. -Make sure "Ignore Apex test failures that may cause the installe
 http://teamspaces.googlecode.com/svn/wiki/image/installation/step11.png
 
 
-Once the application has installed, the application tabs need to be override.
+Once the application has installed, the application's tabs need to be override with it overview page. 
+
+A total of 4 tabs need to be override: Teams Tab, People Tab, Discussion Tab, Wiki Tab.
+
+The process of overriding these tabs is the same for all objects, what differs from one another is the VisualForce page used to override each tab:
+
+1-The Teams Tab needs to be override with the TeamsOverview.page VisualForce page 
+2-People Tab needs to be override with the PeopleOverview.page VisualForce page
+3-Discussion Tab needs to be override with the DiscussionOverview.page VisualForce page
+4-Wiki Tab needs to be override with the WikiOverview.page VisualForce page
+
+
+
+
