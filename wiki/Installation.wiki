@@ -36,4 +36,8 @@ The process of overriding these tabs is the same for all objects, what differs f
 3-Discussion Object Tab needs to be override with the DiscussionOverview.page VisualForce page
 4-WikiPage Object Tab needs to be override with the WikiOverview.page VisualForce page
 
+The following figure illustrates how to override the teams tab:
+
+http://teamspaces.googlecode.com/svn/wiki/image/installation/step14.png
+
 
