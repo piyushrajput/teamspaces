@@ -1,2 +1,13 @@
 #labels Featured,Phase-Deploy
-Under Construction!
+Copy and paste the url of the package into a browser's url window.
+
+Enter the username and password of the org in which you'd like to install the package.
+
+
+Click Next on the Package Installer's Step 1 Screen
+
+Select "Grant access to all users" and click next
+
+Click install. -Make sure "Ignore Apex test failures that may cause the installed application not to function properly." is checked.
+
+Once the application has installed, the application tabs need to be override.
