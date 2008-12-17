@@ -1,7 +1,7 @@
 #labels Featured,Phase-Deploy
 Copy and paste the url of the package into a browser's url window.
 
-https://teamspaces.googlecode.com/svn/wiki/image/installation/step1.png
+http://teamspaces.googlecode.com/svn/wiki/image/installation/step1.png
 
 Enter the username and password of the org in which you'd like to install the package.
 
