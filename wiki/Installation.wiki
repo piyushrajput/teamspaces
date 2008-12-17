@@ -1,47 +1,48 @@
 #labels Featured,Phase-Deploy
 *_Copy and paste the url of the package into a browser's url window.
-Enter the username and password of the org in which you'd like to install the package.
+Enter the username and password of the org in which you'd like to install the package._*
 
 
 http://teamspaces.googlecode.com/svn/wiki/image/installation/step1.png
 
 
-Click Next on the Package Installer's Step 1 Screen
+*_Click Next on the Package Installer's Step 1 Screen_*
 
 http://teamspaces.googlecode.com/svn/wiki/image/installation/step9.png
 
-Select "Grant access to all users" and click next
+*_Select "Grant access to all users" and click next_*
 
 
 http://teamspaces.googlecode.com/svn/wiki/image/installation/step10.png
 
-Click install. -Make sure "Ignore Apex test failures that may cause the installed application not to function properly." is checked.
+*_Click install. -Make sure "Ignore Apex test failures that may cause the installed application not to function properly." is checked._*
 
 
 http://teamspaces.googlecode.com/svn/wiki/image/installation/step11.png
 
 
-Once the application has installed, the application's tabs need to be override with it overview page. 
+*_Once the application has installed, the application's tabs need to be override with it overview page. _*
 
-To begin overriding each tab, list the custom objects that are available in your Org:
+*_To begin overriding each tab, list the custom objects that are available in your Org:
 Click the following path:
-Setup > App Setup > Create (expand) > Objects
+Setup > App Setup > Create (expand) > Objects_*
 
-Once the 'Custom Objects' list is up, a total of 4 tabs in 4 different custom objects need to be override: Teams, People, Discussion, Wiki.
+*_Once the 'Custom Objects' list is up, a total of 4 tabs in 4 different custom objects need to be override: Teams, People, Discussion, Wiki._*
 
-The process of overriding these tabs is the same for all objects, what differs from one another is the VisualForce page used to override each tab:
+*_The process of overriding these tabs is the same for all objects, what differs from one another is the VisualForce page used to override each tab:_*
 
-1-The Teams Object Tab needs to be override with the TeamsOverview.page VisualForce page 
+*_1-The Teams Object Tab needs to be override with the TeamsOverview.page VisualForce page 
 2-People Object Tab needs to be override with the PeopleOverview.page VisualForce page
 3-Discussion Object Tab needs to be override with the DiscussionOverview.page VisualForce page
 4-WikiPage Object Tab needs to be override with the WikiOverview.page VisualForce page
 
-The following figure illustrates how to override the teams tab:
+*_The following figure illustrates how to override the teams tab:_*
 
 http://teamspaces.googlecode.com/svn/wiki/image/installation/step14.png
 
 
-*Initializing the application completes the installation process. To do so follow the steps in the following diagram:*
+*_Initializing the application completes the installation process. To do so follow the steps in the following diagram:_*
+
 
 http://teamspaces.googlecode.com/svn/wiki/image/installation/step15.png
 
