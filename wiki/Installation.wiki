@@ -41,3 +41,9 @@ The following figure illustrates how to override the teams tab:
 http://teamspaces.googlecode.com/svn/wiki/image/installation/step14.png
 
 
+Initializing the application completes the installation process. To do so follow the steps in the following diagram:
+
+http://teamspaces.googlecode.com/svn/wiki/image/installation/step15.png
+
+
+Now teams is ready to be used! :-)
