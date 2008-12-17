@@ -1,7 +1,7 @@
 <apex:page sidebar="false" showHeader="false" controller="PeopleHeaderSearchController">
+
 <script>
 	function submitForm (e,idButton) {
-		alert('Here');
 		if (e.keyCode == 13) {
 			var buttonForm = document.getElementById(idButton);
 			buttonForm.click();
@@ -12,6 +12,7 @@
 		}
 	}
 </script>
+
 <div>
 	<div>
 		<!-- Search Form -->
@@ -22,6 +23,10 @@
 			</div>
 			<apex:commandButton id="mainSearchBtn" value="Search" styleClass="search_btn f_left" action="{!findPeople}"/> 								
 		</apex:form> 
+		<!-- Advanced Search Link -->
+		<!-- <div class="advanced_search_cont">							
+			<a href="javascript:;" >Advanced Search</a>
+		</div> -->	
 		<!-- /Search Form -->						
 	</div>
 </div>	

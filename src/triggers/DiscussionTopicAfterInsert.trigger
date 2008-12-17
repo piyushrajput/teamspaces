@@ -20,11 +20,10 @@ trigger DiscussionTopicAfterInsert on DiscussionTopic__c bulk (after insert) {
 			
 			List<DiscussionTopic__Share> topics = new List<DiscussionTopic__Share>();
 			for(DiscussionTopic__c t : Trigger.new) {
+				
 				// Up the counter
 				DiscussionForum__c forum = forumList.get(t.DiscussionForum__c);
-				if(forum != null) {
-					forum.TopicCount__c += 1;
-				}
+				if(forum != null) forum.TopicCount__c += 1;
 				
 				// Create teh Sharing rule
 				DiscussionTopic__Share s = new DiscussionTopic__Share();

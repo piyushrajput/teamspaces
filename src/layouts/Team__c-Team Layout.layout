@@ -37,10 +37,6 @@
                 <behavior>Edit</behavior>
                 <field>TeamCreatedBy__c</field>
             </layoutItems>
-            <layoutItems>
-                <behavior>Edit</behavior>
-                <field>ContactEmail__c</field>
-            </layoutItems>
         </layoutColumns>
         <layoutColumns>
             <layoutItems>
@@ -94,7 +90,23 @@
     </relatedLists>
     <relatedLists>
         <fields>NAME</fields>
+        <relatedList>BlogEntry__c.Team__c</relatedList>
+    </relatedLists>
+    <relatedLists>
+        <fields>NAME</fields>
+        <relatedList>ProjectRisk__c.Team__c</relatedList>
+    </relatedLists>
+    <relatedLists>
+        <fields>NAME</fields>
+        <relatedList>ProjectIssue__c.Team__c</relatedList>
+    </relatedLists>
+    <relatedLists>
+        <fields>NAME</fields>
         <relatedList>ProjectTask__c.Team__c</relatedList>
+    </relatedLists>
+    <relatedLists>
+        <fields>NAME</fields>
+        <relatedList>Bookmark__c.Team__c</relatedList>
     </relatedLists>
     <relatedLists>
         <fields>NAME</fields>
@@ -143,9 +155,5 @@
     <relatedLists>
         <fields>NAME</fields>
         <relatedList>Project2__c.Team__c</relatedList>
-    </relatedLists>
-    <relatedLists>
-        <fields>NAME</fields>
-        <relatedList>TeamSubscription__c.Team__c</relatedList>
     </relatedLists>
 </Layout>

@@ -1,5 +1,5 @@
 trigger TeamAfterDelete on Team__c bulk (after delete) {
-	if (!TeamUtil.currentlyExeTrigger && !TeamUtil.isTest) {
+	if (!TeamUtil.currentlyExeTrigger) {
 		try {	
 			TeamUtil.currentlyExeTrigger = true;
 			

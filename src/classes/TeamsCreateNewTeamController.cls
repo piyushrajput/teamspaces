@@ -1,60 +1,11 @@
-/**
-*@author Virginia Jamardo @ 06/09/2008
-*/
 public without sharing class TeamsCreateNewTeamController {
-
-    /**
-    * Constructor
-    */
-    public TeamsCreateNewTeamController(){
-        if (param != null){
-        	setTeam(param);
-        	genPermissions();
-        	
-        	if(!userPermissions.getCanManage())
-        		throw new CustomException('Insufficient Privileges');
-        }
-    }
-    
-	/**
-	* Return the Namespace Prefix
-	*@return String
-	*/
-	public String getNamespace () {
-        return TeamUtil.getNamespace();
-    } 
     
     //Get id from team item
     String param = System.currentPageReference().getParameters().get('id');
     
-    // max picture size bytes
-    public final Integer MAX_SIZE = 524288;
-    
     Team__c theTeam = new Team__c();
     String teamPicture = '';
-    Boolean validSizePicture = true;
    
-   
-    public Attachment document = new Attachment();
-	
-	/**
-	*@param Attachment
-	*/
-	public void setdocument (Attachment attach) {
-		this.document = attach;
-	}
-	 
-	/**
-	*@return Attachment
-	*/
-	public Attachment getdocument () {     
-		return document;
-	}
-    
-    public Boolean getValidSizePicture(){
-    	return validSizePicture;
-    }
-    
     /**
     * Set String param
     *@param String p
@@ -87,12 +38,22 @@ public without sharing class TeamsCreateNewTeamController {
     public String getTeamPicture (){
         return teamPicture;
     }
-
+   
+    public TeamsCreateNewTeamController(){
+        if (param != null){
+        	setTeam(param);
+        	genPermissions();
+        	
+        	if(!userPermissions.getCanManage())
+        		throw new CustomException('Insufficient Privileges');
+        }
+    }
+    
+    /* ---------------------------- */
+   	/*   	 SHARING RULES			*/
+   	/* ---------------------------- */	
 	public UserPermissions userPermissions = null;
 	
-	/**
-	* Load permission for cuerrent user
-	*/
 	public void genPermissions () {
 		userPermissions = new UserPermissions();
 		userPermissions.setId(UserInfo.getUserId());
@@ -100,8 +61,8 @@ public without sharing class TeamsCreateNewTeamController {
 		userPermissions.setObjectType('Team');
 		userPermissions.setPermissions();		
 	}
-	
-	public String TeamType {get; set;}
+
+	/* ---------------------------- */	
 	
     /**
     * Get Team
@@ -110,7 +71,6 @@ public without sharing class TeamsCreateNewTeamController {
     */
     public void setTeam (String tId){
 	    theTeam = [Select t.TeamType__c,  
-	    			t.ContactEmail__c,
 	                t.ParentTeam__c,
 	                t.PublicProfile__c,
 	                t.NewMemberProfile__c,
@@ -120,9 +80,6 @@ public without sharing class TeamsCreateNewTeamController {
 	                t.Id, 
 	                t.Description__c 
 	                From Team__c t Where t.Id =:tId];
-	    if(theTeam.TeamType__c != null){
-	    	TeamType = theTeam.TeamType__c;
-	    }
 	    if(theTeam.Id != null){
             getTeamImage();
     		if(theTeam.PublicProfile__c != null && theTeam.NewMemberProfile__c != null){
@@ -144,7 +101,7 @@ public without sharing class TeamsCreateNewTeamController {
         
         teamType = [Select t.Name, t.Id From TeamType__c t order by t.Name asc];  
         options.add(new SelectOption('', '-- select team type --'));
-        for(TeamType__c c: teamType){
+        for(TeamType__c c: teamType) {
             options.add(new SelectOption(c.Id, c.Name));
         }
         return options;
@@ -170,12 +127,27 @@ public without sharing class TeamsCreateNewTeamController {
     *@void
     */
     public void getTeamImage() {
+    	/*List<Attachment> attach = new List<Attachment>();
+        attach = [select Id 
+                    from Attachment 
+                    where Id =: theTeam.Picture__c];
+                    
+        if(attach.size() > 0){            
+            teamPicture = '/servlet/servlet.FileDownload?file=' + attach[0].Id;
+    	}else{
+			attach = [select Id 
+                        from Attachment 
+                        where ParentId =: theTeam.Id];
+            if(attach.size() > 0){            
+	            teamPicture = '/servlet/servlet.FileDownload?file=' + attach[0].Id;
+	    	}
+        }*/
         if(theTeam.Picture__c != null) teamPicture = '/servlet/servlet.FileDownload?file=' + theTeam.Picture__c;
     }
     
 
     /**
-    * Class teamProfile
+    *@class teamProfile
     */
     public class teamProfile {
     	public String publicProfileOpen { set; get; }
@@ -194,54 +166,41 @@ public without sharing class TeamsCreateNewTeamController {
     * Save Team
     *@void
     */    
-    public PageReference saveTeam(){
+    public void saveTeam(){
+    	    	
     	try{
-    		System.debug('LEN:' + document.BodyLength);
-    		if(document.BodyLength <= MAX_SIZE || (document.name == null || document.name == '')){
-    			validSizePicture = true;
-	    		if(newProfile.teamOpenOrClosed == 'open'){
-	    			theTeam.PublicProfile__c = newProfile.publicProfileOpen;
-	    			theTeam.NewMemberProfile__c = newProfile.newProfileOpen;	    			
-	    		}else if (newProfile.teamOpenOrClosed == 'close') {
-	    			theTeam.PublicProfile__c = newProfile.publicProfileClosed;
-	    			theTeam.NewMemberProfile__c = null;
-	    		}else if (newProfile.teamOpenOrClosed == 'private'){
-	    			theTeam.PublicProfile__c = null;
-	    			theTeam.NewMemberProfile__c = null;
-	    		}
-	    		
-	    		
-	    		if(theTeam.Id == null){
-		    		insert theTeam;
-		    		if(document.name != null && document.name != ''){
-			    			document.ParentId = theTeam.Id;
-				    		insert document;
-			    			theTeam.Picture__c = document.Id;
-				    		update theTeam;	
-		    		}	
-	    		}else {
-	       			if(document.name != null && document.name != ''){
-		    			document.ParentId = theTeam.Id;
-		    			insert document;
-		    			theTeam.Picture__c = document.Id;
-		    		}
-		    		if(theTeam.TeamType__c == null){
-		    			theTeam.TeamType__c = TeamType; 
-		    		}
-		    		update theTeam;
-		    	}
-		    	PageReference pageRef = new PageReference('/apex/TeamsRedirect?id=' + theTeam.Id);
-	            pageRef.setRedirect(true);
-	            return pageRef; 
+    		System.Debug(' ///////////////////////////////// \n '+newProfile);
+    		if(newProfile.teamOpenOrClosed == 'open'){
+    			theTeam.PublicProfile__c = newProfile.publicProfileOpen;
+    			theTeam.NewMemberProfile__c = newProfile.newProfileOpen;	    			
+    		}else if (newProfile.teamOpenOrClosed == 'close') {
+    			theTeam.PublicProfile__c = newProfile.publicProfileClosed;
+    			theTeam.NewMemberProfile__c = null;
+    		}else if (newProfile.teamOpenOrClosed == 'private'){
+    			theTeam.PublicProfile__c = null;
+    			theTeam.NewMemberProfile__c = null;
     		}
-    		else{
-    			validSizePicture=false;
-    			document = new Attachment();
-    			return null;
-    		}
+    		
+    		if(theTeam.Id == null)
+	    		insert theTeam;
+    		else 
+	    		update theTeam;
     	}catch(Exception e){
     		throw e;
     	}
     }
+    
+    /**
+    * Update Team Picture__c
+    *@void
+    */
+    public void updateTeamPicture (){
+    	Attachment attach = [select a.Id from Attachment a where a.parentId =: theTeam.Id order by a.CreatedDate desc limit 1];
+    	if(attach != null){
+    		theTeam.Picture__c = attach.Id;
+    		saveTeam();
+    	}
+    }
+    		    
 
 }

@@ -3,16 +3,12 @@ trigger TeamMemberAfterDelete on TeamMember__c bulk (before delete) {
 		try {	
 			TeamUtil.currentlyExeTrigger = true;	
 	
-			
+			List<Group> groupTeamSharing = [select g.Id, g.Name from Group g where g.Name like 'teamSharing%'];
 			
 			List<String> idsTeam = new List<String>();
-			List<String> teamSharingNames = new List<String>();
 			for (TeamMember__c tm : Trigger.old) {
 				idsTeam.add(tm.team__c);
-				teamSharingNames.add('teamSharing' + tm.team__c);
 			}
-			
-			List<Group> groupTeamSharing = [select g.Id, g.Name from Group g where g.Name in:teamSharingNames];
 			
 			List<Team__c> teamList = [select t.PublicProfile__c ,t.NewMemberProfile__c, t.Id, t.Name from Team__c t where t.Id in: idsTeam];
 			
@@ -35,7 +31,7 @@ trigger TeamMemberAfterDelete on TeamMember__c bulk (before delete) {
 											t.CreateBookmarks__c, 
 											t.CreateBlogs__c from TeamProfile__c t];
 			
-			
+			//List<Group> allQueue = [ select Id, Name From Group where Type = 'Queue'];
 			List<String> groupsNames = new List<String>();
 			List<String> userIds = new List<String>();
 			for (TeamMember__c tm : Trigger.old) {

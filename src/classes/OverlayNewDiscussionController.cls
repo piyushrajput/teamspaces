@@ -1,32 +1,19 @@
-/**
-*@author Martin Prado 06/20/2008
-*/
 public class OverlayNewDiscussionController {
 	
-	/**
-	* Constructor
-	*/
 	public OverlayNewDiscussionController () {
 		genPermissions();
 	}
 	
 	public String TEAMID = System.currentPageReference().getParameters().get('id');
 	
-	/**
-	* Get team Id
-	*@return String Id
-	*/
 	public String getTeamId () {
 		return TEAMID;
 	}
 	
-	/**
-	* Read discussion forum for current Team
-	*@return DiscussionForum__c
-	*@throws Exception
-	*/
 	public DiscussionForum__c getForumData(){
+   		
    		DiscussionForum__c team = new DiscussionForum__c();
+   		
    		if(TEAMID != null){
    			 try {
    			 	team = [SELECT
@@ -36,84 +23,52 @@ public class OverlayNewDiscussionController {
    						FROM DiscussionForum__c WHERE Team__c =: TEAMID LIMIT 1];
    						
    			 } catch (Exception e) {
-   			 	throw e;
+   			 	
+   			 	System.Debug('\n ///////////////////////////// \n Error , no team assigned \n //////////////////////////// \n The Forum ID is :' + TEAMID + '\n //////////////////////////// \n');
+   			 	
    			 }
+   			    			 
    		} else {
    			team = null;
    		}
    		return team;
    	}  
    	
-	/**
-	* Class Topic
-	*@author Martin Prado
-	*/   
+   	/* Save the new Topic */
    	public class Topic {
    		public String content = '';
 	   	public String id = '';
 	   	public String subject = '';
 	   	public String forum = '';
 	   	
-	   	/**
-	   	* Returns topic name
-	   	*@return String forum
-	   	*/
 	   	public String getForum () {
 	   		return forum;
 	   	}
 	   	
-	   	/**
-	   	* Set topic name
-	   	*@param String forum
-	   	*/
 	   	public void setForum (String forum) {
 	   		this.forum = forum;
 	   	}
 	   		
-	   	/**
-	   	* Get topic Id
-	   	*@return String Id
-	   	*/
 	   	public String getId() {
 	   		return id;
 	   	}
 	   	
-	   	/**
-	   	* Set topic Id
-	   	*@param String Id
-	   	*/
 	   	public void setId (String id) {
 	   		this.id = id;
 	   	}
 	   	
-	   	/**
-	   	* Get topic content
-	   	*@return String content
-	   	*/
 	   	public String getContent () {
 	   		return content;
 	   	}
 	   	
-	   	/**
-	   	* Set topic content
-	   	*@param String content
-	   	*/
 	   	public void setContent (String content) {
 	   		this.content = content;
 	   	}
 	   	
-	   	/**
-	   	* Get topic subject
-	   	*@return String subject
-	   	*/
 	   	public String getSubject () {
 	   		return subject;
 	   	}
 	   	
-	   	/**
-	   	* Set topic subject
-	   	*@param String subject
-	   	*/
 	   	public void setSubject (String subject) {
 	   		this.subject = subject;
 	   	}
@@ -121,40 +76,29 @@ public class OverlayNewDiscussionController {
    	
    	public Topic newTopic = new Topic();
    	
-   	/**
-   	* Get new topic instance
-   	*@return Topic newTopic
-   	*/
    	public Topic getNewTopic () {
    		return newTopic;	
    	}
    	
-   	/**
-   	* Set new topic
-   	*@param Topic newTopic
-   	*/
-   	public void setNewTopic (Topic newTopic) {
-   		this.newTopic = newTopic;
-   	}
-   	
+    /* ---------------------------- */
+   	/*   	 SHARING RULES			*/
+   	/* ---------------------------- */	
+	public UserPermissions userPermissions = null;
 	
-	//Get loaded object copy from teamDetail
-	public UserPermissions userPermissions = TeamsDetailController.userPermission.clone();
-	
-	/**
-	* Set permissions for current user
-	*/
 	public void genPermissions () {
+		userPermissions = new UserPermissions();
 		userPermissions.setId(UserInfo.getUserId());
 		userPermissions.setTeam(TEAMID);
 		userPermissions.setObjectType('Discussion');
 		userPermissions.setPermissions();		
 	}
+
+	/* ---------------------------- */	
 	
-   	/**
-   	* Save new topic
-   	*/
    	public void saveNewTopic () {
+   		
+   		System.debug('\n\n //////////////////////// \n SAVE THIS NEW TOPIC VARS: \n' + newTopic + '\n //////////////////////// \n\n');
+   		
    		if(!userPermissions.getCanCreate())
         	throw new CustomException('Insufficient Privileges');
         	

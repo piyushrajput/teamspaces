@@ -1,10 +1,10 @@
 <apex:page sidebar="false" id="TeamsNewMember" tabStyle="Team__c" controller="TeamsNewMemberController">
-	<apex:includeScript value="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/prototype.js')}"/>
-	<apex:includeScript value="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/scriptaculous.js')}"/>
-	<apex:includeScript value="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/effects.js')}"/>
-	<apex:includeScript value="{!URLFOR($Resource.TeamsResources, 'inc/js/autocomplete.js')}"/>
+	<script src="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/prototype.js')}" />
+	<script src="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/scriptaculous.js')}" />
+	<script src="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/effects.js')}" />
+	<script src="{!URLFOR($Resource.TeamsResources, 'inc/js/autocomplete.js')}" />
 	<!-- Ajax Toolkit SDFC -->
-	<apex:includeScript value="/soap/ajax/11.1/connection.js"/>
+	<script src="/soap/ajax/11.1/connection.js" type="text/javascript"></script>
 	<script>
 		var API_SESSION_ID = '{!$Api.Session_ID}';
 		var stopRecursivity = false;
@@ -12,7 +12,7 @@
 	<!-- Common CSS Styling  -->
 	<link rel="stylesheet" href="{!URLFOR($Resource.PeopleResourceFiles, 'inc/css/autocomplete.css')}" type="text/css" media="screen" charset="utf-8" />
 	<link rel="stylesheet" href="{!URLFOR($Resource.TeamsResources, 'inc/css/teamOverlyInviteNewMember.css')}" type="text/css" />
-	<
+	
 	<style>
 		.tooltip {
 			background-color:#F9F8CD;
@@ -34,21 +34,16 @@
 			display: block;
 		}	    
 	</style>
-	 
-	<apex:includeScript value="{!URLFOR($Resource.TeamsResources, 'inc/js/TeamsInviteNewMember.js')}"/>
+	
+	<script src="{!URLFOR($Resource.TeamsResources, 'inc/js/TeamsInviteNewMember.js')}" />
+	
 	<script>
-		/**
-        * Namespace Prefix Getter
-        */
-        var namespace = "{!namespace}";
-
 		/**		
 		* Initialize toolkit connection
 		*@void
 		*/
 		function init(){
 			sforce.connection.sessionId = '{!$Api.Session_ID}';
-			sforce.connection.defaultNamespace = namespace;
 		}
 		
 		var showingBubble = false;		
@@ -68,6 +63,8 @@
 			var topPosition = position.y2 - 110;
 			leftPosition = (typeof document.body.style.maxHeight != "undefined") ? position.x2 + 5 : position.x2 - 215;
 			
+			
+			//tooltip.innerHTML = text;
 			tooltipMessage.innerHTML = text;
 			tooltip.style.top = topPosition + 'px'; 
 			tooltip.style.left = leftPosition + 'px';
@@ -76,6 +73,7 @@
 			showingBubble = true;
 			clearTimeout(time);
 			time = setTimeout("Effect.Fade('divToolTip')",3000);
+				
 		}
 	
 		function tooltipoff(){
@@ -100,11 +98,14 @@
 			var y2 = y + parseInt(obj.offsetHeight);
 			return {'x':x, 'y':y, 'x2':x2, 'y2':y2};
 		}
+		
 	</script>
+	
 	<!-- info tooltip -->
 	<div id="divToolTip" class="tooltip">
 		<div id="messageTooltip"></div>
 	</div>
+				
 	<!-- Content  -->
 	<div class="modalContent">
 		<div id="inviteTeam" style="display:none;">
@@ -118,6 +119,7 @@
 					<img src="{!URLFOR($Resource.TeamsResources, 'images/layout/close.gif')}" alt="Close Window" title="Close Window" /></a>
 				</div>
 			</div>
+			  
 			<div>
 				<apex:form id="newMemberForm">
 					<div align="right">
@@ -165,12 +167,16 @@
 															hideSelect.style.visibility = 'hidden';
 														}
 													
-													}else {
+													}
+													else {
 														hideSelect.style.visibility = 'visible';
 													}
+													
 													setTimeout('selectFixIE6()',200);
+												
 												}
-											}else {
+											}
+											else {
 												stopRecursivity = true;
 											}
 										}
@@ -196,7 +202,8 @@
 								<td></td>
 								<td></td>
 								<td>
-									&nbsp;<span class="explain">(comma separated)</span><br/>
+									&nbsp;<span class="explain">(comma separated)</span>
+									<br/>
 								</td>
 							</tr>
 							<tr>
@@ -230,6 +237,7 @@
 									<a href="Javascript:;" onclick="tooltip(this, '{!$Component.newTeamProfile}');">
 										<img class="imgAlign" onmouseover="tooltip(this, '{!$Component.newTeamProfile}');" onmouseout="tooltipoff();" src="{!URLFOR($Resource.TeamsResources, '/images/layout/icons/infoWhite.gif')}" border="0" />
 									</a>
+									<!-- <img alt="" class="imgAlign" src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/info.gif')}" /> -->
 								</td>
 							</tr>	
 							<tr>
@@ -241,7 +249,8 @@
 								</td>
 								<td></td>
 								<td>
-									&nbsp;<apex:inputText style="width:310px;" value="{!newMemberVars.teamRole}" />  
+									&nbsp;
+									<apex:inputText style="width:310px;" value="{!newMemberVars.teamRole}" />  
 								</td>                                
 							</tr>							
 							<tr> 
@@ -255,11 +264,13 @@
 								<td height="15px"></td>
 							</tr>	
 						</table>
+					
 						<div class="title_line_btn"></div> 
 						<div align="center">
 							<apex:commandButton action="{!saveMembers}" oncomplete="modal.close();stopFunction();" styleclass="InviteBtn" value="Send" rerender="membersList"/> 
 							<apex:commandButton action="{!saveMembersNew}" oncomplete="$('{!$Component.newMemberForm}').reset();" styleclass="InviteAndAddBtn" value="Send & add more members" rerender="membersList"/>
 							<input class="cancelBtn" type="button" value="Cancel" onclick="modal.close();stopFunction();"/>
+							<!-- <input class="InviteBtn" type="button" value="Send"/> <input class="InviteAndAddBtn" type="button" value="Send & add more members"/><input class="cancelBtn" type="button" value="Cancel" onclick="modal.close();"/> -->
 						</div>
 					</div>
 				</apex:form>

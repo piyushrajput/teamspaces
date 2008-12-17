@@ -2,24 +2,14 @@
 
     public static testMethod void testTeam() {
         try{
-            GenerateEnvironmentTest.gen();
-            Test.startTest();
-            
-            Id[] fixedSearchResultsList = new Id[1];
-        
-            fixedSearchResultsList.add(GenerateEnvironmentTest.newTeam.Id); 
-            Test.setFixedSearchResults(fixedSearchResultsList);
-
-            
             TeamSearchResultController team = new TeamSearchResultController();
             
-            team.getNamespace();
-            team.setCriteria('Foo');
+            team.setCriteria('');
             team.search();
             String criteria = team.getCriteria();
             List<Team__c> results = team.getResults();
                         
-            TeamMember__c tm = GenerateEnvironmentTest.newTeamMember;
+            TeamMember__c tm = [select Id, Team__c from TeamMember__c where Team__c != '' limit 1];
             
             TeamSearchResultController.sr srch = new TeamSearchResultController.sr();
             List<TeamSearchResultController.sr> srchList = team.getsrList();
@@ -58,11 +48,10 @@
             
             team.setJumpPage(1);
             team.JumpToPage();
+            team.leaveTeam();
             team.assignLeaveTeamId();
             team.setTeamId(tm.Team__c);
             PageReference pr = team.joinTeam();         
-        
-            Test.stopTest();
         
         } catch (Exception e){
             throw e;

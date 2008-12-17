@@ -1,13 +1,12 @@
-@IsTest private class TeamsWidgetRecentWikiPagesTest { 
-    public static testMethod void testTeam() { 
-        GenerateEnvironmentTest.gen();
-		
-		Test.startTest();
-		
-        TeamsWidgetRecentWikiPagesController team = new TeamsWidgetRecentWikiPagesController();
+@IsTest private class TeamsWidgetRecentWikiPagesTest {
+    public static testMethod void testTeam() {
         
-        Team__c newTeam = GenerateEnvironmentTest.newTeam;
-        team.setTeamId(newTeam.Id);
+        TeamsWidgetRecentWikiPagesController team = new TeamsWidgetRecentWikiPagesController();
+        try {
+            team.setTeamId('a0B30000001xHJcEAM');
+        } catch (exception e) {
+            System.assert(true, e);
+        }
         
         if (team.getTeamId() == null){
             System.assert(true, 'Null team Id');    
@@ -21,15 +20,11 @@
         userPermissions.getCanCreate();
         userPermissions.getObjectType();
         userPermissions.getTeam();
+        //userPermissions.getObjectId();
         userPermissions.getId();
         
         team.getUserPermissions();
         team.getWikis();
         team.getWikiPagesCount();
-        
-        team.setSidebar(true);
-        team.getSidebar();
-        
-        Test.stopTest();
     }
 }

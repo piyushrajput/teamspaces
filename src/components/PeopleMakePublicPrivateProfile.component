@@ -1,25 +1,24 @@
 <apex:component allowDML="true" controller="PeopleMakePublicPrivateProfileController" >
-	
-	<!-- Styles of component-->
-	<apex:stylesheet value="{!URLFOR($Resource.PeopleResource, 'inc/css/PeopleMakePublicPrivateProfile.css')}" />
-	
-	<!-- Fixed Styles of component -->
-	<style>
-		.compView a.private {
-			background: url({!URLFOR($Resource.PeopleResource, 'images/people_profile/icons/lock.png')}) no-repeat left center;
-		}
-		
-		.compView a.public {
-			background: url({!URLFOR($Resource.PeopleResource, 'images/people_profile/icons/lock_open.png')}) no-repeat left center;
-		}
-		
-		.loaderStatus {
-			background: url({!URLFOR($Resource.PeopleResource, 'images/people_profile/icons/load.gif')}) no-repeat left center;
-		}
-	</style>
 
-
-	 
+<!-- Styles of component -->
+<style>
+	.compView a.private {
+		background: url({!URLFOR($Resource.PeopleResource, 'images/people_profile/icons/lock.png')}) no-repeat left center;
+		padding: 2px 0pt 2px 19px;
+		float:right;
+	}
+	
+	.compView a.public {
+		background: url({!URLFOR($Resource.PeopleResource, 'images/people_profile/icons/lock_open.png')}) no-repeat left center;
+		padding: 2px 0pt 2px 19px;
+		float:right;
+	}
+	.loaderStatus {
+		background: url({!URLFOR($Resource.PeopleResource, 'images/people_profile/icons/load.gif')}) no-repeat left center;
+		padding: 2px 0pt 2px 19px;
+		float:right;
+	}
+</style>
 	<apex:outputpanel layout="block" styleClass="compView">
 		<apex:form >
 			<apex:actionStatus id="profileStatus">
@@ -30,7 +29,7 @@
 	                		styleClass="{!IF(isPrivate ,'public','private')}"
 							rerender="panelLinkProfile"
 							status="profileStatus"
-							value="{!IF(isPrivate ,'Make Profile Public','Make Profile Private')}" >
+							value="{!IF(isPrivate ,'Make Profile Public','Make Profile Private')}">
 						</apex:commandLink>
 	                </apex:outputPanel>
                 </apex:facet>

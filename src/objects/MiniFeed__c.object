@@ -16,7 +16,6 @@
         <fullName>Team__c</fullName>
         <label>Team</label>
         <referenceTo>Team__c</referenceTo>
-        <relationshipLabel>Mini Feeds</relationshipLabel>
         <type>Lookup</type>
     </fields>
     <fields>
@@ -201,14 +200,6 @@
             </picklistValues>
             <picklistValues>
                 <fullName>MilestoneCompleted</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>TaskDelete</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>MilestoneDelete</fullName>
                 <default>false</default>
             </picklistValues>
             <sorted>false</sorted>

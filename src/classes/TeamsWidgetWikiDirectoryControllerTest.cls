@@ -1,31 +1,43 @@
-@IsTest private class TeamsWidgetWikiDirectoryControllerTest { 
+@IsTest private class TeamsWidgetWikiDirectoryControllerTest {
     public static testMethod void testWiki() {
-        GenerateEnvironmentTest.gen();
-		
-		Test.startTest();
-        
         TeamsWidgetWikiDirectoryController wiki = new TeamsWidgetWikiDirectoryController();
         UserPermissions userPermissions = new UserPermissions();
         
         userPermissions = new UserPermissions();
-		
-		wiki.setSidebar(true);
-        wiki.getSidebar();        
         
-        String idTeam = GenerateEnvironmentTest.newTeam.Id;
+        String idTeam = [select id from Team__c limit 1].id;
+        //String idTeam = 'a0B30000001xHJc';
         wiki.setTeamId(idTeam);
         
-        if (wiki.getTeamId() == null) 
+        if (wiki.getTeamId() == null) {
             System.assert(true, 'Null Team Id');
+        }
         
-        if (wiki.getUserPermissions() == null) 
+        if (wiki.getUserPermissions() == null) {
             System.assert(true, 'Null User Permissions');
+        }
         
         /* Wikis Class */
-      
-        WikiPage__c wikiPage = [select id, name, team__c, parent__c, body__c, createdById , createdBy.Name from WikiPage__c where id =:GenerateEnvironmentTest.newWiki.Id];
-        wikiPage.Name = 'loooooooooooooooooonnnnnnnnnnnnnnnnnnggggggggggggggg';           
+        List<WikiPage__c> wikiPages = [Select 
+                                            Team__c,
+                                            LastModifiedDate ,
+                                            Name, Id, 
+                                            CreatedBy.Name, 
+                                            CreatedBy.Id, 
+                                            CreatedById
+                                        From WikiPage__c limit 1];
+        
+        WikiPage__c wikiPage;
+        if (wikiPages.size() > 0) {
+            wikiPage = wikiPages[0];
+        }
+        else {
+            wikiPage = new WikiPage__c();
+        }
+        
+        wikiPage.Name = 'loooooooooooooooooonnnnnnnnnnnnnnnnnnggggggggggggggg';             
         TeamsWidgetWikiDirectoryController.Wikis wikiClass = new TeamsWidgetWikiDirectoryController.Wikis(wikiPage);
+        
         wikiClass.getWikiPage();
         wikiClass.getName();
         wikiClass.getCreatedByName(); 
@@ -35,10 +47,9 @@
         
         try {
             wiki.refresh();
-        }catch (Exception e) {
+        } 
+        catch (Exception e) {
             System.assert(true, e);
         }
-        
-        Test.stopTest();
     }
 }

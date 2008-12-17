@@ -1,74 +1,52 @@
-/**
-*@author Yuri Alvarez @ 05/02/2008
-*/
 public with sharing class TeamsWidgetActiveDiscussionsController {
 	
-		public Boolean sidebar = false;
-		
-		/**
-		* Constructor
-		*/
-		public TeamsWidgetActiveDiscussionsController(){}
-				
-		/**
-		*@param Boolean
-		*/
-		public void setSidebar(Boolean b){
-	 		sidebar = b;
-		}
-
-		/**
-		*@return Boolean
-		*/
-		public Boolean getSidebar(){
-			return sidebar;
-		}
-		
 		String teamId;
 		
-		/**
-		*@param String 
-		*/
+		// Setter method for Team Id variable
 		public void setTeamId(String id) {
-			teamId = id;
-			genPermissions();			
+			teamId = id;			
 		}
 		
-		/**
-		*@return String
-		*/
+		// Get Team Id Attribute
 		public String getTeamId(){
 			return teamId;
 		}
 
 		Integer actdisSize;
-		String userId = UserInfo.getUserId();
-
-		//UserPermission static instance clone from teamDetail 
-		public UserPermissions userPermissions = TeamsDetailController.userPermission.clone();
 		
-		/**
-		* Read user permissions
-		*/
+		String userId = UserInfo.getUserId();
+		
+		
+		
+		public TeamsWidgetActiveDiscussionsController() {
+		}
+
+		/* ---------------------------- */
+	   	/*   	 SHARING RULES			*/
+	   	/* ---------------------------- */	
+		public UserPermissions userPermissions;
+		
 		public void genPermissions () {
+			userPermissions = new UserPermissions();
 			userPermissions.setId(UserInfo.getUserId());
 			userPermissions.setTeam(teamId);
 			userPermissions.setObjectType('Discussion');
 			userPermissions.setPermissions();					
 		}
 		
-		/**
-		*@return UserPermission instance
-		*/
 		public UserPermissions getUserPermissions () {
+			
+			// temp bug fix for now.  For some reason the teamId is coming through null when this is called from the contructor
+			// This is strange b/c every other widget works this way.   Needs more research
+			if(userPermissions == null ) genPermissions();
+			
 			return userPermissions;
 		}
+	
+		/* ---------------------------- */	
 		
-		List<DiscussionTopic__c> discussions = new List<DiscussionTopic__c>();
+		 List<DiscussionTopic__c> discussions = new List<DiscussionTopic__c>();
 		
-		/**
-		* Refresh list
-		*/
 		public void refresh(){
 			discussions = [ SELECT ViewCount__c, 
 								   Subject__c, 
@@ -88,11 +66,10 @@ public with sharing class TeamsWidgetActiveDiscussionsController {
 		}
 		
 	
-		/**
-		* Read discussions for current team
-		*@return List<Discussion>
-		*/
 		public List<Discussion> getDiscussions(){
+			
+		   
+
 			discussions = [ SELECT ViewCount__c, 
 								   Subject__c, 
 								   OwnerId, 
@@ -119,16 +96,10 @@ public with sharing class TeamsWidgetActiveDiscussionsController {
 			return retDisc;
 		}
 		
-		/**
-		*@return Integer
-		*/
 		public Integer getActiveDiscussionsSize(){
 			return discussions.size();
 		}
 		
-		/**
-		* Class Discussion
-		*/
 		public class Discussion{
 			DiscussionTopic__c discussion;
 			String author;
@@ -141,12 +112,10 @@ public with sharing class TeamsWidgetActiveDiscussionsController {
 			String replierName;
 			String lastPostDate;
 			
-			/**
-			* Costructor
-			*@param DiscussionTopic__c
-			*/
 			public Discussion(DiscussionTopic__c dis){
+				
 				discussion = dis;
+				
 				Datetime aux;
 				views = dis.ViewCount__c.intValue();
 				replies = dis.MessageCount__c.intValue();
@@ -156,89 +125,59 @@ public with sharing class TeamsWidgetActiveDiscussionsController {
 				if(discussion.LastPostedMessage__r.PostedBy__c == null){
 						lastReply += '';
 						authorPicture = '';
-				}else {
+				}
+				else {
 					aux = discussion.LastPostedMessage__r.PostedDate__c;
+												
 					lastPostDate = formatDateToText(aux) + ' at ' + aux.format('hh:mm a');
+						
 					replierId = discussion.LastPostedMessage__r.PostedBy__c;
+
 					replierName = discussion.LastPostedMessage__r.PostedBy__r.Name;
 				}					
+
 			}
 			
-			/**
-			*@return DiscussionTopic__c
-			*/
 			public DiscussionTopic__c getDiscussion(){
 				return discussion;
 			}
 			
-			/**
-			* Get author name
-			*@return String
-			*/
 			public String getAuthor(){
 				return author;
 			}
 			
-			/**
-			* Get author Id
-			*@return Id
-			*/
 			public Id getAuthorId(){
 				return authorId;	
 			}
 			
-			/**
-			*@return String
-			*/
 			public String getLastPostDate(){
 				return lastPostDate;
 			}
 						
-			/**
-			*@return String
-			*/
 			public String getLastReply(){
 				return lastReply;
 			}
 			
-			/**
-			*@return Id
-			*/
 			public Id getLastReplyAuthorId(){
 				return replierId;
 			}
 			
-			/**
-			*@return String
-			*/
 			public String getLastReplyAuthor(){
 				return replierName;
 			}
 			
-			/**
-			*@return String
-			*/
 			public String getAuthorPicture(){
 				return authorPicture;
 			}
 			
-			/**
-			*@return Integer
-			*/
 			public Integer getViews(){
 				return views;
 			}
 			
-			/**
-			*@return Integer
-			*/
 			public Integer getReplies(){
 				return replies;
 			}
 			
-			/**
-			*@return String
-			*/
 			public String formatDateToText(Datetime d){
 				DateTime now = System.now();
 				String res = '';
@@ -254,4 +193,5 @@ public with sharing class TeamsWidgetActiveDiscussionsController {
 			}
 			
 		}
+
 }

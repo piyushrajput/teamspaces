@@ -2,16 +2,12 @@ trigger DiscussionForumBeforeInsert on DiscussionForum__c bulk (before insert) {
 	if (!TeamUtil.currentlyExeTrigger) {
 		try {		
 			
-		    
+		    List<Group> groupTeam = [select id, Name from Group where Name like 'Discussion%' and type = 'Queue'];
 			
 			List<String> idsTeam = new List<String>();
-			List<String> discussionQueueNames = new List<String>();
 			for (DiscussionForum__c iterForum : Trigger.new) {
 				idsTeam.add(iterForum.team__c);	
-				discussionQueueNames.add('Discussion' + iterForum.team__c);
 			}	
-			
-			List<Group> groupTeam = [select id, Name from Group where Name in: discussionQueueNames and type = 'Queue'];
 			
 			List<TeamMember__c> membersLst = [select id, TeamProfile__c, Team__c,
 												TeamProfile__r.ManageDiscussionForums__c 

@@ -1,42 +1,28 @@
 <apex:component Controller="PeopleProfileTeamWidgetController" >
-	<div class="teamWidget mySmallWidget" >
-		<!-- Widget Title -->		
-		<div class="thinHeader">
-			<div><div><h4>{!$ObjectType.Team__c.labelPlural}</h4></div></div>
-		</div>
-		<!-- Widget Container -->   		
-		<div class="box_content">
-			<!-- Widget Links Holder -->
-			<div class="thinWidgetLinkAction">
-				<a class="edit" href="/apex/TeamsOverview">See More&#187;</a>
-			</div>
-			<div class="thinBody collapsable">
-					<div class="contentHolder">
-			        	<ul class="teamspaces">
-			        		<apex:repeat value="{!teamspaces}" var="team">
-								<li>
-									<apex:outputLink value="TeamsRedirect">
-				                    	{!team.Name}
-				                    	<apex:param name="id" value="{!team.Id}" />
-				                    </apex:outputLink><br />
-				                    <strong>
-				                        <script>trunkText('{!team.Description}', 25);</script>
-				                    </strong>
-				                    ({!team.CreatedDate} - present)
-								</li>
-			            	</apex:repeat>
-			            	<apex:outputpanel rendered="{!teamspacesSize==0}">
-			        			<div>{!ProfileUserName} hasn't joined any teams yet.</div>
-			        		</apex:outputpanel>
-			            </ul>
-			        </div>
-
-			</div>				
-		</div>
-		<!-- Widget Holder Foot -->
-		<div class="bottom_borders">
-			<div><div></div></div>
-		</div>
+	<div class="box_round">
+	    <!-- Header -->
+	    <div class="header edition">
+	        <div><div><h4>Teams</h4><a class="edit" href="/apex/TeamsOverview">See More&#187;</a></div></div>
+	    </div> 
+	    <!-- Rounded Box Content -->
+	    <div class="box_content">
+	        <div class="contentHolder">
+	            <ul class="teamspaces">
+	            <apex:repeat value="{!teamspaces}" var="team">
+	                <li>
+	                    <apex:outputLink value="TeamsRedirect">
+	                        {!team.Name}
+	                        <apex:param name="id" value="{!team.Id}" />
+	                    </apex:outputLink><br />
+	                    <strong>
+	                        <script>trunkText('{!team.Description}', 25);</script>
+	                    </strong>
+	                    ({!team.CreatedDate} - present)
+	                </li>
+	            </apex:repeat>
+	            </ul>
+	        </div>  
+	    </div>
+	    <div class="bottom_borders"><div><div></div></div></div>
 	</div>
-	<div class="clear"></div>
 </apex:component>

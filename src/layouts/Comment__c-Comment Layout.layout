@@ -19,6 +19,10 @@
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
+                <field>BlogEntry__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
                 <field>PostedBy__c</field>
             </layoutItems>
             <layoutItems>
@@ -30,6 +34,10 @@
             <layoutItems>
                 <behavior>Edit</behavior>
                 <field>Message__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Bookmark__c</field>
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>

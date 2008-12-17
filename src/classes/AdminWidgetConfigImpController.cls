@@ -6,4 +6,5 @@ public class AdminWidgetConfigImpController {
 	public void verifyAdminPerm(){
 		TeamUtil.isAdminMemberUser();
 	}
+	
 }

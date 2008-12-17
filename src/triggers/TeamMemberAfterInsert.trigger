@@ -197,6 +197,15 @@ trigger TeamMemberAfterInsert on TeamMember__c bulk (after insert) {
 					tms.RowCause = 'Manual';
 					insert tms; 
 				
+					/*
+					TeamMember__Share tms2 = new TeamMember__Share();
+					tms2.ParentId = tm.Id;
+					tms2.UserOrGroupId = tm.User__c;
+					tms2.AccessLevel = 'All';
+					tms2.RowCause = Schema.TeamMember__Share.RowCause.Manual;
+					insert tms2; 
+					*/
+				
 				}
 			}	
 		} finally {

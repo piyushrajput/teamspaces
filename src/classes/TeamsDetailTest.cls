@@ -1,28 +1,22 @@
-@isTest private class TeamsDetailTest {
+@IsTest private class TeamsDetailTest {
     
     public static String USERID =  UserInfo.getUserId();
     
     public static testMethod void testTeam() {
         try{
-            GenerateEnvironmentTest.gen();
-            Test.startTest();
-            
             TeamsDetailController team = new TeamsDetailController();
-            Team__c t = GenerateEnvironmentTest.newTeam;
+            Team__c t = [select Id from Team__c where NewMemberProfile__c != '' limit 1];
             team.setTeamIdParam(t.Id);
             team.getTeamDetail();
-            Boolean b = team.getInTeamSubscription();
             t = team.getTeamspace();
+            team.joinTeam();
+            team.leaveTeam();
             Boolean open = team.getTeamIsOpen();
             String param = team.getTeamIdParam();
-            Boolean message = team.showJoinEvent();
+            Boolean message = team.getShowJoinTeamMessage();
+            team.assignShowJoinTeamMessage();
             UserPermissions up = team.getUserPermissionsWiki();
             String image = team.getTeamspaceImage();
-            team.joinTeam();
-            team.refreshJoinEvent();
-            team.leaveTeam();
-            
-            Test.stopTest();
         }catch(Exception e){
             throw e;
         }

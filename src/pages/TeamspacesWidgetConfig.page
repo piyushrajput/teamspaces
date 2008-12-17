@@ -1,32 +1,29 @@
 <apex:page sidebar="false">
-	<apex:includeScript value="{!URLFOR($Resource.Script_aculo_us, 'prototype.js')}"/>
-	<apex:includeScript value="{!URLFOR($Resource.Script_aculo_us, 'scriptaculous.js')}"/>
-	<apex:includeScript value="{!URLFOR($Resource.Script_aculo_us, 'effects.js')}"/>
-	<apex:includeScript value="/js/functions.js"/>
-	<apex:includeScript value="/soap/ajax/11.1/connection.js"/>		
+	
+	<script src="{!URLFOR($Resource.Script_aculo_us, 'prototype.js')}"></script>
+	<script src="{!URLFOR($Resource.Script_aculo_us, 'scriptaculous.js')}"></script>
+	<script src="{!URLFOR($Resource.Script_aculo_us, 'effects.js')}"></script>
+	<script type="text/javascript" src="/js/functions.js"></script>
+	<script src="/soap/ajax/11.1/connection.js" type="text/javascript" />		
+	
 	<script>
+
 		var aSelecctedWidget = new Array();
 		var TStypeId = null;
 		var TSDetailLayout = null;
 		var _Rows = 0;
 		var _Columns = 0;
 
-		/**
-        * Namespace Prefix Getter
-        */
-        var namespace = "{!namespace}";
-
-		  /*************************/
-		 /          init()         /
-		/*************************/		
+	  /*************************/
+	 /          init()         /
+	/*************************/		
 		function init(){
 			sforce.connection.sessionId = '{!$Api.Session_ID}';
-			sforce.connection.defaultNamespace = namespace;
 		}
 
-		  /*************************/
-		 /      getURLParam()      /
-		/*************************/
+	  /*************************/
+	 /      getURLParam()      /
+	/*************************/
 		function getURLParam(strParamName){
 		  var strReturn = "";
 		  var strHref = window.location.href;
@@ -44,9 +41,9 @@
 		  return unescape(strReturn);
 		}				
 
-		  /*************************/
-		 /       getPageSize()     /
-		/*************************/	
+	  /*************************/
+	 /       getPageSize()     /
+	/*************************/	
 		function getPageSize(){
 			var xScroll, yScroll;
 			if (window.innerHeight && window.scrollMaxY) {	
@@ -85,9 +82,9 @@
 			return arrayPageSize;
 		}
 
-		  /*************************/
-		 /    getDetailLayout()    /
-		/*************************/
+	  /*************************/
+	 /    getDetailLayout()    /
+	/*************************/
 		function getDetailLayout(){
 			var TsId = getURLParam('ts');
 			if(TsId.length == 18 || TsId.length == 16){
@@ -124,9 +121,9 @@
 			}
 		}
 		
-		  /*************************/
-		 /AssemblingConfiguration()/
-		/*************************/
+	  /*************************/
+	 /AssemblingConfiguration()/
+	/*************************/
 		function AssemblingConfiguration (widgetLayouts){
 			$('wc_rows').value = _Rows;
 			$('wc_cols').value = _Columns;
@@ -137,9 +134,9 @@
 			}
 		}
 
-		  /*************************/
-		 /     WidgetMatrix__()    /
-		/*************************/
+	  /*************************/
+	 /     WidgetMatrix__()    /
+	/*************************/
 		function WidgetMatrix__(){
 			var rows = $('wc_rows');;
 			var cols = $('wc_cols');
@@ -179,9 +176,9 @@
 			}
 		} 
 
-		  /*************************/
-		 /      switchOverlay()    /
-		/*************************/		
+	  /*************************/
+	 /      switchOverlay()    /
+	/*************************/		
 		function switchOverlay(){
 			var pageSize = getPageSize();
 			var overlay = $('wc_overlay');
@@ -194,9 +191,9 @@
 			}
 		}
 	
-		  /*************************/
-		 /       messageToUser()   /
-		/*************************/	
+	  /*************************/
+	 /       messageToUser()   /
+	/*************************/	
 		function messageToUser(type, string, okButton){
 			var message = $('messageToUser');
 			var textMsg = $('messageToUserText');
@@ -217,9 +214,9 @@
 			Effect.Appear('messageToUser');
 		}
 
-		  /*************************/
-		 /getWidgetSelecctionList()/
-		/*************************/	
+	  /*************************/
+	 /getWidgetSelecctionList()/
+	/*************************/	
 		function getWidgetSelecctionList(widgetId){
 			var widgetList = $('WidgetsSelecctionList');
 			var widgetsCont = $('WidgetsSelecctionContent'); 
@@ -272,9 +269,9 @@
 		}
 		
 		
-		  /*************************/
-		 /         setGadget()     /
-		/*************************/
+	  /*************************/
+	 /         setGadget()     /
+	/*************************/
 		function setGadget(name, src){
 			init();
 			var widget = $('widgetId_').value;
@@ -294,9 +291,9 @@
 			}		
 		}		
 
-		  /*************************/
-		 /         setWidget()     /
-		/*************************/
+	  /*************************/
+	 /         setWidget()     /
+	/*************************/
 		function setWidget(widget, id){
 			init();
 			var widgetCont = $(widget);
@@ -325,9 +322,9 @@
 			return true;
 		}
 		
-		  /*************************/
-		 /        SaveWidget()     /
-		/*************************/		
+	  /*************************/
+	 /        SaveWidget()     /
+	/*************************/		
 		function SaveWidget(){
 			$('saveAlert').innerHTML = 'Saving...';
 			var TsId = getURLParam('ts');
@@ -380,9 +377,9 @@
 		}
 	
 	
-		/************************************************
-			Get google gadget list
-		************************************************/
+	/************************************************
+		Get google gadget list
+	************************************************/
 		var activeCategory = 'all';
 
 		function gadgetListNextPage(){
@@ -544,12 +541,15 @@
 			$('widgetTab').className = 'tab_widget_selected';
 			$('gadgetTab').className = 'tab_gadget';
 		}
+	
+	
 	</script>
+	
 	<style type="text/css">
 
-		 /**********************/
-		/ Widget Matrix Styles /
-	   /**********************/
+	 /**********************/
+	/ Widget Matrix Styles /
+   /**********************/
 		
 		/* Div's */
 		.WidgetMatrix__ {
@@ -623,7 +623,10 @@
 		.WidgetMatrix__ table td{
 			vertical-align: middle;
 		}		
-				
+		
+		/*/*/
+
+		
 		/* Forms */
 		.WidgetMatrix__bgBar input{
 			width: 40px;
@@ -632,6 +635,8 @@
 			font-size:12px;
 		}
 		
+		/*/*/			
+
 		/* Misc */
 		.tdBorderLeft{
 			border-left: solid 1px #FFFFFF;
@@ -644,7 +649,10 @@
 		.WidgetMatrix__overlay{
 			position: absolute;
 			background: #666666;
-		}		
+		}
+		
+		/*/*/
+		
 		
 		/* Messages */
 		#messageToUser{
@@ -663,7 +671,9 @@
 
 		#messageToUser .bgMessage{
 			background: url({!URLFOR($Resource.TeamspacesWidgetConfig, 'messages_bg.png')});
-		}	
+		}
+	
+		/*/*/			
 		
 	   	/* Widgets Selecction List */
 		
@@ -706,13 +716,13 @@
 				font-weight:bold;
 				position:relative;
 				margin:5px 0px 1px 5px;	
-		}
+			}
 		
 		.TeamSpacesWidgetSelection  .content_gray .btn_New span {
 				left:11px;		
 				position:absolute;
 				top:5px;
-		}
+			}
 		
 		.TeamSpacesWidgetSelection  .content_gray .btn_Done {
 				background:url({!URLFOR($Resource.TeamspacesWidgetConfig, 'btn_done.gif')}) no-repeat top left;
@@ -726,13 +736,13 @@
 				font-size:11px;
 				font-weight:bold;
 				margin:5px 15px 1px 5px;		
-		}
+			}
 		
 		.TeamSpacesWidgetSelection  .content_gray .btn_Done span {
 				left:9px;		
 				position:absolute;
 				top:5px;
-		}
+			}
 		
 		.TeamSpacesWidgetSelection  .content_blue  {
 				background:url({!URLFOR($Resource.TeamspacesWidgetConfig, 'blue_background.png')}) repeat-y top left;
@@ -747,19 +757,19 @@
 				margin-right:9px;
 				position:relative;
 				height:235px;
-		}
+			}
 		
 		.TeamSpacesWidgetSelection  .content_blue  .overflow_control .widgetContainer a {
 				text-decoration:none;
 				color:#8b8a7d;
-		}
+			}
 		
 		.TeamSpacesWidgetSelection  .content_blue  .overflow_control .widgetContainer a:hover {
 				width:105px;
 				height:105px;
 				float:left;			
 				background:url({!URLFOR($Resource.TeamspacesWidgetConfig, 'widgetList_widgetHover.gif')}) no-repeat top left;
-		}
+			}
 		
 		.TeamSpacesWidgetSelection  .content_blue  .overflow_control .widgetContainer {
 				width:105px;
@@ -770,14 +780,14 @@
 				color:#8b8a7d;
 				text-align:center;
 				margin-left:2px;
-		}
+				}
 		
 		.TeamSpacesWidgetSelection  .content_blue  .overflow_control .widgetContainer img {
 			border:0;
 			margin-top:5px;
 			clear:both;
 			margin-bottom:5px;
-		}
+			}
 		
 		.TeamSpacesWidgetSelection  .bottomBorders {
 				background:url({!URLFOR($Resource.TeamspacesWidgetConfig, 'border_bottom.png')}) no-repeat top left;
@@ -803,7 +813,27 @@
 	   		margin-right:10px;
 	   		margin-top:-5px;
 	   }
-	   	   
+	   /*
+	   .tabs {
+	   
+	   		width:454px;
+			margin-left:6px;
+			margin-right:6px;
+			border-bottom:1px solid #FFFFFF;
+			height:34px;
+			position:relative;
+	   }
+	   
+	   .tabs .tab {
+	   		height:25px;
+	   		background:#D3DADC;
+	   		overflow:hidden;
+	   		float:left:
+	   		margin-left:10px;
+	   		padding:0 10px;
+	   }
+	   */
+	   
 	   .tabs .tab_widget, .tabs .tab_gadget, .tabs .tab_widget_selected, .tabs .tab_gadget_selected  {
 	   		margin-top:15px;
 	   }
@@ -815,6 +845,7 @@
 	    }
 	</style>
 	<apex:stylesheet value="{!URLFOR($Resource.TeamspacesWidgetConfig, 'testTabsWidgetSel.css')}" />
+
 	<!-- Message to User -->
 	<div id="messageToUser" style="display: none;">
 		<table cellspacing="0" cellpadding="0">
@@ -833,6 +864,7 @@
 			</tr>	
 		</table>
 	</div>
+	
 	<!-- Widget Selecction List -->
 	<div class="TeamSpacesWidgetSelection" id="WidgetsSelecctionList" style="display:none;">
 		<div class="topBorders"></div>
@@ -863,15 +895,18 @@
 					<option value="new">New stuff</option>	
 				</select>
 			</div>
-			<div class="overflow_control" id="WidgetsSelecctionContent"></div>
-			<div class="overflow_control" id="WidgetsSelecctionContentGadgets" style="display:none;"></div>
-		</div>
-		<img src="{!URLFOR($Resource.TeamspacesWidgetConfig, 'divisor.png')}" alt="" />
-		<div class="content_gray">
+			<div class="overflow_control" id="WidgetsSelecctionContent">
+			</div>
+			
+			<div class="overflow_control" id="WidgetsSelecctionContentGadgets" style="display:none;">
+			</div>
+		</div><img src="{!URLFOR($Resource.TeamspacesWidgetConfig, 'divisor.png')}" alt="" /><div class="content_gray">
 			<div class="btn_Done"><a href="Javascript:;" onclick="getWidgetSelecctionList();"><span>Close</span></a></div>
+			<!--<div class="btn_New"><span>New</span></div>-->			
 		</div>		
 		<div class="bottomBorders"></div>
 	</div>	
+	
 	<!-- Widget's Matrix -->
 	<div class="WidgetMatrix__">
 		<div class="WidgetMatrix__overlay" id="wc_overlay" style="display:none;"></div>	
@@ -905,10 +940,13 @@
 			</table>
 		</div>
 		<div id="matrix"></div>		
+		
 	</div>
+
 	<!-- Initialize SF Connection -->
 	<script>
 		init();
 		getDetailLayout();
 	</script>
+
 </apex:page>

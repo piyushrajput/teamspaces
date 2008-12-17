@@ -10,10 +10,7 @@ trigger CommentBeforeInsert on Comment__c (before insert) {
 	        	wikiPages.add(newComment.ParentWikiPage__c );
 	        }
 	        
-			Map<Id, WikiPage__c> wikiMap = new Map<Id, WikiPage__c>();
-			for (wikiPage__c iterWiki : [select id, Team__c from WikiPage__c where Id in: wikiPages]) {
-				wikiMap.put(iterWiki.Id, iterWiki);
-			}
+			Map<Id, WikiPage__c> wikiMap = new Map<Id, WikiPage__c>([select Team__c from WikiPage__c where Id in: wikiPages]);
 			
 			for(Comment__c newComment : trigger.new){
 	        	newComment.Team__c = wikiMap.get(newComment.ParentWikiPage__c ).Team__c;

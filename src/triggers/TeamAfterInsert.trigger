@@ -46,7 +46,18 @@ trigger TeamAfterInsert on Team__c bulk (after insert) {
 				gdqw.Name = 'Wiki' + team.Id;
 				newGroups.add(gdqw);
 					
-											
+				// Create Blog Queue
+				Group gdqb = new Group();
+				gdqb.Type = 'Queue';
+				gdqb.Name = 'Blog' + team.Id;
+				newGroups.add(gdqb);
+						
+				// Create Bookmark Queue
+				Group gdqbb = new Group();
+				gdqbb.Type = 'Queue';
+				gdqbb.Name = 'Bookmark' + team.Id;
+				newGroups.add(gdqbb);
+							
 				// Rename this to project 		
 				// Create Task Queue
 				Group gdqt = new Group();
@@ -59,59 +70,74 @@ trigger TeamAfterInsert on Team__c bulk (after insert) {
 				String teamQueueId = lsr[0].getId();
 				String discussionQueueId = lsr[1].getId();
 				String wikiQueueId = lsr[2].getId();
-				String taskQueueId = lsr[3].getId();
+				String blogQueueId = lsr[3].getId();
+				String bookmarkQueueId = lsr[4].getId();
+				String taskQueueId = lsr[5].getId();
 				
 				// ### Allow SObjects to be managed by recently created queues ###
 				List<QueueSobject> sobjectsQueueAllowed = new List<QueueSobject>();
 				
 				// Discussion allows
-				QueueSobject allowForum = new QueueSobject(SobjectType = Schema.SObjectType.DiscussionForum__c.getName() ,QueueId = discussionQueueId);
+				
+				QueueSobject allowForum = new QueueSobject(SobjectType = 'DiscussionForum__c',QueueId = discussionQueueId);
 			   	sobjectsQueueAllowed.add(allowForum);
 				
-				QueueSobject allowTopics = new QueueSobject(SobjectType = Schema.SObjectType.DiscussionTopic__c.getName() ,QueueId = discussionQueueId);
+				QueueSobject allowTopics = new QueueSobject(SobjectType = 'DiscussionTopic__c',QueueId = discussionQueueId);
 			   	sobjectsQueueAllowed.add(allowTopics);
 			   	
-			   	QueueSobject allowMessages = new QueueSobject(SobjectType = Schema.SObjectType.DiscussionMessage__c.getName() ,QueueId = discussionQueueId);
+			   	QueueSobject allowMessages = new QueueSobject(SobjectType = 'DiscussionMessage__c',QueueId = discussionQueueId);
 			   	sobjectsQueueAllowed.add(allowMessages);
 						
 			   	// Wiki allows
-				QueueSobject allowWikiPages = new QueueSobject(SobjectType = Schema.SObjectType.WikiPage__c.getName() ,QueueId = wikiQueueId);
+				
+				QueueSobject allowWikiPages = new QueueSobject(SobjectType = 'WikiPage__c',QueueId = wikiQueueId);
 			   	sobjectsQueueAllowed.add(allowWikiPages);
 			   	
-			   	QueueSobject allowComments = new QueueSobject(SobjectType = Schema.SObjectType.Comment__c.getName() ,QueueId = wikiQueueId);
+			   	QueueSobject allowComments = new QueueSobject(SobjectType = 'Comment__c',QueueId = wikiQueueId);
 			   	sobjectsQueueAllowed.add(allowComments);
 			   	
-			   	QueueSobject allowRecentlyViewed = new QueueSobject(SobjectType = Schema.SObjectType.WikiRecentlyViewed__c.getName() ,QueueId = wikiQueueId);
+			   	QueueSobject allowRecentlyViewed = new QueueSobject(SobjectType = 'WikiRecentlyViewed__c',QueueId = wikiQueueId);
 			   	sobjectsQueueAllowed.add(allowRecentlyViewed);
 			   	
-			   	QueueSobject allowWikiLink = new QueueSobject(SobjectType = Schema.SObjectType.WikiLink__c.getName() ,QueueId = wikiQueueId);
+			   	QueueSobject allowWikiLink = new QueueSobject(SobjectType = 'WikiLink__c',QueueId = wikiQueueId);
 			   	sobjectsQueueAllowed.add(allowWikiLink);
 			   	
-			   	QueueSobject allowFavWiki = new QueueSobject(SobjectType = Schema.SObjectType.FavoriteWikis__c.getName() ,QueueId = wikiQueueId);
+			   	QueueSobject allowFavWiki = new QueueSobject(SobjectType = 'FavoriteWikis__c',QueueId = wikiQueueId);
 			   	sobjectsQueueAllowed.add(allowFavWiki);
 			   	
+			   	// Blog
+			   	
+				QueueSobject allowBlogs = new QueueSobject(SobjectType = 'BlogEntry__c',QueueId = blogQueueId);
+			   	sobjectsQueueAllowed.add(allowBlogs);
+			   	
+			   	// Bookmark
+			   	
+				QueueSobject allowBookmarks = new QueueSobject(SobjectType = 'Bookmark__c',QueueId = bookmarkQueueId);
+			   	sobjectsQueueAllowed.add(allowBookmarks);
 			   	
 			   	// Project Tasks - assignees
-				QueueSobject allowAsignee = new QueueSobject(SobjectType = Schema.SObjectType.ProjectAssignee__c.getName() ,QueueId = taskQueueId);
+			   	
+				QueueSobject allowAsignee = new QueueSobject(SobjectType = 'ProjectAssignee__c',QueueId = taskQueueId);
 			   	sobjectsQueueAllowed.add(allowAsignee);
 				
-				QueueSobject allowTasks = new QueueSobject(SobjectType = Schema.SObjectType.ProjectTask__c.getName() ,QueueId = taskQueueId);
+				QueueSobject allowTasks = new QueueSobject(SobjectType = 'ProjectTask__c',QueueId = taskQueueId);
 			   	sobjectsQueueAllowed.add(allowTasks);
 			   	
-			   	QueueSobject allowProject = new QueueSobject(SobjectType = Schema.SObjectType.Project2__c.getName() ,QueueId = taskQueueId);
+			   	QueueSobject allowProject = new QueueSobject(SobjectType = 'Project2__c',QueueId = taskQueueId);
 			   	sobjectsQueueAllowed.add(allowProject);
 			   	
-			    QueueSobject allowProjectTaskPred = new QueueSobject(SobjectType = Schema.SObjectType.ProjectTaskPred__c.getName() ,QueueId = taskQueueId);
+			    QueueSobject allowProjectTaskPred = new QueueSobject(SobjectType = 'ProjectTaskPred__c',QueueId = taskQueueId);
 			   	sobjectsQueueAllowed.add(allowProjectTaskPred);
 			   	
 			   	// Team
-				QueueSobject allowTeams = new QueueSobject(SobjectType = Schema.SObjectType.Team__c.getName() ,QueueId = teamQueueId);
+			   	
+				QueueSobject allowTeams = new QueueSobject(SobjectType = 'Team__c', QueueId = teamQueueId);
 			   	sobjectsQueueAllowed.add(allowTeams);
 			   	
-			   	QueueSobject allowTeamMembers = new QueueSobject(SobjectType = Schema.SObjectType.TeamMember__c.getName() ,QueueId = teamQueueId);
+			   	QueueSobject allowTeamMembers = new QueueSobject(SobjectType = 'TeamMember__c', QueueId = teamQueueId);
 			   	sobjectsQueueAllowed.add(allowTeamMembers);	
 			   	
-			   	QueueSobject allowMiniFeed = new QueueSobject(SobjectType = Schema.SObjectType.MiniFeed__c.getName() ,QueueId = teamQueueId);
+			   	QueueSobject allowMiniFeed = new QueueSobject(SobjectType = 'MiniFeed__c', QueueId = teamQueueId);
 			   	sobjectsQueueAllowed.add(allowMiniFeed);	
 			      	
 				// Insert all the allowed sobjects       	
@@ -190,17 +216,6 @@ trigger TeamAfterInsert on Team__c bulk (after insert) {
 			}
 		} finally {
         	TeamUtil.currentlyExeTrigger = false;
-		}
-	}
-	else {
-		TeamProfile__c defaultProfile = [select Id from TeamProfile__c where Name = 'Team Administrator' limit 1];
-		for (Team__c team : Trigger.new) {
-			TeamMember__c firstTeamMember = new TeamMember__c();
-			firstTeamMember.User__c = Userinfo.getUserId();
-			firstTeamMember.Name = UserInfo.getName();
-			firstTeamMember.Team__c = team.Id;
-			firstTeamMember.TeamProfile__c = defaultProfile.Id;
-			insert firstTeamMember;	
 		}
 	}
 }

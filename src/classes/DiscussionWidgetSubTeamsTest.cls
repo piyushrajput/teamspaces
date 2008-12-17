@@ -2,13 +2,13 @@
 
 public static String teamId = System.currentPageReference().getParameters().get('id');
     public static testMethod void testDiscussion() {
-    	GenerateEnvironmentTest.gen();
-    	Test.startTest();
-    	
         DiscussionWidgetSubTeamsController dis = new DiscussionWidgetSubTeamsController();
         DiscussionWidgetSubTeamsController.subTeams sub = new DiscussionWidgetSubTeamsController.subTeams();
         
-        dis.setTeamId(GenerateEnvironmentTest.newTeam.Id);
+        //String idTeam = [select id from Team__c limit 1].id;
+        //I have to hardcode the team id because the team need to have at least one subteam.
+        String idTeam = 'a0B30000001xHJcEAM';
+        dis.setTeamId(idTeam);
         
         dis.getCountSubTeams();
         dis.getSubTeams();
@@ -17,6 +17,5 @@ public static String teamId = System.currentPageReference().getParameters().get(
         sub.getId();
         sub.getCount();
         
-        Test.stopTest();
     }       
 }

@@ -31,9 +31,11 @@
 		}
 	}
 </script>
+
 <div id="inputTeamFileContainer">
 	<input id="tempfile" name="file" size="20" title="Type the path of the file or click the Browse button to find the file." type="file" />
 </div>
+
 <!-- Iframe for upload file -->
 <form action="/p/attach/NoteAttach" enctype="multipart/form-data" id="uploadImageForm" target="iframeUpload" method="post">
 	<span id="inputFileContainer" style="display:none;"></span>

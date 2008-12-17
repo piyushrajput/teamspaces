@@ -75,6 +75,8 @@ trigger ProjectAssigneeBeforeInsert on ProjectAssignee__c (before insert) {
 	        	
 	        	List<ProjectAssignee__c> assignees  = taskMap.get(newAssignee.ProjectTask__c ).ProjectAssignee__r;
 	        	
+	        	System.debug('Project Assignee number: ' + assignees.size() + ' for task id: ' + newAssignee.ProjectTask__c);
+	        	
 	        	if(!isAdmin && !profile.CreateProjectTasks__c && !profile.ManageProjectTasks__c && assignees.size() == 0)
 	        		newAssignee.addError('Cannot Insert A Task Assignee. Insufficient Privileges');
 	        	

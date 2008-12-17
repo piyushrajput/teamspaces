@@ -2,30 +2,24 @@
 
 
         public static testMethod void testDiscussion() { 
-            
-            GenerateEnvironmentTest.gen();
-            Test.startTest();
-            
-            Id[] fixedSearchResultsList = new Id[1];
-            fixedSearchResultsList.add(GenerateEnvironmentTest.newMessage.Id); 
-            
-            Test.setFixedSearchResults(fixedSearchResultsList);
-
-            DiscussionSearchResultsController dis = new DiscussionSearchResultsController();
-            
-            Boolean isTestController = true;
+        	DiscussionSearchResultsController dis = new DiscussionSearchResultsController();
+        	
+        	Boolean isTestController = true;
             dis.setIsTestController(true);
-            
-            /* WITH SEARCH CRITERIA */
+           	
+        	
+        	/* WITH SEARCH CRITERIA */
             try {
-                dis.setParamkey('Foo Text');
-            }catch (exception e) {
+                dis.setParamkey('juan');
+            }
+            catch (exception e) {
                 System.assert(true, e);
             }
              
             try {
                 dis.contructorFunction();
-            }catch (exception e) {
+            }
+            catch (exception e) {
                 System.assert(true, e);
             }
             
@@ -55,11 +49,20 @@
                 System.assert(true,'getNoMatches return null');
             }
             
-                        
+            /*
+            try {
+            	dis.setIsTestController(true);
+                dis.search();   
+            }
+            catch (exception e) {
+                System.assert(true, e);
+            }
+            */
+            
             dis.setCriteria('test');
             
             List<DiscussionSearchResultsController.searchResult> results = dis.getResults();
-            if (results == null) {
+			if (results == null) {
                 System.assert(true,'getResults return null');
             }
             
@@ -79,8 +82,8 @@
             if (fI == null) {
                 System.assert(true,'getFirstItem return null');
             }
-            
-            Integer lI = dis.getLastItem();
+			
+			Integer lI = dis.getLastItem();
             if (lI == null) {
                 System.assert(true,'getLastItem return null');
             }
@@ -109,8 +112,8 @@
             if (prevLS == null) {
                 System.assert(true,'getPrevPageLinkShow  return null');
             }
-            
-            Boolean prevPS = dis.getPrevPageShow();
+			
+			Boolean prevPS = dis.getPrevPageShow();
             if (prevPS == null) {
                 System.assert(true,'getPrevPageShow  return null');
             }
@@ -134,37 +137,41 @@
             if (nextPS == null) {
                 System.assert(true,'getNextPageShow  return null');
             }
-            
-            Integer jP = dis.getJumpPage();
+			
+			Integer jP = dis.getJumpPage();
             if (jP == null) {
                 System.assert(true,'getJumpPage  return null');
             }
             
             Integer jumpT = 1;
             dis.setJumpPage(jumpT);
-            dis.JumpToPage();
-            
+			dis.JumpToPage();
+			
             /* NO SEARCH CRITERIA */
             try {
-                dis.setIsTestController(true);
+            	dis.setIsTestController(true);
                 dis.setParamkey('');
-            }catch (exception e) {
+            }
+            catch (exception e) {
                 System.assert(true, e);
             }
             
-            dis.setrowsCount(10); 
             
             try {
                 dis.contructorFunction();
-            }catch (exception e) {
+            }
+            catch (exception e) {
                 System.assert(true, e);
             }
           
             try {
+            	
                 dis.search();   
-            }catch (exception e) {
+            }
+            catch (exception e) {
                 System.assert(true, e);
             }
+            
             
             if (dis.getCriteria() == null) {
                 System.assert(true,'getCriteria return null');
@@ -192,8 +199,7 @@
                 System.assert(true,'getNoMatches return null');
             }
             
-            Test.stopTest();     
-               
+            /*
             DiscussionSearchResultsController.searchResult search=  new DiscussionSearchResultsController.searchResult();
             search.setTitle ('A', 'B');
             search.setMatches('A', 'B');
@@ -201,5 +207,8 @@
             System.assert(title=='A', 'OK');
             String matches= search.getMatches ();
             System.assert(matches=='A', 'OK');
+            dis.search();
+            */
+    
         }
 }

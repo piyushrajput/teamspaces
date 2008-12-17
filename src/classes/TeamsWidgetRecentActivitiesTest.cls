@@ -3,18 +3,10 @@
     public static testMethod void testTeam() {
         
         try{
-            GenerateEnvironmentTest.gen();
-            Test.startTest();              
-            
             TeamsWidgetRecentActivitiesController team = new TeamsWidgetRecentActivitiesController();   
             List<TeamsWidgetRecentActivitiesController.miniFeed> feeds=team.getMiniFeeds(); 
-            Team__c t = GenerateEnvironmentTest.newTeam;
+            Team__c t = [select Id from Team__c limit 1];
             team.setTeamId(t.Id);
-            
-            //setting and getting sidebar
-            team.setSidebar(true);
-            team.getSidebar();
-            
             TeamsWidgetRecentActivitiesController.miniFeed feed = new TeamsWidgetRecentActivitiesController.miniFeed();
             
             List<String> types = new List<String>();
@@ -30,6 +22,7 @@
                 feed.setTypeOfFeed(types[i]);
                 feed.getTypeOfFeed();
             }
+            
             feed.setName('Name');
             feed.setUser('User');
             feed.setMessage('Message');
@@ -46,7 +39,6 @@
             String feedDate = feed.getFeedDateString();
             String feedClass = feed.getFeedDateClass();
 
-            Test.stopTest();
         }catch(Exception e){
             throw e;
         }
