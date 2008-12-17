@@ -23,15 +23,17 @@ http://teamspaces.googlecode.com/svn/wiki/image/installation/step11.png
 
 Once the application has installed, the application's tabs need to be override with it overview page. 
 
-A total of 4 tabs need to be override: Teams Tab, People Tab, Discussion Tab, Wiki Tab.
+To begin overriding each tab, list the custom objects that are available in your Org:
+Click the following path:
+Setup / App Setup / Create (expand) / Objects
+
+Once the 'Custom Objects' list is up, a total of 4 tabs in 4 different custom objects need to be override: Teams, People, Discussion, Wiki.
 
 The process of overriding these tabs is the same for all objects, what differs from one another is the VisualForce page used to override each tab:
 
-1-The Teams Tab needs to be override with the TeamsOverview.page VisualForce page 
-2-People Tab needs to be override with the PeopleOverview.page VisualForce page
-3-Discussion Tab needs to be override with the DiscussionOverview.page VisualForce page
-4-Wiki Tab needs to be override with the WikiOverview.page VisualForce page
-
-
+1-The Teams Object Tab needs to be override with the TeamsOverview.page VisualForce page 
+2-People Object Tab needs to be override with the PeopleOverview.page VisualForce page
+3-Discussion Object Tab needs to be override with the DiscussionOverview.page VisualForce page
+4-WikiPage Object Tab needs to be override with the WikiOverview.page VisualForce page
 
 
