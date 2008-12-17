@@ -1,0 +1,57 @@
+<!--  **** Template **** -->
+<apex:component controller="ProjectTaskListController" allowDML="true">
+	
+	<!-- Modal JS -->
+	<apex:includeScript value="{!URLFOR($Resource.commonResources, 'inc/js/modal.js')}"/>
+	
+	<!-- Overlay Styles -->
+	<apex:stylesheet value="{!URLFOR($Resource.TeamsResources, 'inc/css/teamsOverlaysTemplate.css')}" />
+	
+	<!-- ProjectDeleteTaskOverlay Common JS -->
+	<apex:includeScript value="{!URLFOR($Resource.ProjectResources, 'inc/js/projectDeleteTaskOverlay.js')}"/>
+	
+	<!-- Initialize the overlay box for modal.js -->
+	<a href="#modal_container" id="initializeModalOverlay" style="display:none;"></a>
+	<div id="modal_container" style="display:none;"></div>
+	<script>
+		createOverlay('initializeModalOverlay');
+	</script>
+	<div id="deleteTasks" style="display:none;" class="overlayForm">	
+		<!-- Overlay Title -->
+		<div class="overlayTitleContent">
+			<div class="overlayTitle">Delete</div>
+			<div class="overlayCloseEvent">
+				<a href="Javascript:;" onclick="modal.close();">
+					<img src="{!URLFOR($Resource.TeamsResources, 'images/layout/genericClose.gif')}" alt="Close Window" title="Close Window" />
+				</a>
+			</div>
+		</div>
+		<!-- Overlay Content -->
+		<div class="overlayMainContent">
+			<!-- Action Status -->
+			<div id="overlayFormStatus" class="overlayFormStatus" style="display:none;">
+				{Status...}
+			</div>
+			<!-- Overlay Form -->
+			<apex:form id="overlayForm">   
+				<!-- Overlay Form Content -->
+				<div class="overlayFormContent">
+					<strong>Are you sure you want to continue?</strong><br />
+					<span>Once task(s) are deleted, it is not recoverable</span>
+				</div>
+				<div class="overlaySeparateLine" />
+				<!-- Saven and Cancel Buttons -->
+				<div class="overlayFromButtons" align="center">
+					<span id="deleteEventContainer">
+						<apex:commandButton styleclass="overlaySaveBtn" action="{!deleteTask}" value="Continue and delete" onclick="modal.close();showSwirley();" oncomplete="redirect(); showMessageToUser('Deleted item(s)','success');" rerender="taskListPanel" />
+						<apex:inputHidden id="auxInputDeletes" value="{!idDeletes}" />
+					        <script>
+				        		var InputIdToDelete = '{!$Component.auxInputDeletes}';
+				        	</script>
+				        </span>
+			        <input type="button" class="overlayCancelBtn" onclick="modal.close();" value="Cancel" id="cancelButton"/>
+				</div>
+			</apex:form>
+		</div>
+	</div>
+</apex:component>

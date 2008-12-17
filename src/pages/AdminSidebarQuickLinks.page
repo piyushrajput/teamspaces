@@ -1,0 +1,38 @@
+<apex:page sidebar="false" showHeader="false" >
+	<div class="teamWidget mySmallWidget" >
+		<!-- Widget Title -->		
+		<div class="thinHeader">
+			<div><div><h4>Quick links</h4></div></div>
+		</div>
+		<!-- Widget Container -->   		
+		<div class="box_content">
+			<div class="thinBody">
+				<div class="team_detail_commentedItemLeftProfile">					    
+				    <img class="imgSmallLeft" src="{!URLFOR($Resource.TeamsResources, '/images/layout/icons/star.gif')}"  />	
+				    <div>
+				    	<span class="text_link_underlineColorPaddRight">
+				    	  	<a style="color:#0F6CB0" href="Javascript:;" onclick="createOverlay('','AdminNewTeamType', '290');">
+				    	  		Create a new {!$ObjectType.Team__c.label} type
+				    	  	</a>
+				    	</span>
+				   	</div>
+				</div>	
+				<div class="team_detail_commentedItemLeftProfile">					    
+				    <img class="imgSmallLeft" src="{!URLFOR($Resource.TeamsResources, '/images/layout/icons/star.gif')}"  />	
+				   	<div>
+						<span class="text_link_underlineColorPaddRight">
+				      		<a style="color:#0F6CB0" href="Javascript:;" onclick="createOverlay('','newTeamProfile', '290');">
+				      			Create a new {!$ObjectType.Team__c.label} profile
+				      		</a>
+				    	</span>
+				    </div>
+				</div>
+			</div>				
+		</div>
+		<!-- Widget Holder Foot -->
+		<div class="bottom_borders">
+			<div><div></div></div>
+		</div>
+	</div>
+	<div class="clear"></div>
+</apex:page>

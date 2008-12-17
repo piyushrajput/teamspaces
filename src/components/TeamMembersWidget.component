@@ -1,0 +1,878 @@
+<apex:component controller="TeamMembersWidgetController" allowDml="true"> 
+	<!-- Attribute Definitions -->
+	<apex:attribute name="teamId" description="The team ID" type="String" required="true" assignTo="{!team}" />
+	<apex:attribute name="type" description="The list type" type="String" required="false" assignTo="{!typeList}" />
+	<!-- ### JavaScript ### -->		
+	<script src="{!URLFOR($Resource.TeamsResources, 'inc/js/autocomplete.js')}"/>
+	<script>
+		var API_SESSION_ID = '{!$Api.Session_ID}';		
+	
+		var stopRecursivity = false;
+				
+		function showSelects(){
+		 	var selects = $$('#modal_container select');
+		 	for(var i = 0; i < selects.size() ; i++){
+		 		selects[i].style.visibility = '';
+		 		selects[i].style.display = '';
+		 	}
+		 }
+	</script>
+	<!-- NEW MEMBER OVERLAY -->
+	<apex:outputpanel rendered="{!IF(UserPermissions.canManage, true, false)}">
+		<!-- Common CSS Styling  -->
+		<link rel="stylesheet" href="{!URLFOR($Resource.PeopleResourceFiles, 'inc/css/autocomplete.css')}" type="text/css" media="screen" charset="utf-8" />
+		<link rel="stylesheet" href="{!URLFOR($Resource.TeamsResources, 'inc/css/teamOverlyInviteNewMember.css')}" type="text/css" />
+		<script>
+			/**
+	        * Namespace Prefix Getter
+	        */
+	        var namespace = "{!namespace}";		
+			
+			/**
+			* Initialize toolkit connection
+			*@void
+			*/
+			function init(){
+				sforce.connection.sessionId = '{!$Api.Session_ID}';
+				sforce.connection.defaultNamespace = namespace;
+			}
+			
+			var showingBubble = false;		
+			var time = '';
+			function tooltip2(obj, selectId){
+				// Tooltip
+				var tooltip = $('divToolTip2');
+				var tooltipMessage = $('messageTooltip2');
+				var selectValue = $F(selectId);
+				var markup = '';
+				var height = 34;
+				init();
+				queryString ="Select Id, Description__c, Name, PostWikiComments__c, PostDiscussionTopicReplies__c, PostBookmarkComments__c, PostBlogComments__c, ManageWikis__c, ManageTeams__c, ManageProjectTasks__c, ManageDiscussionForums__c, ManageBookmarks__c, ManageBlogs__c, CreateWikiPages__c, CreateProjectTasks__c, CreateDiscussionTopics__c, CreateBookmarks__c, CreateBlogs__c from TeamProfile__c where Id = '" + selectValue + "'";
+				result = sforce.connection.query(queryString);
+				records = result.getArray("records");
+				markup += '<b>"'+ records[0].Name + '" profile:</b><br/>';
+				//Teams permissions
+				if(records[0].ManageTeams__c == 'true'){
+					markup += '<br/><b>{!$ObjectType.Team__c.label}</b><br/>-Manage {!$ObjectType.Team__c.label}<br/>';
+					height += 43;
+				}
+				//Blogs permissions
+				if(records[0].ManageBlogs__c == 'true'){
+					markup += '<br/><b>Blogs</b><br/>-Manage Blogs<br/>-Post comments<br/>-Create blogs<br/>';
+					height += 71;
+				}else if(records[0].PostBlogComments__c == 'true'){
+					markup += '<br/><b>Blogs</b><br/>-Post comments<br/>';
+					height += 43;
+					if(records[0].CreateBlogs__c == 'true'){
+						markup += '-Create blogs<br/>';
+						height += 16;
+					}
+				}else if(records[0].CreateBlogs__c == 'true'){
+					markup += '<br/><b>Blogs</b><br/>-Create blogs<br/>';
+					height += 43;
+				}
+				//Discussions permissions
+				if(records[0].ManageDiscussionForums__c == 'true'){
+					markup += '<br/><b>Discussion</b><br/>-Manage forums<br/>-Post topic replies<br/>-Create topics<br/>';
+					height += 71;
+				}else if(records[0].PostDiscussionTopicReplies__c == 'true'){
+					markup += '<br/><b>Discussion</b><br/>-Post topic replies<br/>';
+					height += 43;
+					if(records[0].CreateDiscussionTopics__c == 'true'){
+						markup += '-Create discussion topics<br/>';
+						height += 16;
+					}
+				}else if(records[0].CreateDiscussionTopics__c == 'true'){
+					markup += '<br/><b>Discussion</b><br/>-Create discussion topics<br/>';
+					height += 43;
+				}
+				//Wiki permissions
+				if(records[0].ManageWikis__c == 'true'){
+					markup += '<br/><b>Wiki</b><br/>-Manage wiki<br/>-Post comments<br/>-Create wiki pages<br/>';
+					height += 71;
+				}else if(records[0].PostWikiComments__c == 'true'){
+					markup += '<br/><b>Wiki</b><br/>-Post comments<br/>';
+					height += 43;
+					if(records[0].CreateWikiPages__c == 'true'){
+						markup += '-Create wiki pages<br/>';
+						height += 16;
+					}
+				}else if(records[0].CreateWikiPages__c == 'true'){
+					markup += '<br/><b>Wiki</b><br/>-Create wiki pages<br/>';
+					height += 43;
+				}
+				//Project permissions
+				if(records[0].ManageProjectTasks__c == 'true'){
+					markup += '<br/><b>Project</b><br/>-Manage project tasks<br/>-Create project tasks<br/>';
+					height += 57;
+				}else if(records[0].CreateProjectTasks__c == 'true'){
+					markup += '<br/><b>Project</b><br/>-Create project tasks<br/>';
+					height += 43;
+				}
+				//Bookmark permissions
+				if(records[0].ManageBookmarks__c == 'true'){
+					markup += '<br/><b>Bookmark</b><br/>-Manage bookmarks<br/>-Post comments<br/>-Create bookmarks<br/>';
+					height += 71;
+				}else if(records[0].PostBookmarkComments__c == 'true'){
+					markup += '<br/><b>Bookmark</b><br/>-Post comments<br/>';
+					height += 43;
+					if(records[0].CreateBookmarks__c == 'true'){
+						markup += '-Create bookmarks<br/>';
+						height += 16;
+					}
+				}else if(records[0].CreateBookmarks__c == 'true'){
+					markup += '<br/><b>Bookmark</b><br/>-Create bookmarks<br/>';
+					height += 43;
+				}
+				tooltipMessage.innerHTML = markup;				
+				tooltip.style.display = 'block';
+				tooltip.style.top = ((height - (height * 2)) / 2) + 'px';
+				showingBubble = true;
+				clearTimeout(time);
+				time = setTimeout("Effect.Fade('divToolTip2')",3000);
+					
+			}
+		
+			function tooltipoff2(){
+				// Tooltip
+				showingBubble = false;
+				clearTimeout(time);
+				var tooltip = $('divToolTip2');
+				tooltip.style.display = 'none';
+			}
+		</script>
+		<!-- Content  -->
+		<div id="inviteTeam" style="display:none;" class="overlayForm">
+			<!-- Overlay Title -->
+			<div class="overlayTitleContent">
+				<div class="overlayTitle">Add new member to {!teamName}</div>
+				<div class="overlayCloseEvent">
+					<a href="Javascript:;" onclick="modal.close();">
+						<img src="{!URLFOR($Resource.TeamsResources, 'images/layout/genericClose.gif')}" alt="Close Window" title="Close Window" />
+					</a>
+				</div>
+			</div>
+			<div class="overlayMainContent">
+				<!-- Required Information -->
+				<span class="overlayRequiredInfo">= Required Information</span>
+				<apex:form id="newMemberForm">
+					<div class="overlayFormContent">
+						<table cellpadding="0" cellspacing="0" style="margin:0px; padding:0px; width: 100%;">
+							<tr>
+								<td class="inputInfoTitle">
+									<span class="inputInfoTitle">Add colleagues</span><br /><span class="explainBottom">(enter name or email)</span>
+								</td>
+								<td style="width:4px;">
+									<span style="display:block;width:4px; height:67px; background-color: #C0272D;"></span>
+								</td>
+								<td>
+									<div id="ajaxResult" style="display:none;"></div>	   								
+									<script>
+										function hideSuggest(){
+											var resultDiv = $('ac_{!$Component.colleaguesNames}');
+											if (resultDiv != null) {
+												Effect.Fade('ac_{!$Component.colleaguesNames}',{duration: 0.2});
+											}
+										}
+										
+										function selectFixIE6 () {
+											if (navigator.appName == "Microsoft Internet Explorer") {
+												if (!stopRecursivity) {
+													var resultDiv = $('ac_{!$Component.colleaguesNames}');
+													var hideSelect = $('{!$Component.newTeamProfile}'); 
+														
+													if (resultDiv != null) {
+														var listItems = $('ac_ul');
+														var countItem = listItems.getElementsByTagName('li');
+														if (countItem.length > 3) {
+															hideSelect.style.visibility = 'hidden';
+														}
+													}else {
+														hideSelect.style.visibility = 'visible';
+													}
+													setTimeout('selectFixIE6()',200);
+												}
+											}else {
+												stopRecursivity = true;
+											}
+										}
+										
+										function stopFunction () {
+											stopRecursivity = true;
+										}
+										
+										function startFunction () {
+											stopRecursivity = false;
+										}
+										
+										function statusSending(obj) {
+											var colleagues = $$('textarea.colleaguesNames')[0];
+											if (colleagues.value == '') {
+												alert('Please search or add a user in Add colleagues field.');
+												stopFunction();
+											} else {
+												var buttons = $$('input.sendButtons');
+												for (var i = 0; i < buttons.size(); i++) {
+													buttons[i].value = '  Saving...  ';
+													buttons[i].disabled = 'disabled';
+												}
+											}
+										}
+										
+										function statusNormal(obj){
+											var buttons = $$('input.sendButtons');
+											buttons[0].value = '  Send  ';
+											buttons[0].disabled = false;
+											buttons[1].value = '  Send & add more members  ';
+											buttons[1].disabled = false;
+										}
+									</script>
+									&nbsp;
+									<apex:inputTextArea id="colleaguesNames" styleClass="colleaguesNames" style="width:310px; height:63px;"value="{!newMemberVars.colleagueNames}" onFocus="javascript:
+										var options = {
+												script: function (input) { return ('SuggestDispatcher?input='+input+'&class=colleagueNames&teamId={!teamId}'); },
+										        callback: function (obj) {}    
+												};
+												xml = new AutoComplete('{!$Component.colleaguesNames}',options);return true;" onBlur="hideSuggest();" />								
+								</td>
+							</tr>
+							<tr>
+								<td></td>
+								<td></td>
+								<td>
+									&nbsp;<span class="explain">(comma separated)</span>
+									<br/>
+								</td>
+							</tr>
+							<tr>
+								<td height="10px"></td>
+							</tr>
+							<tr>
+								<td class="inputInfoTitle">
+									<span class="inputInfoTitle">Message</span>
+								</td>
+								<td></td>
+								<td>
+									&nbsp;<apex:inputTextArea style="height:83px;width:310px" value="{!newMemberVars.message}" />
+								</td>
+							</tr>
+							<tr>
+								<td height="7px"></td>
+							</tr>
+							<tr>
+								<td class="inputInfoTitle">
+									<span class="inputInfoTitle">{!$ObjectType.Team__c.label} profile</span>
+								</td>
+								<td></td>
+								<td>
+									&nbsp;
+									<apex:selectList style="width: 200px;" id="newTeamProfile" value="{!newMemberVars.profileId}" multiselect="false" size="1">
+										<apex:selectOptions value="{!profilesOptions}"/>
+									</apex:selectList>
+									&nbsp;
+									<a style="position: relative;" href="Javascript:;" onclick="tooltip2(this, '{!$Component.newTeamProfile}');">
+										<img class="imgAlign" onmouseover="tooltip2(this, '{!$Component.newTeamProfile}');" onmouseout="tooltipoff2();" src="{!URLFOR($Resource.TeamsResources, '/images/layout/icons/infoWhite.gif')}" border="0" />
+										<!-- info tooltip -->
+										<div id="divToolTip2" class="tooltip2">
+											<div id="messageTooltip2"></div>
+										</div>
+									</a>
+								</td>
+							</tr>	
+							<tr>
+								<td height="7px"></td>
+							</tr>
+							<tr>
+								<td class="inputInfoTitle">
+									<span class="inputInfoTitle">{!$ObjectType.Team__c.label} Role</span>
+								</td>
+								<td></td>
+								<td>
+									&nbsp;<apex:inputText style="width:310px;" value="{!newMemberVars.teamRole}" />  
+								</td>                                
+							</tr>							
+							<tr>
+								<td height="15px"></td>
+							</tr>	
+						</table>
+					</div>
+					<div class="overlaySeparateLine"></div>
+					<!-- Saven and Cancel Buttons -->
+					<div class="overlayFromButtons" align="center">
+						<apex:commandButton onclick="statusSending(this);" action="{!saveMembers}" oncomplete="setTimeout('modal.close()', 5000); showSwirly('swirly_members');" styleclass="overlaySaveBtn" value="Send" rerender="membersListContainer"/>
+						<apex:commandButton onclick="statusSending(this);" action="{!saveMembersNew}" oncomplete="$('{!$Component.newMemberForm}').reset(); statusNormal(this); showSwirly('swirly_members');" styleclass="overlaySaveBtn" value="Send & add more members" rerender="membersListContainer"/>
+						<input class="overlayCancelBtn" type="button" value="Cancel" onclick="modal.close();stopFunction();"/>
+					</div>
+				</apex:form>
+			</div>
+		</div>
+	</apex:outputpanel>
+	<!-- NEW MEMBER OVERLAY -->
+	<!-- Js to show Bubble -->
+	<script type="text/javascript">		
+		var rootResource = "{!URLFOR($Resource.TeamsResources)}";	
+		// Toolkit Connection
+		function initSession(){
+			sforce.connection.sessionId = '{!$Api.Session_ID}';
+			sforce.connection.defaultNamespace = namespace;
+		}
+		
+		var hideBubbleTimeout;
+		var lastUserId = '';
+		var form;
+		var announcementTitle;
+		var currentIdObject;
+		var lastTypeBubble = '';
+		var teamLoaded = '';
+		var teamIDActive = '{!team}';
+		var currentUser = '{!currentUser}';
+		//Hold new id object when overlay is shown
+		var state = false;
+	
+		//////////////////////////////////
+		// 	Show bubbles
+		//////////////////////////////////
+		function showBubble(type, elementToShow, userId){	
+			if(teamIsOpen == null) {
+				var teamIsOpen = true;
+			}
+			sforce.connection.sessionId = '{!$Api.Session_ID}';
+			sforce.connection.defaultNamespace = namespace;
+			lastTypeBubble = type;
+			clearTimeout ( hideBubbleTimeout );
+			hideBubbleTimeout = setTimeout ( 'hideBubble()' , 5000 );
+			
+			// Get element to Hover position		
+			var position = getXY(elementToShow);
+			// Get Hover Container
+			var container = null;
+			if(type == 'team'){ 
+				container = $('teamBubble');
+				var TeamId = (userId);
+			}else{
+				container = $('bubble');
+			}
+			if(type == 'team'){
+				$('bubble').style.display = 'none';
+			}else{
+				$('teamBubble').style.display = 'none';
+			}
+			// Show the Box
+			if(Prototype.Browser.IE){
+				if(type == 'team'){
+					container.style.top = '40px';												
+					container.style.left = '165px';
+				}else {
+					if(!teamIsOpen){
+						topPosition = position.y2 - 175;	
+						leftPosition = position.x2 - 30;
+						container.style.top = topPosition + 'px';												
+						container.style.left = leftPosition + 'px';
+					}else{
+						topPosition = position.y2 - 210;	
+						leftPosition = position.x2 - 30;
+						container.style.top = topPosition + 'px';												
+						container.style.left = leftPosition + 'px';
+					}
+				}
+			}else {
+				if(type == 'team'){
+					container.style.top = '40px';												
+					container.style.left = '165px';
+				}else {
+					if(!teamIsOpen){
+						topPosition = position.y2 - 155;	
+						leftPosition = position.x2 - 30;
+						container.style.top = topPosition + 'px';												
+						container.style.left = leftPosition + 'px';
+					}else{
+						topPosition = position.y2 - 195;	
+						leftPosition = position.x2 - 30;
+						container.style.top = topPosition + 'px';												
+						container.style.left = leftPosition + 'px';
+					}
+				}		
+			}
+			if(type == 'team') showTeamInfo(TeamId);
+			else showUserInfo(userId);
+			container.style.display = 'block';
+		}
+		
+		function setTimeoutToHide(){
+			hideBubbleTimeout = setTimeout ( 'hideBubble()' , 1000 );
+		}
+		
+		function hideBubble(){
+			// Get Hover Container
+			var container = null;
+			if(lastTypeBubble == 'team') 
+				container = $('teamBubble');
+			else 
+				container = $('bubble');
+			//container.style.display = 'none';
+			Effect.Fade(container,{duration: 0.5});
+		}
+				
+		// Get X and Y						
+		function getXY(obj){				
+			var pos = Position.cumulativeOffset(obj)
+			var y = pos[1];
+			var x = pos[0];
+			var x2 = x + parseInt(obj.offsetWidth);
+			var y2 = y + parseInt(obj.offsetHeight);
+			return {'x':x, 'y':y, 'x2':x2, 'y2':y2};
+		}
+		
+		///////////////////////////////////
+		///////////////////////////////////
+			
+		function showLoader(divLoader){
+			$(divLoader).innerHTML = 'Loading...';
+		}
+		
+		function showUserInfo(UserID){
+			initSession();
+			if(lastUserId != UserID){
+				$('bubbleOverlay').style.opacity = '10';
+				$('bubbleOverlay').style.display = 'block';
+			} 
+			var id = UserID;
+			var theQuery = 'SELECT u.Phone, u.Name, u.Id, u.Email, u.Title, u.CompanyName,';
+				theQuery += ' (SELECT Skype__c, YahooIM__c, Aol__c, isPrivate__c, Picture__c	FROM People__r),';
+				theQuery += ' (SELECT OwnerId, Name, CreatedDate, Message__c, User__c, Type__c FROM MiniFeed__r ORDER BY CreatedDate DESC LIMIT 3)';
+				theQuery +=	' FROM User u WHERE u.Id = \'' + id + '\'';
+							
+			var result = sforce.connection.query(theQuery, {
+				onSuccess : function(result) {
+					var records = result.getArray("records");
+					
+					if(records[0].People__r != null){
+						var prof = records[0].People__r.records; 
+					}else{ 
+						var prof = 'noProfile'; 
+					}
+					var minif = records[0].MiniFeed__r;
+					var teamprof = records[0].TeamMember__r;
+					var company = records[0].CompanyName;
+					var title = records[0].Title;
+					//alert(teamIDActive + ' + ' + UserID);
+					var checkTeamMemberQuery ='Select TeamProfile__c From TeamMember__c where Team__c = \'' + teamIDActive + '\' and User__c = \'' + UserID + '\'';
+					var checkTeamMember = sforce.connection.query(checkTeamMemberQuery, {
+						onSuccess : function(result) {
+							var checkTeamMemberResult = result.getArray("records");	
+							if (checkTeamMemberResult == null || checkTeamMemberResult == '') {
+								alert('TEAM MEMBER PROFILE NULL');
+								Effect.Fade('bubbleOverlay');
+							}else {
+								var theQuery2 ='Select Id, User__c, TeamRole__c, TeamProfile__c, TeamProfile__r.Name From TeamMember__c where Team__c = \'' + teamIDActive + '\' and User__c = \'' + UserID + '\'';
+								var queryteamMember = sforce.connection.query(theQuery2, {
+									onSuccess : function(result) {
+										var teamprof = result.getArray("records");	
+										//console.info(teamprof);
+										var u_private = false;
+										if (prof.isPrivate__c == 'false' || prof.isPrivate__c == false) {
+											u_private = false;
+										}else {
+											var commonTeamsSQL = 'Select t.Name, (Select id, User__c, Team__c From TeamMembers__r where User__c =\'' + currentUser + '\' or User__c = \'' + teamprof[0].User__c + '\') From Team__c t';
+											var commonTeamsQuery = sforce.connection.query(commonTeamsSQL);
+											var commonTeams = commonTeamsQuery.getArray("records");	
+											var findJoinTeam = false;
+											var countTeam = 0;
+											
+											while (!findJoinTeam && countTeam < commonTeams.length) {
+												if (commonTeams[countTeam].TeamMembers__r != null && commonTeams[countTeam].TeamMembers__r.size > 1) {
+													findJoinTeam = true;
+												}else {
+													countTeam++;
+												}
+											}
+											
+											if(currentUser == teamprof[0].User__c || findJoinTeam || prof.isPrivate__c == 'false' || prof.isPrivate__c == false){
+												u_private = false;
+											}else {
+												if (prof.isPrivate__c == 'false' || prof.isPrivate__c == false){
+													u_private = false;
+												}else {
+													u_private = true;
+												}
+											}
+										}
+										
+										u_id = (teamprof[0].User__c != null) ? teamprof[0].User__c : '';		
+										u_teamprofile = (teamprof[0].TeamProfile__c != null && teamprof[0].TeamProfile__r.Name != null) ? teamprof[0].TeamProfile__r.Name : '';				
+										u_role = (teamprof[0].TeamRole__c!= null) ? teamprof[0].TeamRole__c : '';
+										u_company = (records[0].CompanyName != null) ? records[0].CompanyName : '';
+										u_name = (records[0].Name != null) ? records[0].Name : '';
+										u_title = (records[0].Title != null) ? records[0].Title : '';
+										u_email = (records[0].Email != null) ? records[0].Email : '';
+										u_phone = (records[0].Phone != null) ? records[0].Phone : '';
+										p_yahoo = (prof.YahooIM__c != null) ? prof.YahooIM__c : '';
+										p_aol = (prof.Aol__c != null) ? prof.Aol__c : '';
+										p_skype = (prof.Skype__c != null) ? prof.Skype__c : '';
+										p_pic_src = (prof.Picture__c != null) ? 'src="/servlet/servlet.FileDownload?file=' + prof.Picture__c + '"' : 'src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/user_not_picture.gif')}"';
+						
+										var outputMemberInfo = '<div class="img_holder"><a href="PeopleProfileDisplay?id=' + u_id + '"><img width="72px" ' + p_pic_src + '  /></a></div>';
+										if(u_name != '' ){ 
+											outputMemberInfo += '<div class="memberInfo"  ><a href="PeopleProfileDisplay?id=' + u_id + '" style="font-size:13px;">' + u_name + '</a>';
+										}
+										if(u_company != '' ){ 
+											outputMemberInfo += '<br /><strong style="font-size:11px;">Company:</strong><span class="memberInfoTitle" > ' + u_company + '</span>';
+										}
+										if(u_title != '' ){ 
+											outputMemberInfo += '<br /><strong style="font-size:11px;">Title:</strong><span class="memberInfoTitle" > ' + u_title + '</span>';
+										}
+										if(u_role != '' ){ 
+											outputMemberInfo +=	'<br /><strong style="font-size:11px;">{!$ObjectType.Team__c.label} Role:</strong><span class="memberInfoTitle"> ' + u_role + '</span>';
+										}
+										if(u_teamprofile != '' ){ 
+											outputMemberInfo += '<br /><strong style="font-size:11px;">{!$ObjectType.Team__c.label} Profile:</strong><span class="memberInfoTitle"> ' + u_teamprofile + '</span></div><div class="clear2"></div>';
+										}
+										
+										var outputContactInfo = '<div class="contact_info_title" >Contact Info</div>\n';
+										outputContactInfo += '<table class="contact_info_desc" cellpadding="0" cellspacing="1" width="100%" >\n<tr>';
+										if( u_email != ''){
+											outputContactInfo += '<td class="c_email  blue">' + trunkInfo(u_email, 18) + '</td>';
+										}else {
+											outputContactInfo += '<td></td>';
+										}
+										if( p_yahoo != ''){
+											outputContactInfo += '<td class=" blue" ><a href="http://edit.yahoo.com/config/send_webmesg?.target=' + p_yahoo + '&.src=pg"><img border=0 src="http://opi.yahoo.com/online?u=' + p_yahoo + '&m=g&t=0"></a> ' + trunkInfo(p_yahoo, 18) + '</td></tr>';
+										}else {
+											outputContactInfo += '<td></td>';
+										}
+										outputContactInfo += '<tr>';
+										if( u_phone != ''){
+											outputContactInfo += '<tr><td class="c_phone  blue" >' + trunkInfo(u_phone, 18) + '</td>';
+										}else {
+											outputContactInfo += '<td></td>';
+										}
+										if( p_aol != ''){
+											outputContactInfo += '<td class=" blue">' + trunkInfo(p_aol, 18) + '</td>';
+										}else {
+											outputContactInfo += '<td></td>';
+										}
+										
+										outputContactInfo += '</tr></table>';
+										var outputRecentActivity = '<div class="clear" ><div class="recent_activity_title" >Recent Activity	</div><div class="recent_activity_desc" >';
+										if(minif){
+											for (var i=0; i < minif.records.length; i++){
+												var recAct =  minif.records[i];
+												outputRecentActivity += '<a style=" margin-top:3px; overflow:hidden; clear:both; position:relative; border-bottom:1px solid #F3F3F3;" class="' + recAct.Type__c + '" href="javascript:;"></a><span class="blue">'+ u_name +'</span> '+ recAct.Message__c  + '</div><div class="clear" /></div>';
+											}
+										}else {
+											outputRecentActivity = 'No activity feeds yet';
+										}		
+										if(u_private == 'false' || u_private == false){
+											$('bubbleTopLink').innerHTML = '<a href="peopleprofiledisplay?id=' + UserID + '" > View Full Profile</a>';				
+										}else{
+											$('bubbleTopLink').innerHTML = '';
+										}
+										$('memberInfo').innerHTML = outputMemberInfo;
+										
+										if(u_private == 'false' || u_private == false){
+											if((u_email != '') || (p_yahoo != '') || (u_phone != '') || (p_skype != '')){
+												$('contact_info').innerHTML = outputContactInfo;
+											} 					
+										}else {
+											$('contact_info').innerHTML = '';
+										}
+										if(u_private == 'false' || u_private == false){
+											$('recent_activity_desc').innerHTML = outputRecentActivity;
+										}else {
+											$('recent_activity_desc').innerHTML = '';
+										}
+										Effect.Fade('bubbleOverlay');
+									},
+									
+									onFailure : function(error) {
+										alert(error);
+									}
+								});
+							}
+						},
+						
+						onFailure : function(error) {
+							alert(error);
+							Effect.Fade('bubbleOverlay');				
+						}
+					});
+				},
+				
+				onFailure : function(error) { 
+					alert(error);
+					Effect.Fade('bubbleOverlay');				
+				}
+			});	
+		}
+			
+		function showError(){
+			$('memberInfo').innerHTML = 'Error';
+		}
+		
+		function parseValue(value){
+			if(value != null) return value;
+			else return '';
+		}
+			
+		//////////////////////////
+		/////Team Information/////
+		//////////////////////////
+		function showTeamInfo(TeamId){
+			initSession();
+			
+			var id = TeamId;
+			if(!teamLoaded){
+				$('teamBubbleOverlay').style.opacity = '10';
+				$('teamBubbleOverlay').style.display = 'block';
+			}
+			
+			var theQuery = 'SELECT t.ContactEmail__c, t.Name, t.Id, t.CreatedById, t.PublicProfile__c, t.NewMemberProfile__c,  t.Description__c, t.CreatedDate, t.Picture__c FROM Team__c t WHERE t.Id =\'' + id + '\'';
+			result = sforce.connection.query(theQuery, {
+				onSuccess : function(result) {
+					records = result.getArray("records");
+					var idCreatedBy = records[0].CreatedById;
+					resultaux = sforce.connection.query('SELECT Name From User Where Id =\'' + idCreatedBy + '\'');
+					recordsaux = resultaux.getArray("records");
+					var relTeam = records[0].Teamspace__r;
+					var teamName = '';
+					var countTeamMembers = 0;
+					var aboutTeam = '';
+					var teamImage = '';
+				
+					////////////////////////
+					//////Data to show//////
+					////////////////////////					
+					teamName = (records[0].Name != null) ? records[0].Name : '';
+					aboutTeam = (records[0].Description__c != null) ? records[0].Description__c : '';
+					teamImage = (records[0].Picture__c != null) ? '/servlet/servlet.FileDownload?file=' + records[0].Picture__c : "{!URLFOR($Resource.commonResources, 'images/placeholders/unknowteam_big.gif')}";
+					createdDate = (records[0].getDateTime("CreatedDate") != null) ? parseDate(records[0].getDateTime("CreatedDate")) : '';
+					
+					// Check the team status
+					var publicProfile = records[0].PublicProfile__c;
+					var memberProfile = records[0].NewMemberProfile__c;
+					var teamPermissionStatus = 'Closed';
+					
+					if((publicProfile != null) && (memberProfile != null)){
+						teamPermissionStatus = 'Open';
+					}else if((publicProfile == null) && (memberProfile == null)){
+						teamPermissionStatus = 'Private';
+					}
+					
+					var editionLink = '';
+					
+					if($('adminstatus').innerHTML == 'true'){
+						editionLink = '<div class="editLink"><a href="TeamsCreateNewTeam?id=' + TeamId + '">Edit Details</a></div>';
+					}
+					
+					var teamAdmins;
+					if($('teamAdmins').innerHTML != ''){
+						teamAdmins = $('teamAdmins').innerHTML;
+					}
+					
+					countTeamMembers = '';
+					if($('teamMembercount').innerHTML < 0 ){
+						countTeamMembers = 'No members yet.';
+					} else {
+						countTeamMembers = $('teamMembercount').innerHTML;
+					}
+					
+					////////////////////////
+					////////////////////////
+					//////////////////////// 
+					var lengthEmail = 23;
+					var contactEmail = '';
+					var contactEmailLong = '';
+					if (records[0].ContactEmail__c != null) {
+						if (records[0].ContactEmail__c.length > lengthEmail) {
+							contactEmail = records[0].ContactEmail__c.substring(0,lengthEmail) + '...';
+						}else {
+							contactEmail = records[0].ContactEmail__c;
+						}
+						contactEmailLong = records[0].ContactEmail__c;
+					}
+					
+					var output = '<div class="teamInfoTop">'+ editionLink + '<div class="image_holder" >\
+									<img width="100px" src="' + teamImage + '"/></div>\
+									<div class="team_info" >\
+									<table>\
+									<tr><td colspan="2" class="team_title bold" >' + teamName + '</td></tr>\
+									<tr><td class="bold" >Creator:</td><td  ><a class="blue" href="PeopleProfileDisplay?id=' + idCreatedBy + '" >' + recordsaux[0].Name + '</a></td></tr>\
+									<tr><td class="bold" >{!$ObjectType.Team__c.label} Email:</td><td  ><a href="mailto:' + contactEmailLong + '" title="' + contactEmailLong + '">' + contactEmail + '</a></td></tr>\
+									<tr><td class="bold" >Create Date:</td><td class="team_info_text" > ' + createdDate + '</td></tr>\
+									<tr><td class="bold" >Access:</td><td class="team_info_text" >' + teamPermissionStatus + '</td></tr>\
+									<tr><td class="bold" >{!$ObjectType.Team__c.label} Members:</td><td ><a class="blue" href="TeamsMembersList?id='+TeamId+'" >' + countTeamMembers + ' Members</a></td></tr>\
+									<tr><td class="bold" valign="top" >Administrators:</td><td>'+ teamAdmins +'</td></tr></table></div>\
+									<div class="teamInfoAbout" ><strong>About the {!$ObjectType.Team__c.label}:</strong><br /><span class="team_info_text" > ' + aboutTeam + ' </span></div>';
+									
+					Effect.Fade('teamBubbleOverlay');
+					var f = function(){$('teamBubbleContent').innerHTML = output;};
+					setTimeout(f,1000);
+					teamLoaded = true;					
+				},
+				
+				onFailure : function(error) {
+					alert(error);
+					Effect.Fade('teamBubbleOverlay');				
+				}
+			});
+		}
+		
+		function parseDate(myDate){
+			var dateStr = myDate.toGMTString();
+			dateStr = dateStr.split(',').join('');
+			var aux = dateStr.split(' ');
+			var output = aux[2] + ' ' + aux[1] + ', ' + aux[3];
+			return output;
+		}
+		
+		/**
+		*	Function to disable the button while processing the request
+		*/
+		function disableAndShowProgress(link) {
+			link.innerHTML = '<span>Wait...</span>';
+			link.style.color= 'gray';
+			link.onclick = 'alert(\'please wait..\');'			
+		}
+		
+		var actionFunctionSubmit = false;
+		function refreshSwirly () {
+			if (countRemaind != 0) {
+				showSwirly('swirly_members');
+			}else {
+				hideSwirly('swirly_members');
+				refreshJoinButton();
+				if ($('newTask')) {
+					actionFunctionSubmit= true;
+					refreshAssignToTask();
+				}
+				if ($('newMilestone')) {
+					actionFunctionSubmit= true;
+					refreshAssignToMilestone();
+				}
+			}
+		}
+		
+		var countRemaind;
+		
+		function refreshCount (){
+			countRemaind = {!memberListToolkitCount};
+		}
+		
+		var pageLoaded = false;
+		
+		function showNewMembersOverlay(){
+			if(pageLoaded){
+				createOverlay('','inviteTeam','380','showSelects();selectFixIE6();startFunction();');
+			}
+		}
+		
+		function trunkInfo(text, len){
+			if(text.length > len){
+				text = text.substring(0, len) + '...';
+			}
+			return text;
+		}
+		
+	</script>
+	<!-- On Hover Bubble team member -->
+	<div id="bubble" class="bubble" >			
+		<div class="top_border">&nbsp;</div>		
+		<div class="content">
+			<img class="arrowBubble" src="{!URLFOR($Resource.TeamsResources, '/images/layout/bubbles/arrow.gif')}" />				
+			<!-- Content here -->
+			<div class="innerContBubble" onmouseover="clearTimeout(hideBubbleTimeout);" onmouseout="setTimeoutToHide();"  >
+				<div class="bubbleOverlay" style="display:none;" id="bubbleOverlay">
+					<div class="swirl blue">
+						<img src="{!URLFOR($Resource.TeamsResources, '/images/layout/small_loader.gif')}" /> Loading.....
+					</div>
+				</div>
+				<div class="topLink" id="bubbleTopLink"></div>
+				<div class="memberHeader" id="memberInfo" >
+					<div class="img_holder"></div>
+					<div class="memberInfo" ></div>
+				</div>	
+				<div class="contact_info" id="contact_info" >
+					<div class="contact_info_title" >
+						Contact Info
+					</div>
+					<div class="contact_info_desc" >
+						<div class="c_email f_left" ></div>
+						<div class="c_YIM f_right" ></div>
+						<div class="clear" ></div>
+						<div class="c_phone f_left" ></div>
+						<div class="c_skype f_right" ></div>
+					</div>
+				</div>
+				<div class="recent_activity" id='recent_activity_desc' ></div>						
+			</div>
+			<!-- End Content here -->					
+		</div>
+		<div class="bottom_border">&nbsp;</div>
+	</div>
+	<!-- On Hover Bubble Team member -->
+	<!-- Team Details Widget -->
+	<div class="teamWidget mySmallWidget" id="teamMemberID">
+		<!-- Widget Title -->
+		<div class="thinHeader">
+			<div><div><h4>{!$ObjectType.Team__c.label} Members</h4></div></div>
+		</div>
+		<!-- Widget Container -->   		
+		<div class="box_content">
+			<div class="thinBody">
+				<div class="contentHolder"> 
+					<apex:outputpanel rendered="{!renderLinkAction}">
+						<div class="linkAction">
+							<apex:outputpanel >
+								<a onclick="showNewMembersOverlay();" href="javascript:;">New</a> |
+							</apex:outputpanel>
+							<a href="#" onclick="location.href='/apex/TeamsMembersList?id={!team}'" class="topRightLinks" >See More&#187;</a>
+						</div>	
+					</apex:outputpanel>			
+				</div>
+				<apex:outputPanel layout="block" id="membersListContainer">
+					<!-- Sync Save Members -->
+					<apex:form >  
+						<apex:actionPoller action="{!syncSaveMembers}" enabled="{!initAddMembers}" rerender="auxPanel, membersListContainer" interval="5" onComplete="refreshCount();refreshSwirly();"/>
+						<!-- Action Function for Refresh Member List -->
+						<apex:actionFunction name="rerenderMemberList" action="{!refreshMethod}" rerender="membersListContainer" />					
+					</apex:form>
+					<!-- Members Repeat -->
+					<apex:repeat value="{!TeamspaceMembers}" var="tm" id="repMembers">
+						<div id="memberRow-{!tm.Id}" style="clear:both;">
+							<apex:outputPanel layout="block" onmouseover="showBubble('member',this,'{!tm.Id}');" style="clear:both;position:relative;display:block;">
+					  			<apex:outputPanel layout="block" styleClass="membersImageHolder" rendered="{!IF(LEN(tm.image) == 0, true, false)}" > 
+						  			<a href="PeopleProfileDisplay?id={!tm.Id}">
+						  				<apex:image width="25" height="25" url="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/no_image_small.gif')}" style="vertical-align:middle;" />							
+						  			</a>
+								</apex:outputPanel> 
+						 		<apex:outputPanel layout="block" styleClass="membersImageHolder" rendered="{!IF(LEN(tm.image) == 0, false, true)}" > 
+									<a href="PeopleProfileDisplay?id={!tm.Id}">
+										<apex:image width="25" height="25" url="/servlet/servlet.FileDownload?file={!tm.image}" />
+									</a>	
+						 		</apex:outputPanel> 
+								<apex:outputPanel layout="block" styleClass="membersDescription" style="float:left;width:120px;" >
+									<a href="PeopleProfileDisplay?id={!tm.Id}" style="text-decoration:none;">
+										<apex:outputText value="{!tm.Username}" ></apex:outputText>
+									</a> 
+									<apex:outputPanel rendered="{!IF(((tm.Yahoo == '') || (tm.Yahoo == null)),'false','true')}">
+										<a href="http://edit.yahoo.com/config/send_webmesg?.target={!tm.Yahoo}&.src=pg"><img border=0 src="http://opi.yahoo.com/online?u={!tm.Yahoo}&m=g&t=0"></a>
+									</apex:outputPanel>
+									<br/>
+									<apex:outputPanel rendered="{!IF(tm.isPrivate,'false','true')}" >
+										<apex:outputPanel >{!tm.status}</apex:outputPanel>
+									</apex:outputPanel>
+								</apex:outputPanel>
+							</apex:outputPanel>
+							<apex:outputPanel layout="block" styleClass="clear"></apex:outputPanel>
+						</div>
+					</apex:repeat>
+				</apex:outputPanel>
+			</div>				
+		</div>
+		<!-- Widget Holder Foot -->
+		<div class="bottom_borders">
+			<div><div></div></div>
+		</div>
+	</div>
+	<div class="clear"></div>
+</apex:component>

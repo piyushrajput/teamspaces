@@ -1,0 +1,41 @@
+<apex:page controller="DiscussionWidgetSubTeamsController">
+
+	<!-- Common CSS -->
+	<apex:stylesheet value="{!URLFOR($Resource.discussionResources, 'inc/css/discussionWidgetSubTeam.css')}" />
+	
+	 
+	<!-- Discussion Widget Sub Teams -->
+	<div class="teamWidget mySmallWidget" >
+		<!-- Widget Title -->		
+		<div class="thinHeader">
+			<div><div><h4>Sub {!$ObjectType.Team__c.labelPlural}</h4></div></div>
+		</div>
+		<!-- Widget Container -->   		
+		<div class="box_content">
+			<div class="thinBody">
+				<apex:outputpanel rendered="{!IF(countSubTeams == 0,false,true)}">
+					<apex:repeat value="{!subTeams}" var="team">
+						<div class="team">
+							<div class="desc">
+								<a href="/apex/discussionTopics?id={!team.id}">
+									{!team.name}
+								</a>
+								<span class="desc"> ({!team.count})</span>									
+							</div>
+						</div>
+					</apex:repeat>
+				</apex:outputpanel>
+				<apex:outputpanel rendered="{!IF(countSubTeams == 0,true,false)}">
+					<div style="margin: 15px 0px 15px 15px">
+						 This team has no sub{!$ObjectType.Team__c.labelPlural}.
+					</div>
+				</apex:outputpanel>
+			</div>				
+		</div>
+		<!-- Widget Holder Foot -->
+		<div class="bottom_borders">
+			<div><div></div></div>
+		</div>
+	</div>
+	<div class="clear"></div>
+</apex:page>

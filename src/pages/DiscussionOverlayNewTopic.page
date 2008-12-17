@@ -1,0 +1,76 @@
+<apex:page id="Discussion" controller="DiscussionOverlayTopicEdit"  sidebar="false" showHeader="false">
+
+	<!-- DiscussionOverlayNewTopic JS -->
+ 	<apex:includeScript value="{!URLFOR($Resource.discussionResources, 'inc/js/discussionOverlayNewTopic.js')}" />
+	
+	<!-- Common CSS -->
+	<apex:stylesheet value="{!URLFOR($Resource.discussionResources, 'inc/css/discussionOverlayNewTopic.css')}" />
+		
+	<!-- Create New Topic Overlay-->
+	<div id="NewTopicForm" style="display:none;" class="overlayForm">	
+	<!-- 				FCK LOADER 				 -->
+		<!-- Overlay Title -->
+		<div class="overlayTitleContent">
+			<div id="overlaytitle" class="overlayTitle">Create New Topic</div>
+			<div class="overlayCloseEvent">
+				<a href="Javascript:;" onclick="modal.close();">
+					<img src="{!URLFOR($Resource.TeamsResources, 'images/layout/genericClose.gif')}" alt="Close Window" title="Close Window" />
+				</a>
+			</div>
+		</div>
+		<!-- Overlay Content -->
+		<div class="overlayMainContent">
+			<!-- Required Information -->
+			<span class="overlayRequiredInfo">= Required Information</span>
+			<apex:form onsubmit="return validateDiscussionTopic('{!$Component.topicName}','{!$Component.topicTextArea}');" >
+			<!-- Overlay Form Content -->
+			<apex:actionStatus id="topicStatus" layout="block">
+				<apex:facet name="start"><apex:outputText value="Saving Topic..." styleClass="msgSaving" /></apex:facet>
+				<apex:facet name="stop">
+					<apex:outputPanel id="topicPanel" layout="block">
+					<div class="overlayFormContent">
+						<table border="0" style="width:97%;">
+							<tr>
+								<td style="width:85px;text-align:right;"><span class="inputInfo">Topic</span></td>
+								<td style="width:4px;"><span style="display:block;width:4px; height:21px; background-color: #C0272D;"></span></td>
+								<td>
+									<apex:inputText value="{!topic.Name}" id="topicName" styleClass="width:98%" />
+									<div id="topicNameApexId" style="display:none;">{!$Component.topicName}</div>
+								</td>
+							</tr>
+							<tr>
+								<td valign="top" style=text-align:right;><span class="inputInfo">Message</span></td>
+								<td valign="top" style="width:4px;"><span style="display:block;width:4px; height:229px; background-color: #C0272D;"></span></td>
+								<td style="height:130px;">
+									<div class="FCKloader" id="FCKloader" style="display:block;"><center><img src="{!URLFOR($Resource.WikiResource, 'images/layout/FCKloader.gif')}" /></center><br />Loading...</div>
+									<div id="fckContentDiv" style="visibility:hidden;">
+										<textarea id="messageTextArea" name="messageTextArea" style="width:98%;height:110px;"></textarea>
+									</div>
+									<apex:inputTextArea value="{!topic.Text}" id="topicTextArea" style="display:none;" />
+									<div id="textAreaApexId" style="display:none;">{!$Component.topicTextArea}</div>
+								</td>
+							</tr> 
+						</table>
+					</div>
+					<div class="overlaySeparateLine"></div>
+					<!-- Saven and Cancel Buttons -->
+					<div class="overlayFromButtons" align="center">
+						<span id="updatebutton" style="display:none;">
+							<apex:inputHidden value="{!topic.TopicIdToUpdate}" id="idToUpdateTopic" />
+							<apex:inputHidden value="{!topic.MessageIdToUpdate}" id="idToUpdateMessage" />
+							<div id="idToUpdateApex" style="display:none;">{!$Component.idToUpdateTopic}|{!$Component.idToUpdateMessage}</div> 
+							<apex:commandButton action="{!updateTopic}" rerender="topicList, noTopicList" status="topicStatus" styleclass="overlaySaveBtn" value="Update" onclick="statusSaving(this,'{!$Component.topicName}','{!$Component.topicTextArea}');" oncomplete="modal.close();multiRefresh();" />
+						</span>
+						<span id="savebutton">
+							<apex:commandButton action="{!saveTopic}" rerender="topicList, noTopicList, replysHolder" status="topicStatus" styleclass="overlaySaveBtn" value="Save" onclick="statusSaving(this,'{!$Component.topicName}','{!$Component.topicTextArea}');" oncomplete="modal.close();refreshList();refreshActivePeople();  showHideOverlay();" /> 
+						</span>
+						<input class="overlayCancelBtn" type="button" value="Cancel" onclick="modal.close();" />
+					</div>
+				</apex:outputPanel>
+				</apex:facet>
+			</apex:actionStatus>
+			</apex:form>
+		</div>
+	</div>
+	
+</apex:page>

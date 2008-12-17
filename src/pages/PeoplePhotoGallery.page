@@ -1,0 +1,69 @@
+<apex:page tabStyle="PeopleProfile__c" sidebar="false" controller="PeopleOverviewController">
+	<!-- Prototype / Scriptaculous Framework -->
+	<apex:includeScript value="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/prototype.js')}"/>
+	<apex:includeScript value="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/scriptaculous.js')}"/>
+	<apex:includeScript value="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/effects.js')}"/>
+	<!-- Portal Support -->
+	<apex:includeScript value="{!$Resource.portalSupport}"/>
+	<!-- Common Js to all people Sections -->
+	<apex:includeScript value="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/common.js')}"/>
+    <!-- CSS styles for Portal Integration -->
+    <apex:stylesheet value="{!URLFOR($Resource.portalStyles, 'portal.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.TeamsResources, 'inc/css/headerTeams.css')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.TeamsResources, 'inc/css/widgetTeam.css')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.commonResources, 'inc/css/fonts.css')}" />
+	<!-- Common CSS Styling  -->
+	<apex:stylesheet value="{!URLFOR($Resource.PeopleResourceFiles, 'inc/css/commonLayout.css')}" />		
+	<apex:includeScript value="/soap/ajax/11.1/connection.js"/>
+	<script>
+		/**
+        * Namespace Prefix Getter
+        */
+        var namespace = "{!namespace}";
+
+		function initSession(){
+			sforce.connection.sessionId = '{!$Api.Session_ID}';
+			sforce.connection.defaultNamespace = namespace;
+		}
+	</script>
+	<!-- People Photo Upload Js  -->
+	<apex:includeScript value="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/peoplePhotoUpload.js')}"/>
+	<!-- Page Begin  -->
+	<!-- Header -->
+	<apex:composition template="HeaderTemplate">
+		<apex:define name="moduleId"><apex:variable var="moduleId" value="headerPeople"/></apex:define>
+	    <apex:define name="module">People</apex:define>
+	    <apex:define name="title">Overview</apex:define>
+	    <apex:define name="search">
+	    	<c:Search module="people_keyword" />
+	    </apex:define>
+    </apex:composition>
+	
+	<div class="leftBar">
+		<!-- Sidebar -->
+		<div class="sidebar">
+			<apex:include pageName="PeopleSidebarProfile" />		
+		</div>		
+	</div>
+	<!-- /Left Column container -->
+	<!-- Contain All -->
+	<div class="two_colsContainer">		
+		<!--  Central content -->
+		<div class="content">
+			<!-- The center div at content -->
+			<div class="main_form_holder">
+				<div class="main_form_header">
+					<a href="peopleprofiledisplay">< Go back to My Profile</a>
+					<h1>My Profile</h1>
+					<h2>Profile Picture Gallery</h2>
+				</div>
+				<div class="main_form" id='photoProfileOut'></div>
+			</div>
+		</div>
+	</div>
+	<script>
+		//Initialize
+		init();
+		readPortalCSSRules();
+	</script>
+</apex:page>
