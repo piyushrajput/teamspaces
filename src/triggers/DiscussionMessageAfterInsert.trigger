@@ -8,39 +8,40 @@ trigger DiscussionMessageAfterInsert on DiscussionMessage__c bulk (after insert)
 			}
 		    
 		    List<Group> groupTeam = [select id, Name from Group where Name like 'teamSharing%'];
-		    List<DiscussionTopic__c> topicList = [select id, MessageCount__c, DiscussionForum__c, Team__c from DiscussionTopic__c where Team__c in: idsTeam];
-		    List<DiscussionForum__c> forumList = [select Id, MessageCount__c, Team__c from DiscussionForum__c where Team__c in: idsTeam];		    
+		    List<DiscussionTopic__c> topicList = [select id, MessageCount__c, DiscussionForum__c, team__c from DiscussionTopic__c where team__c in: idsTeam];
+		    List<DiscussionForum__c> forumList = [select Id, MessageCount__c, team__c from DiscussionForum__c where team__c in: idsTeam];
 		    
 		    for (DiscussionMessage__c m : Trigger.new) {
 		       // Update Message count at topic
+		       DiscussionTopic__c topic; 
 		       Id topicId = m.DiscussionTopic__c;       
-		       List<DiscussionMessage__c> countMessage = [select Id, DiscussionTopic__c from DiscussionMessage__c where DiscussionTopic__c =: m.DiscussionTopic__c limit 2];
-		       Boolean findTopic = false;
-		       Integer countTopic = 0;
-		       while (!findTopic && countTopic < topicList.size()) {
+		       
+		       	Boolean findTopic = false;
+		       	Integer countTopic = 0;
+		       	while (!findTopic && countTopic < topicList.size()) {
 		       		if (topicList[countTopic].Id == topicId) {
-		       			findTopic = true;
-		       			if(countMessage.size() == 2){
-			       			topicList[countTopic].LastPostedMessage__c = m.Id;
-		       			}
 		       			topicList[countTopic].MessageCount__c += 1;
+		       			topicList[countTopic].LastPostedMessage__c = m.Id;
 		       			update topicList[countTopic];
+		       			findTopic = true;
 		       		}
-		    		countTopic++;
+		       		else {
+		    			countTopic++;
+		       		}
 		    	}
 		       
 		       // Update Message count at forum  
-		       	String teamId = m.Team__c;
+		       	String dfId = topicList[countTopic].DiscussionForum__c;
+		       
 		  		Boolean findForum = false;
 		  		Integer countForum = 0;
 		  		while (!findForum && countForum < forumList.size()) {
-		  			if (forumList[countForum].Team__c == teamId) {
+		  			if (forumList[countForum].Id == dfId) {
 		  				findForum = true;
-		  				if(countMessage.size() == 2){
-			  				forumList[countForum].MessageCount__c += 1;
-			     			forumList[countForum].LastPostedMessage__c = m.Id; 
-			     			update forumList[countForum];
-		  				}
+		  				forumList[countForum].MessageCount__c += 1;
+		  				// Update LastPostedMessage Forum
+		     			forumList[countForum].LastPostedMessage__c = m.Id; 
+		     			update forumList[countForum];
 		  			}
 		  			countForum++;
 		  		}     

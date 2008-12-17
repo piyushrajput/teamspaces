@@ -1,49 +1,187 @@
 <apex:page id="TeamsSubscription" sidebar="false" tabStyle="Team__c" controller="TeamsSubscriptionController">
-	<apex:includeScript value="/soap/ajax/11.1/connection.js"/>
+	
+	<script src="/soap/ajax/11.1/connection.js" type="text/javascript"></script>
 	<script>
 		var API_SESSION_ID = '{!$Api.Session_ID}';
+	</script>	
+	
+	<script>
 		//Common Resource URL  
 		var globalCommonResourcesPath = '{!URLFOR($Resource.commonResources)}';
 	</script>
+	
 	<!-- Prototype + Scriptaculous -->
-	<apex:includeScript value="{!URLFOR($Resource.Script_aculo_us, 'prototype.js')}"/>
-	<apex:includeScript value="{!URLFOR($Resource.Script_aculo_us, 'scriptaculous.js')}"/>
-	<apex:includeScript value="{!URLFOR($Resource.Script_aculo_us, 'effects.js')}"/>
-	<!-- Portal Support -->
-	<apex:includeScript value="{!$Resource.portalSupport}"/>	
+	<script type="text/javascript" src="{!URLFOR($Resource.Script_aculo_us, 'prototype.js')}"></script>
+	<script type="text/javascript" src="{!URLFOR($Resource.Script_aculo_us, 'scriptaculous.js')}"></script>
+	<script type="text/javascript" src="{!URLFOR($Resource.Script_aculo_us, 'effects.js')}"></script>
+	
+		<!-- Portal Support -->
+	<script src="{!$Resource.portalSupport}" />	
+	
 	<!-- Common Js for All Sections -->
-	<apex:includeScript value="{!URLFOR($Resource.TeamsResources, 'inc/js/admin.js')}"/>
-	<apex:includeScript value="{!URLFOR($Resource.commonResources, 'inc/js/common.js')}"/>
+	<script src="{!URLFOR($Resource.TeamsResources, 'inc/js/admin.js')}" />
+	<script type="text/javascript" src="{!URLFOR($Resource.commonResources, 'inc/js/common.js')}"></script>
+
 	<!-- CSS de TS -->
 	<link rel="stylesheet"  href="{!URLFOR($Resource.TeamsResources, '/inc/css/commonLayout.css')}" />	
 	<link rel="stylesheet"  href="{!URLFOR($Resource.TeamsResources, '/inc/css/profileEdition.css')}" />
 	<apex:stylesheet value="{!URLFOR($Resource.TeamsResources, 'inc/css/teamDetail.css')}" />
 	<apex:stylesheet value="{!URLFOR($Resource.TeamsResources, 'inc/css/widgets/TeamMemberWidget.css')}" />	
+	
     <!-- CSS styles for Portal Integration -->
     <apex:stylesheet value="{!URLFOR($Resource.portalStyles, 'portal.css')}" />
     <apex:stylesheet value="{!URLFOR($Resource.TeamsResources, 'inc/css/headerTeams.css')}" />
     <apex:stylesheet value="{!URLFOR($Resource.TeamsResources, 'inc/css/widgetTeam.css')}" />
 	<apex:stylesheet value="{!URLFOR($Resource.commonResources, 'inc/css/fonts.css')}" />   
-	
-	
-	<apex:stylesheet value="{!URLFOR($Resource.TeamsResources, 'inc/css/teamsSubscription.css')}" />
-	
+
 	<style>
+		.permisionSectionContainer,
+		.permisionSectionContainerRight {
+			position: relative;  
+			overflow: hidden;
+		}
+		
+		.infoIcon {
+			cursor:pointer;			
+		}
+		
+		div.header div.page_section h2.small {
+			font-size: 13px;
+		}
+		
+		.noTopMargin {
+			margin-top:0px !important;
+		}
+		
+		div.toplinks {
+			background:#E0E0E0;
+			height:22px;
+			border-bottom:3px solid #297B9C;
+			overflow:hidden;
+			clear:both;
+			position:relative;
+			text-align:center;
+		}
+		
+		div.toplinks a {
+			background: #297B9C;
+			padding:2px;
+			color:#ffffff;
+			text-decoration:none;
+		}
+		
+		.tooltip {
+			background-color:#F9F8CD;
+			border:1px solid #221E1F;
+			display:none;
+			font-family:"Lucida Grande",Verdana;
+			font-size:12px;
+			overflow:auto;
+			padding:5px;
+			position:absolute;
+			text-align:left;
+			width:240px;
+			z-index:100;
+		}
+		.imgCheckbox{
+			float:left;
+			text-align:right;
+			margin:0px;
+		}
 		.inputButton{
 			background:transparent url({!URLFOR($Resource.TeamsResources, 'images/layout/buttons/button_right_bkg.gif')}) no-repeat scroll right bottom;
+			color:#FFFFFF !important;
+			cursor:pointer;
+			display: block;
+			float:left;
+			font-family:Verdana,Arial;
+			font-size:10px;
+			font-weight:bold;
+			border:none ;
+			height:21px;
+			line-height:10px;
+			padding:2px 10px 8px 5px;
+			text-decoration:none;
+			white-space:nowrap;
+		}
+		
+		.message_to_user{
+	
+			background:#FFFFC0 none repeat scroll 0% 50%;
+			border:1px solid #2264B1;
+			color:#050707;
+			font-size:12px;
+			margin-left:10px;
+			margin-right:10px;
+			padding:10px 10px 19px;
+			position:relative;
+		}
+		
+		.message_to_user img {
+			margin-right:3px;
+			float:left;
+			border:0pt none;
+		}
+		
+		.crudButtons{
+			overflow:hidden;
+			position:relative;	
+			align:center;
+			margin:  10px auto 0pt;
+			position: absolute;
+			left: 50%
 		}
 	
-	</style>
+		div.permisionSectionContainer{
+			float: left;
+			width: 50%;
+		}
+		
+		div.permisionSectionContainerRight{
+			float: left;
+			width: 48%;
+			margin-left: 10px;
+		}
+		
+		.labelTD {
+			width: 530px;
+		}
+	</style>	
+
 	<!-- Header -->
-	<apex:composition template="HeaderTemplate">
-		<apex:define name="moduleId"><apex:variable var="moduleId" value="headerTeams"/></apex:define>
-	    <apex:define name="module">{!$ObjectType.Team__c.labelPlural}</apex:define>
-	    <apex:define name="title">Subscriptions</apex:define>
-	    <apex:define name="search">
-	    	<c:Search module="team" />
-	    </apex:define>
-    </apex:composition>
-    
+	<div class="header_portal" id="headerTeams">
+		<div class="page_section">
+			<div>
+				<h1 class="arial_black">{!$ObjectType.Team__c.labelPlural}</h1>
+				<h2 class="arial_black">Subscriptions</h2>
+			</div>  
+		</div>  
+		<div class="searchBox">
+			<div>
+				<div>
+					<div class="center_gray">
+						<form method="get" action="/apex/TeamSearchResult" onsubmit="return checkSearchLength();">
+							<div class="search_box_input f_left">
+								<div class="legend_portal">
+									<img class="f_left" alt="" src="{!URLFOR($Resource.TeamsResources, 'images/layout/magnifier.gif')}" />
+									<span>Find {!$ObjectType.Team__c.labelPlural}  </span>
+								</div>
+								<input type="text" value="Enter keyword or name" name="key" onfocus="setValue('');"  onblur="if(getValue(this)==''){ setValue('Enter keyword or name'); }"/>
+							</div>
+							<input type="submit" value="Search" class="search_btn f_left"/>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div> 
+		<div class="help">
+			<div>
+				<a href="javascript:;">Help for this page</a>  <img src="{!URLFOR($Resource.TeamsResources, 'images/layout/help_icon.gif')}" alt="" />
+			</div>
+		</div> 
+		<div class="gray_border"></div>
+	</div>	
+	
 	<div class="sidebar">
 		<!-- Team Details Widget -->		 
 		<c:TeamDetailsWidget teamId="{!idTeam}" />
@@ -51,6 +189,7 @@
 		<c:TeamMembersWidget teamId="{!idTeam}" />	
 		<div class="clear"></div>		
 	</div>
+
 	<!-- BreadCrumbs -->
 	<apex:form id="form_content" onsubmit="getInputValue(); if(!isCloneAction){if(validator('{!$Component.form_content}', 'warning_to_user'))return false;};">
 		<div class="breadcrumbs"  align="center">
@@ -65,6 +204,7 @@
 				<apex:commandButton value="Unsubscribe" action="{!deleteSubscription}"/>
 			</apex:outputpanel>
 		</div>
+
 		<!-- Main Content Div -->
 		<div class="main_content">		
 			<div class="holder">
@@ -107,6 +247,7 @@
 								<td><apex:inputCheckbox value="{!subscription.DiscussionReplyToMe__c}"/></td>
 							</tr>
 						</table>
+
 						<!-- Project Checkboxes Section -->
 						<div class="fieldSection clear">
 							{!$ObjectType.Project2__c.label}
@@ -117,7 +258,7 @@
 								<td><apex:inputCheckbox value="{!subscription.ProjectTaskAssignedToMe__c}"/></td>
 							</tr>
 							<tr>
-								<td class="labelTD"><label>When a task assigned to me has been changed by another </label></td>
+								<td class="labelTD"><label>When a task assigned to be has been changed by another </label></td>
 								<td><apex:inputCheckbox value="{!subscription.ProjectTaskAssignToMeChanged__c}"/></td>
 							</tr>
 							<tr>
@@ -129,6 +270,7 @@
 								<td><apex:inputCheckbox value="{!subscription.ProjectTaskDeleted__c}"/></td>
 							</tr>
 						</table>
+						
 						<!-- Wiki Checkboxes Section -->						
 						<div class="fieldSection">
 							{!$ObjectType.WikiPage__c.labelPlural}
@@ -151,6 +293,7 @@
 			</div><!-- End Main Content -->
 		</div>
 		<!-- BreadCrumbs -->
+		
 		<div class="breadcrumbs" style="padding-bottom: 10px;" align="center">
 			<br>
 			<apex:outputpanel rendered="{!IF(subscriptionCount == 0, true, false)}">

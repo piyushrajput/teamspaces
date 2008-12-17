@@ -1,6 +1,3 @@
-/**
-*@author Yuri Alvarez @ 5-2-2008
-*/
 public without sharing class WikiPageEditController {
   	
   	public Info infoWP = new Info();
@@ -10,20 +7,12 @@ public without sharing class WikiPageEditController {
 	public WikiPage__c editWP = new WikiPage__c();   
 	public Replace replace = new Replace();
 
-   	// SHARING RULES
+    
+   	/* ---------------------------- */
+   	/*   	 SHARING RULES			*/
+   	/* ---------------------------- */	
 	public UserPermissions userPermissions = new UserPermissions();
 	
-    /**
-    * Constructor
-    */
-    public WikiPageEditController () {
- 		constWikiPageEdit();		
- 	}	
-	
-	/**
-	* Generate user permissions
-	*@param Id OwnerId
-	*/
 	public void genPermissions (Id OwnerId) {
 		userPermissions.setId(UserInfo.getUserId());
 		userPermissions.setTeam(idWikiSite);
@@ -32,44 +21,33 @@ public without sharing class WikiPageEditController {
 		userPermissions.setPermissions();		
 	}
 	
-	/**
-	*@return UserPermissions
-	*/
 	public UserPermissions getUserPermissions () {
+		//System.debug('\n //////////////////////// \n USER PERMISSIONS: \n' + userPermissions + '\n //////////////////////////////// \n');
 		return userPermissions;
 	}
+	/* ---------------------------- */
     
-    /**
-    * Function for sply refresh
-    */
-    public void dummyRefresh () {}
-
- 	/**
- 	* Inner class for WikiEditSharing
- 	*@class
- 	*/
+    public void dummyRefresh () {
+    }
+    
+    public WikiPageEditController () {
+ 		constWikiPageEdit();		
+ 	}
+ 	
  	public with sharing class WikiEditSharing {
- 		
- 		/**
- 		*@return List<WikiPage__c>
- 		*@param String
- 		*/
  		public List<WikiPage__c> getWikiEditView (String idWikiPage) {
  			return [SELECT Id From WikiPage__c WHERE id =:idWikiPage];
  		}	
  	}
  	
- 	/**
- 	* Build wiki page edit enviroment
- 	*@void
- 	*/
  	public void constWikiPageEdit () {
  		if (idWikiPage != null && idWikiPage != '') {
 	 		WikiEditSharing wikiView = new WikiEditSharing();
 						    
 			if(wikiView.getWikiEditView(idWikiPage).size() == 0) {
 				throw new CustomException('Insufficient Privileges');	
-			}else {
+			}
+			else {
 		 		iniReplace();
 		 		genEditWP();
 		 		idWikiSite = editWP.Team__r.Id;
@@ -85,85 +63,48 @@ public without sharing class WikiPageEditController {
  		}
  	}
     
-    /**
-    * Select wiki to edit
-    *@void
-    */
     public void genEditWP () {
     	editWP = [SELECT Name, ShortDescription__c, Body__c, Parent__c,PageCreatedBy__c, Team__r.Id, team__c, team__r.Name FROM WikiPage__c WHERE id = : idWikiPage];
     }
     
-    /**
-    *@param String idWiki
-    */
     public void setIdWikiPage (String idWikiPage){
 		this.idWikiPage = idWikiPage;
 	}
     
-    /**
-    *@return Replace
-    */
     public Replace getReplace (){
     	return replace; 
     }
  	
- 	/**
- 	*@param Replace
- 	*/
  	public void setReplace (Replace replace) {
  		this.replace = replace;
  	}
  	
- 	/**
- 	* Select the original Wiki's HTML
- 	*/
  	public void iniReplace () {
  		WikiPage__c wikiHTML = [SELECT Body__c FROM WikiPage__c WHERE id =:idWikiPage]; 
  		replace.setContent(wikiHTML.Body__c); 
  	}
  	
- 	/**
- 	*@return String id
- 	*/
  	public String getIdWikiPage () {
  		return idWikiPage;
  	}
  	
  	public String iniBody;
  	
- 	/**
- 	* Return original Wiki's HTML
- 	*@return String
- 	*/
  	public String getIniBody () {
  		return iniBody;
  	}
  	
- 	/**
- 	* Set the Wiki's HTML
- 	*@param String wikiBody
- 	*/
  	public void setIniBody (String iniBody) {
  		this.iniBody = iniBody;
  	} 
- 	
- 	/**
- 	* Inner class for Replace type
- 	*@class
- 	*/
+ 	  
 	public class Replace {       
         String content; 
         
-        /**
-        *@return String
-        */
         public String getContent() {
                 return content;
         }
 
-		/**
-        *@param String content
-        */
         public void setContent(String content) {
                 this.content = content;
         }            
@@ -175,14 +116,14 @@ public without sharing class WikiPageEditController {
 	
  	public String html = ' ';
  	
- 	/**
- 	* Parse the HTML to Wiki's sintax
- 	*/
  	public void parseHTML() { 
+		
+		
     	String toc = '';
     			
   		html = replace.content;
-		html = html.replaceAll('\n','<br>');
+		//System.debug('\n \n ///////////// \n HTML DEVUELTO POR EL WIKISYNTAX: \n ' + html + '\n /////////////// \n');
+ 		html = html.replaceAll('\n','<br>');
  		
  		/* ------------------------ */
  		/* 		Code (No parsed) 	*/
@@ -200,7 +141,8 @@ public without sharing class WikiPageEditController {
 	 		if (temp[1].indexOf(noparsedClose) != -1) {
 		 		temp2 = temp[1].split(splitClose ,2);
 		 		code = temp2[0];
-	 		}else {
+	 		}
+	 		else {
 	 			temp2.add(temp[1]);
 			 	temp2.add('');
 			 	code = temp[1];
@@ -243,9 +185,14 @@ public without sharing class WikiPageEditController {
 				List<String> tailParts = new List<String>();
 				tailParts = htmlParts[1].split(tableEndExp,2);
 				String tableContent = '';
+				//System.debug('\n  //////////////( 10 )///////////////// \n SAVE THIS TABLE CONTENT: \n ' + tailParts + '\n ///////////////////////////////// \n');
 				
 				tableContent = tailParts[0];
-				
+				/*
+				if (tailParts.size() < 2) {
+					tailParts.add('');
+				}
+				*/
 				
 				tailHtml = tailParts[1];
 				if (tableContent != '') {
@@ -256,37 +203,46 @@ public without sharing class WikiPageEditController {
 						bodyTable = tableAttParts[1].trim();
 						
 						// If the table have attributes
-						if (tableAttParts[0].length() != 0) 
+						if (tableAttParts[0].length() != 0) {
 							tableTag += tableAttParts[0].trim(); //support all attributes
+						}	
 					}
 					tableTag += '>';
 					
 					// If have caption Syntax
+					//System.debug('\n  //////////////( 1 )///////////////// \n SAVE THIS BODY TABLE: \n ' + bodyTable + '\n ///////////////////////////////// \n');
 					List<String> captionTextParts = new List<String>();
 					
 					if (bodyTable.toLowerCase().indexOf('<br>') != -1) {
 						captionTextParts = bodyTable.substring(2).split('(?i)<br>',2);
 						
 						if (bodyTable.trim().indexOf(tableCaption) == 0 && bodyTable.toLowerCase().indexOf('<br>') != -1) {
+							//System.debug('\n  //////////////( 2 )///////////////// \n SAVE THIS CAPTIONS PARTS: \n ' + captionTextParts + '\n ///////////////////////////////// \n');
 							String captionText = captionTextParts[0].trim();
 							if (captionText.indexOf(tableData) == -1) {
+								//System.debug('\n  //////////////( 3 )///////////////// \n SAVE THIS CAPTIONS TEXT NO ATTRIBUTES : \n ' + captionText + '\n ///////////////////////////////// \n');
 								tableTag += '<caption>' + captionText + '</caption>';
-							}else {
+							}
+							else {
 								List<String> captionParts = new List<String>();
 								captionParts = captionText.split(tableDataExp,2);
+								//System.debug('\n  ///////////////( 4 )//////////////// \n SAVE THIS CAPTIONS TEXT ATTRIBUTES : \n ' + captionText + '\n' + captionParts + '\n ///////////////////////////////// \n');
 								tableTag += '<caption ' + captionParts[0].trim() + '>' + captionParts[1] + '</caption>';	
 							}
 							bodyTable = captionTextParts[1];
-						}else {
+						}
+						else {
 							if (bodyTable.trim().indexOf(tableRow) != 0) {
 								bodyTable = '<br>' + bodyTable;
 							}	
 						}
+						//System.debug('\n  ///////////////( 5 )//////////////// \n SAVE THIS BODY TABLE: \n ' + bodyTable + '\n ///////////////////////////////// \n');
 						
 						List<String> tableRows = new List<String>();
 						if (bodyTable.indexOf(tableRow) != -1) {
 							tableRows = bodyTable.split(tableRowExp);	
-						}else {
+						}
+						else {
 							tableRows.add(bodyTable);
 						}
 						
@@ -297,13 +253,16 @@ public without sharing class WikiPageEditController {
 							
 							if (rowAtt.size() == 2) {
 								tableTag += '<tr ';
-								if (rowAtt[0] != '' && rowAtt[0] != null ) 
+								if (rowAtt[0] != '' && rowAtt[0] != null ) {
 									tableTag += rowAtt[0].trim();
-
+								}
 								tableTag += '>';
+								
+								//System.debug('\n  //////////////( 6 )///////////////// \n SAVE THIS ITEM ROW: \n ' + itemRow + '\n ITER ROW: ' + iterRow + '\n ROW ATT: ' + rowAtt + '\n ///////////////////////////////// \n');
 								iterRow = rowAtt[1].trim();
 								
 								for (String itemCell : iterRow.split('(?i)<br>')) {
+									//System.debug('\n  ///////////////( 7 )//////////////// \n SAVE THIS ITEM CELL: \n ' + itemCell + '\n ///////////////////////////////// \n');
 									if (itemCell.trim().indexOf(tableHeader) == 0) {
 										tableTag += '<th ';
 										String tdContent = '';
@@ -313,19 +272,23 @@ public without sharing class WikiPageEditController {
 												List<String> tdAtts = new List<String>();
 												tdAtts = itemCell.split(tableDataExp, 2);
 												String tdAtt = '';
-												if (tdAtts[0] != null) 
+												if (tdAtts[0] != null) {
 													tdAtt = tdAtts[0].trim();
-												if (tdAtts[1] != null) 
+												}
+												if (tdAtts[1] != null) {
 													tdContent = tdAtts[1].trim();
-													
+												}
 												tableTag += tdAtt.trim();	 
-											}else {
+											}	
+											else {
 												tdContent = itemCell.trim();	
 											}
 										}
 										tableTag += '>';
 										tableTag += tdContent;
-									}else {
+									}
+									
+									else {
 										if (itemCell.trim().indexOf(tableData) == 0) {
 											tableTag += '<td ';
 											String tdContent = '';
@@ -335,13 +298,15 @@ public without sharing class WikiPageEditController {
 													List<String> tdAtts = new List<String>();
 													tdAtts = itemCell.split(tableDataExp, 2);
 													String tdAtt = '';
-													if (tdAtts[0] != null) 
+													if (tdAtts[0] != null) {
 														tdAtt = tdAtts[0].trim();
-													if (tdAtts[1] != null) 
+													}
+													if (tdAtts[1] != null) {
 														tdContent = tdAtts[1].trim();
-													
+													}
 													tableTag += tdAtt;	 
-												}else {
+												}	
+												else {
 													tdContent = itemCell.trim();	
 												}
 											}
@@ -358,13 +323,17 @@ public without sharing class WikiPageEditController {
 					}
 					tableTag += '</table>';
 					html = htmlParts[0] + tableTag + tailHtml;
-				}else {
+				}
+				else {
 					html = htmlParts[0] + '<table></table>' + tailHtml;	
 				}
-			}else {
+			}
+			else {
 				html = htmlParts[0] + '<table></table>' + htmlParts[1];
 			}
-		}	
+			
+			//System.debug('\n  //////////////( 8 )///////////////// \n SAVE THIS TABLE TAG: \n ' + tableTag + '\n ///////////////////////////////// \n');
+ 		}	
  		
  		
  		
@@ -383,20 +352,24 @@ public without sharing class WikiPageEditController {
 				temp2 = tail.split('\\)', 2);
 				temp2[0] += ')';
 				endChar = ' ';
-			}else {
+			}
+			else {
 				if (tail.indexOf(' ') != -1 || tail.indexOf('<br>') != -1) {
 					if((tail.indexOf(' ') < tail.indexOf('<br>')) || (tail.indexOf('<br>') == -1)) {
 						temp2 = tail.split(' ', 2);
 						endChar = ' ';
-					}else {
+					}
+					else {
 						temp2 = tail.split('(?i)<br>', 2);	
 						endChar = '<br>';
 					}
-				}else {
+				}
+				else {
 					temp2.add(tail);
 					temp2.add(' ');	
 				}
 			}
+			
 			String bgcolorClose = 'Bgcolor\\]';
 			String restHtml = temp2[1].replaceFirst(bgcolorClose,'</span>');
 			html = temp[0] + '<span style="background-color:' + temp2[0] + ';">' + endChar + restHtml;	
@@ -416,24 +389,29 @@ public without sharing class WikiPageEditController {
 				temp2 = tail.split('\\)', 2);
 				temp2[0] += ')';
 				endChar = ' ';
-			}else {
+			}
+			else {
 				if (tail.indexOf(' ') != -1 || tail.indexOf('<br>') != -1) {
 					if((tail.indexOf(' ') < tail.indexOf('<br>')) || (tail.indexOf('<br>') == -1)) {
 						temp2 = tail.split(' ', 2);
 						endChar = ' ';
-					}else {
+					}
+					else {
 						temp2 = tail.split('(?i)<br>', 2);	
 						endChar = '<br>';    
 					}
-				}else {
+				}
+				else {
 					temp2.add(tail);
 					temp2.add('');
 				}
 			}
+			
 			String colorClose = 'Color\\]';
 			String restHtml = temp2[1].replaceFirst(colorClose,'</span>');
 			html = temp[0] + '<span style="color:' + temp2[0] + ';">' + endChar + restHtml;	
 		}
+		
 		
  		/* ------------------------ */
  		/* 			Text Ident 		*/
@@ -450,10 +428,12 @@ public without sharing class WikiPageEditController {
 				identPx = (temp2[0].length() + 1) * 20;
 				if (temp2[0].length() != 0 ) {
 					identClose = temp2[0] + '->\\]\\]';
-				}else {
+				}
+				else {
 					identClose = '->\\]\\]';
 				}
-			}else {
+			}
+			else {
 				identPx = 0;
 				identClose = '';
 				temp2.add(temp[1]);
@@ -504,38 +484,48 @@ public without sharing class WikiPageEditController {
  		String listSyntax = '*';
  		Boolean first = true;
  		Boolean last = false;
+ 		//System.debug('\n\n/////////////////////////////\n HTML BEFORE LIST: ' + html + '\n///////////////////////////////\n\n');
  		while (html.lastIndexOf(listSyntax) != -1) {	
 	 		String listS = '\\*';
 	 		List<String> temp;
 	 		temp = html.split(listS,2);
 	 		html = html.replaceFirst(listS , '<li>');
+	 		//System.debug('\n\n/////////////////////////////\n temp (1) : ' + temp + '\n///////////////////////////////\n\n');
 	 		if ((temp[1].indexOf(listSyntax) >= temp[1].toLowerCase().indexOf('<br>') && temp[1].toLowerCase().indexOf('<br>') != -1) || temp[1].indexOf(listSyntax)== -1 ) {
+	 			//System.debug('\n\n/////////////////////////////\n into if \n///////////////////////////////\n\n');
 	 			if (temp[1].toLowerCase().indexOf('<br>') == -1) {
 	 				temp[1] = '>' + temp[1] + '</li></ul>';
 	 				last = true;
-	 			}else {	 
+	 			}
+	 			else {	 
 	 				List<String> temp2;	
 	 				temp2 = temp[1].split('(?i)<br>',2);	
+	 				//System.debug('\n\n/////////////////////////////\n temp (2) : ' + temp2 + '\n///////////////////////////////\n\n');
 	 				if ((temp2[1].indexOf(listSyntax) < 3) && (temp2[1].indexOf(listSyntax) != -1) ) {	
 	 					temp[1] = '>' + temp[1].replaceFirst('(?i)<br>', '</li>');
-	 				}else {
+	 				}
+	 				else {
 	 					temp[1] = '>' + temp[1].replaceFirst('(?i)<br>', '</li></ul>');
 	 					last = true;
 	 				}
 	 			}
-	 		}else {
+	 		}
+	 		else {
+	 			//System.debug('\n\n/////////////////////////////\n into else \n///////////////////////////////\n\n');
 	 			temp[1] = temp[1].replaceFirst(listS,'');
 	 			if (temp[1].toLowerCase().indexOf('<br>') == -1) {
 	 				temp[1] = ' style="padding-left:10px;">' + temp[1] + '</li></ul>';
 	 				last = true;
-	 			}else {	 		
+	 			}
+	 			else {	 		
 	 				temp[1] = ' style="padding-left:10px;">' + temp[1].replaceFirst('(?i)<br>', '</li>');
 	 			}
 	 		}	
 	 		if (first) {
 	 			html = temp[0] + '<ul><li' + temp[1];
 	 			first = false;
-	 		}else {
+	 		}
+	 		else {
 	 			html = temp[0] + '<li' + temp[1];
 	 		}
 	 		if (last) {
@@ -543,13 +533,15 @@ public without sharing class WikiPageEditController {
 	 			last = false;
 	 		}
  		}
- 		
+ 		//System.debug('\n\n/////////////////////////////\n HTML AFTER LIST: ' + html + '\n///////////////////////////////\n\n');
+
    		/* ------------------------ */
  		/* 		Ordered List		*/
  		String listSyntaxOL = '~';
  		Boolean firstOL = true;
  		Boolean lastOL = false;
  		
+ 		//System.debug('\n ///////////////////////////// \n SAVE THIS HTML BEFORE APPLY ORDERED LIST PARSER: \n' + html + '\n ///////////////////////////// \n');
  		while (html.lastIndexOf(listSyntaxOL) != -1) {	
 	 		String listS = '~';
 	 		List<String> temp;
@@ -559,29 +551,34 @@ public without sharing class WikiPageEditController {
 	 			if (temp[1].toLowerCase().indexOf('<br>') == -1) {
 	 				temp[1] = '>' + temp[1] + '</li></ol>';
 	 				lastOL = true;
-	 			}else {	 
+	 			}
+	 			else {	 
 	 				List<String> temp2;	
 	 				temp2 = temp[1].split('(?i)<br>',2);	
 	 				if (temp2[1].indexOf(listSyntaxOL) == 0) {	
 	 					temp[1] = '>' + temp[1].replaceFirst('(?i)<br>', '</li>');
-	 				}else {
+	 				}
+	 				else {
 	 					temp[1] = '>' + temp[1].replaceFirst('(?i)<br>', '</li></ol>');
 	 					lastOL = true;
 	 				}
 	 			}
-	 		}else {
+	 		}
+	 		else {
 	 			temp[1] = temp[1].replaceFirst(listS,'');
 	 			if (temp[1].toLowerCase().indexOf('<br>') == -1) {
 	 				temp[1] = ' style="padding-left:10px;">' + temp[1] + '</li></ol>';
 	 				lastOL = true;
-	 			}else {	 		
+	 			}
+	 			else {	 		
 	 				temp[1] = ' style="padding-left:10px;">' + temp[1].replaceFirst('(?i)<br>', '</li>');
 	 			}
 	 		}	
 	 		if (firstOL) {
 	 			html = temp[0] + '<ol><li' + temp[1];
 	 			firstOL = false;
-	 		}else {
+	 		}
+	 		else {
 	 			html = temp[0] + '<li' + temp[1];
 	 		}
 	 		if (lastOL) {
@@ -589,56 +586,58 @@ public without sharing class WikiPageEditController {
 	 			lastOL = false;
 	 		}
  		}
- 		
- 		/* ------------------------ */
+ 		//System.debug('\n ///////////////////////////// \n SAVE THIS HTML AFTER APPLY ORDERED LIST PARSER: \n' + html + '\n ///////////////////////////// \n');
+  		/* ------------------------ */
  		/* 			HEADINGS 		*/
- 		String header = '=======';
- 		for (Integer i = 6; i > 1; i--) {
-	 		if (header.length() > 1) {
-	 			header = header.substring(1);
-	 		}
-	 				
- 	 		while (html.lastIndexOf(header) != -1) {
-		 		List<String> temp = new List<String>();
-		 		List<String> temp2 = new List<String>();
-		 		Integer indexOfHeader = html.indexOf(header);
-		 		temp = html.split(header, 2);
-		 		html = html.replaceFirst(header,'<h' + i + '>');
-		 		String linkName = '';
-		 		if (temp[1].indexOf(header) != -1 && ((temp[1].indexOf(header) < temp[1].indexOf('<br>')) || temp[1].indexOf('<br>') == -1 ) ) {
-		 			temp2 = temp[1].split(header, 2);
-		 			linkName = temp2[0].trim();
-		 			html = html.replaceFirst(header,'</h' + i + '><hr>');
-		 		}else {
-		 			temp2.add(temp[1]);
-		 			temp2.add('');
+ 		 	String header = '=======';
+ 		 	for (Integer i = 6; i > 1; i--) {
+		 		if (header.length() > 1) {
+		 			header = header.substring(1);
 		 		}
-				
-				Integer fontSize;
-				if (i == 2) 
-					fontSize = 20;
-				if (i == 3) 
-					fontSize = 18;
-				if (i == 4) 
-					fontSize = 16;
-				if (i == 5) 
-					fontSize = 14;
-				if (i == 6) 
-					fontSize = 13;
-				
-				if (temp[1].indexOf(header) != -1) {
-		 			html = temp[0] + i + '%%%%<a name="' + linkName + '"></a>%%%%<h' + i + ' style="font-size:' + fontSize + 'px;">' + temp2[0] + '</h' + i + '><hr>' + temp2[1];
-				}else {
-					html = temp[0] + i + '%%%%<a name="' + linkName + '"></a>%%%%<h' + i + ' style="font-size:' + fontSize + 'px;">' + temp2[0];
-				} 
-		 		
-	 		} 
- 		}
+		 		/*
+		 		else {
+		 			header = '=';
+		 		}
+		 		*/			
+	 	 		while (html.lastIndexOf(header) != -1) {
+			 		List<String> temp = new List<String>();
+			 		List<String> temp2 = new List<String>();
+			 		Integer indexOfHeader = html.indexOf(header);
+			 		temp = html.split(header, 2);
+			 		html = html.replaceFirst(header,'<h' + i + '>');
+			 		String linkName = '';
+			 		if (temp[1].indexOf(header) != -1 && ((temp[1].indexOf(header) < temp[1].indexOf('<br>')) || temp[1].indexOf('<br>') == -1 ) ) {
+			 			temp2 = temp[1].split(header, 2);
+			 			linkName = temp2[0].trim();
+			 			html = html.replaceFirst(header,'</h' + i + '><hr>');
+			 		}
+			 		else {
+			 			temp2.add(temp[1]);
+			 			temp2.add('');
+			 		}
+					
+					Integer fontSize;
+					if (i == 2) { fontSize = 20; }
+					if (i == 3) { fontSize = 18; }
+					if (i == 4) { fontSize = 16; }
+					if (i == 5) { fontSize = 14; }
+					if (i == 6) { fontSize = 13; }
+					
+					if (temp[1].indexOf(header) != -1) {
+			 			html = temp[0] + i + '%%%%<a name="' + linkName + '"></a>%%%%<h' + i + ' style="font-size:' + fontSize + 'px;">' + temp2[0] + '</h' + i + '><hr>' + temp2[1];
+					}
+					else {
+						html = temp[0] + i + '%%%%<a name="' + linkName + '"></a>%%%%<h' + i + ' style="font-size:' + fontSize + 'px;">' + temp2[0];
+					} 
+			 		//toc += '<a style="padding-left:' + i + '0px;" href="#' + temp2[0] + '">' + temp2[0] + ' / ' + indexOfHeader + '</a><br>\n';
+		 		} 
+	
  		
+ 		 	}
+	 		
  		/* ------------------------ */
  		/* 			Bold Text 		*/ 			
  		String bold = '\'\'\'';
- 		
  		while (html.lastIndexOf(bold) != -1) {
 	 		html = html.replaceFirst(bold , '<b>');
 	 		html = html.replaceFirst(bold , '</b>');
@@ -647,7 +646,6 @@ public without sharing class WikiPageEditController {
  		/* ------------------------ */
  		/* 		UnderLine Text 		*/ 			
  		String under = '__';
- 		
  		while (html.lastIndexOf(under) != -1) {
 	 		html = html.replaceFirst(under , '<u>');
 	 		html = html.replaceFirst(under , '</u>');
@@ -657,7 +655,6 @@ public without sharing class WikiPageEditController {
  		/* ------------------------ */
  		/* 		SubScript Text 		*/ 			
  		String sub = ',,';
- 		
  		while (html.lastIndexOf(sub) != -1) {
 	 		html = html.replaceFirst(sub , '<sub>');
 	 		html = html.replaceFirst(sub , '</sub>');
@@ -667,7 +664,6 @@ public without sharing class WikiPageEditController {
  		/* 		SuperScript Text 	*/ 			
  		String sup = '^';
  		String supExp = '\\^';
- 		
  		while (html.lastIndexOf(sup) != -1) {
 	 		html = html.replaceFirst(supExp , '<sup>');
 	 		html = html.replaceFirst(supExp , '</sup>');
@@ -676,7 +672,6 @@ public without sharing class WikiPageEditController {
  		/* ------------------------ */
  		/* 			Italic Text 	*/ 		
  		String italic = '\'\'';
- 		
  		while (html.lastIndexOf(italic) != -1) {
 	 		html = html.replaceFirst(italic , '<i>');
 	 		html = html.replaceFirst(italic , '</i>');
@@ -693,7 +688,6 @@ public without sharing class WikiPageEditController {
  		/* 		External Link 		*/
  		/*		HTTPS SUPORT		*/  
  		String extLink = '[http';
- 		
  		while (html.lastIndexOf(extLink) != -1) {
  			List<String> temp;
  			String extL = '\\[http'; 
@@ -704,15 +698,20 @@ public without sharing class WikiPageEditController {
 	 			String[] temp2 = temp[1].split(' ', 2);
 	 			html += temp2[0] + '"';
 	 			List<String> temp3 = new List<String>();
+	 			//System.debug('\n ////////////////////// \n SAVE THIS LINK CONTENT TAIL: ' + temp2 + '\n /////////////////////// \n');
 	 			if (temp2[1].indexOf('[Image:') != -1 && (temp2[1].indexOf('[Image:') < temp2[1].indexOf(']'))) {
 	 				temp3 = temp2[1].split('\\]\\]', 2);
+	 				//System.debug('\n ////////////////////// \n SAVE THIS LINK CONTENT VARS: \n temp3: ' + temp3 + '\n temp2[1].indexOf([Image:)' + temp2[1].indexOf('[Image:') + '\n temp2[1].indexOf(])' + temp2[1].indexOf(']') + '\n /////////////////////// \n');
 	 				temp3[0] += ']';
-	 			}else {
+	 				//System.debug('\n ////////////////////// \n SAVE THIS LINK CONTENT VARS: \n temp3: ' + temp3 + '\n temp2[1].indexOf([Image:)' + temp2[1].indexOf('[Image:') + '\n temp2[1].indexOf(])' + temp2[1].indexOf(']') + '\n /////////////////////// \n');
+	 			}
+	 			else {
 	 				temp3 = temp2[1].split('\\]', 2);
 	 			}
 	 			html += '>' + temp3[0] + '</a>';
 	 			html += temp3[1];
- 			}else {
+ 			}
+ 			else {
  				html = temp[0] + '<a href="javascript:;">Malformed Link</a>' + temp[1];	
  			}
  		}  
@@ -736,6 +735,9 @@ public without sharing class WikiPageEditController {
 	 			String contentImg = temp2[0];
 	 			String imgTag = '<img';
 	 			
+	 			//<img width="100" height="20" align="right" src="nameOfTheAttachImage" _fcksavedurl="nameOfTheAttachImage" _moz_resizing="true"/>
+	 			//System.debug('\n //////////////////// \n CONSTRUCTION OF THE IMG TAG: \n' + imgTag + '\n ////////////////////// \n ');
+	 			
 	 			if (contentImg.indexOf(';') != -1) {
 
 		 			List<String> attributesImg = contentImg.split(';');
@@ -745,18 +747,21 @@ public without sharing class WikiPageEditController {
 		 					List<String> attVals = item.split(':',2);
 		 					String attName = attVals[0].trim();
 		 					String attVal = attVals[1].trim();
-		 					if (attName == 'w') 
+		 					if (attName == 'w') {
 		 						imgTag += ' width="' + attval + '"';	
-		 					if (attName == 'a') 
+		 					}
+		 					if (attName == 'a') {
 		 						imgTag += ' align="' + attval + '"';	
-		 					if (attName == 'h') 
+		 					}
+		 					if (attName == 'h') {
 		 						imgTag += ' height="' + attval + '"';	
-		 					
+		 					}
 		 					if (attName == 'src') {
 		 						String srcImg = '';
 		 						if (attVal.toLowerCase().indexOf('http') != -1 || attVal.toLowerCase().indexOf('file:') != -1) {
 		 							srcImg = attVal;
-		 						}else {
+		 						}
+		 						else {
 			 						String imageName = attVal;
 						 			if (attachmentsMap.get(imageName) != null) {	
 							 			Attachment AttachmentsImage = attachmentsMap.get(imageName);	
@@ -766,9 +771,11 @@ public without sharing class WikiPageEditController {
 		 						}
 		 						imgTag += ' src="' + srcImg + '"';	
 		 					}
+		 					//System.debug('\n //////////////////// \n CONSTRUCTION OF THE IMG TAG: \n' + imgTag + '\n ////////////////////// \n ');
 		 				}
 		 			}
-	 			}else {
+	 			}
+	 			else {
 	 				if (contentImg.indexOf(':') != -1) {
 		 				List<String> attVals = contentImg.split(':',2);
 	 					String attName = attVals[0].trim();
@@ -777,7 +784,8 @@ public without sharing class WikiPageEditController {
 	 						String srcImg = '';
 	 						if (attVal.toLowerCase().indexOf('http') != -1 || attVal.toLowerCase().indexOf('file:') != -1) {
 	 							srcImg = attVal;
-	 						}else {
+	 						}
+	 						else {
 		 						String imageName = attVal;
 					 			if (attachmentsMap.get(imageName) != null ) {	
 							 		Attachment AttachmentsImage = attachmentsMap.get(imageName);
@@ -787,14 +795,21 @@ public without sharing class WikiPageEditController {
 	 						}
 	 						imgTag += ' src="' + srcImg + '"';	
 	 					}
+	 					//System.debug('\n //////////////////// \n CONSTRUCTION OF THE IMG TAG: \n' + imgTag + '\n ////////////////////// \n ');
 	 				}
 	 			}
+	 			
 	 			imgTag += '/>';
+	 			
+	 			//System.debug('\n //////////////////// \n CONSTRUCTION OF THE IMG TAG: \n' + imgTag + '\n ////////////////////// \n ');
+	 			
 	 			html = temp[0] + imgTag + temp2[1];
- 			}else {
+ 			}
+ 			else {
  				html = temp[0] + '<img title="Malformed Image" alt="Malformed Image" />' + temp[1];
  			}
  		}
+ 	
  		
  		/* ------------------------ */
  		/* 		Embedded File		*/ 
@@ -805,6 +820,7 @@ public without sharing class WikiPageEditController {
  			temp = html.split('(?i)' + file , 2);
  			if (temp[1].indexOf(']') != -1) {
 	 			String[] temp2 = temp[1].split('\\]', 2);
+	 			
 	 			String fileName = temp2[0].trim();
 	 			String href = '';
 	 			String fileType = '';
@@ -816,26 +832,32 @@ public without sharing class WikiPageEditController {
 		            String ContentType2 = AttachmentsImage.ContentType;
 		            String image2 = '';
 		            if (ContentType2 == null || ContentType2 == '') {
-		            	// EXTENSION WAY
+		            	// LO HAGO POR LA EXTENSION
 		            	Integer extPos2 = AttachmentsImage.Name.lastIndexOf('.') + 1;
 		            	String extension2 = AttachmentsImage.Name.substring(extPos2);	
-		            	Map<String, String> typesExt2 = new Map<String, String>{'rar' => 'rar.gif', 'xls' => 'xls.gif', 'ppt' => 'ppt.gif', 'avi' => 'video.gif', 'mpeg' => 'video.gif', 'flv' => 'video.gif','mpg' => 'video.gif', 'mp3' => 'audio.gif' , 'wav' => 'audio.gif'};	
+		            	//System.debug('\n ///////////////////// \n SAVE THIS ATTACH EXTENSION: ' + extension2 + '\n SAVE ATTACH NAME: ' + AttachmentsImage.Name + '\n /////////////////////////// \n');
+		           		Map<String, String> typesExt2 = new Map<String, String>{'rar' => 'rar.gif', 'xls' => 'xls.gif', 'ppt' => 'ppt.gif', 'avi' => 'video.gif', 'mpeg' => 'video.gif', 'flv' => 'video.gif','mpg' => 'video.gif', 'mp3' => 'audio.gif' , 'wav' => 'audio.gif'};	
 		           		if(typesExt2.containsKey(extension2)) {
 		           			image2 = typesExt2.get(extension2);
-		           		}else {
-		           			image2 = 'generic.gif';
 		           		}
-		            }else {
-		           		// MIME TYPE WAY
-		           		Map<String, String> typesMime2 = new Map<String, String>{'image/jpeg' => 'images.gif', 'image/png' => 'images.gif', 'image/gif' => 'images.gif', 'image/bmp' => 'images.gif', 'application/pdf' => 'pdf.gif', 'text/plain' => 'txt.gif','application/msword' => 'doc.gif', 'application/x-zip-compressed' => 'zip.gif'};	
-		           		if(typesMime2.containsKey(ContentType2)) {
-		           			image2 = typesMime2.get(ContentType2);
-		           		}else {
+		           		else {
 		           			image2 = 'generic.gif';
 		           		}
 		            }
+		            else {
+		           		// LO HAGO POR EL MIME TYPE
+		           		Map<String, String> typesMime2 = new Map<String, String>{'image/jpeg' => 'images.gif', 'image/png' => 'images.gif', 'image/gif' => 'images.gif', 'image/bmp' => 'images.gif', 'application/pdf' => 'pdf.gif', 'text/plain' => 'txt.gif','application/msword' => 'doc.gif', 'application/x-zip-compressed' => 'zip.gif'};	
+		           		if(typesMime2.containsKey(ContentType2)) {
+		           			image2 = typesMime2.get(ContentType2);
+		           		}
+		           		else {
+		           			image2 = 'generic.gif';
+		           		}
+		            }	 			
+		 			
 		 			fileType = '<img style="vertical-align:bottom;" src="https://na1.salesforce.com/resource/1204814978000/FileTypeIcons/' + image2 + '"/>';
-	 			}else {
+	 			}
+	 			else {
 	 				href = '';
 	 				fileType = '';
 	 				fileName = '';
@@ -843,10 +865,12 @@ public without sharing class WikiPageEditController {
 	 			html = temp[0] + '<a href="';
 	 			html += href + '">' + fileName + '</a>';
 		 		html += temp2[1];
- 			}else {
+ 			}
+ 			else {
  				html = temp[0] + '<a href="javascript:;">Malformed Link</a>' + temp[1];
  			}
  		}
+ 		
  		 		
  		/* ------------------------ */
  		/* 		Internal Link 		*/  		
@@ -875,29 +899,40 @@ public without sharing class WikiPageEditController {
 		 			linkParts = linkContent.split(':',2);
 		 			nameWiki = linkParts[1].trim();
 		 			nameTeam = linkParts[0].trim();
-		 		}else {
+		 		}
+		 		else {
 		 			nameWiki = linkContent.trim();
 		 		}
 		 		
 		 		if (nameWiki != '') {
 			 		if (nameTeam != '') {
 			 			teamNamesList.add(nameTeam);
-			 		}else {
+			 		}
+			 		else {
 			 			teamNamesList.add(editWP.Team__r.Name);	
 			 		}
 			 		wikiNamesList.add(nameWiki);
-			 		htmlLinks = temp[0] + temp2[1];
-		 		}else {
+			 		
+			 		htmlLinks = temp[0] + temp2[1];	
+			 		
+		 		}
+		 		else {
 		 			htmlLinks = temp[0] + temp2[1];	
 		 		}
- 			}else {
+ 			}
+ 			else {
  				htmlLinks = temp[0] + temp[1];
  			}
  		}
  		
+ 		//System.debug('\n\n////////////////////////////////////////////////\n WIKI NAMES LIST: ' + wikiNamesList + '\n//////////////////////////////\n\n');
+ 		//System.debug('\n\n////////////////////////////////////////////////\n TEAM NAMES LIST: ' + teamNamesList + '\n//////////////////////////////\n\n');
+ 		
  		for (WikiPage__c iterWP : [select id, Name, team__c, team__r.Name from WikiPage__c where Name in:wikiNamesList and team__r.Name in:teamNamesList]) {
  			wikiMap.put(iterWP.Team__r.Name + ':' + iterWP.Name, iterWP);	
  		}
+ 		
+ 		//System.debug('\n\n////////////////////////////////////////////////\n WIKI MAP: ' + wikiMap + '\n//////////////////////////////\n\n');
  		
  		while (html.lastIndexOf(intLink) != -1) {		
  			List<String> temp;
@@ -915,32 +950,42 @@ public without sharing class WikiPageEditController {
 		 			linkParts = linkContent.split(':',2);
 		 			nameWiki = linkParts[1].trim();
 		 			nameTeam = linkParts[0].trim();
-		 		}else {
+		 		}
+		 		else {
 		 			nameWiki = linkContent.trim();
 		 			nameTeam = editWP.Team__r.Name;
 		 		}
 		 		
 		 		if (nameWiki != '' && nameTeam != '') {
 			 		WikiPage__c wiki;
-			 		if (wikiMap.get(nameTeam + ':' + nameWiki) != null) 
+			 		if (wikiMap.get(nameTeam + ':' + nameWiki) != null) {
 			 			wiki = wikiMap.get(nameTeam + ':' + nameWiki); 	
+			 		}
+			 		
+			 		//System.debug('\n\n////////////////////////////////////////////////\n CURRENT WIKI LINK:\nName Wiki:' + nameWiki + '\nName Team: ' + nameTeam + '\nWIKI PAGE:' + wiki + '\n//////////////////////////////\n\n');
 			 		
 			 		if (wiki != null) {
 				 		String id;
 				 		id = wiki.Id;
 							 		
 						html = temp[0] + '<a href=\"/apex/WikiPage?idWP=' + id + '\">' + nameWiki + '</a>' + temp2[1];	 		
-				 	}else {
+				 	}
+				 	else {
 				 		html = temp[0] + '<a href="javascript:;" onclick="viewOverlayForm(\'' + idWikiPage + '\',\'AddChildForm\');newChildPreField(\'' + nameWiki + '\')">Create Page ' + nameWiki + '</a>' + temp2[1];
 				 	}
-		 		}else {
+		 		}
+		 		else {
 		 			html = temp[0] + temp2[1];	
 		 		}
- 			}else {
+ 			}
+ 			else {
  				html = temp[0] + temp[1];
  			}
- 		}
+ 		}				 		
+ 		
+ 		
  		html = html.replaceAll('  ','&nbsp;');
+  		
   		
   		/* ------------------------ */
  		/* 	   Table of Content 	*/ 	
@@ -962,9 +1007,12 @@ public without sharing class WikiPageEditController {
 			String part1 = tempToc1[0].substring(0,a);
 			String numH = tempToc1[0].substring(a,a + 1);
 	 		html = part1 + '<a name="'+ tempToc2[0] + '"></a>' + tempToc2[1]; 
-	 		
+	 		//style="padding-left:' + numH.substring(0,1) + '0px;"
 	 		toc += '<a  href="#' + tempToc2[0] + '" style="padding-left:' + numH + '0px;padding-bottom:5px;">' + tempToc2[0] + '</a><br>\n';
- 		}
+
+	 		//toc += tempToc2[0];
+
+ 		}	
  		toc = '<table style="padding:20px;background-color:#FFFFFF;border:1px solid #AAAAAA;"><tr><td>' + toc + '</td></tr></table>';
  		html = html.replaceAll(tocSintax, toc);	
  		
@@ -973,15 +1021,16 @@ public without sharing class WikiPageEditController {
  		Integer countCode = 0;
  		String codeText;
  		codeText = html;
- 		
  		while (codeText.lastIndexOf(replacementCode) != -1) {
 	 		codeText = codeText.replaceFirst(replacementCode,'<table style="border: 1px solid rgb(175, 175, 175); padding: 20px; background-color: rgb(250, 250, 250);"><tbody><tr><td>' + noparsedText.get(countCode) + '<span></span></td></tr></tbody></table>');
  			countCode++;
  		} 		
  		html = codeText;
  		
+ 		
  		/* ------------------------ */
  		/* 		  Emoticons 		*/		
+ 		
  		String happy = ':\\)';
  		String veryHappy = ':D';
  		String sad = ':\\(';
@@ -1024,20 +1073,15 @@ public without sharing class WikiPageEditController {
 		html = html.replaceAll(confused , '<img src=\'/resource/' + resourceId + '/FCKeditor/fckeditor/editor/images/smiley/msn/confused_smile.gif\'>');
 		html = html.replaceAll(angel , '<img src=\'/resource/' + resourceId + '/FCKeditor/fckeditor/editor/images/smiley/msn/angel_smile.gif\'>'); 		
  		
+ 		
  	}   
  	
- 	/**
- 	* Return parsed HTML
- 	*@return String
- 	*/
  	public String getHtml () {
  		return html;	
  	}
-	
-	/**
-	* Parse Wiki code to HTML
-	*/
+
  	public void parseWiki() { 
+			
   		html = replace.content;
 		html = html.replaceAll('(?i)&nbsp;',' ');
 		html = html.replaceAll('(?i)&amp;','&');
@@ -1045,6 +1089,8 @@ public without sharing class WikiPageEditController {
 		html = html.replaceAll('(?i)&gt;','>');
 		html = html.replaceAll('(?i)&lt;','<');
 		
+		System.debug('\n \n ///////////// \n HTML RETRIEVE BY THE FCKEDITOR (width \\n): \n ' + html + '\n /////////////// \n'); 
+		//html = html.replaceAll('[\n\r]','');
 		html = html.replaceAll('(?i)</li>[^<]*<li','</li><li');
 		html = html.replaceAll('(?i)<ul[^>]*>[^<]*<li','<ul><li');
 		html = html.replaceAll('(?i)</li>[^<]*</ul>','</li></ul>');
@@ -1054,14 +1100,20 @@ public without sharing class WikiPageEditController {
 		
 		html = html.replaceAll('(?i)<ol[^>]*>[^<]*<li','<ol><li');
 		html = html.replaceAll('(?i)</li>[^<]*</ol>','</li></ol>');
+		//System.debug('\n \n ///////////// \n HTML RETRIEVE BY THE FCKEDITOR: \n ' + html + '\n /////////////// \n'); 		
+		
+		//System.debug('\n \n ///////////// \n HTML BEFORE REMOVE METADATA : \n ' + html + '\n /////////////// \n');
 		// REMOVE ALL THE METADATA AND CSS STYLES INCLUDE FROM WORD
-  		html = html.replaceAll('(?i)<meta[^>]*>[^(</met)]*</meta>','');
+  		html = html.replaceAll('(?i)<meta[^>]*>.*[\n\r]*.*</meta>','');
   		html = html.replaceAll('(?i)<fck:meta[^>]*>','');
   		html = html.replaceAll('(?i)</fck:meta>','');
   		html = html.replaceAll('(?i)<\\!--[^(-->)]*-->',''); 
   		html = html.replaceAll('(?i)<style[^>]*>[^style]*style>','');
   		html = html.replaceAll('(?i)<link[^>]*>','');
   		
+  		
+  		//System.debug('\n \n ///////////// \n HTML AFTER REMOVE METADATA : \n ' + html + '\n /////////////// \n');
+		
   		/* ------------------------ */
  		/* 		Code (no parsed) 	*/ 		
 		html = html.replaceAll('(?i)' + '<table style=\\\"border: 1px solid rgb\\(175, 175, 175\\); padding: 20px; background-color: rgb\\(250, 250, 250\\);\\\"><tbody><tr><td>','{{{');
@@ -1069,58 +1121,41 @@ public without sharing class WikiPageEditController {
 
  		/* ------------------------ */ 
  		/* 		Background color 	*/ 		
-		String bgcolorOpen = '<span style="[^"]*background-color:';
+		String bgcolorOpen = '<span style="background-color: ';
 		
 		String bgcolorClose = '</span>';
 		List<String> tempBgcolor;
-	
-		while (html.split('(?i)' + bgcolorOpen, 2).size() > 1) {
+		while (html.toLowerCase().indexOf(bgcolorOpen) != -1) {
 			tempBgcolor = html.split('(?i)' + bgcolorOpen, 2);
-			List<String> tail = tempBgcolor[1].split('(?i)' + '[^(;|>)]*"[^>]*>', 2);
-			
-			if (tail[0].trim() == '') {
-				tail = tempBgcolor[1].split('(?i)' + '"[^>]*>', 2);
-			}
-			String color = tail[0].replaceAll(';.*','');
+			List<String> tail = tempBgcolor[1].split('(?i)' + '[ ]*"[^>]*>', 2);
+			String color = tail[0].replaceAll(';','');
 			String resultHtml = tail[1].replaceFirst('(?i)' + bgcolorClose, ' Bgcolor]');
-			html = tempBgcolor[0] + '[Bgcolor:' + color.trim() + ' ' + resultHtml;
+			html = tempBgcolor[0] + '[Bgcolor:' + color + ' ' + resultHtml;
 		}
-		
-		bgcolorOpen = '<span style="[^"]*background:';
-		while (html.split('(?i)' + bgcolorOpen, 2).size() > 1) {
-			tempBgcolor = html.split('(?i)' + bgcolorOpen, 2);
-			List<String> tail = tempBgcolor[1].split('(?i)' + '[^(;|>)]*"[^>]*>', 2);
-			
-			if(tail[0].trim() == '') {
-				tail = tempBgcolor[1].split('(?i)' + '"[^>]*>', 2);
-			}
-			String color = tail[0].replaceAll(';.*','');
-			
-			if (color.toLowerCase().indexOf('rgb(') == -1) {
-				color = color.trim().replaceAll('[ ]+.*','');
-			}
-			String resultHtml = tail[1].replaceFirst('(?i)' + bgcolorClose, ' Bgcolor]');
-			html = tempBgcolor[0] + '[Bgcolor:' + color.trim() + ' ' + resultHtml;
-		}		
 
  		/* ------------------------ */
  		/* 		Text color 			*/ 		
 		String colorOpen = '<span[^>]*style="[^"]*color:';
 		String colorClose = '</span>';
 		List<String> tempColor;
+		//System.debug('\n ///////////////////////// TEXT COLOR PARSER ///////////////////////');
+		//System.debug('\n\n/////////////////////////\n HTML:\n' + html+ '\n /////////////////////// \n\n');
+		//System.debug('\n\n/////////////////////////\n BOOLEAN MATCH:\n' + Pattern.matches('.*[\n\r]*.*<span[^>]*style="[^"]*color:.*[\n\r]*.*', html.toLowerCase()) + '\n /////////////////////// \n\n');
 		
 		while (html.toLowerCase().split('<span[^>]*style="[^"]*color:', 2).size() > 1) {
 			tempColor = html.split('(?i)' + colorOpen, 2);
-			List<String> tail = tempColor[1].split('(?i)' + '[^(;|>)]*"[^>]*>', 2);
 			
-			if (tail[0].trim() == '') {
-				tail = tempColor[1].split('(?i)' + '"[^>]*>', 2);
-			}
+			//System.debug('\n\n/////////////////////////\n tempColor:\n' + tempColor+ '\n /////////////////////// \n\n');
+			List<String> tail = tempColor[1].split('(?i)' + '[^;]*"[ ]*>', 2);
+			
+			//System.debug('\n\n/////////////////////////\n tail:\n' + tail+ '\n /////////////////////// \n\n');
 			String color = tail[0].replaceAll(';.*','');
-			
 			String resultHtml = tail[1].replaceFirst('(?i)' + colorClose, ' Color]');
 			
+			//System.debug('\n\n/////////////////////////\n resultHtml:\n' + resultHtml+ '\n /////////////////////// \n\n');
 			html = tempColor[0] + '[Color:' + color + ' ' + resultHtml;
+			
+			//System.debug('\n\n/////////////////////////\n html:\n' + html+ '\n /////////////////////// \n\n');
 		}
 		
  		/* ------------------------ */
@@ -1130,6 +1165,7 @@ public without sharing class WikiPageEditController {
 		String identClose = '</p>';
 		List<String> tempIdent;
 		
+		System.debug('\n\n/////////////////////////\n HTML BEFORE TEXT IDENT :\n' + html+ '\n /////////////////////// \n\n');
 		while (html.toLowerCase().indexOf(identOpen) != -1) {
 			tempIdent = html.split('(?i)' + identOpen, 2);
 			List<String> marginPx = tempIdent[1].split('(?i)' + 'px[^>]*">', 2);
@@ -1146,6 +1182,7 @@ public without sharing class WikiPageEditController {
  		/* 		UnOrdered List	 	*/
  		String ulOpen = '<ul[^>]*>';
  		String ulClose = '</ul>';
+ 		System.debug('\n\n////////////////\n HTML BEFORE UL : ' + html + '\n///////////////////\n\n');
  		while (html.toLowerCase().split(ulOpen,2).size() > 1) {
 	 		List<String> ulPart;
 	 		List<String> ulPart2;
@@ -1156,8 +1193,11 @@ public without sharing class WikiPageEditController {
 	 		String listTagOpen = '<li[^>]*>';
 	 		String listTagClose = '</li>';
 	 		String listTagClose2 = '<br></li>';
+	 		System.debug('\n\n////////////////\n UL CONTENT: ' + ulString + '\n///////////////////\n\n');
 	 		
 	 		String listTagPadOpen = '<li style="[^"]*padding-left: 10px;[^"]*">';
+	 		System.debug('\n\n////////////////\n UL CONTENT: final ' + ulString + '\n///////////////////\n\n');
+	 		System.debug('\n\n////////////////\n UL CONTENT: parts ' + ulString.toLowerCase().split(listTagPadOpen,2) + '\n///////////////////\n\n');
 	 		while (ulString.toLowerCase().split(listTagPadOpen,2).size() > 1) {
 		 		List<String> temp;
 		 		temp = ulString.split('(?i)' + listTagPadOpen ,2);
@@ -1171,19 +1211,32 @@ public without sharing class WikiPageEditController {
 		 		temp = ulString.split('(?i)' + listTagOpen ,2);
 		 		ulString = ulString.replaceFirst('(?i)' + listTagOpen , '*');
 		 		if ((ulString.toLowerCase().indexOf(listTagClose2) < ulString.toLowerCase().indexOf(listTagClose)) && ulString.toLowerCase().lastIndexOf(listTagClose2) != -1) {
+		 			System.debug('\n\n////////////////\n into if \n///////////////////\n\n');
 		 			temp[1] = temp[1].replaceFirst('(?i)' + listTagClose,'');
-		 		}else {
+		 		}
+		 		else {
+		 			System.debug('\n\n////////////////\n into else \n///////////////////\n\n');
+		 			System.debug('\n\n////////////////\n temp[1] :' + temp[1] + '\n///////////////////\n\n');
 		 			if ((temp[1].split('(?i)' + listTagClose,2).size() > 1) && ((temp[1].toLowerCase().indexOf('<li') > temp[1].toLowerCase().indexOf('</li>')) ||(temp[1].toLowerCase().indexOf('<li')== -1)) ) {
 		 				temp[1] = temp[1].replaceFirst('(?i)' + listTagClose,'<br>');
-		 			}else {
+		 				System.debug('\n\n////////////////\n temp[1] if :' + temp[1] + '\n///////////////////\n\n');
+		 			}
+		 			else {
 		 				temp[1] = temp[1].replaceFirst('[\n\r][^<li]*','<br>');	
 		 				temp[0] = temp[0].replaceAll('[\n\r]','');
+		 				System.debug('\n\n////////////////\n temp[1] else :' + temp[1] + '\n///////////////////\n\n');
 		 			}
 		 		}
 		 		ulString = temp[0] + '* ' + temp[1];
-		 	}
+		 		System.debug('\n\n////////////////\n UL CONTENT: ' + ulString + '\n///////////////////\n\n');
+	 		} 		
+			
+	 		
+	 		
 	 		html = ulPart[0] + ulString + ulPart2[1];
  		}
+		
+		System.debug('\n\n////////////////\n HTML BEFORE UL : ' + html + '\n///////////////////\n\n');
 		
   		/* ------------------------ */
  		/* 		Ordered List	 	*/
@@ -1199,8 +1252,8 @@ public without sharing class WikiPageEditController {
 	 		String listTagOpen = '<li[^>]*>';
 	 		String listTagClose = '</li>';
 	 		String listTagClose2 = '<br></li>';
-	 		String listTagPadOpen = '<li style="[^"]*padding-left: 10px;[^"]*">';
 	 		
+	 		String listTagPadOpen = '<li style="[^"]*padding-left: 10px;[^"]*">';
 	 		while (olString.toLowerCase().split(listTagPadOpen,2).size() > 1) {
 		 		List<String> temp;
 		 		temp = olString.split('(?i)' + listTagPadOpen ,2);
@@ -1208,30 +1261,37 @@ public without sharing class WikiPageEditController {
 		 		temp[1] = temp[1].replaceFirst('(?i)' + listTagClose,'<br>');
 		 		olString = temp[0] + '~~* ' + temp[1];
 	 		} 
+	 		
 	 		while (olString.toLowerCase().split(listTagOpen,2).size() > 1) {
 		 		List<String> temp;
 		 		temp = olString.split(listTagOpen ,2);
 		 		olString = olString.replaceFirst('(?i)' + listTagOpen , '*');
 		 		if (olString.toLowerCase().indexOf(listTagClose2) < olString.toLowerCase().indexOf(listTagClose) && olString.toLowerCase().lastIndexOf(listTagClose2) != -1) {
 		 			temp[1] = temp[1].replaceFirst('(?i)' + listTagClose,'');
-		 		}else {
+		 		}
+		 		else {
 		 			if (temp[1].split('(?i)' + listTagClose,2).size() > 1) {
 		 				temp[1] = temp[1].replaceFirst('(?i)' + listTagClose,'<br>');
-		 			}else {
+		 			}
+		 			else {
 		 				temp[1] = temp[1].replaceFirst('[\n\r][^<li]*','<br>');	
 		 				temp[0] = temp[0].replaceAll('[\n\r]','');
 		 			}
 		 		}
 		 		olString = temp[0] + '~ ' + temp[1];
 	 		} 		
+	
+	 		
 	 		html = olPart[0] + olString + olPart2[1];
  		}
  		
  		// REMOVE THE RETURN CHAR 
  		html = html.replaceAll('[\n\r]','');
  		
+ 		
 		/* ------------------------ */
  		/* 			Text Align	 	*/
+		
 		String alignRightOpen = '<p style="text-align: right;">';
 		String alignLeftOpen = '<p style="text-align: left;">';
 		String alignCenterOpen = '<p style="text-align: center;">';
@@ -1239,6 +1299,7 @@ public without sharing class WikiPageEditController {
 		
 		String alignRightOpenWord = '<div align="right">';
 		String alignCenterOpenWord = '<div align="center">';
+		//String alignLeftOpenWord = '<div>';
 		
 		String alignClose = '</p>';
 		String alignCloseWord = '</div>';
@@ -1255,6 +1316,14 @@ public without sharing class WikiPageEditController {
 			tempRight = html.split('(?i)' + alignRightOpenWord, 2);
 			html = tempRight[0] + '[[> ' + tempRight[1].replaceFirst('(?i)' + alignCloseWord ,' >]]');
 		}
+		
+		// Left Align from Word
+		/*
+		while (html.toLowerCase().indexOf(alignLeftOpenWord) != -1) {
+			tempRight = html.split('(?i)' + alignLeftOpenWord, 2);
+			html = tempRight[0] + '[[< ' + tempRight[1].replaceFirst('(?i)' + alignCloseWord ,' <]]');
+		}
+		*/
 		
 		// Align from FCKeditor
 		while (html.toLowerCase().indexOf(alignRightOpen) != -1) {
@@ -1276,10 +1345,11 @@ public without sharing class WikiPageEditController {
 			tempRight = html.split('(?i)' + alignJustifyOpen, 2);
 			html = tempRight[0] + '[[<>' + tempRight[1].replaceFirst('(?i)' + alignClose ,'<>]]');
 		}
-		
 
   		/* ------------------------ */
  		/* 			HEADINGS 		*/
+ 		
+ 		//System.debug('\n\n////////////////////////////\n HTML BEFORE HEADINGS: ' + html + '\n/////////////\n\n');
  		for (Integer i = 6; i > 1; i--) {
 	  		String headerOpen = '<h' + i + '[^>]*>'; 		
 	  		String header = '';
@@ -1288,33 +1358,30 @@ public without sharing class WikiPageEditController {
 	  		} 
 	  		
  			Integer fontSize;
-			if (i == 2) 
-				fontSize = 20;
-			if (i == 3) 
-				fontSize = 18;
-			if (i == 4) 
-				fontSize = 16;
-			if (i == 5) 
-				fontSize = 14;
-			if (i == 6) 
-				fontSize = 13;			
+			if (i == 2) { fontSize = 20; }
+			if (i == 3) { fontSize = 18; }
+			if (i == 4) { fontSize = 16; }
+			if (i == 5) { fontSize = 14; }
+			if (i == 6) { fontSize = 13; }			
  			 
- 			html = html.replaceAll('(?i)' + headerOpen ,' ' + header + ' ');
+ 			System.debug('\n\n \n////////////////////////////\n HTML INTO HEADINGS (' + i + '): ' + html + '\n/////////////\n\n');  		
+	 		html = html.replaceAll('(?i)' + headerOpen ,' ' + header + ' ');
 	 		
-	 		//remove <br> and whitespace if any.
-	 		String headerClose1 = '<br[^>]*>[ \r\n]*</h' + i + '><hr[^>]*>';
-	 		
+	 		// The last <br> fix the firefox problem when click on delete key.
+	 		String headerClose1 = '<br[^>]*>[\r\n]*</h' + i + '><hr[^>]*><br>';
+	 		//String headerClose2 = '<br[^>]*></h' + i + '>[\r\n]*<hr>';
 	 		String headerClose3 = '<br></h' + i + '>';
 	 		String headerClose4 = '</h' + i + '><hr[^>]*>';
 	 		String headerClose5 = '</h' + i + '>[\r\n]*<hr[^>]*>';
 	 		String headerClose6 = '</h' + i + '>';
 	 		html = html.replaceAll('(?i)' + headerClose1 ,' ' + header + ' ');
-	 			
+	 		//html = html.replaceAll('(?i)' + headerClose2 ,' ' + header + ' ');	
 	 		html = html.replaceAll('(?i)' + headerClose3 ,' ' + header + ' ');
 	 		html = html.replaceAll('(?i)' + headerClose4 ,' ' + header + ' ');	
 	 		html = html.replaceAll('(?i)' + headerClose5 ,' ' + header + ' ');	
 	 		html = html.replaceAll('(?i)' + headerClose6 ,' ' + header + ' ');
-	 	}	
+	 		System.debug('\n\n \n ///////////////////////////\n HTML AFTER HEADINGS (' + i + '): ' + html + '\n/////////////\n\n');  		
+ 		}	
 	 	
 	 	/* ------------------------ */
  		/* 		Horizontal Line 	*/
@@ -1385,6 +1452,7 @@ public without sharing class WikiPageEditController {
  			}	
  		}
   		
+  		
   		String imgTag = '<img ';
  		while (html.toLowerCase().indexOf(imgTag) != -1) {	
  			Boolean smileImg = false;
@@ -1393,194 +1461,258 @@ public without sharing class WikiPageEditController {
  			List<String> imgAtt = new List<String>();
  			if (imgtagContent[1].indexOf('/>') != -1) {
  				imgAtt = imgtagContent[1].split('/>',2);
- 			}else {
+ 			}
+ 			else {
  				imgAtt = imgtagContent[1].split('>',2);
  			}
- 			List<String> imgAttList = new List<String>();
- 			String attributes = imgAtt[0]; 
- 			if (attributes.toLowerCase().indexOf('src') != -1) {
- 				List<String> tempAtt = new List<String>();
- 				tempAtt = attributes.split('(?i)src',2);
- 				if (tempAtt[1].toLowerCase().indexOf(' ') != -1) {
- 					List<String> tempAtt2 = new List<String>();
- 					tempAtt2 = tempAtt[1].split(' ', 2);
- 					imgAttList.add('src' + tempAtt2[0]);
- 					attributes = tempAtt[0] + tempAtt2 [1];
- 				}else {
- 					imgAttList.add('src' + tempAtt[1]);
- 					attributes = tempAtt[0];
- 				}
- 			}
- 			if (attributes.toLowerCase().indexOf('style') != -1) {
- 				List<String> tempAtt = new List<String>();
- 				tempAtt = attributes.split('(?i)style',2);
- 				String styleValue = tempAtt[1];
- 				
- 				styleValue = styleValue.substring(2);
- 				List<String> tempAtt2 = new List<String>();
- 				tempAtt2 = styleValue.split('"', 2);
- 				imgAttList.add('style="' + tempAtt2[0] + '"');
- 				attributes = tempAtt[0] + tempAtt2 [1];
- 			}
- 			if (attributes.toLowerCase().indexOf('width') != -1) {
- 				List<String> tempAtt = new List<String>();
- 				tempAtt = attributes.split('(?i)width',2);
- 				if (tempAtt[1].toLowerCase().indexOf(' ') != -1) {
- 					List<String> tempAtt2 = new List<String>();
- 					tempAtt2 = tempAtt[1].split(' ', 2);
- 					imgAttList.add('width' + tempAtt2[0]);
- 					attributes = tempAtt[0] + tempAtt2 [1];
- 				}else {
- 					imgAttList.add('width' + tempAtt[1]);
- 					attributes = tempAtt[0];
- 				}
- 			}
- 			if (attributes.toLowerCase().indexOf('height') != -1) {
- 				List<String> tempAtt = new List<String>();
- 				tempAtt = attributes.split('(?i)height',2);
- 				if (tempAtt[1].toLowerCase().indexOf(' ') != -1) {
- 					List<String> tempAtt2 = new List<String>();
- 					tempAtt2 = tempAtt[1].split(' ', 2);
- 					imgAttList.add('height' + tempAtt2[0]);
- 					attributes = tempAtt[0] + tempAtt2 [1];
- 				}else {
- 					imgAttList.add('height' + tempAtt[1]);
- 					attributes = tempAtt[0];
- 				}
- 			}
- 			if (attributes.toLowerCase().indexOf('align') != -1) {
- 				List<String> tempAtt = new List<String>();
- 				tempAtt = attributes.split('(?i)align',2);
- 				if (tempAtt[1].toLowerCase().indexOf(' ') != -1) {
- 					List<String> tempAtt2 = new List<String>();
- 					tempAtt2 = tempAtt[1].split(' ', 2);
- 					imgAttList.add('align' + tempAtt2[0]);
- 					attributes = tempAtt[0] + tempAtt2 [1];
- 				}else {
- 					imgAttList.add('align' + tempAtt[1]);
- 					attributes = tempAtt[0];
- 				}
- 			}
- 			Integer widthSet = 0;
- 			Integer heightSet = 0;
- 			for (String dim : imgAttList) {
- 				if (dim.toLowerCase().indexOf('width') != -1) {
- 					widthSet++;	
- 				}
- 				if (dim.toLowerCase().indexOf('height') != -1) {
- 					heightSet++;	
- 				}
- 			}
- 			for (String item: imgAttList) {
- 				if(item.indexOf('=') != -1) {
- 					List<String> attParts = item.split('=', 2);
- 					String attName = attParts[0].toLowerCase().trim();
- 					String attVal = attParts[1].trim();
- 					if (attName == 'style')	{
- 						if (attVal.toLowerCase().indexOf('width') != -1 && widthSet < 2) {
- 							List<String> styleW = new List<String>();
- 							styleW = attVal.split('(?i)width[ ]*:',2);
- 							String styleWVal = '';
- 							if (styleW[1].indexOf(';') != -1) {
- 								List<String> widthValS = new List<String>();
- 								widthValS = styleW[1].split(';',2);
- 								styleWVal = widthVals[0].trim();
- 							}else {
- 								styleWVal = styleW[1].trim();	
- 							}
- 							imgTagGen += ' w:' + styleWVal.replaceAll('"', '') + ';';	
- 						}
- 						if (attVal.toLowerCase().indexOf('height') != -1 && heightSet < 2) {
- 							List<String> styleH = new List<String>();
- 							styleH = attVal.split('(?i)height[ ]*:',2);
- 							String styleHVal = '';
- 							if (styleH[1].indexOf(';') != -1) {
- 								List<String> heightValS = new List<String>();
- 								heightValS = styleH[1].split(';',2);
- 								styleHVal = heightValS[0].trim();
- 							}else {
- 								styleHVal = styleH[1].trim();	
- 							}
- 							imgTagGen += ' h:' + styleHVal.replaceAll('"', '') + ';';
- 						}
- 					}
- 					if (attName == 'width') 
-						imgTagGen += ' w:' + attVal.replaceAll('"', '') + ';';	
- 					if (attName == 'height') 
- 						imgTagGen += ' h:' + attVal.replaceAll('"', '') + ';';	
- 					if (attName == 'align') 
- 						imgTagGen += ' a:' + attVal.replaceAll('"', '') + ';';	
-
- 					if (attName == 'src') {
- 						String srcImage = '';
- 						attVal = attVal.replaceAll('"', '');
- 						if (attVal.toLowerCase().indexOf('https://na1.salesforce.com/servlet/servlet') != -1) {
-	 						String[] srcParts = attVal.split('(?i)file=',2);
-				  			String imageId = srcParts[1];				
-				 			List<Attachment> AttachmentsImage = [select Name, Id from Attachment where id =:imageId  limit 1];
-				 			String imageName = '';
-				 			if (attachmentsMap.get(imageId) != null) {	
-					 			imageName = attachmentsMap.get(imageId).Name;
-							}	
-							imgTagGen += ' src:' + imageName + ';'; 
- 						}else {
- 							if (attVal.toLowerCase().indexOf('fckeditor/editor/images/smiley/msn') != -1) {
-				 				if (attVal.toLowerCase().indexOf('regular_smile.gif') != -1) 
-				 					html = imgTagContent[0] + ':)';	
-				 				if (attVal.toLowerCase().indexOf('whatchutalkingabout_smile.gif') != -1) 
-				 					html = imgTagContent[0] + ':|';	
-				 				if (attVal.toLowerCase().indexOf('teeth_smile.gif') != -1) 
-				 					html = imgTagContent[0] + ':D';	
-				 				if (attVal.toLowerCase().indexOf('sad_smile.gif') != -1) 
-				 					html = imgTagContent[0] + ':(';	
-				 				if (attVal.toLowerCase().indexOf('cry_smile.gif') != -1) 
-				 					html = imgTagContent[0] + ':\'(';	
-				 				if (attVal.toLowerCase().indexOf('wink_smile.gif') != -1) 
-				 					html = imgTagContent[0] + ';)';	
-				 				if (attVal.toLowerCase().indexOf('devil_smile.gif') != -1) 
-				 					html = imgTagContent[0] + '(6)';	
-				 				if (attVal.toLowerCase().indexOf('lightbulb.gif') != -1) 
-				 					html = imgTagContent[0] + '(I)';	
-				 				if (attVal.toLowerCase().indexOf('thumbs_up.gif') != -1) 
-				 					html = imgTagContent[0] + '(Y)';	
-				 				if (attVal.toLowerCase().indexOf('thumbs_down.gif') != -1) 
-				 					html = imgTagContent[0] + '(N)';	
-				 				if (attVal.toLowerCase().indexOf('heart.gif') != -1) 
-				 					html = imgTagContent[0] + '(L)';	
-				 				if (attVal.toLowerCase().indexOf('broken_heart.gif') != -1) 
-				 					html = imgTagContent[0] + '(U)';	
-				 				if (attVal.toLowerCase().indexOf('kiss.gif') != -1) 
-				 					html = imgTagContent[0] + '(K)';	
-				 				if (attVal.toLowerCase().indexOf('envelope.gif') != -1) 
-				 					html = imgTagContent[0] + '(E)';	
-				 				if (attVal.toLowerCase().indexOf('shades_smile.gif') != -1) 
-				 					html = imgTagContent[0] + '(H)';	
-				 				if (attVal.toLowerCase().indexOf('angry_smile.gif') != -1) 
-				 					html = imgTagContent[0] + ':@';	
-				 				if (attVal.toLowerCase().indexOf('tounge_smile.gif') != -1) 
-				 					html = imgTagContent[0] + ':P';	
-				 				if (attVal.toLowerCase().indexOf('embaressed_smile.gif') != -1) 
-				 					html = imgTagContent[0] + ':$';	
-				 				if (attVal.toLowerCase().indexOf('omg_smile.gif') != -1) 
-				 					html = imgTagContent[0] + ':O';	
-				 				if (attVal.toLowerCase().indexOf('confused_smile.gif') != -1) 
-				 					html = imgTagContent[0] + ':S';	
-				 				if (attVal.toLowerCase().indexOf('angel_smile.gif') != -1) 
-				 					html = imgTagContent[0] + '(A)';	
-				 				smileImg = true;		
- 							}else {
-	 							imgTagGen += ' src:' + attVal + ';';
+ 			
+ 			//if (imgAtt[0].toLowerCase().indexOf('file:///') == -1) {
+	 			//System.debug('\n //////////( 1 )/////////////// \n THIS IMAGE ATTRIBUTES LIST : \n' + imgAtt[0] + '\n ///////////////////////// \n');	
+	 			
+	 			List<String> imgAttList = new List<String>();
+	 			String attributes = imgAtt[0]; 
+	 			//System.debug('\n //////////( 1 )/////////////// \n THIS ATTRIBUTES PARSER : \n' + attributes + '\n ///////////////////////// \n');
+	 			if (attributes.toLowerCase().indexOf('src') != -1) {
+	 				List<String> tempAtt = new List<String>();
+	 				tempAtt = attributes.split('(?i)src',2);
+	 				if (tempAtt[1].toLowerCase().indexOf(' ') != -1) {
+	 					List<String> tempAtt2 = new List<String>();
+	 					tempAtt2 = tempAtt[1].split(' ', 2);
+	 					imgAttList.add('src' + tempAtt2[0]);
+	 					attributes = tempAtt[0] + tempAtt2 [1];
+	 				}
+	 				else {
+	 					imgAttList.add('src' + tempAtt[1]);
+	 					attributes = tempAtt[0];
+	 				}
+	 			}
+	 			//System.debug('\n //////////( 2 )/////////////// \n THIS ATTRIBUTES PARSER : \n' + attributes + '\n ///////////////////////// \n');
+	 			if (attributes.toLowerCase().indexOf('style') != -1) {
+	 				List<String> tempAtt = new List<String>();
+	 				tempAtt = attributes.split('(?i)style',2);
+	 				String styleValue = tempAtt[1];
+	 				
+	 				styleValue = styleValue.substring(2);
+	 				List<String> tempAtt2 = new List<String>();
+	 				tempAtt2 = styleValue.split('"', 2);
+	 				imgAttList.add('style="' + tempAtt2[0] + '"');
+	 				attributes = tempAtt[0] + tempAtt2 [1];
+	 			}
+	 			//System.debug('\n //////////( 3 )/////////////// \n THIS ATTRIBUTES PARSER : \n' + attributes + '\n ///////////////////////// \n');
+	 			if (attributes.toLowerCase().indexOf('width') != -1) {
+	 				List<String> tempAtt = new List<String>();
+	 				tempAtt = attributes.split('(?i)width',2);
+	 				if (tempAtt[1].toLowerCase().indexOf(' ') != -1) {
+	 					List<String> tempAtt2 = new List<String>();
+	 					tempAtt2 = tempAtt[1].split(' ', 2);
+	 					imgAttList.add('width' + tempAtt2[0]);
+	 					attributes = tempAtt[0] + tempAtt2 [1];
+	 				}
+	 				else {
+	 					imgAttList.add('width' + tempAtt[1]);
+	 					attributes = tempAtt[0];
+	 				}
+	 			}
+	 			//System.debug('\n //////////( 4 )/////////////// \n THIS ATTRIBUTES PARSER : \n' + attributes + '\n ///////////////////////// \n');
+	 			if (attributes.toLowerCase().indexOf('height') != -1) {
+	 				List<String> tempAtt = new List<String>();
+	 				tempAtt = attributes.split('(?i)height',2);
+	 				if (tempAtt[1].toLowerCase().indexOf(' ') != -1) {
+	 					List<String> tempAtt2 = new List<String>();
+	 					tempAtt2 = tempAtt[1].split(' ', 2);
+	 					imgAttList.add('height' + tempAtt2[0]);
+	 					attributes = tempAtt[0] + tempAtt2 [1];
+	 				}
+	 				else {
+	 					imgAttList.add('height' + tempAtt[1]);
+	 					attributes = tempAtt[0];
+	 				}
+	 			}
+	 			//System.debug('\n //////////( 5 )/////////////// \n THIS ATTRIBUTES PARSER : \n' + attributes + '\n ///////////////////////// \n');
+	 			if (attributes.toLowerCase().indexOf('align') != -1) {
+	 				List<String> tempAtt = new List<String>();
+	 				tempAtt = attributes.split('(?i)align',2);
+	 				if (tempAtt[1].toLowerCase().indexOf(' ') != -1) {
+	 					List<String> tempAtt2 = new List<String>();
+	 					tempAtt2 = tempAtt[1].split(' ', 2);
+	 					imgAttList.add('align' + tempAtt2[0]);
+	 					attributes = tempAtt[0] + tempAtt2 [1];
+	 				}
+	 				else {
+	 					imgAttList.add('align' + tempAtt[1]);
+	 					attributes = tempAtt[0];
+	 				}
+	 			}
+	 			System.debug('\n ///////////( 2 )////////////// \n THIS IMAGE ATTRIBUTES LIST : \n' + imgAttList + '\n ///////////////////////// \n');
+	 			Integer widthSet = 0;
+	 			Integer heightSet = 0;
+	 			
+	 			for (String dim : imgAttList) {
+	 				if (dim.toLowerCase().indexOf('width') != -1) {
+	 					widthSet++;	
+	 				}
+	 				if (dim.toLowerCase().indexOf('height') != -1) {
+	 					heightSet++;	
+	 				}
+	 			}
+	 			
+	 			for (String item: imgAttList) {
+	 				if(item.indexOf('=') != -1) {
+	 					List<String> attParts = item.split('=', 2);
+	 					String attName = attParts[0].toLowerCase().trim();
+	 					String attVal = attParts[1].trim();
+	 					if (attName == 'style')	{
+	 						if (attVal.toLowerCase().indexOf('width') != -1 && widthSet < 2) {
+	 							List<String> styleW = new List<String>();
+	 							styleW = attVal.split('(?i)width[ ]*:',2);
+	 							String styleWVal = '';
+	 							if (styleW[1].indexOf(';') != -1) {
+	 								List<String> widthValS = new List<String>();
+	 								widthValS = styleW[1].split(';',2);
+	 								styleWVal = widthVals[0].trim();
+	 							}
+	 							else {
+	 								styleWVal = styleW[1].trim();	
+	 							}
+	 							imgTagGen += ' w:' + styleWVal.replaceAll('"', '') + ';';	
 	 						}
-						}
- 					}
- 				}
- 			}
-			if (!smileImg) {
-				html = imgTagContent[0] + '[Image: ' + imgTagGen + ']';
-			}
-			if (imgAtt.size() > 1) {
-	 			html += imgAtt[1];
-			}
+	 						if (attVal.toLowerCase().indexOf('height') != -1 && heightSet < 2) {
+	 							List<String> styleH = new List<String>();
+	 							styleH = attVal.split('(?i)height[ ]*:',2);
+	 							String styleHVal = '';
+	 							//System.debug('\n ///////////( 2 )////////////// \n THIS IMAGE ATTRIBUTES VALUES : \n' + styleH + '\n ///////////////////////// \n');
+	 							if (styleH[1].indexOf(';') != -1) {
+	 								List<String> heightValS = new List<String>();
+	 								heightValS = styleH[1].split(';',2);
+	 								styleHVal = heightValS[0].trim();
+	 							}
+	 							else {
+	 								styleHVal = styleH[1].trim();	
+	 							}
+	 							imgTagGen += ' h:' + styleHVal.replaceAll('"', '') + ';';
+	 						}
+	 					}
+	 						
+	 					if (attName == 'width') {
+							imgTagGen += ' w:' + attVal.replaceAll('"', '') + ';';	
+	 					}
+	 						
+	 					if (attName == 'height') {
+	 						imgTagGen += ' h:' + attVal.replaceAll('"', '') + ';';	
+	 					}
+	 						
+	 					if (attName == 'align') {
+	 						imgTagGen += ' a:' + attVal.replaceAll('"', '') + ';';	
+	 					}
+	 						
+	 					if (attName == 'src') {
+	 						String srcImage = '';
+	 						attVal = attVal.replaceAll('"', '');
+	 						System.debug('\n ///////////( 1 )////////////// \n THIS IMAGE ATTRIBUTES SRC : \n' + attVal + '\n ///////////////////////// \n');
+	 						if (attVal.toLowerCase().indexOf('https://na1.salesforce.com/servlet/servlet') != -1) {
+		 						
+		 						String[] srcParts = attVal.split('(?i)file=',2);
+		  				
+					  			String imageId = srcParts[1];				
+					 			List<Attachment> AttachmentsImage = [select Name, Id from Attachment where id =:imageId  limit 1];
+					 			String imageName = '';
+					 			
+								//System.debug('\n ///////////( 2 )////////////// \n THIS IMAGE ATTRIBUTES SRC : \n' + counti + '\n ///////////////////////// \n');
+								if (attachmentsMap.get(imageId) != null) {	
+						 			//System.debug('\n ///////////( 3 )////////////// \n THIS IMAGE ATTRIBUTES SRC : \n' + AttachmentsImage + '\n ///////////////////////// \n');
+						 			imageName = attachmentsMap.get(imageId).Name;
+								}
+						 			
+								imgTagGen += ' src:' + imageName + ';'; 
+	 						}	
+	 						else {
+	 							if (attVal.toLowerCase().indexOf('fckeditor/editor/images/smiley/msn') != -1) {
+					 				if (attVal.toLowerCase().indexOf('regular_smile.gif') != -1) {
+					 					html = imgTagContent[0] + ':)';	
+					 				}
+					 				if (attVal.toLowerCase().indexOf('whatchutalkingabout_smile.gif') != -1) {
+					 					html = imgTagContent[0] + ':|';	
+					 				}
+					 				if (attVal.toLowerCase().indexOf('teeth_smile.gif') != -1) {
+					 					html = imgTagContent[0] + ':D';	
+					 				}
+					 				if (attVal.toLowerCase().indexOf('sad_smile.gif') != -1) {
+					 					html = imgTagContent[0] + ':(';	
+					 				}
+					 				if (attVal.toLowerCase().indexOf('cry_smile.gif') != -1) {
+					 					html = imgTagContent[0] + ':\'(';	
+					 				}
+					 				if (attVal.toLowerCase().indexOf('wink_smile.gif') != -1) {
+					 					html = imgTagContent[0] + ';)';	
+					 				}
+					 				if (attVal.toLowerCase().indexOf('devil_smile.gif') != -1) {
+					 					html = imgTagContent[0] + '(6)';	
+					 				}
+					 				if (attVal.toLowerCase().indexOf('lightbulb.gif') != -1) {
+					 					html = imgTagContent[0] + '(I)';	
+					 				}
+					 				if (attVal.toLowerCase().indexOf('thumbs_up.gif') != -1) {
+					 					html = imgTagContent[0] + '(Y)';	
+					 				}
+					 				if (attVal.toLowerCase().indexOf('thumbs_down.gif') != -1) {
+					 					html = imgTagContent[0] + '(N)';	
+					 				}
+					 				if (attVal.toLowerCase().indexOf('heart.gif') != -1) {
+					 					html = imgTagContent[0] + '(L)';	
+					 				}
+					 				if (attVal.toLowerCase().indexOf('broken_heart.gif') != -1) {
+					 					html = imgTagContent[0] + '(U)';	
+					 				}
+					 				if (attVal.toLowerCase().indexOf('kiss.gif') != -1) {
+					 					html = imgTagContent[0] + '(K)';	
+					 				}
+					 				if (attVal.toLowerCase().indexOf('envelope.gif') != -1) {
+					 					html = imgTagContent[0] + '(E)';	
+					 				}
+					 				if (attVal.toLowerCase().indexOf('shades_smile.gif') != -1) {
+					 					html = imgTagContent[0] + '(H)';	
+					 				}
+					 				if (attVal.toLowerCase().indexOf('angry_smile.gif') != -1) {
+					 					html = imgTagContent[0] + ':@';	
+					 				}
+					 				if (attVal.toLowerCase().indexOf('tounge_smile.gif') != -1) {
+					 					html = imgTagContent[0] + ':P';	
+					 				}
+					 				if (attVal.toLowerCase().indexOf('embaressed_smile.gif') != -1) {
+					 					html = imgTagContent[0] + ':$';	
+					 				}
+					 				if (attVal.toLowerCase().indexOf('omg_smile.gif') != -1) {
+					 					html = imgTagContent[0] + ':O';	
+					 				}
+					 				if (attVal.toLowerCase().indexOf('confused_smile.gif') != -1) {
+					 					html = imgTagContent[0] + ':S';	
+					 				}
+					 				if (attVal.toLowerCase().indexOf('angel_smile.gif') != -1) {
+					 					html = imgTagContent[0] + '(A)';	
+					 				}
+					 				smileImg = true;		
+	 							}				
+		 						else {
+		 							imgTagGen += ' src:' + attVal + ';';
+		 						}
+							}
+	 					}
+	 				}
+	 			}
+				
+				if (!smileImg) {
+					html = imgTagContent[0] + '[Image: ' + imgTagGen + ']';
+				}
+				
+				if (imgAtt.size() > 1) {
+		 			html += imgAtt[1];
+				}
+				//System.debug('\n ///////////////////////// \n THIS IMAGE HTML: \n' + html + '\n ///////////////////////// \n');
+ 			
+ 			//}
+ 			//else {
+ 				//html = imgTagContent[0] + imgAtt[1];
+ 			//}
  		} 
  		
   		/* ------------------------ */
@@ -1589,6 +1721,7 @@ public without sharing class WikiPageEditController {
  		html = html.replaceFirst('(?i)' + tocLinks,'>%TOC%');
  		html = html.replaceAll('(?i)' + tocLinks,'>');
  		
+ 		
  		/* ------------------------ */
  		/* 		  Linking Methods 	*/ 	 
 		
@@ -1596,7 +1729,10 @@ public without sharing class WikiPageEditController {
 		String linkString = '<a';
 		String htmlIds = html;
 		
+		
 		while (htmlIds.toLowerCase().indexOf(linkString) != -1) {
+			System.debug('\n\n/////////////////////////////////////\n htmlIds: ' + htmlIds + '\n///////////////////////////////\n\n');
+			
 			String linkAttributes = '';
 			String linkTail = '';
 			String linkContent = '';
@@ -1617,7 +1753,8 @@ public without sharing class WikiPageEditController {
 					linkTailParts = linkTail.split('(?i)</a>', 2);
 					linkContent = linkTailParts[0];
 					htmlTail = linkTailParts[1];
-				}				
+				}
+				
 				if (linkAttributes.toLowerCase().indexOf('apex/wikipage?idwp') != -1) {
 					List<String> hrefParts = new List<String>();
 					hrefParts = linkAttributes.split('(?i)href=[^>]*apex/wikipage\\?idwp=',2);
@@ -1626,9 +1763,14 @@ public without sharing class WikiPageEditController {
 					idWikiLink = idParts[0].trim().replaceAll('&quot[^>]', '');
 					
 					wikiPageIds.add(idWikiLink);
+					
+					
 				}
+				
 				htmlIds =  htmlLinkParts[0] + htmlTail;	
-			}else  {
+				//System.debug('\n\n/////////////////////////////////////\n htmlIds: ' + htmlIds + '\n///////////////////////////////\n\n');
+			}
+			else  {
 				htmlIds = htmlLinkParts[0] + htmlLinkParts[1];
 			}
 		}
@@ -1637,7 +1779,11 @@ public without sharing class WikiPageEditController {
 		for (WikiPage__c iterWiki : [select id, Name, Team__c, team__r.Name, team__r.Id from WikiPage__c where id in:wikiPageIds]) {
 			wikiPageLinksMap.put(iterWiki.Id, iterWiki);
 		}
+		//System.debug('\n\n/////////////////////////////////////\n WIKI PAGE IDS: ' + wikiPageIds + '\n///////////////////////////////\n\n');
+		//System.debug('\n\n/////////////////////////////////////\n WIKI PAGE LINKS MAPS: ' + wikiPageLinksMap + '\n///////////////////////////////\n\n');
+		
 		while (html.toLowerCase().indexOf(linkString) != -1) {
+			System.debug('\n ///////////////////////// \n HTML INTO LINK PARSER (START): \n' + html + '\n ///////////////////////// \n');
 			String linkAttributes = '';
 			String linkTail = '';
 			String linkContent = '';
@@ -1647,6 +1793,7 @@ public without sharing class WikiPageEditController {
 			
 			List<String> htmlLinkParts = new List<String>();
 			htmlLinkParts = html.split('(?i)' + linkString,2);
+			System.debug('\n ///////////////////////// \n htmlLinkParts: \n' + htmlLinkParts + '\n ///////////////////////// \n');
 			if (htmlLinkParts[1].indexOf('>') != -1) {
 				List<String> linkParts = new List<String>();
 				linkParts = htmlLinkParts[1].split('>', 2);
@@ -1667,6 +1814,10 @@ public without sharing class WikiPageEditController {
 					idParts = hrefParts[1].split('"',2);
 					idWikiLink = idParts[0].trim().replaceAll('&quot[^>]', '');
 					
+					//System.debug('\n /////////////////////////// \n SAVE THIS WIKI LINK ID: \n' + idWikiLink + '\n Link Attributes: ' + linkAttributes + '\n ///////////////////////////// \n');
+					
+					// BULK THIS!!
+					
 					WikiPage__c wiki = wikiPageLinksMap.get(idWikilink);
 					if (linkContent.trim().replaceAll('(?i)<br>', '') != '') {
 						html =  htmlLinkParts[0] + '[['+ wiki.team__r.name + ':' + wiki.name + ']]' + htmlTail;
@@ -1674,7 +1825,8 @@ public without sharing class WikiPageEditController {
 					else {
 						html =  htmlLinkParts[0] + htmlTail;
 					}	
-				}else {
+				}
+				else {
 					if (linkAttributes.toLowerCase().indexOf('servlet/servlet.filedownload?file=') != -1) {
 						List<String> hrefParts = new List<String>();
 						hrefParts = linkAttributes.split('(?i)href=[^>]*servlet/servlet.filedownload\\?file=',2);
@@ -1685,15 +1837,21 @@ public without sharing class WikiPageEditController {
 						if (linkContent.trim().replaceAll('(?i)<br>', '') != '' && attachmentsMap.get(idAttach) != null) {
 							Attachment attch = attachmentsMap.get(idAttach);
 							html =  htmlLinkParts[0] + '[File:'+ attch.name + ']' + htmlTail;
-						}else {
+						}
+						else {
 							html =  htmlLinkParts[0] + htmlTail;
 						}
-					}else {
+					}
+					else {
 						if (linkAttributes.toLowerCase().indexOf('newchildprefield(') != -1) {
 							List<String> newChildParts = new List<String>();
 							newChildParts = linkContent.split('(?i) Page ', 2);
 							html =  htmlLinkParts[0] + '[[' + newChildParts[1].trim() + ']]' + htmlTail;
-						}else {
+						}
+						else {
+							
+							System.debug('\n\n//////////////////////////\n LINK ATTRIBUTES : ' + linkAttributes + '\n///////////////////////////////////\n\n');
+							System.debug('\n\n//////////////////////////\n LINK HTML : ' + html + '\n///////////////////////////////////\n\n');
 							
 							if (linkAttributes.toLowerCase().indexOf('href="http') != -1 || linkAttributes.toLowerCase().indexOf('href="../') != -1) {
 								List<String> hrefParts = new List<String>();
@@ -1704,21 +1862,29 @@ public without sharing class WikiPageEditController {
 								if (linkContent.trim().replaceAll('(?i)<br>', '') != '') {
 									if (linkAttributes.toLowerCase().indexOf('href="../') != -1) {
 										html =  htmlLinkParts[0] + '[' + linkContent.trim().replaceAll('<br>', '') + ' ' + linkContent.trim().replaceAll('<br>', '') + ']'+ htmlTail;
-									}else {
+									}
+									else {
 										html =  htmlLinkParts[0] + '[' + idParts[0].trim() + ' ' + linkContent.trim().replaceAll('<br>', '') + ']'+ htmlTail;
 									}
 									
-								}else {
+									System.debug('\n\n//////////////////////////\n LINK HTML : ' + html + '\n///////////////////////////////////\n\n');
+								}
+								else {
 									html =  htmlLinkParts[0] + htmlTail;
 								}
-							}else {
+							}
+							else {
 								if (linkAttributes.toLowerCase().indexOf('href=') == -1) {
 									html =  htmlLinkParts[0] + htmlTail;	
-								}else {
+								}
+								else {
 									List<String> hrefParts = new List<String>();
+									//System.debug('\n /////////////////////////// \n SAVE THIS Link Attributes: ' + linkAttributes + '\n ///////////////////////////// \n');
 									hrefParts = linkAttributes.split('(?i)href="',2);
 									List<String> idParts = new List<String>();
+									//System.debug('\n /////////////////////////// \n SAVE THIS hrefParts: ' + hrefParts + '\n ///////////////////////////// \n');
 									idParts = hrefParts[1].split('"',2);
+									//System.debug('\n /////////////////////////// \n SAVE THIS idParts: ' + idParts + '\n ///////////////////////////// \n');
 									String wikiPageName = idParts[0].trim().replaceAll('(?i)&quot[^>]', '');
 									html =  htmlLinkParts[0] + '[[' + wikiPageName.replaceAll('<br>', '').replaceAll('%20', ' ') + ']]'+ htmlTail;
 								}
@@ -1726,10 +1892,12 @@ public without sharing class WikiPageEditController {
 						}
 					}	
 				}
-			}else  {
+			}
+			else  {
 				html= htmlLinkParts[0] + htmlLinkParts[1];
 			}
 		}
+		
    		
    		/* ------------------------ */
  		/* 			Tables	 		*/
@@ -1740,6 +1908,7 @@ public without sharing class WikiPageEditController {
  		String tableHeader = '!';
  		String tableData = '|';
  		
+ 		System.debug('\n ///////////////////////// \n HTML BEFORE TABLE PARSER: \n' + html + '\n ///////////////////////// \n');
  		while (html.toLowerCase().indexOf('<table') != -1) {
  			List<String> htmlParts = new List<String>();
  			htmlParts = html.split('(?i)<table',2);
@@ -1751,6 +1920,7 @@ public without sharing class WikiPageEditController {
  			if (htmlParts[0] != null) {
  				htmlHead = htmlParts[0];
  			}
+ 			
  			if (htmlParts[1].toLowerCase().indexOf('</table>') != -1) {
  				List<String> htmlTailParts = new List<String>();
  				htmlTailParts = htmlParts[1].split('(?i)</table>', 2);
@@ -1767,49 +1937,78 @@ public without sharing class WikiPageEditController {
  				tableContent = tableContent.replaceAll('(?i)>[ ]*<','><');
  				//Fix Copy and paste problems
  				
+ 				//System.debug('\n ///////////( class 1 )////////////// \n TABLE CONTENT BEFORE CLASS REMOVE: \n' + tableContent + '\n ///////////////////////// \n');
  				tableContent = tableContent.replaceAll('(?i)class=" FCK__ShowTableBorders"','');
  				tableContent = tableContent.replaceAll('(?i)class=[^ ^>]*','');
+ 				//System.debug('\n ///////////( class 2 )////////////// \n TABLE CONTENT AFTER CLASS REMOVE: \n' + tableContent + '\n ///////////////////////// \n');
+ 				
  				tableContent = tableContent.replaceFirst('(?i)>[ ]*','\n');
+ 				//System.debug('\n ///////////( 1 )////////////// \n TABLE CONTENT: \n' + tableContent + '\n ///////////////////////// \n');
+ 				
  				tableContent = tableContent.replaceAll('(?i)[ ]*<tbody>','');
- 				tableContent = tableContent.replaceAll('(?i)</tbody>[ ]*','');
+ 				tableContent = tableContent.replaceAll('(?i)</tbody>[ ]*','');              
+ 				
+ 				//System.debug('\n ///////////( 2 )////////////// \n TABLE CONTENT: \n' + tableContent + '\n ///////////////////////// \n');
+ 				
  				tableContent = tableContent.replaceAll('(?i)</td>[ ]*','\n');
  				tableContent = tableContent.replaceAll('(?i)</th>[ ]*','\n');
  				tableContent = tableContent.replaceAll('(?i)</tr>[ ]*','');
+ 				
+ 				//System.debug('\n ///////////( 3 )////////////// \n TABLE CONTENT: \n' + tableContent + '\n ///////////////////////// \n');
+ 				
  				tableContent = tableContent.replaceAll('(?i)[ ]*<tr>','|-\n');
  				tableContent = tableContent.replaceAll('(?i)[ ]*<td>','|');
  				tableContent = tableContent.replaceAll('(?i)[ ]*<th>','!');
  				
+ 				System.debug('\n ///////////( 4 )////////////// \n TABLE CONTENT: \n' + tableContent + '\n ///////////////////////// \n');
+ 				
  				if (tableContent.toLowerCase().indexOf('<caption') != -1) {
+ 					
  					if (tableContent.toLowerCase().indexOf('<caption>') != -1) {
  						tableContent = tableContent.replaceAll('(?i)<caption>','|+');
- 					}else {
+ 					}
+ 					else {
  						tableContent = tableContent.replaceAll('(?i)[ ]*<caption','|+');
  						tableContent = tableContent.replaceFirst('(?i)>[ ]*','|');	
  					}
  					tableContent = tableContent.replaceAll('(?i)</caption>[ ]*','\n');	
  				}
+ 				
+ 				//System.debug('\n ///////////( 5 )////////////// \n TABLE CONTENT: \n' + tableContent + '\n ///////////////////////// \n');
+ 				
  				while (tableContent.toLowerCase().indexOf('<tr') != -1) {
  					List<String> trParts = new List<String>();
  					trParts = tableContent.split('(?i)[ ]*<tr',2);
  					trParts[1] = trParts[1].replaceFirst('>[ ]*','\n');	
  					tableContent = trParts[0] + '<tr' + trParts[1];
+ 					
  					tableContent = tableContent.replaceFirst('(?i)[ ]*<tr','|-');
  				
+ 					//System.debug('\n ///////////( 6 )////////////// \n TABLE CONTENT: \n' + tableContent + '\n ///////////////////////// \n');
+ 					
  					while (tableContent.toLowerCase().indexOf('<td') != -1) {
 	 					List<String> tdParts = new List<String>();
 	 					tdParts = tableContent.split('(?i)[ ]*<td',2);
 	 					tdParts[1] = tdParts[1].replaceFirst('>[ ]*','|');	
 	 					tableContent = tdParts[0] + '<td' + tdParts[1];
+	 					
 	 					tableContent = tableContent.replaceFirst('(?i)[ ]*<td','|');	
-	 				}
+	 					
+	 					//System.debug('\n ///////////( 7 )////////////// \n TABLE CONTENT: \n' + tableContent + '\n ///////////////////////// \n');
+ 					}
+ 					
  					while (tableContent.toLowerCase().indexOf('<th') != -1) {
 	 					List<String> thParts = new List<String>();
 	 					thParts = tableContent.split('(?i)[ ]*<th',2);
 	 					thParts[1] = thParts[1].replaceFirst('>[ ]*','|');	
 	 					tableContent = thParts[0] + '<th' + thParts[1];
+	 					
 	 					tableContent = tableContent.replaceFirst('(?i)[ ]*<th','!');
+	 					
+	 					//System.debug('\n ///////////( 8 )////////////// \n TABLE CONTENT: \n' + tableContent + '\n ///////////////////////// \n');
 	 				}
  				}
+ 				System.debug('\n ///////////( 9 )////////////// \n TABLE CONTENT: \n' + tableContent + '\n ///////////////////////// \n');
  				while (tableContent.toLowerCase().indexOf('<td') != -1) {
 	 				List<String> tdParts = new List<String>();
 	 				tdParts = tableContent.split('(?i)[ ]*<td',2);
@@ -1817,40 +2016,51 @@ public without sharing class WikiPageEditController {
 	 				tableContent = tdParts[0] + '<td' + tdParts[1];
 	 					
 	 				tableContent = tableContent.replaceFirst('(?i)[ ]*<td','|');	
-	 			}	
+	 					
+	 				//System.debug('\n ///////////( 9 )////////////// \n TABLE CONTENT: \n' + tableContent + '\n ///////////////////////// \n');
+ 				}
+ 					
  				while (tableContent.toLowerCase().indexOf('<th') != -1) {
 	 				List<String> thParts = new List<String>();
 	 				thParts = tableContent.split('(?i)[ ]*<th',2);
 	 				thParts[1] = thParts[1].replaceFirst('>[ ]*','|');	
 	 				tableContent = thParts[0] + '<th' + thParts[1];
+	 					
 	 				tableContent = tableContent.replaceFirst('(?i)[ ]*<th','!');
+	 					
+	 				//System.debug('\n ///////////( 10 )////////////// \n TABLE CONTENT: \n' + tableContent + '\n ///////////////////////// \n');
 	 			}
+	 			
  				tableContent = tableContent.replaceAll('\n','<br>');
- 			}else {
+ 			}
+ 			else {
  				htmlTail = htmlParts[1];
  			}
+ 			//System.debug('\n //////////( final )///////////// \n TABLE CONTENT: \n' + tableContent + '\n ///////////////////////// \n');
  			html = htmlHead + '{|' + tableContent + '|}' + htmlTail;
+ 			//System.debug('\n ///////////////////////// \n HTML ADENTRO PARSER TABLA: \n' + html + '\n ///////////////////////// \n');
  		}
- 		
- 		html = html.replaceAll('(?i)' + '</p>([ ]*[\r\n]*)*<p>','<br><br>');
  		html = html.replaceAll('(?i)' + '<p>','');
  		html = html.replaceAll('(?i)' + '</p>','<br>');
- 		
- 	}
+ 		//html = html.replaceAll('  ','&nbsp;');
+ 		//System.debug('\n //////////( final result )///////////// \n HTML RESULT: \n' + html + '\n ///////////////////////// \n');
+  	}
 
+ 	
+   	/* ---------------------------- */
+   	/*   	 EDIT WIKI PAGE			*/ 
+   	/* ---------------------------- */
+   	
 	WikiVersions__c editWV;
 	
-	/**
-	* Save changes and redirect
-	*@return PageReference
-	*/
 	public PageReference SaveEdit () {
+		//System.debug('\n\n////////////////////////\nHTML BEFORE SAVE (1):' + html + '\n//////////////////////////\n\n');
 		parseWiki();
 		html = html.replaceAll('&nbsp;',' ');
-		
 		html = html.replaceAll('(?i)<br>','\n');
+		//System.debug('\n\n////////////////////////\nHTML BEFORE SAVE (2):' + html + '\n//////////////////////////\n\n');
 		html = html.replaceAll('<[^>]*>', '');
-		
+		//System.debug('\n\n////////////////////////\nHTML BEFORE SAVE (3):' + html + '\n//////////////////////////\n\n');
 		editWV = new WikiVersions__c();
 		editWV.Name = editWP.Name;
 		editWV.Body__c = html;
@@ -1862,14 +2072,17 @@ public without sharing class WikiPageEditController {
 			Double oldCount = oldCountLst[0].revisionCount__c;
 			if (oldCount == null) {
 				editWV.revisionCount__c = 1;
-			}else {
+			}
+			else {
 				editWV.revisionCount__c = oldCount + 1;
 			}
-		}else {
+		}
+		else {
 			editWV.revisionCount__c = 1;
 		}
-	 	
- 		// out/in Links	
+	 		
+ 		/* ------------------------ */
+ 		/* 		out/in Links 		*/	
  		List<WikiLink__c> wikiLinksDel = [select Id, Name,FromLink__c, ToLink__c from WikiLink__c where FromLink__c =: editWP.Id];
  		for (WikiLink__c delLink: wikiLinksDel){
  			// UPDATE WIKI LINK COUNT
@@ -1879,8 +2092,10 @@ public without sharing class WikiPageEditController {
  			// UPDATE WIKI LINK COUNT
  			delete delLink;	
  		}
+ 		
  		String wikiBodyCode;
  		wikiBodyCode = html;
+ 		
  		String intLink = '[[';
  		while (wikiBodyCode.lastIndexOf(intLink) != -1) {
  			List<String> temp;
@@ -1898,21 +2113,25 @@ public without sharing class WikiPageEditController {
 		 			linkParts = linkContent.split(':',2);
 		 			nameWiki = linkParts[1].trim();
 		 			nameTeam = linkParts[0].trim();
-		 		}else {
+		 		}
+		 		else {
 		 			nameWiki = linkContent.trim();
 		 		}
+		 		
 		 		if (nameWiki != '') {
 			 		WikiPage__c wiki = new WikiPage__c();
 			 		String idTeamLink = '';
 			 		Integer countWs;
 			 		if (nameTeam == '') {
 			 			idTeamLink = idWikiSite;	
-			 		}else {
+			 		}
+			 		else {
 			 			list<Team__c> linkTeam = [select id, name from Team__c where name =: nameTeam limit 1];
 			 			if (linkTeam != null && linkTeam.size() > 0) {
 			 				idTeamLink = linkTeam[0].id;	
 			 			}
 			 		}
+			 		
 			 		List<WikiPage__c> wikiLst = [select Id, name from WikiPage__c where Name = :nameWiki and Team__c =:idTeamLink];
 			 		
 			 		if (wikiLst.size() > 0) {
@@ -1933,7 +2152,8 @@ public without sharing class WikiPageEditController {
 			 		}
 		 		}
 		 		wikiBodyCode = temp[0] + temp2[1];	
- 			}else {
+ 			}
+ 			else {
  				wikiBodyCode = temp[0] + temp[1];
  			}
  		} 
@@ -1942,38 +2162,33 @@ public without sharing class WikiPageEditController {
 		editWP.Body__c = html;
 		update editWP;
 		
-		PageReference pageRef = Page.WikiPage;
-		pageRef.getParameters().put('idWP', editWP.Id);
+		PageReference pageRef = new PageReference('https://na1.salesforce.com/apex/WikiPage?idWP=' + editWP.Id);
 		pageRef.setRedirect(true);
 		return pageRef;
 	} 
 	
 	public PageReference CancelEdit () {
-		PageReference pageRef = Page.WikiPage;
-		pageRef.getParameters().put('idWP', editWP.Id);
+		PageReference pageRef = new PageReference('https://na1.salesforce.com/apex/WikiPage?idWP=' + editWP.Id);
 		pageRef.setRedirect(true);
 		return pageRef;	
 	}
 	
-   	/**
-   	* Return the Wiki Site's name for breadcrumbin
-   	*@return String
-   	*/
+   	/* ---------------------------- */
+   	/*   	  BREADCRUMBING			*/
+   	/* ---------------------------- */ 
+	
 	public String getWikiSiteName () {
 		String teamName = '';
 		if (idWikiSite != null) {
 			Team__c teamNameResult = [select id, Name from Team__c where id=:idWikiSite];
+			
 			if (teamNameResult != null) {
 				teamName = '<a href="/apex/TeamsRedirect?id=' + teamNameResult.Id + '">' + teamNameResult.name + '</a> > <a href="/apex/WikiTeamOverview?tid=' + teamNameResult.Id + '">Wiki</a> > ';	
 			}
 		}
 		return teamName;
 	}
-	
-   	/**
-   	* Return the breadcrumbin
-   	*@return String
-   	*/
+	  	
 	public String getBreadCrumbing () {
 	   	WikiPage__c wikiBC;
 	   	String breadCrumbing = '';
@@ -1981,37 +2196,47 @@ public without sharing class WikiPageEditController {
 		Integer crumbingLength = 1;
 		Integer crumbingMaxLength = 2;
 		
+		/*
+		if (idWikiPage == null) {
+			idWikiPage = getWikiHome();
+		}
+		*/
    		wikiBC = [SELECT Id, Name, ShortDescription__c, Body__c, Parent__c, LastModifiedDate FROM WikiPage__c WHERE id = : idWikiPage ];
+   		//breadCrumbing += wikiBC.Name;
    		parentBC = wikiBC.Parent__c;
 	   	while (parentBC != null) {
+	   		
 	   		wikiBC = [select Name, Id, Parent__c from WikiPage__c where id =:parentBC];
 	   		parentBC = wikiBC.Parent__c;
+	   		
 	   		String trunkName;
 	   		if (wikiBC.Name.length() > 25) {
 	   			trunkName = wikiBC.Name.substring(0,23) + '..';
-	   		}else {
+	   		}
+	   		else {
 	   			trunkName = wikiBC.Name; 	
 	   		}
 	   		if (crumbingLength < crumbingMaxLength) {
 	   			breadCrumbing = '<a href="/apex/WikiPage?idWP=' + wikiBC.Id + '" style="text-decoration:underline; cursor:pointer;" >' + trunkName + '</a> > ' + breadCrumbing;
-	   		}else {
+	   		}
+	   		else {
 	   			if (parentBC == null) {
 	   				breadCrumbing = '<a href="/apex/WikiPage?idWP=' + wikiBC.Id + '" style="text-decoration:underline; cursor:pointer;" >' + trunkName + '</a> > ' + breadCrumbing;
-	   			}else {
+	   			}
+	   			else {
 	   				if (crumbingLength == crumbingMaxLength) {
 	   					breadCrumbing = ' .. > ' + breadCrumbing;
 	   				}
 	   			}
 	   		}
 	   		crumbingLength++;
-	   	}
+	   	} 
 	   	return breadCrumbing;
 	}
 	
-   	/**
-   	* Inner class for Info wiki type
-   	*@class
-   	*/
+   	/* ---------------------------- */
+   	/*   	  INFO WIKI PAGE		*/
+   	/* ---------------------------- */	
 	public class Info {
         
         String name;
@@ -2023,153 +2248,100 @@ public without sharing class WikiPageEditController {
         String shortDescription;
         String lastModifiedById;
         
-        /**
-        *@return String
-        */
         public String getName() {
-        	return name;
+                return name;
         }
-		
-        /**
-        *@param String
-        */
+
         public void setName(String name) {
             if (name.length() > 25) {
             	this.name = name.substring(0,23) + '..';
-            }else {
+            }
+            else {
             	this.name = name;
             }
-        } 
+        }  
         
-        /**
-        *@return String
-        */
         public String getShortDescription() {
         	return shortDescription;
         }
-		
-        /**
-        *@param String
-        */
+
         public void setShortDescription (String shortDescription) {
         	this.shortDescription = shortDescription;
         }
         
-        /**
-        *@return String
-        */
         public String getCreatedBy() {
         	return createdBy;
         }
-		
-        /**
-        *@param Id
-        */
+
         public void setCreatedBy(Id id) {
             User user;
             user = [select Name from User where id = :id];
             this.createdBy = user.Name;
         }  
         
-        /**
-        *@return Id
-        */
         public String getCreatedById() {
             return createdById;
         }
-		
-        /**
-        *@param Id
-        */
+
         public void setCreatedById(Id id) {
             this.createdById = id;
         }
         
-        /**
-        *@return String
-        */
         public String getLastModifiedBy() {
             return lastModifiedBy;
         }
-		
-        /**
-        *@param Id
-        */
+
         public void setLastModifiedBy (Id id) {
             User user;
             user = [select Name from User where id = :id];
             this.lastModifiedBy = user.Name;
         } 
         
-        /**
-        *@param Id
-        */
         public void setLastModifiedById (Id id) {
         	this.lastModifiedById = id;	
         }	
 		
-        /**
-        *@return String
-        */
 		public String getLastModifiedById () {
 			return lastModifiedById;	
 		}
-		
-        /**
-        *@return String
-        */
+			
         public String getCreatedDate() {
             return createdDate;
         }
-		
-        /**
-        *@param Datetime
-        */
+
         public void setCreatedDate(Datetime createdDate) {
             this.createdDate = createdDate.format();
         } 
         
-        /**
-        *@return String
-        */
         public String getLastModifiedDate() {
             return lastModifiedDate;
         }
-		
-        /**
-        *@param Datetime
-        */
+
         public void setLastModifiedDate(Datetime lastModifiedDate) {
             this.lastModifiedDate = lastModifiedDate.format();
         }                
                                         
-	} 
+	} // end of the class	
    	
-   	/**
-   	*@return Boolean
-   	*/
+
+   	
 	public Boolean getInfo () {
 		return this.Info;
 	}   	
-   	
-   	/**
-   	* Set false to 'info'
-   	*/
+   
 	public void okInfo () {
 		info = false;
 	}
-	
-	/**
-	* Generate wiki's info and set 'info' to true
-	*/
+	   	
    	public void infoGen () {
    		
    		WikiPage__c wiki;
 		String idInfo = idWikiPage;
-			
+		//String idInfo = System.currentPageReference().getParameters().get('idWP');	
     	if (idInfo == '0' || idInfo == null) {
     		wiki = [SELECT Name, ShortDescription__c, CreatedById, CreatedDate, LastModifiedById, LastModifiedDate  From WikiPage__c WHERE Name = 'Home' AND Team__c =: idWikiSite  ];	
-    	}else {
+    	}
+    	else {
     		wiki = [SELECT Name, ShortDescription__c, CreatedById, CreatedDate, LastModifiedById, LastModifiedDate From WikiPage__c WHERE id = : idInfo ];
     	}
 			
@@ -2184,10 +2356,7 @@ public without sharing class WikiPageEditController {
 			
 		info = true;
 	}    		
-   	
-   	/**
-   	*@return Info infoWiki
-   	*/
+   		
  	public Info getInfoWiki () {
  		return infoWP;
  	}		 	

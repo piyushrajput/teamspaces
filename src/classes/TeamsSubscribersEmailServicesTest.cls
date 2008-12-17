@@ -3,6 +3,7 @@ public class TeamsSubscribersEmailServicesTest {
     public static Boolean alreadyRun = false;
     
     public static testMethod void test(){
+    	
     	if(!alreadyRun){
     		alreadyRun = true;
 	    	GenerateEnvironmentTest.gen();

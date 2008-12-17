@@ -8,12 +8,13 @@
     
     public static testMethod void testTeam() {
         try{
+            
             GenerateEnvironmentTest.gen();
             Test.startTest();
 
+            //List<TeamMember__c> tms = [select Id, User__c, Team__c from TeamMember__c where User__c !=: UserInfo.getUserId() limit 2];
             TeamMembersListController team = new TeamMembersListController();
             
-            team.getNamespace();
             
             // Team Inner Class
             TeamMembersListController.Member member = new TeamMembersListController.Member();
@@ -130,7 +131,53 @@
             //////////////////////////////
             //      92 SOQL AND 74%     //
             //////////////////////////////
+                
+            /*
+            team.setIdTeam(tms[0].Team__c);
+            team.setRemoveMemberId(tms[0].User__c);
             
+            team.getRemoveMessage();
+            PageReference page = team.removeMember();
+            
+            List<SelectOption> option = team.getProfilesOptions();
+            List<SelectOption> option2 = team.getProfilesOptionsFilter();
+            
+            team.setEditMemberId(newTeamMember.User__c);
+            team.setIdTeam(newTeamMember.Team__c);
+            team.assignEditId();
+
+            team.getTeamEditProfiles(); 
+            team.assignRemoveId ();
+            team.getAdminCount();
+            team.getUserMemberId();
+            
+            team.getDelName();
+            
+            
+            team.getIsTeamAdmin();
+            
+            
+                        
+            team.setLetter('T');
+            team.genMembers();
+            
+            team.setLetter('ALL');
+            team.genMembers();
+            
+            
+            
+            List<TeamMembersListController.Letters> letterList = team.getLetterFilter();
+            
+            String sortBye =  team.getSortBy ();
+            team.sortList();
+            
+            team.setSortBy('User__r.CompanyName');
+            team.sortList();            
+            
+            team.setSortBy('User__r.Title');
+            team.sortList();            
+            */
+            //PageReference pageEdit = team.editMemberAction();
             Test.stopTest();
         }
         catch(Exception e){
@@ -139,6 +186,7 @@
     }
     
     public static testMethod void Test1(){
+    
     
     }
 }

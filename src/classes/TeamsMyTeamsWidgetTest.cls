@@ -20,8 +20,6 @@
 
   			team.setSortBy('TeamProfile__r.Name');
   			team.sortList(); 
-  			
-  			team.getNamespace();
 	
   		}catch(Exception e){
   			throw e;

@@ -5,9 +5,10 @@
 	        GenerateEnvironmentTest.gen();
 	        Test.startTest();	        
 	        
-	        if(!TeamUtil.currentlyExeTrigger)
+	        if(!TeamUtil.currentlyExeTrigger){
 	            System.assert(true,'Not current trigger');  
-
+	        }
+	        
 	        TeamUtil.isAdminMemberUser();
 	        TeamUtil.getOrganizationGroup();
 	        

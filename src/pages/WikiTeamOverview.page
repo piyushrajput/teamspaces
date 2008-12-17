@@ -1,75 +1,269 @@
 <apex:page id="WikiOverview" controller="WikiTeamOverviewController" tabStyle="WikiPage__c" sidebar="false" >
-	<apex:includeScript value="/soap/ajax/11.1/connection.js"/>
+
+	<script src="/soap/ajax/11.1/connection.js" type="text/javascript" />
+
 	<!-- Scripts -->
-	<apex:includeScript value="{!URLFOR($Resource.WikiResource, 'inc/js/common.js')}"/>
-	<apex:includeScript value="{!URLFOR($Resource.Script_aculo_us, 'prototype.js')}"/>
-	<apex:includeScript value="{!URLFOR($Resource.Script_aculo_us, 'scriptaculous.js')}"/>
-	<apex:includeScript value="{!URLFOR($Resource.Script_aculo_us, 'effects.js')}"/>
-	<apex:includeScript value="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/common.js')}"/>
-	<!-- Portal Support -->
-	<apex:includeScript value="{!$Resource.portalSupport}"/>
-	<apex:includeScript value="{!URLFOR($Resource.OverlayFunctionsFixed, 'js/overlayFunction.js')}"/>
-	<apex:includeScript value="{!URLFOR($Resource.WikiResource, 'inc/js/WikiOverview.js')}"/>
+	<script src="{!URLFOR($Resource.WikiResource, 'inc/js/common.js')}" />
+	<script src="{!URLFOR($Resource.Script_aculo_us, 'prototype.js')}"></script>
+	<script src="{!URLFOR($Resource.Script_aculo_us, 'scriptaculous.js')}"></script>
+	<script src="{!URLFOR($Resource.Script_aculo_us, 'effects.js')}"></script>
+	<script src="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/common.js')}"></script>
+
+		<!-- Portal Support -->
+	<script src="{!$Resource.portalSupport}" />
+	
+	<script src="{!URLFOR($Resource.OverlayFunctionsFixed, 'js/overlayFunction.js')}"></script>
+	<script src="{!URLFOR($Resource.WikiResource, 'inc/js/WikiOverview.js')}"></script>
+
     <!-- CSS styles for Portal Integration -->
     <apex:stylesheet value="{!URLFOR($Resource.portalStyles, 'portal.css')}" />
     <apex:stylesheet value="{!URLFOR($Resource.TeamsResources, 'inc/css/headerTeams.css')}" />
 	<apex:stylesheet value="{!URLFOR($Resource.TeamsResources, 'inc/css/widgetTeam.css')}" />
+
 	<!-- Styles -->
 	<apex:stylesheet value="{!URLFOR($Resource.WikiResource, 'inc/css/commonLayout.css')}" />
 	<apex:stylesheet value="{!URLFOR($Resource.WikiResource, 'inc/css/WikiOverview.css')}" />
 	<apex:stylesheet value="{!URLFOR($Resource.commonResources, 'inc/css/fonts.css')}" />
-	
-	 
-	<apex:stylesheet value="{!URLFOR($Resource.WikiResource, 'inc/css/wikiTeamOverview.css')}" />
-	
-	<apex:includeScript value="{!URLFOR($Resource.WikiResource, 'inc/js/wikiTeamOverview.js')}" />
-	
 	<style>
-		div.wikiPageTree div.wikiPageContainer div.wikiPage {
-			background:url('{!URLFOR($Resource.WikiResource, 'images/layout/icons/wikipage.png')}') no-repeat top left;
+	
+		div.header_portal div.searchBox div div div.search_box_input div.findDiscussion{
+			width:auto !important;
+			padding:8px 10px 7px 7px;
 		}
+		
+		div.header_portal div.searchBox div div div.search_box_input div.inputSearch {
+			min-width:100px !important;
+			max-width:284px !important;
+			background-position:right;
+		}
+		
 	</style>
+	
 	<script>
-		/**
-        * Namespace Prefix Getter
-        */
-        var namespace = "{!namespace}";
-
-
 		var staticURLFORWiki = '{!$Resource.WikiResource}';
-		var API_SESSION_ID = '{!$Api.Session_ID}';
-
-		var globalExpandWiki = "{!URLFOR($Resource.WikiResource, 'images/layout/icons/expandwiki.gif')}";
-		var globalCollapseWiki = "{!URLFOR($Resource.WikiResource, 'images/layout/icons/collapsewiki.gif')}";
+		
+		function fixHeader () {
+			var inputWidth = 390 - $('labelDisc').getWidth();
+			var inputDisc = $('inputDisc');
+			inputDisc.style.width = inputWidth -2 + 'px';
+		}
+		
+		window.onload = fixHeader;     
+		   
 	</script>
-
+	
 	<apex:outputpanel rendered="{!userPermissions.canCreate}">
 			<c:WikiNewPageWidget /> 
 	</apex:outputpanel>
+	
 	<apex:form >
 		<apex:actionFunction name="refreshTeamOverview" action="{!genWikiTree}" rerender="wikiTreePanel, updatedPanel" />
 	</apex:form>
+	
 	<div class="BodyPage">
 		<!-- - - - - - - - - - - - - - - - - - - - - -->	
 		<!-- - - - - - - -   OVERLAY   - - - - - - - -->
 		<!-- - - - - - - - - - - - - - - - - - - - - -->
-		<div class="UPF__overlay__" id="UPF__overlay__" style="display:none;"></div>
+		<!-- 		  Overlay		-->
+		<div class="UPF__overlay__" id="UPF__overlay__" style="display:none;">
+		</div>
 		<!-- 		  Overlay		-->
 	
 		<!-- 		  Loader		-->
 		<div class="loader__" id="loader__" style="display:none;"><center><img src="{!URLFOR($Resource.commonResources, 'images/loaders/bigLoader.gif')}" /></center><br />Loading...</div>
 		<!-- 		  Loader		-->
 		
-		<!-- Header -->
-		<apex:composition template="HeaderTemplate">
-			<apex:define name="moduleId"><apex:variable var="moduleId" value="headerWiki"/></apex:define>
-		    <apex:define name="module">Wiki</apex:define>
-		    <apex:define name="title">Overview</apex:define>
-		    <apex:define name="search">
-		    	<c:Search module="wiki" />
-		    </apex:define>
-	    </apex:composition>
-	    
+		<script>
+			var version;
+			if (navigator.appName == "Microsoft Internet Explorer") {
+				version = navigator.appVersion;
+				if (version.indexOf("MSIE 6") != -1) {
+					document.getElementById('loader__').className = 'loaderIE6__';
+					document.getElementById('loader__').style.position = 'absolute';
+				}
+			}
+						
+			var API_SESSION_ID = '{!$Api.Session_ID}';
+			
+			function trunkText(text, len){
+		   		if(text.length > len){
+			    	text = text.substring(0, len) + '...';
+			   	}
+			   	return text;
+		  	}
+		  	
+					
+					
+			function resizeWrapper(){
+				var td = $('wikipageDirectoryTD');
+				
+				var pagetree = $('wikiPageTree');
+				
+				var tdDim = td.getDimensions();
+				
+				pagetree.style.width = tdDim.width + 'px';
+				
+			
+			}
+			
+			function expandCollapse(ParentId, action){				
+			
+				// Link container:
+				var actionContainerId = 'actionContainer-' + ParentId;
+
+				if(action == 'expand'){			
+					// Connect to sforce
+					sforce.connection.sessionId = '{!$Api.Session_ID}'; 
+					
+					// Query for the childs									
+					result = sforce.connection.query("Select Id, Parent__c, Name,  (Select Parent__c, Id From WikiPages__r) From WikiPage__c where Parent__c ='" + ParentId + "'");
+					records = result.getArray("records");				
+					
+					// Set the Child container
+					var childContainerId = 'childs-'+ ParentId;
+					var childContainer = $(childContainerId);
+					
+					// Initialize wiki childs var
+					var wikiChilds = '';
+					
+					// Switch expand / Collapse link and function.
+					$(actionContainerId).innerHTML = '<a href="javascript:;" onclick="expandCollapse(\'' + ParentId + '\',\'collapse\');"><img src="{!URLFOR($Resource.WikiResource, 'images/layout/icons/collapsewiki.gif')}" alt="" title="" /></a>' ;
+					
+					// Iterate over query Results to build the tree
+					for(var i = 0; i < records.length;i++){						
+						// Build the branch
+						wikiChilds += '<div id="pagecontainer-'+ records[i].Id +'" class="wikiPageContainer"><div class="WPwrapper">';
+						
+						// If the wiki page has childs (link to expand):
+						if(records[i].WikiPages__r != null){							
+							wikiChilds += '<div id="actionContainer-'+ records[i].Id +'" class="actions">';
+							wikiChilds += '<a href="javascript:;" onclick="expandCollapse(\'' + records[i].Id + '\',\'expand\');"><img src="{!URLFOR($Resource.WikiResource, 'images/layout/icons/expandwiki.gif')}" alt="" title="" /></a>';
+							wikiChilds += '</div>';
+						} else {
+							wikiChilds += '<div class="actions"></div>';
+						}
+						
+						wikiChilds += '<div class="wikiPage"><a href="/apex/WikiPage?idWP=' + records[i].Id + '">' + trunkText(records[i].Name,30) + '</a></div></div>';
+						
+						// If the wiki page has childs (child container):
+						if(records[i].WikiPages__r != null){
+							wikiChilds += '<div id="childs-' + records[i].Id + '" class="wikiChilds"></div>';
+						}
+						
+						wikiChilds += '</div>';
+					}
+					
+					// Fill the child container:
+					childContainer.innerHTML = wikiChilds;
+					
+				} else if(action == 'collapse'){
+				
+					// Build the child container:
+					var childContainerId = 'childs-'+ ParentId;
+					// Rebuild the action 
+					$(actionContainerId).innerHTML = '<a href="javascript:;" onclick="expandCollapse(\'' + ParentId + '\',\'expand\');"><img src="{!URLFOR($Resource.WikiResource, 'images/layout/icons/expandwiki.gif')}" alt="" title="" /></a>' ;
+					// Erase childs!
+					$(childContainerId).innerHTML = '';									
+				}
+			
+			}
+		</script>		
+		<style>
+		
+				
+			div.wikiPageTree {
+				overflow-x:auto;
+				width:100%;
+			}
+			
+			div.wikiPageTree div.wikiPageContainer {
+				clear:both;
+				margin-left:5px;				
+			}
+			
+			div.wikiPageTree div.wikiPageContainer div.WPwrapper {
+				width:250px;
+				overflow:hidden;
+				position:relative;
+				clear:both;
+			}
+		
+			div.wikiPageTree div.wikiPageContainer div.wikiPage {
+				float:left;				
+				padding-left:20px;
+				padding-bottom:5px;	
+				background:url('{!URLFOR($Resource.WikiResource, 'images/layout/icons/wikipage.png')}') no-repeat top left;
+			}
+			
+			div.wikiPageTree div.wikiPageContainer div.wikiChilds{
+				margin-left:10px;
+			}
+			
+			div.wikiPageTree div.wikiPageContainer div.actions {
+				width:15px;
+				height:20px;
+				float:left;
+			}
+			
+			div.MainContent div.addWikiPageBtn {
+				margin: 10px 0px 5px 0px;
+				width: 100%;
+				overflow: hidden;
+				position: relative;
+				padding: 0 px;
+			}
+			
+			div.MainContent div.addWikiPageBtn form {
+				margin: 0px;
+				padding: 0px;
+			}
+		</style>
+		
+		
+		<!-- Control wikis that have to be expanded -->
+		
+		<!-- - - - - - - - - - - - - - - - - - - - - -->	
+		<!-- - - - - - - -   HEADER    - - - - - - - -->
+		<!-- - - - - - - - - - - - - - - - - - - - - -->
+		
+		<div class="header_portal" id="headerWiki">
+	        <!-- Page Section -->
+	        <div class="page_section">
+	            <div>
+	                <h1 class="arial_black">Wiki</h1>
+					<h2 class="arial_black">Overview</h2>
+				</div>		
+			</div>		
+			<!-- Search Box Container (always Centered) -->
+			<div class="searchBox">
+				<div>
+					<div>
+						<div class="center_gray">
+							<form method="get" action="" onsubmit="return checkSearchLength();">
+								<div class="search_box_input f_left">
+									<div width="auto" id="labelDisc" class="legend_portal findDiscussion">
+										<img class="f_left" alt="" src="{!URLFOR($Resource.TeamsResources, 'images/layout/magnifier.gif')}" />
+										<span>Find Wiki Pages</span>
+									</div>
+									<div id="inputSearch">
+										<input id="inputDisc" width="auto" type="text" value="Enter keyword or name" name="key" onfocus="setValue('');"  onblur="if(getValue(this)==''){ setValue('Enter keyword or name'); }"/>
+									</div>
+								</div>
+								<input type="submit" value="Search" class="search_btn f_left"/>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div> 
+			<!-- Help for this page -->
+			<div class="help">
+				<div>
+					<a href="javascript:;">Help for this page</a>  <img src="{!URLFOR($Resource.TeamsResources, 'images/layout/help_icon.gif')}" alt="" />
+				</div>
+			</div>
+			<div class="gray_border"></div>
+		</div>	
+		
 		<div class="MainPage">
 			<div class="PageBlock">	
 				<!-- - - - - - - - - - - - - - - - - - - - - -->	
@@ -82,7 +276,6 @@
 							<div class="sidebar">
 								<!-- - - - - - - - - - - - - - - - - - - - - -->	
 								<!-- 				MY FAVORITES			 -->
-								<!-- - - - - - - - - - - - - - - - - - - - - -->
 								<div class="teamWidget mySmallWidget" >
 									<!-- Widget Title -->		
 									<div class="thinHeader">
@@ -96,6 +289,7 @@
 													+ <a href="javascript:;">Expand to show all</a>
 												</div>
 											</apex:outputpanel>
+											
 											<apex:form id="formFavorite">
 												<table width="100%" style="margin-top:7px;" border="0">
 													<apex:repeat value="{!favorite}" var="item">
@@ -115,6 +309,7 @@
 															</td>
 														</tr> 
 													</apex:repeat>
+													
 													<apex:outputPanel layout="block" rendered="{!IF(cntFav == 0 , true, false)}">
 														<tr>
 															<td style="padding:5px;" align="center" valign="middle">No Favorites Yet </td>
@@ -130,9 +325,9 @@
 									</div>
 								</div>
 								<div class="clear"></div>
+								
 								<!-- - - - - - - - - - - - - - - - - - - - - -->	
 								<!-- 			MY RECENT CHANGES			 -->
-								<!-- - - - - - - - - - - - - - - - - - - - - -->
 								<div class="teamWidget mySmallWidget" >
 									<!-- Widget Title -->		
 									<div class="thinHeader">
@@ -165,6 +360,7 @@
 															</td>
 														</tr> 
 													</apex:repeat>
+													
 													<apex:outputPanel layout="block" rendered="{!IF(cntMyRecentChanges == 0 , true, false)}">
 														<tr>
 															<td style="padding:5px;" align="center" valign="middle">No Recent Changes </td>
@@ -182,6 +378,7 @@
 								<div class="clear"></div>
 							</div>	
 						</td>
+
 						<td valign="top" class="mainContentTD">
 							<!-- - - - - - - - - - - - - - - - - - - - - -->	
 							<!-- - - - - - - MAIN CONTENT DIV  - - - - - -->
@@ -194,6 +391,7 @@
 										</form>
 									</div>
 								</apex:outputpanel>
+								
 								<table border="0" cellspacing="8" style="width:100%;">
 									<tr>
 										<td width="50%" valign="top" id="wikipageDirectoryTD">
@@ -295,6 +493,7 @@
 										</td>
 									</tr>
 								</table>
+								
 								<apex:outputpanel rendered="{!userPermissions.canCreate}">
 									<div align="center" class="addWikiPageBtn">
 										<form>
@@ -318,6 +517,14 @@
 	</apex:outputpanel>	
 	<script>
 		resetSearchInput();
+		// initialExpansion('{!currentTeam.Id}');
+		/*
+		if(Prototype.Browser.IE){
+			setTimeout('resizeWrapper();',2000);
+		} else {
+			resizeWrapper();
+		}
+		*/
 		readPortalCSSRules();
 	</script>
 </apex:page>

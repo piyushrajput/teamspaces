@@ -2,6 +2,7 @@
     public static testMethod void testDiscussion() {   
          
         try{ 
+        	
         	GenerateEnvironmentTest.gen();
     		Test.startTest();
     		  
@@ -44,7 +45,12 @@
             newReply.DiscussionTopic__c = newTopic.id;
             newReply.Team__c = idTeam;
             newReply.Subject__c = 'Reply to Message';
-       
+            
+            //insert newReply;
+            
+            //String idDiscussionTopic = [select id from DiscussionTopic__c limit 1].id;
+            // I have to hardcode the id because it has to
+            //String idDiscussionTopic = 'a0730000002qnVHAAY';
             String idDiscussionTopic = newTopic.Id;
             dis.setParamId(idDiscussionTopic);
             
@@ -135,10 +141,13 @@
             
             Id ide = dis.getTopicId();
             DiscussionMessage__c fstMsg = dis.getFirstMessage();
+//            dis.deleteReply();
+//            replyMessage rplMsg = dis.getTopicReply();
 
 			dis.setParamId('1');
 			dis.setPageNumberParam('1');
 			dis.constructorMethods();
+			//dis.updateReadCount();
 			dis.getPrevPageLinkShow();
 
             

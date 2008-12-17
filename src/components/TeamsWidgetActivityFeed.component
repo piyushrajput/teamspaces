@@ -10,6 +10,7 @@
 			width:209px;
 		}
 	</style>
+
 	<div class="teamWidget mySmallWidget" >
 		<!-- Widget Title -->		
 		<div class="thinHeader">

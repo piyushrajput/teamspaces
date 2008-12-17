@@ -9,7 +9,9 @@
 			padding: 4px 0pt 4px 22px;			
 		}
 	</style>
+ 
 	<apex:attribute name="teamId" description="The team ID" type="String" required="true" assignTo="{!TEAM}" />
+
 	<div class="teamWidget mySmallWidget" >
 		<!-- Widget Title -->		
 		<div class="thinHeader">

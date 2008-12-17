@@ -1,67 +1,47 @@
 <apex:page controller="AdminProfileController">
-    <apex:includeScript value="{!URLFOR($Resource.TeamsResources, 'inc/js/AdminOverlayRemoveTeamProfile.js')}" />
-	<div id="removeTeamProfile" style="display:none;" class="overlayForm">
-		<div class="overlayTitleContent">
-			<div class="overlayTitle">Delete {!$ObjectType.Team__c.label} Profile</div>
+	<div id="removeTeamProfile" style="display:none;">
+		<div class="modalTitle">
+			<div class="overlayTitleContent">Delete {!$ObjectType.Team__c.label} Profile</div>
 			<div class="overlayCloseEvent">
 				<a href="Javascript:;" onclick="modal.close();"><img src="{!URLFOR($Resource.TeamsResources, '/images/layout/close.gif')}" alt="Close Window" title="Close Window" /></a>
 			</div>
 		</div>
-		<div class="overlayMainContent">
-			<div class="overlayFormContent">
-				<div class="modalMessage padding_Table">
+		<div class="modalContent">
+			<div class="modalMessage padding_Tables bottom_border_gray">
+				<div class="overlayFormContent">
 					<strong>Are you sure you want to delete the <span id="teamProfileNameLabel"></span> profile?</strong>
 					<br/><br/>
-					<div id ="reassignProfileUsers">
-						<span style="font-weight:normal;" id="countProfileUsers">
-							107 users are assigned to this profile
-						</span>
-						<br/>
-						<div class="divCombobox">
-							<label class="overlayFormLabel">Reassign the user's profile to</label>
-							<select id="teamProfileSelect" class = "teamProfileSel"></select>
-						</div>
-						<br/><br/>
+					<span style="font-weight:normal;" id="countProfileUsers">
+						107 users are assigned to this profile
+					</span>
+					<br/><br/>
+					<div class="divCombobox">
+						<label>Reassign the user's profile to</label>
+						<select id="teamProfileSelect"></select>
 					</div>
-					<div id ="reassignPubProfileTeam">	
-						<span style="font-weight:normal;" id="countTeamsPubProfile">
-							107 teams are assigned to this profile on Public Profile
-						</span>
-						<br/>
-						<div class="divCombobox">
-							<label class="overlayFormLabel">Reassign the profile to</label>
-							<select id="teamProfileSelect2" class = "teamProfileSel"></select>
-						</div>
-						<br/><br/>
-					</div>
-					<div id ="reassignNewMemProfileTeam">	
-						<span style="font-weight:normal;" id="countTeamsNewMem">
-							100 teams are assigned to this profile on New Member Profile
-						</span>
-						<br/>
-						<div class="divCombobox">
-							<label class="overlayFormLabel">Reassign the profile to</label>
-							<select id="teamProfileSelect3" class = "teamProfileSel"></select>
-						</div>
-						<br/>
-					</div>	
 				</div>
 			</div>
-			<div class="overlaySeparateLine" ></div>
 			<!--Actions  -->
 			<div class="overlayFromButtons" align="center">
 				<span id="removeTeamProfileEvent">
 					<apex:form >
 						<apex:inputHidden id="oldProfileId" value="{!oldIdProfile}"/>
 						<apex:inputHidden id="newProfileId" value="{!newIdProfile}"/>
-						<apex:inputHidden id="newPublicElementId" value="{!newIdProfilePublicProfile}"/>
-						<apex:inputHidden id="newNewMemProfileId" value="{!newIdProfileNewMember}"/>
 						<apex:inputHidden id="profileListMode" value="{!profileListMode}"/>
-						<apex:commandButton styleclass="overlaySaveBtn" onclick="deleteTeamProfile(true);" value="Continue and delete" oncomplete="modal.close();" rerender="theGrid"/>						
-						<input type="button" onclick="modal.close();" class="overlayCancelBtn" value="Cancel" />
+						<apex:commandLink styleclass="button" onclick="deleteTeamProfile(true);" value="Continue and delete" oncomplete="modal.close();" rerender="theGrid"/>						
 					</apex:form>
+					<!-- <a href="javascript:;" onclick="modal.close();" class="button">Continue and delete</a> action="{!reAssignUsers}" -->
 				</span>
+				<a href="javascript:;" onclick="modal.close();" class="button gray">Cancel</a>
 			</div>
 		</div>
 	</div>
+	
+	<script>
+		function reloadProfileListOverlay () {
+			if (profileListMode == 'true') {
+				reloadProfileList();
+			}
+		}
+	</script>
 </apex:page>

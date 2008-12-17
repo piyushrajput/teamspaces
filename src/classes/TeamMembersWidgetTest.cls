@@ -8,7 +8,6 @@
             TeamMembersWidgetController team = new TeamMembersWidgetController();
             String curUser = team.getCurrentUser(); 
             
-            team.getNamespace();
             Team__c t = GenerateEnvironmentTest.newTeam;
             team.setIdTeam(t.Id);
             team.setTeam(t.Id);
@@ -61,7 +60,7 @@
             users[1] = newUser2;
             users[2] = newUser3;
             
-            
+            //List<User> users = [select Id, Name from User where isActive = true limit 3];
             String names = null;
             for (User u : users){
                 names += u.Name + ',';  

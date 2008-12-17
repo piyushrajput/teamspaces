@@ -2,41 +2,85 @@
     
     <!-- ### Common Stylesheet & JS Include ### -->     
     <apex:stylesheet value="{!URLFOR($Resource.TeamsResources, 'inc/css/commonLayout.css')}" />
-    <apex:includeScript value="{!URLFOR($Resource.TeamsResources, 'inc/js/common.js')}"/> 
-	
+    <script src="{!URLFOR($Resource.TeamsResources, 'inc/js/common.js')}"></script> 
+
 	<!-- Portal Support -->
-	<apex:includeScript value="{!$Resource.portalSupport}"/>
-    
+	<script src="{!$Resource.portalSupport}" />
+
     <!-- ### SWFObject Include ### -->  
-    <apex:includeScript value="{!URLFOR($Resource.commonResources, 'inc/js/swfobject.js')}"/>  
+    <script type="text/javascript" src="{!URLFOR($Resource.commonResources, 'inc/js/swfobject.js')}"></script>  
     
     <!-- ### Ajax Toolkit Include ### -->
-    <apex:includeScript value="/soap/ajax/12.0/connection.js"/>
-    
+    <script src="/soap/ajax/12.0/connection.js" type="text/javascript" />
+
     <!-- CSS styles for Portal Integration -->
     <apex:stylesheet value="{!URLFOR($Resource.portalStyles, 'portal.css')}" />
     <apex:stylesheet value="{!URLFOR($Resource.TeamsResources, 'inc/css/headerTeams.css')}" />
 	
 	<!-- Scriptaculous / Prototype -->
-	<apex:includeScript value="{!URLFOR($Resource.Script_aculo_us, 'prototype.js')}"/>
-	<apex:includeScript value="{!URLFOR($Resource.Script_aculo_us, 'scriptaculous.js')}"/>
-	<apex:includeScript value="{!URLFOR($Resource.Script_aculo_us, 'effects.js')}"/>
-   
-	<!-- ProjectTimeLine CSS -->   
-    <apex:stylesheet value="{!URLFOR($Resource.ProjectResources, 'inc/css/projectTimeLine.css')}" />
+	<script type="text/javascript" src="{!URLFOR($Resource.Script_aculo_us, 'prototype.js')}"></script>
+	<script type="text/javascript" src="{!URLFOR($Resource.Script_aculo_us, 'scriptaculous.js')}"></script>
+	<script type="text/javascript" src="{!URLFOR($Resource.Script_aculo_us, 'effects.js')}"></script>
 	
-	<!-- ProjectTimeLine JS -->
-	<apex:includeScript value="{!URLFOR($Resource.ProjectResources, 'inc/js/projectTimeLine.js')}" />
-    
-    <!-- Header -->
-    <apex:composition template="HeaderTemplate">
-		<apex:define name="moduleId"><apex:variable var="moduleId" value="headerProject"/></apex:define>
-	    <apex:define name="module">{!$ObjectType.Team__c.label}</apex:define>
-	    <apex:define name="title">Timeline</apex:define>
-	    <apex:define name="search">
-	    	<c:Search module="team" />
-	    </apex:define>
-    </apex:composition>
+
+    <style>
+        /* Clear Faux Bar*/
+        body {
+            background: white !important;
+        }
+        
+        /* Gantt Wrapper */
+        div.ganttWrapper{
+            margin: 10px; 
+        }
+        
+        /* Search title fix*/
+        div.header div.searchBox div div div.search_box_input div.legend{
+            left: -20px;
+        }
+    </style>
+	<script>
+		function centerGantt(){
+			var viewportHeight = document.viewport.getHeight() - 20;			
+			$('ganttEmbed').height = viewportHeight+'px';			
+			Effect.ScrollTo('gantWrapper');			
+		}		
+	</script>
+	
+	<!-- Header -->
+	<div class="header_portal" id="headerProject">
+        <!-- Page Section -->
+        <div class="page_section">
+            <div>
+                <h1 class="arial_black">{!$ObjectType.Team__c.label}</h1>
+                <h2 class="arial_black">Timeline</h2>
+            </div>      
+        </div>      
+		<div class="searchBox">
+			<div>
+				<div>
+					<div class="center_gray">
+						<form method="get" action="/apex/TeamSearchResult" onsubmit="return checkSearchLength();">
+							<div class="search_box_input f_left">
+								<div class="legend_portal">
+									<img class="f_left" alt="" src="{!URLFOR($Resource.TeamsResources, 'images/layout/magnifier.gif')}" />
+									<span>Find {!$ObjectType.Team__c.labelPlural}  </span>
+								</div>
+								<input type="text" value="Enter keyword or name" name="key" onfocus="setValue('');"  onblur="if(getValue(this)==''){ setValue('Enter keyword or name'); }"/>
+							</div>
+							<input type="submit" value="Search" class="search_btn f_left"/>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div> 
+		<div class="help">
+			<div>
+				<a href="javascript:;">Help for this page</a>  <img src="{!URLFOR($Resource.TeamsResources, 'images/layout/help_icon.gif')}" alt="" />
+			</div>
+		</div> 
+		<div class="gray_border"></div>
+	</div>
     
     <div class="ganttWrapper" id="gantWrapper">
        <a id="topGantt" style="display:none;"></a>
@@ -52,7 +96,8 @@
                 id="ganttEmbed" 
                 allowScriptAccess="always"
                 type="application/x-shockwave-flash"
-                pluginspage="http://www.adobe.com/go/getflashplayer" /> 
+                pluginspage="http://www.adobe.com/go/getflashplayer"
+        /> 
     </div>
 	<script>
 		setTimeout('centerGantt()', 1500);		

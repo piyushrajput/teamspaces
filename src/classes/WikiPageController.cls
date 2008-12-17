@@ -1,6 +1,3 @@
-/**
-*@author Yuri Alvarez @ 05/02/2008
-*/
 public with sharing class WikiPageController {
 
 	public String idWikiSite = '';
@@ -14,45 +11,36 @@ public with sharing class WikiPageController {
 	public Integer maxView = 5;	  
 
    	public Info infoWP = new Info();
-		
+	
+	/*
+	public Boolean info = false;	 
+	public Boolean go = false;
+	*/
+	
 	public String linkpart1 = 'switchOverlay(true);;A4J.AJAX.Submit(\'_viewRoot\',\'WikiPage:auxForm\',event,{\'parameters\':{\'WikiPage:auxForm:auxLink\':\'WikiPage:auxForm:auxLink\',\'idWP2\':\'';
 	public String linkpart2 = '\'} ,\'actionUrl\':\'/apex/WikiPage?javax.portlet.faces.DirectLink=true\',\'oncomplete\':function(request,event,data){switchOverlay(false);}} );return false;\" name=\"WikiPage:auxForm:auxLink\" id=\"WikiPage:auxForm:auxLink\" href=\"#\">';
 
-	public String paramIdWP = System.currentPageReference().getParameters().get('idWP');
-	
-	/**
-	* Costructor
-	*/
 	public WikiPageController () {
 		contructMethods();
 	}
-		
-	/**
-	*@param String
-	*/
+
+	
+	public String paramIdWP = System.currentPageReference().getParameters().get('idWP');
+	
 	public void setParamIdWP (String paramIdWP){
 		this.paramIdWP = paramIdWP;
 	}
 	
-	/**
-	*@param String
-	*/
 	public void setIdWikiPage (String idWikiPage) {
 		this.idWikiPage = idWikiPage;
 	}
 	
 	public String wikiPageName = '';
 	
-	/**
-	*@param String
-	*/
 	public void setWikiPageName (String wikiPageName) {
 		this.wikiPageName = wikiPageName;
 	}
 	
-	/**
-	*@return String
-	*/
 	public String getWikiPageName () {
 		String trunkName;
 		if (wikiPageName.length() > 25) {
@@ -66,11 +54,6 @@ public with sharing class WikiPageController {
 	
 	public List<WikiPage__c> wikiPageBodyList = new List<WikiPage__c>();
 	
-	/**
-	* Gets the first wikipage whose id is paramIdWp, stores its name and id,
-	* parses the page and generates the relates information.
-	*@throws CustomException
-	*/
 	public void contructMethods () {
 		if(paramIdWP != null) {
 			wikiPageBodyList = [SELECT Id, 
@@ -84,6 +67,8 @@ public with sharing class WikiPageController {
 									   Team__r.Name,
 									   Team__r.Id 
 							    From WikiPage__c WHERE id =:paramIdWP];
+			
+			System.debug('\n\n//////////////////////\n SAVE THIS \nwikiPageBodyList : ' + wikiPageBodyList + '\n paramIdWP : ' + paramIdWP + '\n ///////////////////////////// \n\n');
 			if (wikiPageBodyList.size() > 0) {
 				wikiPageBody = wikiPageBodyList[0];
 			}
@@ -96,6 +81,8 @@ public with sharing class WikiPageController {
 			
 			idWikiSite = wikiPageBody.Team__r.Id;
 			
+			//theParent = [SELECT Id From WikiPage__c WHERE Name = 'Home' AND Team__c =:idWikiSite ].Id;
+			//parent = [SELECT Id From WikiPage__c WHERE Name = 'Home' AND Team__c =:idWikiSite ].Id;
 			parseHTML();
 			infoGen();
 			
@@ -110,10 +97,6 @@ public with sharing class WikiPageController {
    	/* ---------------------------- */	
 	public UserPermissions userPermissions = new UserPermissions();
 	
-	/**
-	* Generates the user permissions
-	*@param Id
-	*/
 	public void genPermissions (Id OwnerId) {
 		userPermissions.setId(UserInfo.getUserId());
 		userPermissions.setTeam(idWikiSite);
@@ -122,31 +105,20 @@ public with sharing class WikiPageController {
 		userPermissions.setPermissions();		
 	}
 	
-	/**
-	*@return UserPermissions
-	*/
 	public UserPermissions getUserPermissions () {
+		System.debug('\n //////////////////////// \n USER PERMISSIONS: \n' + userPermissions + '\n //////////////////////////////// \n');
 		return userPermissions;
 	}
 	/* ---------------------------- */		
 		
-	/**
-	*@param String
-	*/
 	public void setIdWikiSite (String idWikiSite) {
 		this.idWikiSite = idWikiSite;
 	}
 	
-	/**
-	*@return String
-	*/
 	public String getWikiHome () {
 		return [select Id from WikiPage__c where Team__c =:idWikiSite limit 1].Id;
 	}
 	
-	/**
-	*@return String
-	*/
 	public String getWikiSiteName () {
 		String teamName = '';
 		if (idWikiSite != null) {
@@ -159,33 +131,44 @@ public with sharing class WikiPageController {
 		return teamName;
 	}
 	
-	/**
-	*@return String
-	*/
 	public String getidWikiPage () {
 		return idWikiPage;
 	}
 	
+	/*
+	public Boolean getGo () {
+		return this.go;
+	}
 	
+	public Integer getcnt () {
+		return this.cnt;
+	}
+	*/
 	
    	/* ---------------------------- */
    	/*   	 SHOW WIKI PAGES		*/
    	/* ---------------------------- */	
 
-	/**
-	*@return WikiPage__c
+	/*	
+	public List<WikiPage__c> getPagesList () {
+		return [ SELECT Id, Name, ShortDescription__c, Parent__c, LastModifiedDate FROM WikiPage__c WHERE Team__c =: idWikiSite ORDER BY Name ];
+	}
 	*/
 	public WikiPage__c getWikiBody () {
+		//infoGen();
 		return wikiPageBody;	
 	}
 
 	
-	/**
-	* Gets the wiki page and stores it in wikiPageBody
-	*/
     public void getWiki() {
-    	
+    	/*
+    	go = false;
+    	newPage = false;
+    	edit = false;
+    	*/
     	WikiPage__c wiki;
+    	
+    	//System.debug('\n \n /////////// \n GUARDE ESTA WIKI PARA MOSTRAR: / idWikiPage: ' + idWikiPage + '\n Parametro idWikiPage: ' + System.currentPageReference().getParameters().get('idWP2') + '\n Wiki: ' + wiki + '\n ///////////// \n');
     	
     	if (System.currentPageReference().getParameters().get('idWP2') == '' || System.currentPageReference().getParameters().get('idWP2') == null || System.currentPageReference().getParameters().get('idWP2') == '0') {
     		idWikiPage = getWikiHome();
@@ -195,6 +178,8 @@ public with sharing class WikiPageController {
     	}
     	  	
     	wiki = [SELECT Id, Name, ShortDescription__c, Body__c, Parent__c, LastModifiedDate FROM WikiPage__c WHERE id = : idWikiPage ];
+		
+		//System.debug('\n \n /////////// \n GUARDE ESTA WIKI PARA MOSTRAR: / idWikiPage: ' + idWikiPage + '\n Parametro idWikiPage: ' + System.currentPageReference().getParameters().get('idWP2') + '\n Wiki: ' + wiki + '\n ///////////// \n');
 		
 		Integer cntTempView = [select count() from WikiRecentlyViewed__c where User__c =:UserInfo.getUserId() AND WikiPage__c =:idWikiPage];
 		if (cntTempView == 0 ) {
@@ -208,6 +193,7 @@ public with sharing class WikiPageController {
 			if ( totalCnt > maxView) {
 				Integer delNum = totalCnt - maxView; 
 				List<WikiRecentlyViewed__c> delView = [SELECT Id, Name FROM WikiRecentlyViewed__c WHERE User__c = :UserInfo.getUserId() ORDER BY LastModifiedDate limit :delNum];
+				//System.debug('\n \n /////////// \n GUARDE ESTOS CONTADORES: / totalCnt: ' + totalCnt + ' / delNum: ' + delNum + ' \n REGISTROS A BORRAR : ' + delView + '\n /////////////');
 				delete delView;	
 			}
 		}
@@ -217,8 +203,9 @@ public with sharing class WikiPageController {
 			update tempView;
 		}
      	
+     	//infoGen();
     	wikiPageBody = wiki;
-    	
+    	//parseHTML();
     }
 	
 	
@@ -227,20 +214,20 @@ public with sharing class WikiPageController {
    	/* ---------------------------- */	 
  	public String html = null;
  	
- 	
- 	/**
-	* Parses the wikipage and stores its HTML code in the html attribute
-	*/
  	public void parseHTML() {
 		
 		WikiPage__c wikiHTML = new WikiPage__c();
     	String toc = '';
+    	
+    	System.debug('\n\n/////////////////////////////////\n ID WIKI PAGE: ' + idWikiPage + '\n/////////////////////////////////////\n\n');
     	
     	if (idWikiPage != null && idWikiPage != '') {
     	wikiHTML = [SELECT Name, ShortDescription__c, Body__c, Parent__c, LastModifiedDate FROM WikiPage__c WHERE id = : idWikiPage ];		
     	}
  		
   		html = wikiHTML.Body__c;
+  		
+  		System.debug('\n\n/////////////////////////////////\n WIKI PAGE CONTENT: ' + html + '\n/////////////////////////////////////\n\n');
   		
 		if (html != null && html!= '') {
 	 		html = html.replaceAll('[\n\r]','<br>');
@@ -309,8 +296,14 @@ public with sharing class WikiPageController {
 					List<String> tailParts = new List<String>();
 					tailParts = htmlParts[1].split(tableEndExp,2);
 					String tableContent = '';
+					//System.debug('\n  //////////////( 10 )///////////////// \n SAVE THIS TABLE CONTENT: \n ' + tailParts + '\n ///////////////////////////////// \n');
 					
 					tableContent = tailParts[0];
+					/*
+					if (tailParts.size() < 2) {
+						tailParts.add('');
+					}
+					*/
 					
 					tailHtml = tailParts[1];
 					if (tableContent != '') {
@@ -328,19 +321,23 @@ public with sharing class WikiPageController {
 						tableTag += '>';
 						
 						// If have caption Syntax
+						//System.debug('\n  //////////////( 1 )///////////////// \n SAVE THIS BODY TABLE: \n ' + bodyTable + '\n ///////////////////////////////// \n');
 						List<String> captionTextParts = new List<String>();
 						
 						if (bodyTable.toLowerCase().indexOf('<br>') != -1) {
 							captionTextParts = bodyTable.substring(2).split('(?i)<br>',2);
 							
 							if (bodyTable.trim().indexOf(tableCaption) == 0 && bodyTable.toLowerCase().indexOf('<br>') != -1) {
+								//System.debug('\n  //////////////( 2 )///////////////// \n SAVE THIS CAPTIONS PARTS: \n ' + captionTextParts + '\n ///////////////////////////////// \n');
 								String captionText = captionTextParts[0].trim();
 								if (captionText.indexOf(tableData) == -1) {
+									//System.debug('\n  //////////////( 3 )///////////////// \n SAVE THIS CAPTIONS TEXT NO ATTRIBUTES : \n ' + captionText + '\n ///////////////////////////////// \n');
 									tableTag += '<caption>' + captionText + '</caption>';
 								}
 								else {
 									List<String> captionParts = new List<String>();
 									captionParts = captionText.split(tableDataExp,2);
+									//System.debug('\n  ///////////////( 4 )//////////////// \n SAVE THIS CAPTIONS TEXT ATTRIBUTES : \n ' + captionText + '\n' + captionParts + '\n ///////////////////////////////// \n');
 									tableTag += '<caption ' + captionParts[0].trim() + '>' + captionParts[1] + '</caption>';	
 								}
 								bodyTable = captionTextParts[1];
@@ -350,6 +347,7 @@ public with sharing class WikiPageController {
 									bodyTable = '<br>' + bodyTable;
 								}	
 							}
+							//System.debug('\n  ///////////////( 5 )//////////////// \n SAVE THIS BODY TABLE: \n ' + bodyTable + '\n ///////////////////////////////// \n');
 							
 							List<String> tableRows = new List<String>();
 							if (bodyTable.indexOf(tableRow) != -1) {
@@ -371,9 +369,11 @@ public with sharing class WikiPageController {
 									}
 									tableTag += '>';
 									
+									//System.debug('\n  //////////////( 6 )///////////////// \n SAVE THIS ITEM ROW: \n ' + itemRow + '\n ITER ROW: ' + iterRow + '\n ROW ATT: ' + rowAtt + '\n ///////////////////////////////// \n');
 									iterRow = rowAtt[1].trim();
 									
 									for (String itemCell : iterRow.split('(?i)<br>')) {
+										//System.debug('\n  ///////////////( 7 )//////////////// \n SAVE THIS ITEM CELL: \n ' + itemCell + '\n ///////////////////////////////// \n');
 										if (itemCell.trim().indexOf(tableHeader) == 0) {
 											tableTag += '<th ';
 											String tdContent = '';
@@ -443,7 +443,8 @@ public with sharing class WikiPageController {
 					html = htmlParts[0] + '<table></table>' + htmlParts[1];
 				}
 				
-			}	
+				//System.debug('\n  //////////////( 8 )///////////////// \n SAVE THIS TABLE TAG: \n ' + tableTag + '\n ///////////////////////////////// \n');
+	 		}	
 	 		
 	 		
 	 		
@@ -594,12 +595,15 @@ public with sharing class WikiPageController {
 	 		String listSyntax = '*';
 	 		Boolean first = true;
 	 		Boolean last = false;
+	 		//System.debug('\n\n/////////////////////////////\n HTML BEFORE LIST: ' + html + '\n///////////////////////////////\n\n');
 	 		while (html.lastIndexOf(listSyntax) != -1) {	
 		 		String listS = '\\*';
 		 		List<String> temp;
 		 		temp = html.split(listS,2);
 		 		html = html.replaceFirst(listS , '<li>');
+		 		//System.debug('\n\n/////////////////////////////\n temp (1) : ' + temp + '\n///////////////////////////////\n\n');
 		 		if ((temp[1].indexOf(listSyntax) >= temp[1].toLowerCase().indexOf('<br>') && temp[1].toLowerCase().indexOf('<br>') != -1) || temp[1].indexOf(listSyntax)== -1 ) {
+		 			//System.debug('\n\n/////////////////////////////\n into if \n///////////////////////////////\n\n');
 		 			if (temp[1].toLowerCase().indexOf('<br>') == -1) {
 		 				temp[1] = '>' + temp[1] + '</li></ul>';
 		 				last = true;
@@ -607,6 +611,7 @@ public with sharing class WikiPageController {
 		 			else {	 
 		 				List<String> temp2;	
 		 				temp2 = temp[1].split('(?i)<br>',2);	
+		 				//System.debug('\n\n/////////////////////////////\n temp (2) : ' + temp2 + '\n///////////////////////////////\n\n');
 		 				if ((temp2[1].indexOf(listSyntax) < 3) && (temp2[1].indexOf(listSyntax) != -1) ) {	
 		 					temp[1] = '>' + temp[1].replaceFirst('(?i)<br>', '</li>');
 		 				}
@@ -617,6 +622,7 @@ public with sharing class WikiPageController {
 		 			}
 		 		}
 		 		else {
+		 			//System.debug('\n\n/////////////////////////////\n into else \n///////////////////////////////\n\n');
 		 			temp[1] = temp[1].replaceFirst(listS,'');
 		 			if (temp[1].toLowerCase().indexOf('<br>') == -1) {
 		 				temp[1] = ' style="padding-left:10px;">' + temp[1] + '</li></ul>';
@@ -638,13 +644,15 @@ public with sharing class WikiPageController {
 		 			last = false;
 		 		}
 	 		}
-	 		
+	 		//System.debug('\n\n/////////////////////////////\n HTML AFTER LIST: ' + html + '\n///////////////////////////////\n\n');
+	
 	   		/* ------------------------ */
 	 		/* 		Ordered List		*/
 	 		String listSyntaxOL = '~';
 	 		Boolean firstOL = true;
 	 		Boolean lastOL = false;
 	 		
+	 		//System.debug('\n ///////////////////////////// \n SAVE THIS HTML BEFORE APPLY ORDERED LIST PARSER: \n' + html + '\n ///////////////////////////// \n');
 	 		while (html.lastIndexOf(listSyntaxOL) != -1) {	
 		 		String listS = '~';
 		 		List<String> temp;
@@ -689,14 +697,19 @@ public with sharing class WikiPageController {
 		 			lastOL = false;
 		 		}
 	 		}
-	 		/* ------------------------ */
+	 		//System.debug('\n ///////////////////////////// \n SAVE THIS HTML AFTER APPLY ORDERED LIST PARSER: \n' + html + '\n ///////////////////////////// \n');
+	  		/* ------------------------ */
 	 		/* 			HEADINGS 		*/
 	 		 	String header = '=======';
 	 		 	for (Integer i = 6; i > 1; i--) {
 			 		if (header.length() > 1) {
 			 			header = header.substring(1);
 			 		}
-			 				
+			 		/*
+			 		else {
+			 			header = '=';
+			 		}
+			 		*/			
 		 	 		while (html.lastIndexOf(header) != -1) {
 				 		List<String> temp = new List<String>();
 				 		List<String> temp2 = new List<String>();
@@ -727,7 +740,7 @@ public with sharing class WikiPageController {
 						else {
 							html = temp[0] + i + '%%%%<a name="' + linkName + '"></a>%%%%<h' + i + ' style="font-size:' + fontSize + 'px;">' + temp2[0];
 						} 
-				 		
+				 		//toc += '<a style="padding-left:' + i + '0px;" href="#' + temp2[0] + '">' + temp2[0] + ' / ' + indexOfHeader + '</a><br>\n';
 			 		} 
 		
 	 		
@@ -796,9 +809,12 @@ public with sharing class WikiPageController {
 		 			String[] temp2 = temp[1].split(' ', 2);
 		 			html += temp2[0] + '"';
 		 			List<String> temp3 = new List<String>();
+		 			//System.debug('\n ////////////////////// \n SAVE THIS LINK CONTENT TAIL: ' + temp2 + '\n /////////////////////// \n');
 		 			if (temp2[1].indexOf('[Image:') != -1 && (temp2[1].indexOf('[Image:') < temp2[1].indexOf(']'))) {
 		 				temp3 = temp2[1].split('\\]\\]', 2);
+		 				//System.debug('\n ////////////////////// \n SAVE THIS LINK CONTENT VARS: \n temp3: ' + temp3 + '\n temp2[1].indexOf([Image:)' + temp2[1].indexOf('[Image:') + '\n temp2[1].indexOf(])' + temp2[1].indexOf(']') + '\n /////////////////////// \n');
 		 				temp3[0] += ']';
+		 				//System.debug('\n ////////////////////// \n SAVE THIS LINK CONTENT VARS: \n temp3: ' + temp3 + '\n temp2[1].indexOf([Image:)' + temp2[1].indexOf('[Image:') + '\n temp2[1].indexOf(])' + temp2[1].indexOf(']') + '\n /////////////////////// \n');
 		 			}
 		 			else {
 		 				temp3 = temp2[1].split('\\]', 2);
@@ -829,6 +845,9 @@ public with sharing class WikiPageController {
 		 			String[] temp2 = temp[1].split('\\]', 2);
 		 			String contentImg = temp2[0];
 		 			String imgTag = '<img';
+		 			
+		 			//<img width="100" height="20" align="right" src="nameOfTheAttachImage" _fcksavedurl="nameOfTheAttachImage" _moz_resizing="true"/>
+		 			//System.debug('\n //////////////////// \n CONSTRUCTION OF THE IMG TAG: \n' + imgTag + '\n ////////////////////// \n ');
 		 			
 		 			if (contentImg.indexOf(';') != -1) {
 	
@@ -863,6 +882,7 @@ public with sharing class WikiPageController {
 			 						}
 			 						imgTag += ' src="' + srcImg + '"';	
 			 					}
+			 					//System.debug('\n //////////////////// \n CONSTRUCTION OF THE IMG TAG: \n' + imgTag + '\n ////////////////////// \n ');
 			 				}
 			 			}
 		 			}
@@ -886,10 +906,14 @@ public with sharing class WikiPageController {
 		 						}
 		 						imgTag += ' src="' + srcImg + '"';	
 		 					}
+		 					//System.debug('\n //////////////////// \n CONSTRUCTION OF THE IMG TAG: \n' + imgTag + '\n ////////////////////// \n ');
 		 				}
 		 			}
 		 			
 		 			imgTag += '/>';
+		 			
+		 			//System.debug('\n //////////////////// \n CONSTRUCTION OF THE IMG TAG: \n' + imgTag + '\n ////////////////////// \n ');
+		 			
 		 			html = temp[0] + imgTag + temp2[1];
 	 			}
 	 			else {
@@ -919,10 +943,11 @@ public with sharing class WikiPageController {
 			            String ContentType2 = AttachmentsImage.ContentType;
 			            String image2 = '';
 			            if (ContentType2 == null || ContentType2 == '') {
-			            	// EXTENSION WAY
+			            	// LO HAGO POR LA EXTENSION
 			            	Integer extPos2 = AttachmentsImage.Name.lastIndexOf('.') + 1;
 			            	String extension2 = AttachmentsImage.Name.substring(extPos2);	
-			            	Map<String, String> typesExt2 = new Map<String, String>{'rar' => 'rar.gif', 'xls' => 'xls.gif', 'ppt' => 'ppt.gif', 'avi' => 'video.gif', 'mpeg' => 'video.gif', 'flv' => 'video.gif','mpg' => 'video.gif', 'mp3' => 'audio.gif' , 'wav' => 'audio.gif'};	
+			            	//System.debug('\n ///////////////////// \n SAVE THIS ATTACH EXTENSION: ' + extension2 + '\n SAVE ATTACH NAME: ' + AttachmentsImage.Name + '\n /////////////////////////// \n');
+			           		Map<String, String> typesExt2 = new Map<String, String>{'rar' => 'rar.gif', 'xls' => 'xls.gif', 'ppt' => 'ppt.gif', 'avi' => 'video.gif', 'mpeg' => 'video.gif', 'flv' => 'video.gif','mpg' => 'video.gif', 'mp3' => 'audio.gif' , 'wav' => 'audio.gif'};	
 			           		if(typesExt2.containsKey(extension2)) {
 			           			image2 = typesExt2.get(extension2);
 			           		}
@@ -931,7 +956,7 @@ public with sharing class WikiPageController {
 			           		}
 			            }
 			            else {
-			           		// MIME TYPE WAY
+			           		// LO HAGO POR EL MIME TYPE
 			           		Map<String, String> typesMime2 = new Map<String, String>{'image/jpeg' => 'images.gif', 'image/png' => 'images.gif', 'image/gif' => 'images.gif', 'image/bmp' => 'images.gif', 'application/pdf' => 'pdf.gif', 'text/plain' => 'txt.gif','application/msword' => 'doc.gif', 'application/x-zip-compressed' => 'zip.gif'};	
 			           		if(typesMime2.containsKey(ContentType2)) {
 			           			image2 = typesMime2.get(ContentType2);
@@ -1011,9 +1036,14 @@ public with sharing class WikiPageController {
 	 			}
 	 		}
 	 		
+	 		//System.debug('\n\n////////////////////////////////////////////////\n WIKI NAMES LIST: ' + wikiNamesList + '\n//////////////////////////////\n\n');
+	 		//System.debug('\n\n////////////////////////////////////////////////\n TEAM NAMES LIST: ' + teamNamesList + '\n//////////////////////////////\n\n');
+	 		
 	 		for (WikiPage__c iterWP : [select id, Name, team__c, team__r.Name from WikiPage__c where Name in:wikiNamesList and team__r.Name in:teamNamesList]) {
 	 			wikiMap.put(iterWP.Team__r.Name + ':' + iterWP.Name, iterWP);	
 	 		}
+	 		
+	 		//System.debug('\n\n////////////////////////////////////////////////\n WIKI MAP: ' + wikiMap + '\n//////////////////////////////\n\n');
 	 		
 	 		while (html.lastIndexOf(intLink) != -1) {		
 	 			List<String> temp;
@@ -1042,6 +1072,9 @@ public with sharing class WikiPageController {
 				 		if (wikiMap.get(nameTeam + ':' + nameWiki) != null) {
 				 			wiki = wikiMap.get(nameTeam + ':' + nameWiki); 	
 				 		}
+				 		
+				 		//System.debug('\n\n////////////////////////////////////////////////\n CURRENT WIKI LINK:\nName Wiki:' + nameWiki + '\nName Team: ' + nameTeam + '\nWIKI PAGE:' + wiki + '\n//////////////////////////////\n\n');
+				 		
 				 		if (wiki != null) {
 					 		String id;
 					 		id = wiki.Id;
@@ -1085,8 +1118,10 @@ public with sharing class WikiPageController {
 				String part1 = tempToc1[0].substring(0,a);
 				String numH = tempToc1[0].substring(a,a + 1);
 		 		html = part1 + '<a name="'+ tempToc2[0] + '"></a>' + tempToc2[1]; 
-		 		
+		 		//style="padding-left:' + numH.substring(0,1) + '0px;"
 		 		toc += '<a  href="#' + tempToc2[0] + '" style="padding-left:' + numH + '0px;padding-bottom:5px;">' + tempToc2[0] + '</a><br>\n';
+	
+		 		//toc += tempToc2[0];
 	
 	 		}	
 	 		toc = '<table style="padding:20px;background-color:#FFFFFF;border:1px solid #AAAAAA;"><tr><td>' + toc + '</td></tr></table>';
@@ -1157,16 +1192,9 @@ public with sharing class WikiPageController {
  		
  	}   
  	
- 	/**
-	*@return String
-	*/
  	public String getHtml () {
  		return html;	
  	}
- 	
- 	/**
-	*@return String
-	*/
  	public String getHtml2 () {
  		String html2;
  		html2 = html;
@@ -1183,9 +1211,6 @@ public with sharing class WikiPageController {
    	/*   CHILDREN OF A WIKI PAGE	*/
    	/* ---------------------------- */
    
-	/**
-	*@return List<WikiPage__c>
-	*/   
    	public List<WikiPage__c> getChilds () {
    		
    		List<WikiPage__c> childs = new List<WikiPage__c>();
@@ -1194,9 +1219,6 @@ public with sharing class WikiPageController {
    		return childs;
    	} 
    	 	
-   	/**
-	*@return Integer
-	*/   	
    	public Integer getChildsCount () {
    		Integer count;
 		count = [select count() from WikiPage__c where Parent__c = :idWikiPage];
@@ -1210,7 +1232,12 @@ public with sharing class WikiPageController {
 	public WikiPage__c editWP;
 	WikiVersions__c editWV;
 	
-	
+	/*
+	public Boolean edit = false;
+	public Boolean getEdit () {
+		return this.edit;
+	}
+	*/
    	/* ---------------------------- */
    	/*   	   NEW WIKI PAGE		*/
    	/* ---------------------------- */	
@@ -1219,46 +1246,28 @@ public with sharing class WikiPageController {
 	
 	public Boolean newPage = false;
 	
-	/**
-	*@return Boolean
-	*/  
 	public Boolean getNewPage () {
 		return this.newPage;
 	}
 	 
-	/**
-	* Sets the newPage status to false
-	*/ 
 	public void cancelNew () {
 		newPage = false;
 	}
 	
-	/**
-	* Sets the newPage status to true
-	*/ 
 	public void newWiki () {
 		newPage = true;
 		newWP = null;	
 		newWV = null;
 	}
 
-	/**
-	*@param WikiPage__c
-	*/  
 	public void setnewWP (WikiPage__c newWP) {
 		this.newWP = newWP;
 	}
 
-	/**
-	*@param WikiVersions__c
-	*/ 
 	public void setnewWV (WikiVersions__c newWV) {
 		this.newWV = newWV;
 	}		
 	
-	/**
-	* Saves the new wiki page and sets ints newPage status to false.
-	*/ 
 	public void SaveNew () {
 		newWP.Parent__c = idWikiPage;
 		newWP.Team__c = idWikiSite; 
@@ -1271,13 +1280,14 @@ public with sharing class WikiPageController {
 		newWV.Body__c = '=== Congratulations! === \n You created a new wiki page for your team. Begin by clicking the "Edit" button above to modify this page.';
 		insert newWV;
 		
+		// To refresh the "Create Page XXXX" action
+		//parseHTML();
+		//infoGen();
+		// To refresh the "Create Page XXXX" action
 		
 		newPage = false;	
 	}   	
 
-	/**
-	*@return WikiPage__c
-	*/
 	public WikiPage__c getnewWP () {
 		if (newWP == null) {
 			newWP = new WikiPage__c();
@@ -1285,9 +1295,6 @@ public with sharing class WikiPageController {
 		return newWP;	
 	}    	   	
 
-	/**
-	*@return WikiVersions__c
-	*/
 	public WikiVersions__c getnewWV () {
 		if (newWV == null) {
 			newWV = new WikiVersions__c();
@@ -1295,10 +1302,9 @@ public with sharing class WikiPageController {
 		return newWV;	
 	}
 	
-   	
-	/**
-	* Class Info
-	*/
+   	/* ---------------------------- */
+   	/*   	  INFO WIKI PAGE		*/
+   	/* ---------------------------- */	
 	public class Info {
         
         String name;
@@ -1310,16 +1316,10 @@ public with sharing class WikiPageController {
         String shortDescription;
         String lastModifiedById;
         
-        /**
-        *@return String
-        */
         public String getName() {
                 return name;
         }
 
-		/**
-        *@param String
-        */
         public void setName(String name) {
                 if (name.length() > 60) {
 	            	this.name = name.substring(0,58) + '..';
@@ -1329,104 +1329,62 @@ public with sharing class WikiPageController {
 	            }
         }  
         
-        /**
-        *@return String
-        */
         public String getShortDescription() {
                 return shortDescription;
         }
 
-		/**
-        *@param String
-        */
         public void setShortDescription (String shortDescription) {
                 this.shortDescription = shortDescription;
         }
         
-        /**
-        *@return String
-        */
         public String getCreatedBy() {
                 return createdBy;
         }
 
-		/**
-        *@param Id
-        */
         public void setCreatedBy(Id id) {
                 User user;
                 user = [select Name from User where id = :id];
                 this.createdBy = user.Name;
         }  
         
-        /**
-        *@return String
-        */
         public String getCreatedById() {
                 return createdById;
         }
 
-		/**
-        *@param	Id
-        */
         public void setCreatedById(Id id) {
                 this.createdById = id;
         }
         
-        /**
-        *@return String
-        */
         public String getLastModifiedBy() {
                 return lastModifiedBy;
         }
 
-		/**
-        *@param Id
-        */
         public void setLastModifiedBy (Id id) {
                 User user;
                 user = [select Name from User where id = :id];
                 this.lastModifiedBy = user.Name;
         } 
         
-        /**
-        *@param Id
-        */
         public void setLastModifiedById (Id id) {
         	this.lastModifiedById = id;	
         }	
 		
-		/**
-        *@return String
-        */
 		public String getLastModifiedById () {
 			return lastModifiedById;	
 		}
-		
-		/**
-        *@return String
-        */
+			
         public String getCreatedDate() {
                 return createdDate;
         }
 
-		/**
-        *@param Datetime
-        */
         public void setCreatedDate(Datetime createdDate) {
                 this.createdDate = createdDate.format();
         } 
         
-        /**
-        *@return String
-        */
         public String getLastModifiedDate() {
                 return lastModifiedDate;
         }
 
-		/**
-        *@param Datetime
-        */
         public void setLastModifiedDate(Datetime lastModifiedDate) {
                 this.lastModifiedDate = lastModifiedDate.format();
         }                
@@ -1434,9 +1392,18 @@ public with sharing class WikiPageController {
 	} // end of the class	
    	
 
-    /**
-    * Stores the wike page info in infoWP.
-    */  	
+   
+   	/*
+   		
+	public Boolean getInfo () {
+		return this.Info;
+	}   	
+   
+	public void okInfo () {
+		info = false;
+	}
+	*/
+	   	
    	public void infoGen () {
    		
    		WikiPage__c wiki;
@@ -1457,12 +1424,9 @@ public with sharing class WikiPageController {
 		infoWP.setLastModifiedDate(wiki.LastModifiedDate);
 		infoWP.setShortDescription(wiki.ShortDescription__c);  
 			
-		
+		//info = true;
 	}    		
    		
-   	/**
-	*@return Info
-	*/
  	public Info getInfoWiki () {
  		return infoWP;
  	}
@@ -1474,35 +1438,23 @@ public with sharing class WikiPageController {
 	
 	public Attachment wikiAttach = new Attachment();
 	
-	/**
-	*@param Attachment
-	*/
 	public void setWikiPage (Attachment attach) {
 		this.wikiAttach = attach;
 	}
 	 
-	/**
-	*@return Attachment
-	*/
 	public Attachment getWikiAttach () {     
 		return wikiAttach;
 	}
 	
-	/**
-	*@return PageReference
-	*/
 	public PageReference saveWikiAttach () {
 		wikiAttach.ParentId = idWikiPage;
+		System.debug('\n\n///////////////////////////////////\n SAVE THIS ATTACHMENT:' + wikiAttach + '\n///////////////////////////////\n\n');
 		insert wikiAttach;		
-		PageReference pageRef = Page.WikiPage;
-		pageRef.getParameters().put('idWP', idWikiPage);
+		PageReference pageRef = new PageReference('/apex/WikiPage?idWP=' + idWikiPage);
 		pageRef.setRedirect(true);
 		return pageRef;
 	}
 	
-	/**
-	* Class AttachmentInfo
-	*/
 	public class AttachmentInfo {
         
         String name;
@@ -1513,109 +1465,64 @@ public with sharing class WikiPageController {
         String createdDate;
         String lastModifiedById;
         
-        /**
-        *@return String
-        */
         public String getCreatedDate () {
         	return createdDate;
         }
         
-        /**
-        *@param String
-        */
         public void setCreatedDate (String createdDate) {
         	this.createdDate = createdDate;
         }
         
-        /**
-        *@return String
-        */
         public String getId () {
         	return id;
         }
         
-        /**
-        *@param String
-        */
         public void setId (String id) {
         	this.id = id;
         }
         
-        /**
-        *@return String
-        */
         public String getLastModifiedDate () {
         	return lastModifiedDate;
         }
         
-        /**
-        *@param String
-        */
         public void setLastModifiedDate (String lastModifiedDate) {
         	this.lastModifiedDate = lastModifiedDate;
         }
         
-        /**
-        *@return String
-        */
         public String getName() {
                 return name;
         }
 
-		/**
-        *@param String
-        */
         public void setName(String name) {
                 this.name = name;
         }  
         
-        /**
-        *@return String
-        */
         public String getAttachImage() {
                 return attachImage;
         }
 
-		/**
-        *@param String
-        */
         public void setAttachImage (String attachImage) {
                 this.attachImage = attachImage;
         } 
         
-        /**
-        *@return String
-        */
         public String getLastModifiedBy () {
         	return lastModifiedBy;
         }
         
-        /**
-        *@param String
-        */
         public void setLastModifiedBy (String lastModifiedBy) {
         	this.lastModifiedBy = lastModifiedBy;
         }
         
-        /**
-        *@return String
-        */
         public String getLastModifiedById () {
         	return lastModifiedById;
         }
         
-        /**
-        *@param String
-        */
         public void setLastModifiedById (String lastModifiedById) {
         	this.lastModifiedById = lastModifiedById;
         }
                                         
 	}
 	   
-	/**
-	*@return List<AttachmentInfo>
-	*/
     public List<AttachmentInfo> getAttachments() {
     	
     	List<Attachment> Attachments = [select name, id, parentid, ContentType, LastModifiedDate, LastModifiedBy.Id, LastModifiedBy.Name, CreatedDate from attachment where parentid=:idWikiPage order by name];		
@@ -1633,13 +1540,17 @@ public with sharing class WikiPageController {
             String ContentType = item.ContentType;
             String image = '';
             
+            System.debug('\n\n//////////////////////////////////////\n ContentType ATTACHMENT:' + ContentType + '\n//////////////////////////////////////////\n\n');
+            
        		if (ContentType == null || ContentType == '') {
             	// Using extension
+            	System.debug('\n\n//////////////////////////////////////\n Using Extension \n//////////////////////////////////////////\n\n');
             	Integer extPos = item.Name.lastIndexOf('.') + 1;
             	String extension = item.Name.substring(extPos);
             	// containsKey does a case sensitive comparison
             	extension = extension.toLowerCase();
-            	Map<String, String> typesExt = new Map<String, String>{
+            	System.debug('\n\n//////////////////////////////////////\n ATTACHMENT EXTRENSION :' + extension + '\n//////////////////////////////////////////\n\n');
+           		Map<String, String> typesExt = new Map<String, String>{
            			'png' => 'images.gif',
            			'jpg' => 'images.gif',
            			'gif' => 'images.gif', 
@@ -1662,6 +1573,7 @@ public with sharing class WikiPageController {
             }
             else {
            		// Using mime type
+           		System.debug('\n\n//////////////////////////////////////\n Using Mime Type \n//////////////////////////////////////////\n\n');
            		Map<String, String> typesMime = new Map<String, String>{
            			'image/jpeg' => 'images.gif', 
            			'image/pjpeg' => 'images.gif', 
@@ -1686,15 +1598,14 @@ public with sharing class WikiPageController {
            		}
             }
             
+            System.debug('\n\n//////////////////////////////////////\n IMAGE STRING: ' + image + '\n//////////////////////////////////////////\n\n');
+            
             info.setAttachImage(image);
             infos.add(info);
         }	
 		return infos;   	    									
     }     
     
-    /**
-	*@return Integer
-	*/
     public Integer getAttachCount () {
     	return [select count() from attachment where parentid=:idWikiPage];
     }
@@ -1718,9 +1629,6 @@ public with sharing class WikiPageController {
    	/*   	  BREADCRUMBING			*/
    	/* ---------------------------- */ 
 	  	
-	/**
-	*@return String
-	*/
 	public String getBreadCrumbing () {
 	   	WikiPage__c wikiBC;
 	   	String breadCrumbing = '';
@@ -1732,7 +1640,7 @@ public with sharing class WikiPageController {
 			idWikiPage = getWikiHome();
 		}
    		wikiBC = [SELECT Id, Name, ShortDescription__c, Body__c, Parent__c, LastModifiedDate FROM WikiPage__c WHERE id = : idWikiPage ];
-   		
+   		//breadCrumbing += wikiBC.Name;
    		parentBC = wikiBC.Parent__c;
 	   	while (parentBC != null) {
 	   		
@@ -1769,41 +1677,24 @@ public with sharing class WikiPageController {
    	/*   	OUTGOING / INCOMING		*/
    	/* ---------------------------- */  
    	
-   	/**
-	*@return List<WikiLink__c>
-	*/
     public List<WikiLink__c> getOutgoing() {		
 		return [select ToLink__r.ShortDescription__c, ToLink__r.Name, ToLink__r.Id from WikiLink__c where FromLink__c =:idWikiPage order by Name];   	    									
     }    	
 
-	/**
-	*@return Integer
-	*/
     public Integer getCntOutgoing() {		
 		return [select count() from WikiLink__c where FromLink__c =:idWikiPage];   	    									
     } 
        	
-    /**
-	*@return List<WikiLink__c>
-	*/
     public List<WikiLink__c> getIncoming() {		
 		return [select FromLink__r.ShortDescription__c, FromLink__r.Name, FromLink__r.Id from WikiLink__c where ToLink__c =:idWikiPage order by Name];   	    									
     }  
 
-	/**
-	*@return Integer
-	*/
     public Integer getCntIncoming() {		
 		return [select count() from WikiLink__c where ToLink__c =:idWikiPage];   	    									
     }
-    
    	/* ---------------------------- */
    	/*   	RECENTLY UPDATED		*/
    	/* ---------------------------- */
-   	
-   	/**
-	*@return List<WikiPage__c>
-	*/
    	public List<WikiPage__c> getRecentlyUpdated () {
    		return	[ SELECT Id, Name, ShortDescription__c, Parent__c, LastModifiedDate FROM WikiPage__c WHERE Team__c =: idWikiSite ORDER BY LastModifiedDate desc limit 5];
    	}
@@ -1812,78 +1703,38 @@ public with sharing class WikiPageController {
    	/*   	     TAG CLOUD			*/
    	/* ---------------------------- */
    	public Integer linksNum = 0;
-   	
-   	/**
-	* Class Links
-	*/
  	public class Links {
  		String linkName;
  		Integer linkCount;
  		String linkId;
  		String linkClass;
- 		
- 		/**
-        *@return String
-        */
         public String getLinkName () {
         	return linkName;
-        }
-        
-        /**
-        *@return String
-        */
+        } 
         public String getLinkId () {
         	return linkId;
-        }
-        
-        /**
-        *@return Integer
-        */
+        }        
         public Integer getLinkCount () {
         	return linkCount;
         } 
-        
-        /**
-        *@return String
-        */
         public String getLinkClass () {
         	return linkClass;
-        }    
-        
-        /**
-        *@param String
-        */
+        }        
         public void setLinkName (String linkName) {
         	this.linkName = linkName;
         }
-        
-        /**
-        *@param String
-        */
         public void setLinkClass (String linkClass) {
         	this.linkClass = linkClass;
-        }   
-        
-        /**
-        *@param String
-        */     
+        }        
         public void setLinkId (String linkId) {
         	this.linkId = linkId;
         }        
-        
-        /**
-        *@param Integer
-        */
         public void setLinkCount (Integer linkCount) {
         	this.linkCount = linkCount;
         }                              		
  	
  	}
 	
-	/**
-	*@param List<Links>
-	*@return List<WikiPage__c>
-	*/
 	public List<Links> upsetting (List<Links> result) {
 	    Integer resultSize = result.size() - 1;
 	    Integer i;
@@ -1897,9 +1748,6 @@ public with sharing class WikiPageController {
 		return result;
 	} 
 	
-	/**
-	*@return List<Links>
-	*/
  	public List<Links> getLinkCount () {
  		
  		List<Links> popularLinks = new List<Links>();
@@ -1928,10 +1776,6 @@ public with sharing class WikiPageController {
  		linksNum = popularLinks.size(); 
  		return upsetting(popularLinks);	
  	}  
- 	
- 	/**
-	*@return Integer
-	*/
  	public Integer getLinksNum () {
  		return linksNum;
  	}	   	
@@ -1939,23 +1783,11 @@ public with sharing class WikiPageController {
    	/*   	   MY FAVOURITES		*/
    	/* ---------------------------- */
    	
-   	/**
-	*@return List<FavoriteWikis__c>
-	*/
    	public List<FavoriteWikis__c> getFavorite () {
    		return	[ SELECT WikiPage__r.Name, WikiPage__r.Id FROM FavoriteWikis__c WHERE User__c = :UserInfo.getUserId() and WikiPage__r.Team__c =:idWikiSite order by WikiPage__r.Name];
    	}   	
    	
-   	
-   	/**
-	* Class FavoriteSharing
-	*/
    	public without sharing class FavoriteSharing {
-   		
-   		/**
-		*@param String
-		*@param String
-		*/
    		public void setFavorites (String idWikiPage, String userId) {
    			Integer countFav = [ SELECT count() FROM FavoriteWikis__c WHERE User__c = :userId AND WikiPage__r.Id =: idWikiPage];	
 	   		if (countFav == 0 ) {
@@ -1977,15 +1809,11 @@ public with sharing class WikiPageController {
    		
    	}
    	 
-
    	public void save_del_fav () {
    		FavoriteSharing favClass = new FavoriteSharing();
    		favClass.setFavorites(idWikiPage, UserInfo.getUserId());
    	} 
    	
-   	/**
-	*@return Boolean
-	*/
    	public Boolean getIsFav () {
    		Integer countFav = [ SELECT count() FROM FavoriteWikis__c WHERE User__c = :UserInfo.getUserId() AND WikiPage__r.Id =: idWikiPage];
    		if (countFav == 0 ) {
@@ -1996,85 +1824,47 @@ public with sharing class WikiPageController {
    		}
    	}  
    	
-   	/**
-	*@return Integer
-	*/
    	public Integer getCntFav () {
    		return [select count() from FavoriteWikis__c where User__c = :UserInfo.getUserId() and WikiPage__r.Team__c =:idWikiSite];
    	} 
    	
    	
-   	/**
-	* Class RecentlyView
-	*/
+   	/* ---------------------------- */
+   	/*   	   RECENTLY VIEW		*/
+   	/* ---------------------------- */
 	public class RecentlyView {
 		String wikiId;
 		String wikiName;
 		String parentName;
 		Boolean belong;
 		
-		/**
-		*@param String
-		*/
 		public void setWikiId (String wikiId) {
 			this.wikiId = wikiId;
 		}
-		
-		/**
-		*@param String
-		*/
 		public void setWikiName (String wikiName) {
 			this.wikiName = wikiName;
 		}
-		
-		/**
-		*@param String
-		*/
 		public void setParentName (String parentName) {
 			this.parentName = parentName;
 		}
-		
-		/**
-		*@param Boolean
-		*/
 		public void setBelong (Boolean belong) {
 	   		this.belong = belong;			
 		}
-		
-		/**
-		*@return String
-		*/
 		public String getWikiId () {
 			return wikiId;
-		}
-		
-		/**
-		*@return String
-		*/
+		} 
 		public String getWikiName () {
 			return wikiName;
 		}
-		
-		/**
-		*@return String
-		*/
 		public String getParentName () {
 			return parentName;
 		}
-		
-		/**
-		*@return Boolean
-		*/
 		public Boolean getBelong () {
 			return belong;
 		}	
 		
 	}
 	 
-	/**
-	* Returns a list of the recently viewed wikies.
-	*@return List<RecentlyView>
-	*/
    	public List<RecentlyView> getRecentlyView () {
    		List<RecentlyView> views = new List<RecentlyView>();
    		for (WikiRecentlyViewed__c item :	[ SELECT WikiPage__r.Team__r.Id, WikiPage__r.Team__r.Name , WikiPage__r.Name, WikiPage__r.Id FROM WikiRecentlyViewed__c WHERE User__c = :UserInfo.getUserId()  ORDER BY LastModifiedDate desc limit :maxView]) { //and WikiId__r.WikiSpace__c =:idWikiSite
@@ -2092,11 +1882,6 @@ public with sharing class WikiPageController {
    		} 
    		return views;  	
    	}    	
-   	
-   	
-   	/**
-	*@return Integer
-	*/
    	public Integer getCntViews () {
    		return	[ SELECT count() FROM WikiRecentlyViewed__c WHERE User__c = :UserInfo.getUserId()];
    	}
@@ -2109,10 +1894,6 @@ public with sharing class WikiPageController {
    	public String commentName = '';
    	public String commentBody = '';
 	
-	
-	/**
-	* Class Comments
-	*/
    	public class Comments {
    		String commentDate;
    		String comment;
@@ -2120,88 +1901,57 @@ public with sharing class WikiPageController {
    		String commentBy;
    		String commentPicture;
    		
-   		/**
-		*@param String
-		*/
    		public void setCommentName (String commentName) {
    			this.commentName = commentName;
    		}
-   		
-   		/**
-		*@param String
-		*/
 	   	public void setComment (String comment) { 
 	   		this.comment = comment;
-	   	}
-	   	
-	   	/**
-		*@param Datetime
-		*/
+	   	} 
 	   	public void setCommentDate (Datetime commentDate) {
 	   		this.commentDate = commentDate.format(); 
 	   	}
-	   	
-	   	/**
-		*@param String
-		*/
 	   	public void setCommentBy (String name) {
 	   		this.commentBy = name;
 	   	}
-	   	
-	   	/**
-		*@return String
-		*/
 	   	public String getCommentName () {
 	   		return commentName;
 	   	}
 	   	
-	   	/**
-		*@param PeopleProfile__c
-		*/
-	   	public void setCommentPicture (PeopleProfile__c peopleProfile) {
+	   	public void setCommentPicture (String userId) {
 			String PictureId;
-			
-			
-			if(peopleProfile.Picture__c == null || peopleProfile.Picture__c == ''){
+			Integer cntPicture;
+			cntPicture = [SELECT count() FROM PeopleProfile__c WHERE User__c =:userId];
+			if (cntPicture != 0) {
+				PeopleProfile__c picture = [SELECT Picture__c FROM PeopleProfile__c WHERE User__c =:userId limit 1];
+		        if(picture.Picture__c == '' || picture.Picture__c == null) {                	                                          	 
+			     	//PictureId = '01530000000VO5s';
+			     	PictureId = 'nopicture';
+				} 
+				else {
+					PictureId = picture.Picture__c;
+				} 
+			}
+			else {
+				//PictureId = '01530000000VO5s';
 				PictureId = 'nopicture';
-			}else{
-				PictureId = peopleProfile.Picture__c;
 			}
    			this.commentPicture = PictureId ;
    		}
    		
-   		/**
-		*@return String
-		*/
 	   	public String getCommentPicture () {
 	   		return commentPicture;
 	   	}
-	   	
-	   	/**
-		*@return String
-		*/
 	   	public String getCommentDate () {
 	   		return commentDate;
 	   	}
-	   	
-	   	/**
-		*@return String
-		*/
 	   	public String getCommentBy () {
 	   		return commentBy;
 	   	}
-	   	
-	   	/**
-		*@return String
-		*/
 	   	public String getComment () {
 	   		return comment;
 	   	}
 	   	
-	   	/**
-		*@return String
-		*/
-		public String getShowShortCommentBy(){
+	   public String getShowShortCommentBy(){
 			Integer charDisplayed = 20;
 	        		
 			if(commentBy.length() > charDisplayed){
@@ -2212,90 +1962,48 @@ public with sharing class WikiPageController {
 		}
    	}
    	   	
-   	/**
-	*@return String
-	*/
    	public String getCommentName () {
    		return commentName;
    	}
-   	
-   	/**
-	*@param String
-	*/
    	public void setCommentName (String commentName) {
    		this.commentName = commentName;
    	}
    	
-   	/**
-	*@return String
-	*/
    	public String getCommentBody () {
    		return commentBody;
    	}
-   	
-   	/**
-	*@param String
-	*/
    	public void setCommentBody (String commentBody) {
    		this.commentBody = commentBody;
    	}   
    	
-   	/**
-	*@return List<Comments>
-	*/
    	public List<Comments> getComments () {
    		List<Comments> commentsList = new List<Comments>();
-      		
-   		List<String> userComment = new List<String>(); 
-   		
-   		for (Comment__c item: [ SELECT Message__c, CreatedBy.Name,CreatedById, LastModifiedDate FROM Comment__c WHERE ParentWikiPage__c =:idWikiPage ORDER BY LastModifiedDate desc]){
-   			userComment.add(item.CreatedById);
-   		}
-		List<PeopleProfile__c> pictureList = [SELECT User__c, Picture__c FROM PeopleProfile__c WHERE User__c in:userComment];
-		Map<String, PeopleProfile__c> pictureMap = new Map<String, PeopleProfile__c>();
-		
-		for (PeopleProfile__c item: pictureList){
-		 	pictureMap.put(item.User__c, item);
-		 }
-				 
-		Integer countComment = [select count() from Comment__c WHERE ParentWikiPage__c =:idWikiPage];
+   		Integer countComment = [ SELECT count() from Comment__c WHERE ParentWikiPage__c =:idWikiPage];
    		if (countComment != 0) {
 	   		for (Comment__c item: [ SELECT Message__c, CreatedBy.Name,CreatedById, LastModifiedDate FROM Comment__c WHERE ParentWikiPage__c =:idWikiPage ORDER BY LastModifiedDate desc]) {
 	   			Comments itemComment = new Comments();
 	   			itemComment.setCommentBy(item.CreatedBy.Name);
 	   			itemComment.setComment(item.Message__c);
 	   			itemComment.setCommentDate(item.LastModifiedDate);
-	   			itemComment.setCommentPicture(pictureMap.get(item.CreatedById));
+	   			itemComment.setCommentPicture(item.CreatedById);
 	   			commentsList.add(itemComment);
 	   		}	
    		}
    		return	commentsList;
    	}
-   	 
-   	/**
-	*@return Integer
-	*/   	
+   	    	
    	public Integer getCntComments () {
    		return	[ SELECT count() FROM Comment__c WHERE ParentWikiPage__c =: idWikiPage];
    	}  
    	  
-   	/**
-	*@return Boolean
-	*/ 
    	public Boolean getAddComment () {
    		return addComment;	
    	}
-   	 
-    /**
-	* Sets addComent to true
-	*/ 
+   	 	
    	public void addCommentLink () {
    		addComment = true;
    	}
    	
-   	/**
-	* Saves the current comment
-	*/ 
    	public void saveComment () {
    		Comment__c newComment = new Comment__c();
    		newComment.Message__c = commentBody;
@@ -2305,9 +2013,6 @@ public with sharing class WikiPageController {
    		addComment = false;
    	}
    	
-   	/**
-	* Cancels the current coment
-	*/
    	public void cancelComment () {
    		commentBody = '';
    		addComment = false;
@@ -2317,42 +2022,38 @@ public with sharing class WikiPageController {
    	/*   		REVISIONS			*/
    	/* ---------------------------- */   	
    	
-   	/**
-	*@return String
-	*/ 
 	public String getCurrentRevision () {
    		Integer revCount;
    		Integer resultCount = [select count() from WikiVersions__c where WikiPageId__c =:idWikiPage];
+	   	//System.debug('\n //////// \n GUARDE ESTE CONTADOR DE VERSIONES: ' + resultCount + '\n /////////////\n' );
 	   	if (resultCount != 0) {	
 	   		WikiVersions__c wikiVersion = [select Name from WikiVersions__c where WikiPageId__c =:idWikiPage order by CreatedDate desc limit 1];
-	   		
+	   		/*if (wikiVersion.revisionCount__c == null) {
+	   			revCount = 1;
+	   		}
+	   		else {
+	   			revCount = Integer.valueOf(String.valueOf(Math.roundToLong(wikiVersion.revisionCount__c)));
+	   		}*/
 	   		revCount = 1;
 	   	}
 	   	else {
 	   		revCount = 1;
 	   	} 
    		return ('Revision v' + revCount);
-   		
+   		//return ('Revision v1');
    	}
    	
    	/* ---------------------------- */
    	/*   		DELETE PAGE			*/
    	/* ---------------------------- */  
    	
-   	/**
-	* Class DeleteWiki
-	*/
    	public without sharing class DeleteWiki {
-   		
-   		/**
-		*@return PageReference
-		*@throws CustomException
-		*/
    		public PageReference deleteWikiPage (List<WikiPage__c> wikiPageBodyList, UserPermissions userPermissions) {
    			PageReference pageRef;
    			if (userPermissions.getCanManage()) {
 		   		String wikiParent = '';
 		   		String idWikiSite = '';
+		   		//System.debug('\n\n///////////////////////////////////// \n wikiPageBodyList ' + wikiPageBodyList + '\n ////////////////////////// \n\n');
 		   		if (wikiPageBodyList.size() > 0) {
 		   			if (wikiPageBodyList[0].Parent__c != null) {
 		   				wikiParent = wikiPageBodyList[0].Parent__c;	
@@ -2360,13 +2061,12 @@ public with sharing class WikiPageController {
 		   			idWikiSite = wikiPageBodyList[0].team__c;
 		   			delete wikiPageBodyList;
 		   		}
+		   		//System.debug('\n\n///////////////////////////////////// \n wikiParent ' + wikiParent + '\n ////////////////////////// \n\n');
 		   		if (wikiParent != '') {
-		   			pageRef = Page.WikiPage;
-		   			pageRef.getParameters().put('idWP', wikiParent);
+		   			pageRef = new PageReference('https://na1.salesforce.com/apex/WikiPage?idWP=' + wikiParent);
 		   		}
 		   		else {
-		   			pageRef = Page.WikiTeamOverview;
-		   			pageRef.getParameters().put('tid', idWikiSite);
+		   			pageRef = new PageReference('https://na1.salesforce.com/apex/WikiTeamOverview?tid=' + idWikiSite);
 		   		}
 	   		}
 	   		else {
@@ -2377,9 +2077,6 @@ public with sharing class WikiPageController {
    		}	
    	}
    	
-   	/**
-	*@return PageReference
-	*/ 
    	public PageReference deletePage () {
    		DeleteWiki delW = new DeleteWiki();
    		return delW.deleteWikiPage(wikiPageBodyList,userPermissions);

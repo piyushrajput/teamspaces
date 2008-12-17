@@ -1,14 +1,10 @@
-/**
-*@author Martin Prado @ 06/10/2008
-*/
 public with sharing class TeamsWidgetRecentWikiPagesController {
+	
 	
 	// Get Team Id Attribute
 	String teamId;
 	
-	/**
-	*@param String
-	*/
+	// Setter method for Team Id variable
 	public void setTeamId(String tID) {
 		if (teamId == null || teamID != tID) {
 			teamId = tID;	
@@ -16,9 +12,6 @@ public with sharing class TeamsWidgetRecentWikiPagesController {
 		}		
 	}
 	
-	/**
-	*@return String
-	*/
 	public String getTeamId(){
 		return teamId;
 	}
@@ -27,7 +20,7 @@ public with sharing class TeamsWidgetRecentWikiPagesController {
 	
 	/**
 	* Set Sidebar
-	*@param Boolean
+	*@void
 	*/
 	public void setSidebar (Boolean b){
 		sidebar = b;
@@ -43,11 +36,11 @@ public with sharing class TeamsWidgetRecentWikiPagesController {
 	
 	Integer wikiPagesCount;
     
+   	/* ---------------------------- */
+   	/*   	 SHARING RULES			*/
+   	/* ---------------------------- */	
 	public UserPermissions userPermissions = TeamsDetailController.userPermission.clone();
 		
-	/**
-	* Read user permissions
-	*/
 	public void genPermissions () {
 		userPermissions.setId(UserInfo.getUserId());
 		userPermissions.setTeam(teamId);
@@ -55,18 +48,15 @@ public with sharing class TeamsWidgetRecentWikiPagesController {
 		userPermissions.setPermissions();		
 	}
 	
-	/**
-	*@return UserPermissions
-	*/
 	public UserPermissions getUserPermissions () {
+		System.debug('\n //////////////////////// \n USER PERMISSIONS: \n' + userPermissions + '\n //////////////////////////////// \n');
 		return userPermissions;
 	}
-
-    /**
-    * Read 10 wikis sorted by name asc
-    *@return List<WikiPage__c> 
-    */
+	/* ---------------------------- */	
+    
+    
     public List<WikiPage__c> getWikis() {
+     	
        	// Wikis
 	    List<WikiPage__c> myWikis = new List<WikiPage__c>();
 	    myWikis =  [Select Team__c,
@@ -79,16 +69,21 @@ public with sharing class TeamsWidgetRecentWikiPagesController {
 					 Where Team__c =: teamId
 					 ORDER BY Name ASC LIMIT 10];
 		                                
+ 		
  		wikiPagesCount = myWikis.size();
     	return myWikis;
     } 
     
-    /**
-    * Return wiki list size
-    *@return Integer
-    */
-    public Integer getWikiPagesCount(){
+     public Integer getWikiPagesCount(){
     	return wikiPagesCount;
     }
-
+    
+    /*
+    public void setWikiPagesCount(Integer count){
+    	wikiPagesCount = count;
+    }
+    */
+	       
+    					
+	
 }

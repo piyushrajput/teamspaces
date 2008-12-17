@@ -1,0 +1,92 @@
+
+.headerborderResourceList
+{
+	font-family : verdana, arial;
+	vertical-align : middle;
+	background-Color : #cccccc; 
+	height : 26; 
+	border-Color : 999999;
+	border-Thickness : 1; 
+	border-Style : solid; 
+	border-Sides : bottom;
+}
+
+.gridheadersTaskResources {
+	font-family : Arial Narrow, Arial, Trebuchet MS;
+	font-size:12;
+	color: #666666;
+	font-weight:bold;
+}
+
+.headerlabelResource
+{
+	font-family : verdana, arial;
+	color : #666666;
+	font-weight : bold;
+	text-align : center;
+	font-size : 11px;
+}
+ /*setea el la label link [add] de la clase TaskResources*/
+.linkResources
+{
+	font-family : verdana, arial;
+	color: #666666;
+	textDecoration : underline;
+	useHandCursor : true;
+}
+/*setea la label que dice %dedicated en la clase TaskResources*/
+.labelDedicated 
+{
+	font-family : verdana, arial;
+	text-Align : right;
+	padding-Right : 5;
+	font-weight :  bold; 
+}
+/* setea el HBox que esta dentro del ItemRenderer en el DataGrid de la clase TaskResources*/
+.HBoxItemRenderer 
+{
+	font-family : verdana, arial;
+	padding-Left : 5;
+	padding-Right : 5;
+	padding-Top : 3;
+}
+/*setea el NumericStepper al final de la clase TaskResources*/
+.numericStepperDedicated 
+{
+	text-align : right;
+	cornerRadius : 0;
+}
+/*setea el estilo de el datagrid de recursos*/
+.dataGridResources
+{
+	alternatingItemColors : white, white;
+	font-family : Arial Narrow, Arial, Trebuchet MS;
+	font-size:12;
+	horizontalGridLines : false;
+	horizontalGridLineColor : black;
+	vertical-grid-lines: false;
+	vertical-grid-line-color: white;
+	border-thickness : 0; 
+	top : 20;
+}
+/*setea el estilo del panel al principio dde la clase TaskResources*/
+.panelResource
+{   
+	border-Thickness : 0;
+	border-ThicknessBottom : 0;
+	border-ThicknessLeft : 0;
+	border-ThicknessRight : 0;
+	border-ThicknessTop : 0;
+	headerHeight : 0;
+}
+.labelResource
+{
+	font-family : verdana, arial;
+	color: #666666;
+	textDecoration : underline;
+}
+
+.footerbuttons {
+	padding-top:10;
+	
+}

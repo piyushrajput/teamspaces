@@ -3,6 +3,7 @@
     public static testMethod void testTeam() {
         
         try{
+            
             GenerateEnvironmentTest.gen();
             Test.startTest();              
             
@@ -30,6 +31,7 @@
                 feed.setTypeOfFeed(types[i]);
                 feed.getTypeOfFeed();
             }
+            
             feed.setName('Name');
             feed.setUser('User');
             feed.setMessage('Message');

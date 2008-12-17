@@ -49,7 +49,6 @@
             people.setEmploymentItem(new EmploymentHistory__c());
             people.getEm();
             people.getEmployer();
-            
             for(Integer it = 1; it <= 12; it++){
                 people.getMonthName(it);
             }
@@ -85,6 +84,9 @@
 	        DateTime mod3 = DateTime.newInstance(2008,11,12,4,0,30);
 	        DateTime mod4 = DateTime.newInstance(2008,11,12,6,13,30);
 	        DateTime now = System.now();
+	        System.debug('#####################################');
+	        System.debug('mod[' + mod + '] mod2[' + mod2 + '] mod3[' + mod3 + '] mod4[' + mod4 + '] now[' + now + ']');
+	        System.debug('#####################################');
 	        status.setModified(mod);
 	        status.setModified(mod2);
 	        status.setModified(mod3);
@@ -109,7 +111,7 @@
 	            people.setEmploymentItem(new EmploymentHistory__c());
             	PageReference page3= people.save();
             }
-            PageReference page4 = people.forwardTo('/apex/TeamsOverview');
+            PageReference page4 = people.forwardTo('/apex/teamsOverview');
             people.cancel();
 
 			Test.stopTest();

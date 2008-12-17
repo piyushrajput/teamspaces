@@ -1,6 +1,3 @@
-/**
-*@author Juan Bessonart @ 07/22/2008
-*/
 public class UserPermissions {
 
 	/* Vars */
@@ -20,87 +17,53 @@ public class UserPermissions {
 	Boolean canComment = false;
 	Boolean canView = true;
 	
-	/**
-	* Costructor
-	*/
 	public UserPermissions (){
 		
 	}
 	
-	/**
-	*@return String
-	*/
+	/* Getters */
 	public String getId () {
 		return id;
 	}
 	
-	/**
-	*@return String
-	*/
 	public String getTeam () {
 		return team;
 	}
 	
-	/**
-	*@return String
-	*/
 	public String getObjectType () {
 		return objectType;
 	}
 	
-	/**
-	*@return Boolean
-	*/
 	public Boolean getCanCreate () {
 		return canCreate;
 	}
 	
 	
-	/**
-	*@return Boolean
-	*/
 	public Boolean getCanManage () {
 		return canManage;
 	}
 	
-	/**
-	*@return Boolean
-	*/
 	public Boolean getCanComment () {
 		return canComment;
 	}
 	
-	/**
-	*@return Boolean
-	*/
 	public Boolean getCanView () {
 		return canView;
 	}
 	
-	/**
-	*@param String
-	*/
+	/* Setters */
 	public void setId (String id) {
 		this.id = id;
 	}
 	
-	/**
-	*@param String
-	*/ 	
  	public void setOwnerId (String ownerId) {
 		this.ownerId = ownerId;
 	}
 	
-	/**
-	*@param String
-	*/	
 	public void setTeam (String team) {
 		this.team = team;
 	}
 	
-	/**
-	*@param String
-	*/	
 	public void setObjectType (String objectType) {
 		this.objectType = objectType;
 	}
@@ -110,14 +73,19 @@ public class UserPermissions {
 	*@void
 	*/
 	public void setPermissions () {
+		
 		try{
 			canManage = false;
 			canCreate = false;
 			canComment = false;
 			Boolean isAdmin = false;			
 			
-			if(teamAdmin == null || teamAdmin.Id != UserInfo.getUserId())
+			System.debug('\n setPermissions :' + team + '');
+	
+			if(teamAdmin == null || teamAdmin.Id != UserInfo.getUserId()){
+				System.debug('HERE ADMIN:');
 				teamAdmin = [Select id, Profile.PermissionsModifyAllData, ProfileId, Name From User where id =: id limit 1];
+			}
 
 			if(teamAdmin.Profile.PermissionsModifyAllData){
 				canManage = true;
@@ -126,8 +94,10 @@ public class UserPermissions {
 				canComment = true;
 				isAdmin = true;
 			}
+			
 			if(!isAdmin){
 				if(members == null){
+					System.debug('HERE MEMBER:');
 					members = new List<TeamMember__c>();
 					members = [select TeamProfile__r.PostWikiComments__c, 
 									TeamProfile__r.PostDiscussionTopicReplies__c,
@@ -151,14 +121,15 @@ public class UserPermissions {
 							  and Team__c=:Team 
 							  limit 1];
 				}
+												 
 				// If the user is a member of the team we should use the profile assigned to that user
 				if (members.size() > 0) {
 					profile = members[0].TeamProfile__r;
-				
 				// If the user is not a member of the team then we have to go to the public profile of the team
 				// to figure out the permissions.
 				}else{
 					if(currentTeam == null){
+						System.debug('HERE TEAM:');
 						currentTeam = new List<Team__c>();
 						List<Team__c> currentTeam = [SELECT PublicProfile__c, 
 													 Id,
@@ -185,7 +156,11 @@ public class UserPermissions {
 							profile = currentTeam[0].PublicProfile__r;
 					}
 				}				
+						
+				System.debug('\n setPermissions profile:' + profile + '');
+																
 				if (profile != null) {
+					
 					/*		WIKI		*/
 					if (objectType == 'Wiki') {
 						if(profile.CreateWikiPages__c) 	
@@ -198,15 +173,19 @@ public class UserPermissions {
 							canComment = true; 
 						}
 					}
+					
 					/*		PROJECT		*/
 					if (objectType == 'Project') {
 						if(profile.CreateProjectTasks__c)
 							canCreate = true;	
+							System.debug('HERE CREATE TASK');
 						if (profile.ManageProjectTasks__c){
 							canManage = true; 
 							canCreate = true;
+							System.debug('HERE MANAGE TASK');
 						}
 					}
+					
 					/*		DISCUSSION		*/
 					if (objectType == 'Discussion') {
 						if(profile.CreateDiscussionTopics__c)
@@ -218,12 +197,14 @@ public class UserPermissions {
 							canCreate = true;
 							canComment = true;
 						}					
-					}						
+					}			
+						
 					/*     TEAM   */
 					if(objectType == 'Team') {
 						if(profile.ManageTeams__c)
 							canManage = true;
-					}
+					}								
+
 					/*     ATTACHMENT   */
 					if(objectType == 'Attachment') {
 						if(profile.ManageAttachments__c)
@@ -233,10 +214,13 @@ public class UserPermissions {
 			}
 			
 			String canManageStr = (canManage) ? 'true' : 'false';
-			System.debug('\n\n User Permissions Results: \n\tObject: ' + objectType + '\n\tCan Manage: ' + canManage + '\n\tCan Create: ' + canCreate+ '\n\tCan Comment: ' + canComment + '\n\tCan View: ' + canView + '\n\n');
+			System.debug('HERE //// Manage:' + canManageStr + ' //// Object:' + objectType);
+			System.debug('\n\n/////////////////////// \n SAVE THIS: \n ownerId: ' + ownerId + '\n id: ' + id + '\n/////////////\n\n');
 			
 			if(ownerId == id) 
 				canManage = true;  // Shouldnt this be called user UserId?
+			System.debug('\n\n/////////////////////// \n SAVE THIS: \n canManage: ' + canManage + '\n/////////////\n\n');	
+		
 		}catch(Exception e){
 			throw e;
 		}

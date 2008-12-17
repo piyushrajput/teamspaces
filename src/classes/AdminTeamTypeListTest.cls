@@ -11,7 +11,6 @@
 	        teamTypes.getCreatedDate();
 	        teamTypes.getTeams();
 	        teamTypes.getTeamType();
-	        admin.getNamespace();
 	        
 			Test.stopTest();	        
         }catch(Exception e){

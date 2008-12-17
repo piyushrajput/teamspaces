@@ -2,7 +2,7 @@
 
 
         public static testMethod void testDiscussion() { 
-            
+                
             GenerateEnvironmentTest.gen();
             Test.startTest();
             
@@ -16,16 +16,19 @@
             Boolean isTestController = true;
             dis.setIsTestController(true);
             
+            
             /* WITH SEARCH CRITERIA */
             try {
                 dis.setParamkey('Foo Text');
-            }catch (exception e) {
+            }
+            catch (exception e) {
                 System.assert(true, e);
             }
              
             try {
                 dis.contructorFunction();
-            }catch (exception e) {
+            }
+            catch (exception e) {
                 System.assert(true, e);
             }
             
@@ -55,7 +58,16 @@
                 System.assert(true,'getNoMatches return null');
             }
             
-                        
+            /*
+            try {
+                dis.setIsTestController(true);
+                dis.search();   
+            }
+            catch (exception e) {
+                System.assert(true, e);
+            }
+            */
+            
             dis.setCriteria('test');
             
             List<DiscussionSearchResultsController.searchResult> results = dis.getResults();
@@ -148,7 +160,8 @@
             try {
                 dis.setIsTestController(true);
                 dis.setParamkey('');
-            }catch (exception e) {
+            }
+            catch (exception e) {
                 System.assert(true, e);
             }
             
@@ -156,15 +169,19 @@
             
             try {
                 dis.contructorFunction();
-            }catch (exception e) {
+            }
+            catch (exception e) {
                 System.assert(true, e);
             }
           
             try {
+                
                 dis.search();   
-            }catch (exception e) {
+            }
+            catch (exception e) {
                 System.assert(true, e);
             }
+            
             
             if (dis.getCriteria() == null) {
                 System.assert(true,'getCriteria return null');
@@ -194,6 +211,7 @@
             
             Test.stopTest();     
                
+            
             DiscussionSearchResultsController.searchResult search=  new DiscussionSearchResultsController.searchResult();
             search.setTitle ('A', 'B');
             search.setMatches('A', 'B');
@@ -201,5 +219,8 @@
             System.assert(title=='A', 'OK');
             String matches= search.getMatches ();
             System.assert(matches=='A', 'OK');
+            //dis.search();
+            
+    
         }
 }

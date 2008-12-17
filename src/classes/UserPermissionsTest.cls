@@ -11,16 +11,21 @@
 		
 		Test.startTest();
 		
+		System.debug('\n\n///////////////////////////////////////\n INTO TEST  \n//////////////////////////////////\n\n');
+		
         List<User> NOTteamAdmin = [Select id, Profile.PermissionsModifyAllData, ProfileId, Name From User where Profile.Name = 'Read Only' limit 1];
         //Set non Admin user
         String userId;
         if (NOTteamAdmin.size() > 0) {
             userId = NOTteamAdmin[0].Id;
-        }else {
+        }
+        else {
             userId = UserInfo.getUserId();
         }
 
 		UserPermissions up = new UserPermissions();
+           	
+       	System.debug('\n\n///////////////////////////////////////\n USER ID: ' + userId + '\n//////////////////////////////////\n\n');
         up.setId(userId);
         
         //Get one TeamMember & Team for non Admin user.
@@ -63,7 +68,8 @@
             //Test getters
             userId = up.getId();        
             String objectType = up.getObjectType();
-            String teamId = up.getTeam();      
+            String teamId = up.getTeam();
+            // String tId = up.getObjectId();       
             Boolean canMange = up.getCanManage();
             Boolean canCreate = up.getCanCreate();
             Boolean canComment = up.getCanComment();

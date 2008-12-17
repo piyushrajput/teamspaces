@@ -5,8 +5,6 @@
 			Test.startTest();
 
             PeopleOverviewController overview = new PeopleOverviewController();
-            
-            overview.getNamespace();
                 
             String time = overview.getCurrentTime();
             PageReference page = overview.profileExist();
@@ -27,6 +25,7 @@
             peopleObject.getDepartment();
             peopleObject.getTitle();
             peopleObject.getImageId();
+            
             
             // MINIFEED inner class
             PeopleOverviewController.minifeed minifeedObject = new PeopleOverviewController.minifeed();

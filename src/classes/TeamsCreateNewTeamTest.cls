@@ -19,7 +19,6 @@
             
             
             TeamsCreateNewTeamController team = new TeamsCreateNewTeamController();
-            team.getNamespace();
             List<SelectOption> optionType = team.getTypes();
             List<SelectOption>  optionProfile = team.getProfiles();
             Team__c t = GenerateEnvironmentTest.newTeam;

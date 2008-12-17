@@ -1,14 +1,63 @@
 <!--  **** Template **** -->
+
 <apex:component controller="ProjectTaskListController" allowDML="true">
-	
 	<!-- Modal JS -->
-	<apex:includeScript value="{!URLFOR($Resource.commonResources, 'inc/js/modal.js')}"/>
-	
+	<script type="text/javascript" src="{!URLFOR($Resource.commonResources, 'inc/js/modal.js')}"></script>
 	<!-- Overlay Styles -->
 	<apex:stylesheet value="{!URLFOR($Resource.TeamsResources, 'inc/css/teamsOverlaysTemplate.css')}" />
 	
-	<!-- ProjectDeleteTaskOverlay Common JS -->
-	<apex:includeScript value="{!URLFOR($Resource.ProjectResources, 'inc/js/projectDeleteTaskOverlay.js')}"/>
+	<script>
+		function showOverlayStatus ( formId ) {
+			var statusDiv = $('overlayFormStatus');
+			var mainForm = $(formId);
+			statusDiv.style.display= '';
+			mainForm.style.display= 'none';
+		}
+		
+		/**
+		* Create overlay to confirm tasks delete
+		*@param String id
+		*/
+		function showDeleteEvent(id, redirect, isMailstone){
+			var ids = (id != 'undefined' && id != '' && id != null) ? new Array(id) : getIdsToDelete();
+			var idsString = '';
+			for(var it=0; it < ids.length; it++){
+				var taskId = ids[it];	
+				if (it == ids.length - 1) {
+					idsString += taskId;
+				}
+				else {
+					idsString += taskId + ':';
+				}
+			}
+				$(InputIdToDelete).value = idsString;
+				
+			var eventCont = $('deleteEventContainer');		
+		 	var type = $('tasktype');
+		 	//eventCont.innerHTML = '<input class="SaveBtn auto" type="button" value="Continue and delete" onclick="deleteTasks(\'' + id + '\', '+redirect+', ' +isMailstone+ ');" />';
+			//type.innerHTML = (isMailstone) ? 'Milestone(s)' : 'Task(s)';
+			createOverlay('', 'deleteTasks', 132);	
+		}
+		
+		function redirect()
+		{
+			var uri = location.href;
+			var len = uri.split('projecttaskdetail');
+			if(len.length > 1){
+				location.href = '/apex/ProjectTaskList?id=' + currentTeam;
+			}
+			else {
+				sortListEvent();
+			}
+			
+		}
+		
+		function showSwirley () {
+			if (isProjectTaskList) {
+				showHideOverlay();	
+			}
+		}
+	</script>
 	
 	<!-- Initialize the overlay box for modal.js -->
 	<a href="#modal_container" id="initializeModalOverlay" style="display:none;"></a>
@@ -16,6 +65,7 @@
 	<script>
 		createOverlay('initializeModalOverlay');
 	</script>
+	
 	<div id="deleteTasks" style="display:none;" class="overlayForm">	
 		<!-- Overlay Title -->
 		<div class="overlayTitleContent">
@@ -26,6 +76,7 @@
 				</a>
 			</div>
 		</div>
+		
 		<!-- Overlay Content -->
 		<div class="overlayMainContent">
 			<!-- Action Status -->
@@ -39,11 +90,12 @@
 					<strong>Are you sure you want to continue?</strong><br />
 					<span>Once task(s) are deleted, it is not recoverable</span>
 				</div>
+				
 				<div class="overlaySeparateLine" />
 				<!-- Saven and Cancel Buttons -->
 				<div class="overlayFromButtons" align="center">
 					<span id="deleteEventContainer">
-						<apex:commandButton styleclass="overlaySaveBtn" action="{!deleteTask}" value="Continue and delete" onclick="modal.close();showSwirley();" oncomplete="redirect(); showMessageToUser('Deleted item(s)','success');" rerender="taskListPanel" />
+						<apex:commandButton styleclass="overlaySaveBtn" action="{!deleteTask}" value="Continue and delete" onclick="modal.close();showSwirley();" oncomplete="redirect(); showMessageToUser('Deleted item(s) success');" rerender="taskListPanel" />
 						<apex:inputHidden id="auxInputDeletes" value="{!idDeletes}" />
 					        <script>
 				        		var InputIdToDelete = '{!$Component.auxInputDeletes}';

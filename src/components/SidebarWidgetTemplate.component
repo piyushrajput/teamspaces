@@ -4,6 +4,10 @@
 		<div class="thinHeader">
 			<div><div><h4>Title Here</h4></div></div>
 		</div>
+		<!-- Widget Without Title -/->		
+		<div class="thinHeader" style="background:white;">
+			<div><div><h4></h4></div></div>
+		</div> -->
 		<!-- Widget Container -->   		
 		<div class="box_content">
 			<div class="thinBody">
@@ -16,7 +20,7 @@
 				when an unknown printer took a galley of type and scrambled it to make a type specimen book. 
 				It has survived not only five centuries, but also the leap into electronic typesetting, 
 				remaining essentially unchanged. It was popularised in the 1960s...	
-			</div>
+			</div>				
 		</div>
 		<!-- Widget Holder Foot -->
 		<div class="bottom_borders">

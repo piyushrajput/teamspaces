@@ -13,7 +13,6 @@
             
             TeamSearchResultController team = new TeamSearchResultController();
             
-            team.getNamespace();
             team.setCriteria('Foo');
             team.search();
             String criteria = team.getCriteria();
@@ -58,6 +57,7 @@
             
             team.setJumpPage(1);
             team.JumpToPage();
+            //team.leaveTeam();
             team.assignLeaveTeamId();
             team.setTeamId(tm.Team__c);
             PageReference pr = team.joinTeam();         

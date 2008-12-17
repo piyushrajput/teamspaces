@@ -20,13 +20,15 @@
         userPermissions.getCanCreate();
         userPermissions.getObjectType();
         userPermissions.getTeam();
+        // userPermissions.getObjectId();
         userPermissions.getId();
         
         task.setSidebar(true);
         if (task.getSidebar() == null) {
             System.assert(true,'getSidebar failed');
         }
-		        
+         
+        
         /* ProjectTask class */
         TeamsWidgetTasksMainController.ProjectTask projectTaskClass = new TeamsWidgetTasksMainController.ProjectTask();
         projectTaskClass.getPicture();

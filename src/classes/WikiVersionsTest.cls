@@ -36,7 +36,6 @@
         
         WikiVersionsController.InfoRev infoRev2 = wiki.getRevLeftBody();
         WikiVersionsController.InfoRev infoRev3 = wiki.getRevRightBody();
-        
         wiki.getWikiInfo();
         wiki.getGoDiff();
         wiki.getGoLeft();
@@ -46,6 +45,9 @@
         wiki.getGoRight();
         wiki.getWikiRight();
         wiki.hideRightBody();
+        
+       	//wiki.saveLeft ();
+        //wiki.saveRight ();
         
         Test.stopTest();
         
@@ -74,12 +76,15 @@
         
         wiki.getRevLeftBody();
         wiki.getRevRightBody();
+       
         wiki.setIdWikiPage(wp.Id);
         wiki.setIdRevL(wv.Id);
         wiki.setIdRevR(wv.Id);
+
        	wiki.saveLeft ();
         wiki.saveRight ();
         
         Test.stopTest();
+    
     }
 }

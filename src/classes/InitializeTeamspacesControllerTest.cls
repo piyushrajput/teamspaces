@@ -1,7 +1,9 @@
 @IsTest private class InitializeTeamspacesControllerTest {
 	public static testMethod void test() {
 		GenerateEnvironmentTest.gen();
+		
 		Test.startTest();
+		
 		InitializeTeamspacesController iniTeams = new InitializeTeamspacesController();
 		
 		Widget__c newWidget = new Widget__c();

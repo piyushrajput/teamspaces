@@ -3,24 +3,30 @@
      /*  TEST CLASS      */
      /* ******************/
     
-    public static testMethod void SearchResultController(){
+    public static testMethod void SearchResultController()
+    {
         SearchResultController n = new SearchResultController();
         String resultTypeOfAction = n.getTypeAction();
-        if(resultTypeOfAction == ''){
+        if(resultTypeOfAction == '')
+        {
                 System.assert(false, 'No type of action'); 
         }
 
         n.setSizeList(12);
         List<PeopleProfile__c> people = n.getPeople();
-        if(people == null){
+        if(people == null)
+        {
             System.assert(false, 'no List'); 
         }
         PaginatorController ins = n.getPaginator();
-        if(ins == null){
+        if(ins == null)
+        {
                 System.assert(false, 'No Instance'); 
         }
         Integer listSize = n.getSizeList();
-        if(listSize == null){
+        
+        if(listSize == null)
+        {
                 System.assert(false, 'No List size'); 
         }
         String userId = UserInfo.getUserId();
@@ -29,8 +35,12 @@
         n.setTypeAction(miType2);
         String titleMy = n.getTitle();
         
-        if(titleMy == null){
+        if(titleMy == null)
+        {
                 System.assert(false, 'No Title'); 
         }
+        
+        
+
     }
 }

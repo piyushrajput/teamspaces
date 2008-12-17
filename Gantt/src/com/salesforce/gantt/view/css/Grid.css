@@ -1,0 +1,121 @@
+/* CSS file */
+
+.calendarGrill
+{
+	horizontal-align : center;
+	text-align : center;
+	border-style : none; 
+}
+
+.textInputGrill
+{
+	border-style: none;
+	border-alpha : .0; 
+	focus-thickness : 0;
+	text-align : left;
+	corner-Radius : 0;
+	shadow-distance:5;
+}
+
+.numberStepperGrid
+{
+	border-style: none;
+	border-alpha : .0; 
+	xfocus-thickness : 0;
+	text-align : left;
+	corner-Radius : 0;
+	down-arrow-skin:'/imgs/stepper_arrow_down.png';
+	xup-arrow-skin:"imgs/stepper_arrow_down.png";
+
+}
+
+.taskNumber
+{
+	border-style: none;
+	border-alpha : .0; 
+	focus-thickness : 0;
+	text-align : center;
+	vertical-align:middle;
+	corner-Radius : 0;
+	padding-left:10px;
+	padding-top:2px;
+	background-color:#E1E2E1;
+}
+/* es utilizado en AvailableResources para la letra del link [add] y [cancel]*/
+.labelLinkGrid  
+{
+	font-family : verdana, arial;
+	text-color : #666666;
+	textDecoration: underline;
+}
+
+.gridColumnHeader
+{
+	font-family : Arial Narrow, Arial;
+	color: #666666;
+	font-weight:bold;
+	text-align:center;
+	vertical-align:middle;
+	text-align:center;
+	font-size:12px;
+	font-anti-alias-type:normal;	
+	background-color : #ffffff;
+	padding-top:4px;
+}
+/*le setea el estilo al DataGrid de la clase TaskList*/
+.dataGridTaskList 
+{
+	alternatingItemColors : white, #FAF9F9;
+	top : 0px;
+	font-family : Arial Narrow, Arial;
+	font-weight:bold;
+	font-size:12px;
+	font-anti-alias-type:normal;	
+	border-Color : #999999;
+	horizontalGridLineColor : #999999; 
+	horizontalGridLines : true; 
+	verticalGridLineColor : #999999;
+    verticalGridLines : true;
+    headerColors : #E1E2E1, #E1E2E1;
+    border-thickness : 1; 
+	rollOverColor : #CFECF2;	
+	color:#000000;
+	padding-top:4px;
+	drop-indicator-skin:ClassReference("com.salesforce.gantt.view.components.DragDataGridTask");	
+	/*selection-Color:#ffffff;*/
+}
+
+
+/*le setea el estilo al VBox que esta al final de la clase TaskList*/
+.VBoxTask 
+{
+	font-family : verdana, arial;
+	background-Color : #eaeaea;
+	border-Style : none;
+}
+
+/*setea el estilo del dataGrid que esta en la clase AvailableRecourses*/
+.dataGridAvailable
+{
+	alternatingItemColors : white, white;
+	headerColors : #77b900, #77b900;
+	horizontalGridLineColor : #000000; 
+	horizontalGridLines : true; 
+	font-family : verdana, arial;
+	horizontal-grid-line-color : #666666;
+	border-style : none;
+	
+}
+
+.itemSelected
+{
+	background-Color : #eaeaea;
+	border-Style : solid;
+	border-Color : #333333;
+	border-thickness : 2; 
+	/*padding-top : 0;
+	horizontal-align : top;
+	gutter-top : 0;*/
+	
+	/*border-Color : #d6d3ce;*/
+}

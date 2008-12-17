@@ -1,12 +1,250 @@
 <apex:page id="Discussion" controller="DiscussionOverlayTopicEdit"  sidebar="false" showHeader="false">
-
-	<!-- DiscussionOverlayNewTopic JS -->
- 	<apex:includeScript value="{!URLFOR($Resource.discussionResources, 'inc/js/discussionOverlayNewTopic.js')}" />
+<style>
+	.msgSaving {
+		margin-top: 10px;
+	}
+</style>
+<script>	
+	//this var contains the first topic message id 
+	var topicFirstMessageId;
+	var topicFirstMessage='';
+	/* it indecate when you have to insert or update, if this var is null you are going to insert else update*/
+	var topicId = null;
 	
-	<!-- Common CSS -->
-	<apex:stylesheet value="{!URLFOR($Resource.discussionResources, 'inc/css/discussionOverlayNewTopic.css')}" />
+	// Get X and Y						
+	function getXY(obj){				
+		var pos = Position.cumulativeOffset(obj)
+		var y = pos[1];
+		var x = pos[0];
+		var x2 = x + parseInt(obj.offsetWidth);
+		var y2 = y + parseInt(obj.offsetHeight);
+		return {'x':x, 'y':y, 'x2':x2, 'y2':y2};
+	}
+	
+	function getFCKContent(){
+		try {
+			var b = document.getElementsByTagName('iframe');
+			for(var it = 0; it < b.length; it++){
+				var aux = b[it].src.split('fckeditor');
+				if(aux.length > 1){
+					var iframes = b[it].contentWindow.document.getElementsByTagName('iframe');
+					var markup = iframes[0].contentWindow.document.body.innerHTML; 
+				}
+			}
+			setFocus();
+			return markup;
 		
-	<!-- Create New Topic Overlay-->
+		} catch(e){
+			
+		}
+	}
+
+		function getIframe() {
+			var b = document.getElementsByTagName('iframe');
+			for(var it = 0; it < b.length; it++){
+				var aux = b[it].src.split('fckeditor');
+				if(aux.length > 1){
+					var iframes = b[it].contentWindow.document.getElementsByTagName('iframe');						
+				}
+			}
+			return iframes;
+		}	
+		
+		function assignFCKHTML(newContent) {
+			var frame = getIframe();
+			frame[0].contentWindow.document.body.innerHTML = newContent;
+		}
+		
+		
+	
+	//set the fields to show in the overlay when the action is update
+	function getTopicToEdit(topicIdToEdit,  topicFirstMessageToEditId, page){
+	 	
+	 	topicId = topicIdToEdit;
+	 	
+	 	// Hide save button and show the update one.
+	 	var saveButton = $('savebutton');
+		var updateButton = $('updatebutton');
+		updateButton.style.display = '';
+		saveButton.style.display = 'none';
+		
+		// Set title
+		var title = document.getElementById('overlaytitle');
+		var t = document.getElementById('topicNameApexId');
+		var topicName = $(t.innerHTML);				
+		title.innerHTML = 'Edit Discussion Topic';
+		topicFirstMessageId = topicFirstMessageToEditId;		
+		
+		// If in discussion details take this action.
+		if(page == 'details'){
+			var discussiontitle = $('DiscussionTopicTitle').innerHTML;  
+			topicName.value = discussiontitle;			
+			var m = $('DiscussionMessageContainer').innerHTML;			
+			topicFirstMessage = m;
+			
+			// The ids to send the modification data.
+			var idAux= $('idToUpdateApex').innerHTML;
+			var inputsToStore = idAux.split('|');
+			idAux = $('modifyIdsApex').innerHTML;
+			var idsToEdit = idAux.split('|');
+			var idToEditTopicHidden = $(inputsToStore[0]);
+			idToEditTopicHidden.value = idsToEdit[0];
+			var idToEditMessageHidden = $(inputsToStore[1]);
+			idToEditMessageHidden.value = idsToEdit[1];
+			
+			
+			// The ids to send the modification data.
+			var idAux= $('idToUpdateApex').innerHTML;
+			var inputsToStore = idAux.split('|');
+			var idToEditTopicHidden = $(inputsToStore[0]);
+			idToEditTopicHidden.value = topicIdToEdit;
+			var idToEditMessageHidden = $(inputsToStore[1]);
+			idToEditMessageHidden.value = topicFirstMessageToEditId;
+			
+		}		
+		else{
+		// If in discussion topics
+			if(page == 'topics'){
+				// Get data to put on the form and edit 
+				var idtitle = 'topicTitle-' + topicIdToEdit;
+				var idMessage = 'topicMessage-' + topicIdToEdit;
+				var discussionTitle = document.getElementById(idtitle);
+				var discussionMessage = document.getElementById(idMessage);				
+				topicName.value = discussionTitle.innerHTML;
+				topicFirstMessage = discussionMessage.innerHTML;
+				
+				// The ids to send the modification data.
+				var idAux= $('idToUpdateApex').innerHTML;
+				var inputsToStore = idAux.split('|');
+				var idToEditTopicHidden = $(inputsToStore[0]);
+				idToEditTopicHidden.value = topicIdToEdit;
+				var idToEditMessageHidden = $(inputsToStore[1]);
+				idToEditMessageHidden.value = topicFirstMessageToEditId;
+			}
+		}
+		createFCKEditor('messageTextArea');
+		setFocus();
+		
+	}
+	
+	function validateDiscussionTopic(topicName,topicText){
+		var FCKtext = getFCKContent();
+		var topicNameInput = $(topicName);
+		var auxId = $('textAreaApexId');
+		messageTextArea = $(topicText);   
+		messageTextArea.value = FCKtext;
+		
+		messageTextValue = messageTextArea.value;
+		messageTextValue = messageTextValue.replace(/nbsp;/gi,'');
+		messageTextValue = messageTextValue.replace(/&/gi,'');
+		messageTextValue = messageTextValue.replace(/[ ]*[\n]*[\r]*[\t]*/gi,'');
+		messageTextValue = messageTextValue.replace(/<[^>]*>/gi, '');
+		messageTextLength = messageTextValue.length;
+		
+		topicNameValue = topicNameInput.value;
+		topicNameValue = topicNameValue.replace(/nbsp;/gi,'');
+		topicNameValue = topicNameValue.replace(/&/gi,'');
+		topicNameValue = topicNameValue.replace(/[ ]*[\n]*[\r]*[\t]*/gi,'');
+		topicNameLength = topicNameValue.length;
+		
+		if(topicNameLength == 0 || messageTextLength == 0 || messageTextArea.value == null){
+			return false;
+		} else {
+			return true;
+		}
+	}
+	
+	
+	function refreshPage () {
+		//var buttonForm = $$('.auxLinkClass');
+		//buttonForm.focus();
+		//buttonForm[0].onclick();
+		
+	}		
+	
+	function setNewFocus(){
+		createFCKEditor('messageTextArea');
+		// document.getElementById('topicName').focus();	
+	}
+	
+	function setFocus(){
+	
+		// document.getElementById('topicName').focus();		
+	}
+	
+	function relocateOverlay(){	
+		Control.Modal.center(Control.Modal.container);
+	}
+		
+	// Loader 
+	function showHideOverlay(){
+		var a = $('paginationOverlay');
+		if(a.style.display == 'none'){
+			Effect.Appear(a,{duration:0.3,to:0.6});
+		} else {
+			Effect.Fade(a,{duration:0.3,to:0.0});
+		}
+		
+	}
+	
+	//This method is to execute after the fckEditor is created
+	 function FCKeditor_OnComplete( editorInstance ) {
+		
+		if(editorInstance.Name == 'replyTopicArea'){
+			
+			Effect.Fade('FCKloaderReply');
+			var divContentFck = $('fckContentDivReply');
+			divContentFck.style.display = 'none';
+			divContentFck.style.visibility = 'visible';
+			Effect.Appear('fckContentDivReply');
+		}
+		else{
+			if(editorInstance.Name == 'replyMessageArea'){
+				
+				assignFCKHTML(topicFirstMessage);
+				Effect.Fade('FCKloaderMessage');
+				var divContentFck = $('fckContentDivMessage');
+				divContentFck.style.display = 'none';
+				divContentFck.style.visibility = 'visible';
+				Effect.Appear('fckContentDivMessage');
+			}
+			else{
+				if(editorInstance.Name == 'messageTextArea'){
+					Effect.Fade('FCKloader');
+					assignFCKHTML(topicFirstMessage);
+					var divContentFck = $('fckContentDiv');
+					divContentFck.style.display = 'none';
+					divContentFck.style.visibility = 'visible';
+					topicFirstMessage = '';
+					Effect.Appear('fckContentDiv');
+				}
+			}
+		}
+	}
+	
+	function statusSaving(obj, topicName, topicText) {
+    	if(!validateDiscussionTopic(topicName,topicText)){
+       		alert('Please fill in a message.');
+       	}else {
+       		var buttons = $$('input.saveBtn');
+       		for (var i = 0; i < buttons.size(); i++) {
+       			buttons[i].value = '  Saving...  ';
+       			buttons[i].disabled = 'disabled';
+       		}
+    	}
+	}
+	
+	function multiRefresh () {
+		if (isInDetail) {
+			refreshReplys();	
+		}
+		else {
+			refreshUpdateList();
+		}
+	}
+</script>
+
+<!-- Create New Topic Overlay-->
 	<div id="NewTopicForm" style="display:none;" class="overlayForm">	
 	<!-- 				FCK LOADER 				 -->
 		<!-- Overlay Title -->
@@ -34,13 +272,14 @@
 								<td style="width:85px;text-align:right;"><span class="inputInfo">Topic</span></td>
 								<td style="width:4px;"><span style="display:block;width:4px; height:21px; background-color: #C0272D;"></span></td>
 								<td>
+									<!-- <input id="topicName" type="text" style="width:98%"/>  -->
 									<apex:inputText value="{!topic.Name}" id="topicName" styleClass="width:98%" />
 									<div id="topicNameApexId" style="display:none;">{!$Component.topicName}</div>
 								</td>
 							</tr>
 							<tr>
 								<td valign="top" style=text-align:right;><span class="inputInfo">Message</span></td>
-								<td valign="top" style="width:4px;"><span style="display:block;width:4px; height:229px; background-color: #C0272D;"></span></td>
+								<td valign="top" style="width:4px;"><span style="display:block;width:4px; height:199px; background-color: #C0272D;"></span></td>
 								<td style="height:130px;">
 									<div class="FCKloader" id="FCKloader" style="display:block;"><center><img src="{!URLFOR($Resource.WikiResource, 'images/layout/FCKloader.gif')}" /></center><br />Loading...</div>
 									<div id="fckContentDiv" style="visibility:hidden;">
@@ -48,6 +287,7 @@
 									</div>
 									<apex:inputTextArea value="{!topic.Text}" id="topicTextArea" style="display:none;" />
 									<div id="textAreaApexId" style="display:none;">{!$Component.topicTextArea}</div>
+									<!-- <input type="checkbox" id="emailNewDiscussion" name="email" /><span class="inputInfo">Email new {!$ObjectType.Team__c.label} members about new discussion topic</span> -->
 								</td>
 							</tr> 
 						</table>
@@ -62,7 +302,8 @@
 							<apex:commandButton action="{!updateTopic}" rerender="topicList, noTopicList" status="topicStatus" styleclass="overlaySaveBtn" value="Update" onclick="statusSaving(this,'{!$Component.topicName}','{!$Component.topicTextArea}');" oncomplete="modal.close();multiRefresh();" />
 						</span>
 						<span id="savebutton">
-							<apex:commandButton action="{!saveTopic}" rerender="topicList, noTopicList, replysHolder" status="topicStatus" styleclass="overlaySaveBtn" value="Save" onclick="statusSaving(this,'{!$Component.topicName}','{!$Component.topicTextArea}');" oncomplete="modal.close();refreshList();refreshActivePeople();  showHideOverlay();" /> 
+							<apex:commandButton action="{!saveTopic}" rerender="topicList, noTopicList, replysHolder" status="topicStatus" styleclass="overlaySaveBtn" value="Save" onclick="statusSaving(this,'{!$Component.topicName}','{!$Component.topicTextArea}');" oncomplete="modal.close();refreshList();refreshActivePeople();" /> 
+							<!-- <input class="saveBtn" type="button" value="Save" onclick="saveTopic('{!forumData.Team__c}','{!forumData.Id}','{!forumData.Team__r.Name}', topicId);" /> -->
 						</span>
 						<input class="overlayCancelBtn" type="button" value="Cancel" onclick="modal.close();" />
 					</div>

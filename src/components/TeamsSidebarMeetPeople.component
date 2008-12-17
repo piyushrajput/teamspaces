@@ -1,6 +1,7 @@
 <apex:component controller="TeamsSidebarMeetPeopleController">
 	<style>
 		div.box_round_blue div.header.auto {
+			
 			height:auto;
 			position:relative;
 			width:100%;
@@ -34,6 +35,7 @@
 			
 		}
 	</style>
+
 	<div class="teamWidget mySmallWidget" >
 		<!-- Widget Title -->		
 		<div class="thinHeader">
@@ -52,7 +54,7 @@
 						<a href="/apex/PeopleProfileDisplay?id={!item.Id}">{!item.name}</a>
 					</div>
 				</apex:repeat>
-			</div>
+			</div>				
 		</div>
 		<!-- Widget Holder Foot -->
 		<div class="bottom_borders">

@@ -2,9 +2,10 @@
     
     public static testMethod void testDiscussion() {
         try{
+        	
         	GenerateEnvironmentTest.gen();
     		Test.startTest();
-			
+
             DiscussionTopicsController dis= new DiscussionTopicsController();
             
             DiscussionTopic__c dt = GenerateEnvironmentTest.newTopic;
@@ -18,7 +19,7 @@
             List<DiscussionTopicsController.TopicList> topics = dis.getTopicList();
 			
 			dis.getForumData();
-			
+
             DiscussionTopicsController.updateviewCount upd = new DiscussionTopicsController.updateviewCount();
             String topicId = upd.getTopicId();
             upd.setTopicId(GenerateEnvironmentTest.newTopic.Id);
@@ -54,7 +55,8 @@
             String pic = topicList.getAuthorPicture();
             
             topicList.getFirstMessageCreated();
-
+            //String firstId = topicList.getFirstMessageId();
+            
             String id = topicList.getId();
             String author = topicList.getAuthorId();
             String fuulAuthor = topicList.getFullAuthorName();

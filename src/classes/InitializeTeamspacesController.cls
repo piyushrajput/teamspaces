@@ -1,13 +1,10 @@
-/**
-* Class for create minimal data necesary for the app works.
-*@author Nicolas Gunther @ 10/14/2008
-*/
 public class InitializeTeamspacesController {
 
 	//Action history
 	public Boolean alreadyRun {get; set;}
 	public Boolean insertWidget {get; set;}
 	public Boolean insertProfiles {get; set;}
+	
 	
 	//Asoc. widget name with component name
 	static final Map<String, String> widgets  = new Map<String, String>{'Attachments' => 'TeamsWidgetAttachments', 
@@ -20,22 +17,22 @@ public class InitializeTeamspacesController {
 	//Default profiles
 	static final Set<String> profiles = new Set<String> {'Team Administrator', 'Read Only', 'Individual Contributor'};
 	
-	/**
-	* Constructor
-	*/
 	public InitializeTeamspacesController(){
 		//Only for Admin use
 		TeamUtil.isAdminMemberUser();
+		
 		alreadyRun = false;
 	}
 	
 	/**
 	* Initialize
-	* Create default widgets and team profiles
+	*@void
 	*/
 	public void initialize(){
+
 		insertWidget = false;
 		insertProfiles = false;
+
 		/* ### Default Widgets ### */
 		List<Widget__c> widgetList = new List<Widget__c>();
 		Set<String> widgetNames = new Set<String>();
@@ -53,6 +50,7 @@ public class InitializeTeamspacesController {
 				newWidget.Name = widgetName;
 				newWidget.WidgetUrl__c = widgets.get(widgetName);
 				newWidget.Type__c = 'Widget';
+				System.debug('\n --- Add Widget:' + widgetName + '--- \n');
 				widgetList.add(newWidget);
 			}
 		}
@@ -71,17 +69,20 @@ public class InitializeTeamspacesController {
 			profilesNames.add(profile.Name);
 			 
 		for(String profileName : profiles){
-			if(!profilesNames.contains(profileName))
+			if(!profilesNames.contains(profileName)){
 				createProfile(profileName);	
+			}
 		}
+		
 		alreadyRun = true;
 	}
 	
 	/**
-	* Create team profile
-	*@param String name
+	* Create profile
+	*@void
 	*/
 	public void createProfile (String name){
+		
 		TeamProfile__c profile = new TeamProfile__c(); 
 		if(name == 'Team Administrator'){
 			profile.Name = name;
@@ -110,7 +111,9 @@ public class InitializeTeamspacesController {
 			profile.PostWikiComments__c = true;
 			profile.CreateProjectTasks__c = true;
 		}
+		
 		if(profile.Name != null){
+			System.debug('\n --- Add profile:' + profile.Name + '--- \n');
 			insertProfiles = true;
 			insert profile;
 		}

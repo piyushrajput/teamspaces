@@ -1,11 +1,83 @@
 <apex:page sidebar="false" showHeader="false" controller="ProjectLookupController" >
+	<style>
+	body {
+		font-family:'Arial','Helvetica',sans-serif;
+		font-size:75%;
+		padding: 0pt 7px 7px;
+		margin: 0pt;
+	}
+	div.lookup {
+		background-color:#737E96;
+		border-color:#737E96;
+		color: #fff;
+	}
 
-	<!-- PeopleProfileDisplay css -->
-    <apex:stylesheet value="{!URLFOR($Resource.ProjectResources, 'inc/css/projectLookup.css')}" />
- 	
-	<!-- PeopleProfileDisplay JS  -->
-	<apex:includeScript value="{!URLFOR($Resource.ProjectResources, 'inc/js/projectLookup.js')}" />
+	div.lookup img, h1 {
+		float: left;
+	}
 	
+	div.lookup img {
+		margin-top: 3px;
+	}
+	
+	h1 {
+		font-size: 14px;
+		margin: 9px 0pt;
+	}
+	.clear { clear: both;}
+	
+	.content_result {
+		background-color:#F3F3EC;
+		margin-right:2px;
+		padding:6px 20px 4px;
+		border-top: solid 2px #737E96;
+		border-bottom: solid 2px #737E96;
+		margin-top: 8px;
+	}
+	
+	
+	.result {
+		width: 100%;
+		border-collapse: collapse;
+		text-align: left;
+	}
+	
+	.result a {
+		color: #000;
+	}
+	
+	.result tbody td{
+		border-bottom:1px solid #E3DEB8;
+		padding: 4px 2px;
+	}
+	
+	.result thead th{
+		border-bottom:2px solid #CCCCCC;
+		padding: 4px 2px;
+		text-align: left;
+	}
+	</style>
+	
+	<script>
+		function gup( name ){
+			var regexS = "[\\?&]"+name+"=([^&#]*)";
+			var regex = new RegExp ( regexS );
+			var tmpURL = window.location.href;
+			var results = regex.exec( tmpURL );
+			if( results == null )
+				return"";
+			else
+				return new String(results[1]);
+		}
+		
+		function selectProject(id, name){
+			var nameIn = gup('name');
+			var hiddenIn = gup('hidden');
+			window.opener.document.getElementById(nameIn).value = name;
+			window.opener.document.getElementById(hiddenIn).value = id;
+			window.close();
+		}
+	</script>
 	
 	<div class="lookup">
 		<img title="" class="pageTitleIcon" alt="" src="{!URLFOR($Resource.ProjectResources, '/images/layout/lookup32.png')}"/>

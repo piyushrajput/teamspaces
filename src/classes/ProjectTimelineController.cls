@@ -1,14 +1,8 @@
-/**
-*@author Nicolas Gunther @ 16/07/2008
-*/
 public class ProjectTimelineController {
 
     Team__c team = new Team__c();
     String param = System.currentPageReference().getParameters().get('id');
     
-    /**
-    *Constructor
-    */
     public ProjectTimelineController(){
         getTeamAndProject(param);
     }
@@ -21,13 +15,14 @@ public class ProjectTimelineController {
         return team;
     }
     
+    
     /**
     * Get Project
     *@return Project2__c
     */
     public Project2__c getProject(){
         if(team.Projects__r.size() > 0)
-        	return team.Projects__r[0];
+            return team.Projects__r[0];
         return new Project2__c();
     }
     
@@ -41,4 +36,5 @@ public class ProjectTimelineController {
             team = [select Id, Name, (Select Id, Name From Projects__r) from Team__c t where t.Id =: param];    
         }
     }
+    
 }

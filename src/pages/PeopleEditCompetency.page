@@ -1,61 +1,119 @@
 <apex:page sidebar="false"  standardController="Competency__c" extensions="PeopleNewEditCompetencyController" action="{!getCompetency}">
+
 	<!-- Ajax Toolkit SDFC -->
-	<script src="/soap/ajax/11.1/connection.js"/>
-	
+	<script src="/soap/ajax/11.1/connection.js" type="text/javascript"></script>
 	<script>
 		var API_SESSION_ID = '{!$Api.Session_ID}';
 	</script>		
-	
+
 	<!-- Prototype / Scriptaculous Framework -->
-	<script src="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/Validator.js')}"/>
-	<script src="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/prototype.js')}"/>
-	<script src="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/scriptaculous.js')}"/>
-	<script src="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/effects.js')}"/>
-	<script src="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/slider.js')}"/>
-	<script src="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/autocomplete.js')}"/>	
-	<script src="{!URLFOR($Resource.YahooUI, 'build/yahoo-dom-event/yahoo-dom-event.js')}"/>
-	<script src="{!URLFOR($Resource.YahooUI, 'build/animation/animation-min.js')}"/>
-	<script src="{!URLFOR($Resource.YahooUI, 'build/dragdrop/dragdrop-min.js')}"/>
-	<script src="{!URLFOR($Resource.YahooUI, 'build/slider/slider-min.js')}"/>	
+	<script src="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/Validator.js')}" />
+	<script src="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/prototype.js')}" />
+	<script src="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/scriptaculous.js')}" />
+	<script src="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/effects.js')}" />
+	<script src="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/slider.js')}" />
+	<script src="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/autocomplete.js')}" />	
+	<script src="{!URLFOR($Resource.YahooUI, 'build/yahoo-dom-event/yahoo-dom-event.js')}" />
+	<script src="{!URLFOR($Resource.YahooUI, 'build/animation/animation-min.js')}" />
+	<script src="{!URLFOR($Resource.YahooUI, 'build/dragdrop/dragdrop-min.js')}" />
+	<script src="{!URLFOR($Resource.YahooUI, 'build/slider/slider-min.js')}" />	
 	<apex:stylesheet value="{!URLFOR($Resource.commonResources, 'inc/css/fonts.css')}" />
-	
-	<!-- Portal Support -->
-	<script src="{!$Resource.portalSupport}"/>
-	
+
+		<!-- Portal Support -->
+	<script src="{!$Resource.portalSupport}" />
+
 	<!-- Common Js to all people Sections -->
-	<script src="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/common.js')}"/>
-    
+	<script src="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/common.js')}" />
+
     <!-- CSS styles for Portal Integration -->
     <apex:stylesheet value="{!URLFOR($Resource.portalStyles, 'portal.css')}" />
     <apex:stylesheet value="{!URLFOR($Resource.TeamsResources, 'inc/css/headerTeams.css')}" />
 	<apex:stylesheet value="{!URLFOR($Resource.TeamsResources, 'inc/css/widgetTeam.css')}" />
-	
+
 	<!-- Common CSS Styling  -->
 	<apex:stylesheet value="{!URLFOR($Resource.PeopleResourceFiles, 'inc/css/commonLayout.css')}" />	
 	<apex:stylesheet value="{!URLFOR($Resource.PeopleResourceFiles, 'inc/css/peopleEditions.css')}" />
-	<apex:stylesheet value="{!URLFOR($Resource.PeopleResourceFiles, 'inc/css/autocomplete.css')}" />
-
-	<style>
+	<link rel="stylesheet" href="{!URLFOR($Resource.PeopleResourceFiles, 'inc/css/autocomplete.css')}" type="text/css" media="screen" charset="utf-8" />
+	<style type="text/css">
+		div.main_form_holder div.main_form div.form_action div.buttons input.gray{
+			background: #999;
+		}
+		
 	    #slider-bg {
-		        background:url({!URLFOR($Resource.YahooUI, 'assets/slider/bg-fader.gif')}) 5px 0 no-repeat;
+	        position: relative;
+	        background:url({!URLFOR($Resource.YahooUI, 'assets/slider/bg-fader.gif')}) 5px 0 no-repeat;
+	        height:40px; 
+	        float:left;     
+	        width:228px; 
 	    }
+	
+	    #slider-thumb {
+	        cursor:default;
+	        position: absolute;
+	        top: 4px;
+	    }
+	    
+	    #slider-bg  #skill-rating {
+	    	position:absolute;
+	    	bottom:0;
+	    	left:0;
+	    	height:15px;
+	    	color:#CCCCCC;
+	    	width:228px;    	
+	    }
+	    
+		#slider-bg  #skill-rating ul,
+		#slider-bg  #skill-rating ul li {
+			margin:0;
+			padding:0;
+			list-style:none;			
+		}
+		
+		#slider-bg  #skill-rating ul {
+			margin-left:5px;
+		}
+		
+		#slider-bg  #skill-rating ul li {
+			width:20px;
+			float:left;
+			font-size:10px;
+		}
+		
+		#slider-bg  #skill-rating ul li.selected {
+			color:#000000;
+		}
+		
+		.LowHighSkillLabel {
+			float:left;
+			margin-top:7px;
+			text-align:center;
+			width:25px;
+			padding-top:3px;
+			margin-right:10px !important;
+		}
 	</style>
-	
-	<!-- PeopleEditCompetency CSS -->
-	<apex:stylesheet value="{!URLFOR($Resource.PeopleResourceFiles, 'inc/css/peopleEditCompetency.css')}" />
-	
 	<!-- Page Begin  -->
-	
 	<!-- Header -->
-	<apex:composition template="HeaderTemplate">
-		<apex:define name="moduleId"><apex:variable var="moduleId" value="headerPeople"/></apex:define>
-	    <apex:define name="module">People</apex:define>
-	    <apex:define name="title">My Profile</apex:define>
-	    <apex:define name="search">
-	    	<c:Search module="people_keyword" />
-	    </apex:define>
-    </apex:composition>
-	
+	<div class="header_portal" id="headerPeople">
+		<!-- Page Section -->
+		<div class="page_section">
+			<div>
+				<h1 class="arial_black">People</h1> 
+				<h2 class="arial_black">My Profile</h2>
+			</div>		
+		</div>		
+        <!-- Search Box -->
+        <div class="searchBox">
+            <c:PeopleFinder />
+        </div>
+		<!-- Help for this page -->
+		<div class="help">
+			<div>
+				<a href="javascript:;">Help for this page</a>  <img src="{!URLFOR($Resource.TeamsResources, 'images/layout/help_icon.gif')}" alt="" />
+			</div>
+		</div>
+		<div class="gray_border"></div>
+	</div>	
 	<!-- /Header -->
 	<!-- Sidebar -->
 	<div class="sidebar">
@@ -79,15 +137,18 @@
 						<img src="{!URLFOR($Resource.PeopleResourceFiles, 'images/layout/warning.gif')}" />
 						Some required fields are empty or its format is incorrect. Please enter the data correctly.
 					</div>
-					<div id="warning_to_user_not_owner" class="message_to_user" style="{!IF((error == ''),'display:none;','')}">
-			   			<img src="{!URLFOR($Resource.PeopleResourceFiles, 'images/layout/warning.gif')}" />
+						
+					 <div id="warning_to_user_not_owner" class="message_to_user" style="{!IF((error == ''),'display:none;','')}">
+			   		  	 <img src="{!URLFOR($Resource.PeopleResourceFiles, 'images/layout/warning.gif')}" />
 			     		 {!error}<br />
-			    	</div>
+			    	</div>	
+			    	
 					<div class="require_reference">
 						<span class="reference">&nbsp;</span>
 						<span> = Required Information</span>
 					</div>
 					<apex:form id="formId" onsubmit="if(validator('{!$Component.formId}', 'warning_to_user')) return false;">
+								
 						<div class="form_fields">
 							<div class="f_left">
 								<div class="field">
@@ -100,11 +161,11 @@
 										}
 									</script>
 									<apex:inputText id="competency" value="{!newCompetency.Name}" styleclass="large RQ_String" onFocus="javascript:
-										var options = {
-												script: function (input) { return ('SuggestDispatcher?input='+input+'&class=Competency'); },
-										        callback: function (obj) {}    
-												};
-										xml = new AutoComplete('{!$Component.competency}',options);return true;" onBlur="hideSuggest();" />								
+									var options = {
+											script: function (input) { return ('SuggestDispatcher?input='+input+'&class=Competency'); },
+									        callback: function (obj) {}    
+											};
+											xml = new AutoComplete('{!$Component.competency}',options);return true;" onBlur="hideSuggest();" />								
 								</div>							
 								<div class="field">
 									<label>Skill Level</label>																		
@@ -155,6 +216,7 @@
 										    var tickSize = 20;
 										
 										    Event.onDOMReady(function() {
+										    
 												// Build the slider
 										        slider = YAHOO.widget.Slider.getHorizSlider(bg, 
 										                         thumb, topConstraint, bottomConstraint, 20);
@@ -168,6 +230,7 @@
 												
 												var initialListCont = Dom.get('skillList');
 										        var InitialLis = Dom.getChildren(initialListCont);
+										        
 										        									            
 									            Dom.addClass(InitialLis[{!returnRating}],'selected');
 									            
@@ -241,9 +304,11 @@
 										        });
 										    });
 										})();
-									</script>		
-									 									
+										</script>
+										
+																									
 								</div>
+								
 								<div class="field" style="clear:both;">
 									<apex:inputCheckbox style="margin-left:125px;float:left;" value="{!NewUserCompetency.InterestedInProvidingAssistance__c}" /><label style="width: 350px; float: left; text-align: left; margin-left: 9px;">I am interested in provide asistance</label>
 								</div>

@@ -23,7 +23,8 @@
 		
 		try {
 			wiki.refreshWikis();    
-		}catch (exception e) {
+		}
+		catch (exception e) {
 			System.assert(true, e);
 		}
 		
@@ -31,11 +32,10 @@
 		wiki.setIdTeam(GenerateEnvironmentTest.newTeam.id);
 		wiki.setIdTeamOverview(GenerateEnvironmentTest.newTeam.id);
 		
-		wiki.getNamespace();
+		
 		wiki.constructMethods();    
 		
 		wiki.getNewWikiPage();
-		
 		
 		Test.stopTest();
 	}

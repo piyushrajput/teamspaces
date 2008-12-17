@@ -5,11 +5,10 @@
             Test.startTest();               
             
             TeamDetailsWidgetController team = new TeamDetailsWidgetController();
-            team.getNamespace(); 
-            
             team.setTeam(GenerateEnvironmentTest.newTeam.Id);
             Team__c teamspace = team.getTeamspace();
  
+            boolean  isTeamMember= team.getIsTeamMember();
             String member = team.getTeamMemberId();
             
             team.setTeam('no_id');
@@ -22,7 +21,6 @@
             String adminStr = team.getTeamAdmins();
             Integer cnt = team.getTeamCount();
             String pic = team.getTeamspaceImage(); 
-            team.getTeamIsOpen();
             
             String pic2 = team.getTeamspaceImage();
             String userName = team.getCurrentUser();

@@ -3,6 +3,7 @@ trigger TeamProfileAfterUpdate on TeamProfile__c bulk (after update) {
 		try {	
 			
 			List<TeamMember__c> membersProfileList = [select id, team__c, user__c, teamProfile__c from TeamMember__c where teamProfile__c in: Trigger.new];
+			System.debug(membersProfileList);
 			List<String> idsTeam = new List<String>();
 			List<String> groupsNames = new List<String>();
 			List<String> userIds = new List<String>();

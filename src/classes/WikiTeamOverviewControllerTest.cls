@@ -6,12 +6,14 @@
 		Test.startTest();
         
         WikiTeamOverviewController wtoc = new WikiTeamOverviewController();  
-        wtoc.getNamespace();
         
      	Team__c newTeam = GenerateEnvironmentTest.newTeam;
         
         wtoc.setTEAMID(newTeam.Id); 
+        
         wtoc.getTEAMID();
+        
+        //UserPermissionsTest.UserPermissionsTest(); 
         
         /* TeamWikis class */
         WikiTeamOverviewController.TeamWikis teamWikis = new WikiTeamOverviewController.TeamWikis();
@@ -34,18 +36,21 @@
         wikiClass.getLastModifiedDate();
         wikiClass.getShortDescription();
         
+        
         if (wtoc.getUserPermissions() == null) {
             System.assert(true, 'Null Permissions');
         }
+        
         if (wtoc.getUserPermissionsTeam() == null) {
             System.assert(true, 'Null Permissions');
         }
         
+      
         wtoc.genContructor();
         wtoc.getCurrentTeam();
         wtoc.getWpl();
         
-        // Create a new Wiki Child
+         // Create a new Wiki Child
         WikiPage__c newWiki = new WikiPage__c();
         newWiki.Name = 'Foo Child Wiki';
         newWiki.Team__c = GenerateEnvironmentTest.newTeam.Id;
@@ -54,6 +59,7 @@
         insert newWiki;
         
         wtoc.genContructor();
+        
         wtoc.trunkText('aaa ra ra fkjdsaf;lkjdsaf;lkjdsaflkjdsaf;lkjdsalkfjlkdsajflkdsajf;lkdsa');
         wtoc.getWikiSites();
         wtoc.getRecentlyUpdated();
@@ -61,6 +67,8 @@
         wtoc.getCntFav();
         wtoc.getMyRecentChanges();
         wtoc.getCntMyRecentChanges(); 
+        
+
         
         Test.stopTest();
     }

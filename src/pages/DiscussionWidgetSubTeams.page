@@ -1,9 +1,28 @@
 <apex:page controller="DiscussionWidgetSubTeamsController">
-
-	<!-- Common CSS -->
-	<apex:stylesheet value="{!URLFOR($Resource.discussionResources, 'inc/css/discussionWidgetSubTeam.css')}" />
+	<style>
 	
-	 
+		div.mySmallWidget div.header div div h3 {
+			padding: 5px 5px 0px 13px!important;
+		}	
+		
+		div.mySmallWidget div.header div div, div.mySmallWidget div.header div, div.mySmallWidget div.header {
+			height: 23px!important;
+		}
+		
+		div.mySmallWidget div.box_content div.thinBody div.team {
+			margin:4px 0pt;
+		}
+		
+		div.mySmallWidget div.box_content div.thinBody div.team div.desc {
+			height:auto;
+		}
+		
+		div.mySmallWidget div.box_content div.thinBody div.team div.desc {
+			width: 170px;
+		}
+		
+	</style>
+
 	<!-- Discussion Widget Sub Teams -->
 	<div class="teamWidget mySmallWidget" >
 		<!-- Widget Title -->		

@@ -49,8 +49,8 @@
 			admin.saveTeamProfile();          
             
             Test.stopTest();
-        }catch(Exception e){
-        	
+        }
+        catch(Exception e){
         }
     }
 }

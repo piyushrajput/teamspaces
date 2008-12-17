@@ -1,6 +1,3 @@
-/**
-*@author Bruno Fagundez @ 06/09/2008
-*/
 public with sharing class TeamsDetailController {
 	
 	Team__c teamspace = new Team__c();
@@ -8,53 +5,41 @@ public with sharing class TeamsDetailController {
     boolean noImage; 
     boolean emailTeamspace;
     String  error = '';
-    boolean showError = false;
+    boolean showError = false; 
 	
 	public static UserPermissions userPermission = new UserPermissions();
 	
 	String teamIdParam = System.currentPageReference().getParameters().get('id'); 
 	
-	/**
-	* Constructor
-	*/
-	public TeamsDetailController(){
-		if(teamIdParam != null)
-			getTeamDetail();		
-		genPermissions();
-	}	
-	
-	/**
-	*@param String team id
-	*/
 	public void setTeamIdParam (String idTeam){ 
 		teamIdParam = idTeam;
 	}
 	
-	/**
-	* Check if is TeamsSuscription page
-	*@return Boolean 
-	*/
 	public Boolean getInTeamSubscription () {
+		
 		String currentPageUrl = System.currentPageReference().getUrl();
 		return (currentPageUrl != null && currentPageUrl.indexOf('TeamsSubscription') != -1);
+		
+		/*if (currentPageUrl != null && currentPageUrl.indexOf('TeamsSubscription') != -1) {
+			inTeamSubscription = true;
+		}
+		return inTeamSubscription;
+		*/
 	} 
 	
 	public String USERID =  UserInfo.getUserId();
 	
+    /* ---------------------------- */
+   	/*   	 SHARING RULES 			*/
+   	/* ---------------------------- */	
 	public UserPermissions userPermissionsTeam = new UserPermissions();
 	
 	public UserPermissions userPermissionsWiki = new UserPermissions();
 	
-	/**
-	*@return UserPermission
-	*/
 	public UserPermissions getUserPermissionsWiki () {
 		return userPermissionsWiki;
 	}
 	
-	/**
-	* Load permission for current user
-	*/
 	public void genPermissions () {
 		userPermission.setId(UserInfo.getUserId());
 		userPermission.setTeam(teamIdParam);
@@ -68,9 +53,6 @@ public with sharing class TeamsDetailController {
 		userPermissionsTeam.setPermissions();					
 	}
 
-	/**
-	*@return UserPermission
-	*/
 	public UserPermissions getUserPermission () {
 		return userPermission;
 	}	
@@ -83,11 +65,22 @@ public with sharing class TeamsDetailController {
 	public String getTeamIdParam(){
 		return teamIdParam;
 	}
-
 	/**
-	* Read Team
-	*@throws Exception
+	* Boolean to determine if show buttons.
 	*/
+	Boolean teamIsOpen = false;
+	
+	public Boolean getTeamIsOpen(){
+		return teamIsOpen;
+	}
+	
+		
+	public TeamsDetailController(){
+		if(teamIdParam != null)
+			getTeamDetail();		
+		genPermissions();
+	}
+	
 	public void getTeamDetail(){
 		try {
 			teamspace = [Select  t.SystemModstamp, 
@@ -110,21 +103,6 @@ public with sharing class TeamsDetailController {
 	}
 	
 	/**
-	* Boolean to determine if show buttons.
-	*/
-	Boolean teamIsOpen = false;
-	
-	/**
-	* Returns true if team is open
-	*@return Boolean
-	*/
-	public Boolean getTeamIsOpen(){
-		List<TeamMember__c> member = [select Id from TeamMember__c where User__c =: UserInfo.getUserId() and Team__c =: teamspace.Id limit 1];
-		teamIsOpen = (member.size() == 0);
-		return teamIsOpen;
-	}
-	
-	/**
 	* Show join event
 	*@return Boolean
 	*/
@@ -135,29 +113,55 @@ public with sharing class TeamsDetailController {
 		canShow = (members.size() == 0) && ((teamspace.PublicProfile__c != null && teamspace.NewMemberProfile__c != null) ||
 											(userPermissionsTeam.getCanManage()));
 		
+		/*if(members.size() == 0){
+			if(teamspace.PublicProfile__c != null && teamspace.NewMemberProfile__c != null){
+				canShow = true;
+			} else if (userPermissionsTeam.getCanManage()){
+				canShow = true;
+			}		
+		}else{
+			canShow = false;
+		}
+		*/
 		return canShow;
 	}
 	
 	/**
-   	* For show join button
-   	*@void
-   	*/
-   	public void refreshJoinEvent(){
-   		teamIsOpen = showJoinEvent();
-   	}
+	* Perform the addition to the team
+	*/	
+	public boolean showJoinTeamMessage = false;
 	
 	/**
-	* Join Team
+	* assignShowJoinTeamMessage()
+	*@void
 	*/
+	public void assignShowJoinTeamMessage () {
+		String joinedTeamParam = System.currentPageReference().getParameters().get('j');
+	
+		if(joinedTeamParam == 'true'){
+			showJoinTeamMessage =  true;
+		} else {
+			showJoinTeamMessage =  false;
+		}
+	}
+	
+	public boolean getShowJoinTeamMessage(){
+		return showJoinTeamMessage;
+	}
+	
+	
 	public void joinTeam(){
+		 
 		 TeamMember__c newUserJoin = new TeamMember__c();
-		 if(teamIsOpen){
+		 if(teamspace != null ){
+		 	
 			 newUserJoin.User__c = USERID;
 			 newUserJoin.Name = UserInfo.getName();
 			 newUserJoin.Team__c = teamspace.Id;
 			 newUserJoin.TeamProfile__c = teamspace.NewMemberProfile__c;		 
 			 teamIsOpen = false;
-			 			 
+			 showJoinTeamMessage = true;
+			 
 			 insert newUserJoin;
 		 }
 	}
@@ -165,21 +169,23 @@ public with sharing class TeamsDetailController {
 	
 	/**
 	* Perform the remove from the team
-	*@throws Exception
 	*/		
 	public void leaveTeam(){
+		 
 		 List<TeamMember__c> userRow = new List<TeamMember__c>();
 		
 		 try {
 		 	userRow = [Select Id, User__c, Team__c from TeamMember__c where User__c =: USERID and Team__c =: teamspace.Id];
-		 } catch(Exception e){ 
-		 
-		 }
+		 	
+		 } catch(Exception e){ }
 		 		 
+		 teamIsOpen = true;
+		 showJoinTeamMessage = false;
+		 
 		 if (userRow.size() == 1) {
 		 	delete userRow;
-		 	teamIsOpen = true;
 		 }
+		 
 	}
 	
 	/**
@@ -201,12 +207,15 @@ public with sharing class TeamsDetailController {
     *@return String
     */
     public String getTeamspaceImage() {
-    
+    	/*List<Attachment> attach = [SELECT Id 
+        									 FROM Attachment 
+        									 WHERE ParentId =:System.currentPageReference().getParameters().get('id')];
+        	if(attach.size() == 0) return '';					
+        		return '/servlet/servlet.FileDownload?file=' + attach[0].Id;*/
         List<Team__c> teamAvatar = [select Picture__c
         								from Team__c
         								where Id =:System.currentPageReference().getParameters().get('id')];
-        if(teamAvatar.size() == 0) 
-        	return '';
+        if(teamAvatar.size() == 0) return '';
         return '/servlet/servlet.FileDownload?file=' + teamAvatar[0].Picture__c;
     }  
     
@@ -215,8 +224,23 @@ public with sharing class TeamsDetailController {
    	* Refresh wiki list for widgets
    	*@void
    	*/
-   	public void refreshWikis () {}
+   	public void refreshWikis () {
+    	System.debug('\n //////////////////// \n REFRESH THE WIKIS \n ////////////////// \n');
+   	}
+   	
+   	/**
+   	* For show join button
+   	*@void
+   	*/
+   	public void refreshJoinEvent(){
+   		teamIsOpen = showJoinEvent();
+   	}
    	
    	public static ProjectTask__c taskT;
 
+    /*public void SaveTest(){
+   		System.debug('\n //////////////////// \n Task in TeamDetailController = '+ taskT+' \n ////////////////// \n');
+   	 }
+   	 */
+  
 }

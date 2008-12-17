@@ -5,8 +5,10 @@ trigger TeamBeforeDelete on Team__c bulk (before delete) {
 			
 		    Integer mySoql = 0;
 		    Integer mySoqlLimit = Limits.getLimitQueries();    
-		   
+		    System.debug('\n \n ///////////////////////////////// \n SAVE THIS SOQL QUERIES LIMIT:\n' + mySoqlLimit + '\n ///////////////////////////// \n \n');
+		    
 		    mySoql = Limits.getQueries();
+		    System.debug('\n \n ///////////////////////////////// \n SAVE THIS SOQL QUERIES COUNT:\n' + mySoql + '\n ///////////////////////////// \n \n');
 		    
 		    Team__c[] t = Trigger.old;      
 		        
@@ -15,37 +17,44 @@ trigger TeamBeforeDelete on Team__c bulk (before delete) {
 		    delete members;     
 			
 			mySoql = Limits.getQueries();
-		    
+		    System.debug('\n \n ///////////////////////////////// \n SAVE THIS SOQL QUERIES COUNT members:\n' + mySoql + '\n ///////////////////////////// \n \n');
+			
 		    //Remove Wiki Pages from the Team 
 		    // commenting for now untill we're ready for deleting wiki pages.
 		    List<Wikipage__c> pages = [SELECT Id FROM WikiPage__c WHERE Team__c in :Trigger.old];
 		    delete pages; 
 		    
 		    mySoql = Limits.getQueries();
+		    System.debug('\n \n ///////////////////////////////// \n SAVE THIS SOQL QUERIES COUNT pages:\n' + mySoql + '\n ///////////////////////////// \n \n');
 		    
 		    //Remove Project2__c
 		     List<Project2__c> project2 = [SELECT Id FROM Project2__c WHERE Team__c in :Trigger.old];
 		     delete project2;  
 		    
 		   	mySoql = Limits.getQueries();
+		    System.debug('\n \n ///////////////////////////////// \n SAVE THIS SOQL QUERIES COUNT project2:\n' + mySoql + '\n ///////////////////////////// \n \n');
 		    
 		    //Remove Discussion Forum from the Team 
 		    List<DiscussionForum__c> forum = [Select d.Id From DiscussionForum__c d where d.Team__c in :Trigger.old];
 		    delete forum;
 		    
 		    mySoql = Limits.getQueries();
+		    System.debug('\n \n ///////////////////////////////// \n SAVE THIS SOQL QUERIES COUNT forum:\n' + mySoql + '\n ///////////////////////////// \n \n');
 		     
 		    //Remove Minifeeds
 		    List<MiniFeed__c> minifeeds = [SELECT Id FROM MiniFeed__c WHERE Team__c in :Trigger.old];                     
 		    delete minifeeds;   
 		    
 		    mySoql = Limits.getQueries();
+		    System.debug('\n \n ///////////////////////////////// \n SAVE THIS SOQL QUERIES COUNT minifeeds:\n' + mySoql + '\n ///////////////////////////// \n \n');
 		      
 		    //Remove SubTeams
 		    List<Team__c> subteams = [SELECT Id FROM Team__c WHERE ParentTeam__c in :Trigger.old];                     
 		    delete subteams;
 		    
 		    mySoql = Limits.getQueries();
+		    System.debug('\n \n ///////////////////////////////// \n SAVE THIS SOQL QUERIES COUNT subteams:\n' + mySoql + '\n ///////////////////////////// \n \n');
+		    
 		    
 		    List<String> groupsNames = new List<String>();
 		    for (Team__c iterTeam : Trigger.old) {
@@ -60,6 +69,7 @@ trigger TeamBeforeDelete on Team__c bulk (before delete) {
 	    	delete groups; 	
 			
 			mySoql = Limits.getQueries();
+		    System.debug('\n \n ///////////////////////////////// \n SAVE THIS SOQL QUERIES COUNT groups:\n' + mySoql + '\n ///////////////////////////// \n \n');
 		}catch(Exception e){
 			throw e;
 		} finally {

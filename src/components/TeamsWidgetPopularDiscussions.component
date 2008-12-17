@@ -41,6 +41,7 @@
 			font-weight: bold;
 		}
 	</style>
+
 	<div class="teamWidget mySmallWidget" >
 		<!-- Widget Title -->		
 		<div class="thinHeader">
@@ -55,13 +56,15 @@
 	            <div style="{!IF(popularDiscussionsSize > 0, '', 'display:none')};">
 	                <ul class="popDiscussions">        
 		                <apex:repeat value="{!Discussions}" var="t">                 
-		                	<li>
-		                   		<a href="/apex/DiscussionDetail?id={!t.Id}">{!t.Subject__c}</a>
+		                   <li>
+		                   		<a href="/apex/DiscussionDetail?id={!t.Id}">
+									{!t.Subject__c} 
+								</a>
 							</li>
 		                </apex:repeat>
 	                </ul>  
 	            </div>   
-			</div>
+			</div>				
 		</div>
 		<!-- Widget Holder Foot -->
 		<div class="bottom_borders">

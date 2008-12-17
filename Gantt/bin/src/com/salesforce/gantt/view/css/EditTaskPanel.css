@@ -1,0 +1,107 @@
+
+.headerborder
+{
+	font-family : verdana, arial;
+	vertical-align : middle;
+	background-Color : #cccccc; 
+	height : 26; 
+	border-Color : 999999;
+	border-Thickness : 1; 
+	border-Style : solid; 
+	border-Sides : bottom;
+}
+
+.headerlabel
+{
+	font-family : verdana, arial;
+	color : #666666;
+	font-weight : bold;
+	text-align : center;
+	font-size : 11px;
+
+}
+/* setea el estilo del formulario de la clase EditTaskPanel*/
+.form  
+{
+	
+	font-family : Arial Narrow, Arial, Trebuchet MS;
+	font-size:12;	
+	padding-Left : 0; 
+	padding-Right : 0;  
+	padding-Bottom : 0;
+	padding-Top : 10;
+	top : 0;
+}
+ /* setea la letra o labels de cada item de el Form*/
+.labelFormItem 
+{
+	font-weight:bold;
+	color:#999999; 
+	text-Align : right;
+	/*margin-left:45px;*/
+}
+/* setea el estilo de los DataField y de los text input del form de la clase EditTaskPanel*/
+.textInputFormItem    
+{
+	border-style : solid;
+	border-color:#CBCBCB;
+	font-size : 12pt;
+	font-family:Arial Narrow, Arial, Trebuchet MS;
+	margin : none;  
+	padding : none;   
+	
+}
+
+
+.footerbuttons {
+
+	padding-top:10;
+	
+}
+
+/* Required field block */
+.requiredBlockImg {
+	margin:0;
+	padding-right:0;
+	padding-left:0;
+	
+}
+/* setea el estilo del NumericStepper (el contador de dias, la duracion) de la clase EditTaskPanel*/ 
+.numericStepperDuration  
+{
+	border-style : none; 
+	font-size : 10pt;
+	margin : none;  
+	padding : none;   
+	text-Align : right;
+	cornerRadius : 0; 
+}
+/*setea la label del parent task de la clase EditTaskPanel*/
+.labelLinkFormItem 
+{
+	font-family : verdana, arial;
+	text-color: #666666;
+	text-decoration:underline;
+	/*padding-right:15px;*/
+}
+/*setea el VBox que contiene el link [delete] */
+.VBoxDelete  
+{
+	font-family : verdana, arial;
+	border-Style : none;
+}
+/*cambie el estilo de cada item en el Form*/
+.FormItem
+{
+	xborder-style : solid; 
+	xborder-sides : bottom; 
+	xborder-color : #dbdbdb;
+	
+}
+.link
+{
+    color: #666666;
+    text-decoration:underline;
+}
+
+

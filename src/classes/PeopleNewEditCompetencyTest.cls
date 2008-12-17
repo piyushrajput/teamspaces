@@ -35,7 +35,7 @@
             UserCompetencies__c userCompetency = people.getNewUserCompetency();
             
             people.setNameCompetency('Competency Name');
-            PageReference page1 = people.saveCompetency();               
+            PageReference page = people.saveCompetency();               
 
             Competency__c comp = [select id, Name from Competency__c limit 1];
             people.setNewCompetency(comp);
@@ -68,7 +68,7 @@
             PageReference page2 = people.deleteCompetency();
             
             PageReference page3 = people.cancel();
-            PageReference page4 = people.forwardTo('/apex/TeamsOverview');
+            PageReference page4 = people.forwardTo('/apex/teamsOverview');
             PageReference page5 = people.cancelCompetency();
             PageReference page9 = people.findPeople();
             

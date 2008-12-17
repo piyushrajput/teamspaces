@@ -17,45 +17,85 @@
 
 		wiki.contructMethods();
 
-		if (wiki.getWikiSiteName() == null) 
+		if (wiki.getWikiSiteName() == null) {
 			System.assert(true, 'Null Wiki Site Name');	
-		if (wiki.getidWikiPage() == null) 
+		}
+		
+		if (wiki.getidWikiPage() == null) {
 			System.assert(true, 'Null Wiki Page Id');	
-		if (wiki.getWikiBody() == null) 
+		}
+		
+		if (wiki.getWikiBody() == null) {
 			System.assert(true, 'Null Wiki Page Body');	
+		}
+		
+		try {
+			//wiki.parseHTML();
+		}
+		catch (exception e) {   
+			System.assert(true, e);
+		}
 		
 		wiki.getHtml();
+		
 		wiki.getHtml2();
+		
 		wiki.getChilds();
 		
-		if (wiki.getChildsCount() == null) 
+		if (wiki.getChildsCount() == null) {
 			System.assert(true, 'Null Wiki Page Childs Count');	
-			
+		}
+		
 		/* INFO INNER CLASS */
 		WikiPageController.Info info = new WikiPageController.Info();
 		
-		if (info.getName() == null) 
+		if (info.getName() == null) {
 			System.assert(true, 'Null Wiki Page Info var');	
-		if (info.getShortDescription() == null) 
+		}
+		
+		if (info.getShortDescription() == null) {
 			System.assert(true, 'Null Wiki Page Info var');	
-		if (info.getCreatedBy() == null) 
+		}
+		
+		if (info.getCreatedBy() == null) {
 			System.assert(true, 'Null Wiki Page Info var');	
-		if (info.getCreatedById() == null) 
+		}
+		
+		if (info.getCreatedById() == null) {
 			System.assert(true, 'Null Wiki Page Info var');	
-		if (info.getLastModifiedBy() == null) 
+		}
+		
+		if (info.getLastModifiedBy() == null) {
 			System.assert(true, 'Null Wiki Page Info var');	
-		if (info.getLastModifiedById() == null) 
+		}
+		
+		if (info.getLastModifiedById() == null) {
 			System.assert(true, 'Null Wiki Page Info var');	
-		if (info.getCreatedDate() == null) 
+		}
+		
+		if (info.getCreatedDate() == null) {
 			System.assert(true, 'Null Wiki Page Info var');	
-		if (info.getLastModifiedDate() == null) 
+		}
+		
+		if (info.getLastModifiedDate() == null) {
 			System.assert(true, 'Null Wiki Page Info var');	
-		if (wiki.getInfoWiki() == null) 
+		}
+		
+		try {
+			//wiki.infoGen();
+		}
+		catch (exception e) {
+			System.assert(true, e);
+		}
+		
+		if (wiki.getInfoWiki() == null) {
 			System.assert(true, 'Null Wiki Page Info');	  
+		}
 		
 		try {
 			wiki.getWiki();	
-		}catch (exception e) {
+		}
+		catch (exception e) {
 			System.assert(true, e);
 		}
 		
@@ -66,94 +106,147 @@
 		
 		try {
 			wiki.cancelNew();
-		}catch (exception e) {
+		}
+		catch (exception e) {
 			System.assert(true, e);
 		}
 		
 		try {
 			wiki.newWiki();
-		}catch (exception e) {
+		}
+		catch (exception e) {
 			System.assert(true, e);
 		}
 		
-		if (wiki.getnewWP() == null) 
-			System.assert(true, 'Null New Wiki Page');	
-		if (wiki.getnewWP() == null) 
-			System.assert(true, 'Null New Wiki Page');	
+		if (wiki.getnewWP() == null) {
+			System.assert(true, 'Null New Wiki Page');		
+		}
+		
+		if (wiki.getnewWP() == null) {
+			System.assert(true, 'Null New Wiki Page');		
+		}
 		
 		/* ATTACHMENTS */
 		WikiPageController.AttachmentInfo attach = new WikiPageController.AttachmentInfo();
 		
-		if (attach.getId() == null) 
+		if (attach.getId() == null) {
 			System.assert(true, 'Null Attach var');	
-		if (attach.getName() == null) 
+		}
+		
+		if (attach.getName() == null) {
 			System.assert(true, 'Null Attach var');	
-		if (attach.getAttachImage() == null) 
+		}
+		
+		if (attach.getAttachImage() == null) {
 			System.assert(true, 'Null Attach var');	
-		if (wiki.getAttachments() == null) 
+		}
+		
+		if (wiki.getAttachments() == null) {
 			System.assert(true, 'Null Attachments list');	
-		if (wiki.getAttachCount() == null) 
-			System.assert(true, 'Null Attachments list');
+		}
+		
+		if (wiki.getAttachCount() == null) {
+			System.assert(true, 'Null Attachments list');	
+		}
+		
 		
 		/* BREAD CRUMBRING */
-		if (wiki.getBreadCrumbing() == null) 
+		if (wiki.getBreadCrumbing() == null) {
 			System.assert(true, 'Null Bread Crumbing');	
+		}
 		
 		/* OUTGOING AND INCOMING */
-		if (wiki.getOutgoing() == null) 
+		if (wiki.getOutgoing() == null) {
+			System.assert(true, 'Null Out/Inc links vars');	  
+		}
+		
+		if (wiki.getCntOutgoing() == null) {
+			System.assert(true, 'Null Out/Inc links vars');		
+		}
+		
+		if (wiki.getIncoming() == null) {
 			System.assert(true, 'Null Out/Inc links vars');	
-		if (wiki.getCntOutgoing() == null) 
+		}
+		
+		if (wiki.getCntIncoming() == null) {
 			System.assert(true, 'Null Out/Inc links vars');	
-		if (wiki.getIncoming() == null) 
-			System.assert(true, 'Null Out/Inc links vars');	
-		if (wiki.getCntIncoming() == null) 
-			System.assert(true, 'Null Out/Inc links vars');	
+		}
 		
 		/* RECENTLY UPDATED */
-		if (wiki.getRecentlyUpdated() == null) 
-			System.assert(true, 'Null Recently Updated');	
+		if (wiki.getRecentlyUpdated() == null) {
+			System.assert(true, 'Null Recently Updated');		
+		}
 		
 		/* TAG CLOUD */
 		WikiPageController.Links tagCloud = new WikiPageController.Links();
 		
-		if (tagCloud.getLinkName() == null) 
+		if (tagCloud.getLinkName() == null) {
 			System.assert(true, 'Null TagCloud vars');		
-		if (tagCloud.getLinkId() == null) 
+		}
+		
+		if (tagCloud.getLinkId() == null) {
 			System.assert(true, 'Null TagCloud vars');		
-		if (tagCloud.getLinkCount() == null) 
+		}
+		
+		if (tagCloud.getLinkCount() == null) {
 			System.assert(true, 'Null TagCloud vars');		
-		if (tagCloud.getLinkClass() == null) 
+		}
+		
+		if (tagCloud.getLinkClass() == null) {
 			System.assert(true, 'Null TagCloud vars');		
-		if (tagCloud.getLinkClass() == null) 
-			System.assert(true, 'Null TagCloud vars');	
-		if (wiki.getLinkCount() == null) 
+		}
+		
+		if (tagCloud.getLinkClass() == null) {
+			System.assert(true, 'Null TagCloud vars');		
+		}
+		
+		if (wiki.getLinkCount() == null) {
 			System.assert(true, 'Null TagCloud');		
-		if (wiki.getLinksNum() == null) 
+		}
+		
+		if (wiki.getLinksNum() == null) {
 			System.assert(true, 'Null TagCloud');		
-			
+		}
+		
 		/* MY FAVOURITES */
-		if (wiki.getFavorite() == null) 
-			System.assert(true, 'Null Favorite');	
-		if (wiki.getIsFav() == null) 
-			System.assert(true, 'Null Is Favorite');	
-		if (wiki.getCntFav() == null) 
-			System.assert(true, 'Null Count Favorite');	
+		if (wiki.getFavorite() == null) {
+			System.assert(true, 'Null Favorite');		
+		}
+		
+		if (wiki.getIsFav() == null) {
+			System.assert(true, 'Null Is Favorite');		
+		}
+		
+		if (wiki.getCntFav() == null) {
+			System.assert(true, 'Null Count Favorite');		
+		}
 		
 		/* RECENTLY VIEW */
 		WikiPageController.RecentlyView recentlyView = new WikiPageController.RecentlyView();
 		
-		if (recentlyView.getWikiId() == null) 
-			System.assert(true, 'Null Recently View var');	
-		if (recentlyView.getWikiName() == null) 
-			System.assert(true, 'Null Recently View var');	
-		if (recentlyView.getParentName() == null) 
-			System.assert(true, 'Null Recently View var');	
-		if (recentlyView.getBelong() == null) 
-			System.assert(true, 'Null Recently View var');	
-		if (wiki.getRecentlyView() == null) 
+		if (recentlyView.getWikiId() == null) {
+			System.assert(true, 'Null Recently View var');		
+		}
+		
+		if (recentlyView.getWikiName() == null) {
+			System.assert(true, 'Null Recently View var');		
+		}
+		
+		if (recentlyView.getParentName() == null) {
+			System.assert(true, 'Null Recently View var');		
+		}
+		
+		if (recentlyView.getBelong() == null) {
+			System.assert(true, 'Null Recently View var');		
+		}
+		
+		if (wiki.getRecentlyView() == null) {
 			System.assert(true, 'Null Recently View');		
-		if (wiki.getCntViews() == null) 
-			System.assert(true, 'Null Count of Recently View');	
+		}
+		
+		if (wiki.getCntViews() == null) {
+			System.assert(true, 'Null Count of Recently View');		
+		}
 		
 		/* COMMENTS */
 		Comment__c newComment = new Comment__c();
@@ -175,9 +268,13 @@
 		comments.getComment();
 		
 		wiki.getComments();
+		
 		wiki.getCntComments();
+		
 		wiki.getAddComment();
+		
 		wiki.addCommentLink();
+		
 		wiki.cancelComment();
 		
 		Test.stopTest();

@@ -371,6 +371,14 @@
     </fieldLevelSecurities>
     <fieldLevelSecurities>
         <editable>true</editable>
+        <field>ProjectAssignee__c.ProjectIssue__c</field>
+    </fieldLevelSecurities>
+    <fieldLevelSecurities>
+        <editable>true</editable>
+        <field>ProjectAssignee__c.ProjectRisk__c</field>
+    </fieldLevelSecurities>
+    <fieldLevelSecurities>
+        <editable>true</editable>
         <field>ProjectAssignee__c.ProjectTask__c</field>
     </fieldLevelSecurities>
     <fieldLevelSecurities>
@@ -380,6 +388,94 @@
     <fieldLevelSecurities>
         <editable>true</editable>
         <field>ProjectAssignee__c.User__c</field>
+    </fieldLevelSecurities>
+    <fieldLevelSecurities>
+        <editable>true</editable>
+        <field>ProjectIssue__c.Deadline__c</field>
+    </fieldLevelSecurities>
+    <fieldLevelSecurities>
+        <editable>true</editable>
+        <field>ProjectIssue__c.Description__c</field>
+    </fieldLevelSecurities>
+    <fieldLevelSecurities>
+        <editable>true</editable>
+        <field>ProjectIssue__c.Percent_Complete__c</field>
+    </fieldLevelSecurities>
+    <fieldLevelSecurities>
+        <editable>true</editable>
+        <field>ProjectIssue__c.Priority__c</field>
+    </fieldLevelSecurities>
+    <fieldLevelSecurities>
+        <editable>true</editable>
+        <field>ProjectIssue__c.ProjectTask__c</field>
+    </fieldLevelSecurities>
+    <fieldLevelSecurities>
+        <editable>true</editable>
+        <field>ProjectIssue__c.Project__c</field>
+    </fieldLevelSecurities>
+    <fieldLevelSecurities>
+        <editable>true</editable>
+        <field>ProjectIssue__c.StartDate__c</field>
+    </fieldLevelSecurities>
+    <fieldLevelSecurities>
+        <editable>true</editable>
+        <field>ProjectIssue__c.Team__c</field>
+    </fieldLevelSecurities>
+    <fieldLevelSecurities>
+        <editable>true</editable>
+        <field>ProjectRisk__c.Category__c</field>
+    </fieldLevelSecurities>
+    <fieldLevelSecurities>
+        <editable>true</editable>
+        <field>ProjectRisk__c.DateClosed__c</field>
+    </fieldLevelSecurities>
+    <fieldLevelSecurities>
+        <editable>true</editable>
+        <field>ProjectRisk__c.DateDue__c</field>
+    </fieldLevelSecurities>
+    <fieldLevelSecurities>
+        <editable>true</editable>
+        <field>ProjectRisk__c.DateOpened__c</field>
+    </fieldLevelSecurities>
+    <fieldLevelSecurities>
+        <editable>true</editable>
+        <field>ProjectRisk__c.DaysImpact__c</field>
+    </fieldLevelSecurities>
+    <fieldLevelSecurities>
+        <editable>true</editable>
+        <field>ProjectRisk__c.Description__c</field>
+    </fieldLevelSecurities>
+    <fieldLevelSecurities>
+        <editable>true</editable>
+        <field>ProjectRisk__c.ImpactDescription__c</field>
+    </fieldLevelSecurities>
+    <fieldLevelSecurities>
+        <editable>true</editable>
+        <field>ProjectRisk__c.MitigationPlan__c</field>
+    </fieldLevelSecurities>
+    <fieldLevelSecurities>
+        <editable>true</editable>
+        <field>ProjectRisk__c.Priority__c</field>
+    </fieldLevelSecurities>
+    <fieldLevelSecurities>
+        <editable>true</editable>
+        <field>ProjectRisk__c.Probability__c</field>
+    </fieldLevelSecurities>
+    <fieldLevelSecurities>
+        <editable>true</editable>
+        <field>ProjectRisk__c.ProjectTask__c</field>
+    </fieldLevelSecurities>
+    <fieldLevelSecurities>
+        <editable>true</editable>
+        <field>ProjectRisk__c.Project__c</field>
+    </fieldLevelSecurities>
+    <fieldLevelSecurities>
+        <editable>true</editable>
+        <field>ProjectRisk__c.Status__c</field>
+    </fieldLevelSecurities>
+    <fieldLevelSecurities>
+        <editable>true</editable>
+        <field>ProjectRisk__c.Team__c</field>
     </fieldLevelSecurities>
     <fieldLevelSecurities>
         <editable>true</editable>
@@ -884,6 +980,12 @@
         <layout>ProjectAssignee__c-Project Issue Assignee Layout</layout>
     </layoutAssingments>
     <layoutAssingments>
+        <layout>ProjectIssue__c-Project Issue Layout</layout>
+    </layoutAssingments>
+    <layoutAssingments>
+        <layout>ProjectRisk__c-Project Risk Layout</layout>
+    </layoutAssingments>
+    <layoutAssingments>
         <layout>ProjectTaskPred__c-ProjectTaskPred Layout</layout>
     </layoutAssingments>
     <layoutAssingments>
@@ -981,6 +1083,12 @@
     </objectPermissions>
     <objectPermissions>
         <object>ProjectAssignee__c</object>
+    </objectPermissions>
+    <objectPermissions>
+        <object>ProjectIssue__c</object>
+    </objectPermissions>
+    <objectPermissions>
+        <object>ProjectRisk__c</object>
     </objectPermissions>
     <objectPermissions>
         <object>ProjectTaskPred__c</object>

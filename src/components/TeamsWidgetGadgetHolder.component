@@ -1,8 +1,15 @@
 <apex:component controller="TeamsWidgetGadgetHolderController">
-	<!-- This attribute is required if the component is a widget -->	
+	
+	<!-- 
+		### Attribute Definitions ###
+		This attribute is required if the component is a widget	
+	-->	
 	<apex:attribute name="source" description="Iframe source" type="String" required="true" assignTo="{!source}" />
 	<apex:attribute name="name" description="Gadget name" type="String" required="true" assignTo="{!name}" />	
 	<apex:attribute name="sidebar" description="Holder" type="Boolean" required="false" assignTo="{!sidebar}" />
+	
+	<!-- ### Javascript ### -->
+	
 	<!-- ### Wide Widget ### -->	
 	<apex:outputPanel layout="block" rendered="{!IF(!sidebar, true, false)}">	
 		<div class="myBigWidget">
@@ -16,6 +23,7 @@
 			</div>
 		</div>		
 	</apex:outputPanel>
+	
 	<!--  ### Thin Widget ###  -->	
 	<apex:outputPanel layout="block" rendered="{!IF(sidebar, true, false)}">
 		<div class="teamWidget mySmallWidget" >
@@ -36,4 +44,5 @@
 		</div>
 		<div class="clear"></div>		
 	</apex:outputPanel>
+
 </apex:component>

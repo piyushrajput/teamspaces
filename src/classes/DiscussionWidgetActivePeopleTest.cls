@@ -2,6 +2,7 @@
 
     public static testMethod void testDiscussion() {
         try{
+        	
         	GenerateEnvironmentTest.gen();   
     		Test.startTest();
             DiscussionWidgetActivePeopleController dis = new DiscussionWidgetActivePeopleController(); 

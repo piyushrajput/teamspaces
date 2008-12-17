@@ -21,6 +21,7 @@
 			color:white; 
 			font-size:11px;
 		}	
+
 		div.brt div.contblue {
 			background:url( {!URLFOR($Resource.TeamsResources, 'images/layout/rc_boxes/blue.gif')} ) no-repeat;
 			color:#FFFFFF;
@@ -43,10 +44,12 @@
 			width:106px;
 		}
 	</style>  
+	
 	<script>
 		/*********************************/
 		  /* Status  Change Scripting	 */
 		/*********************************/
+
 		// Edit Status
 		/////////////////////////////////
 		function editStatus(){
@@ -86,7 +89,9 @@
 				$(linkid).onclick();
 			}
 		}
+		
 	</script>
+
 	<div class="teamWidget mySmallWidget" >
 		<!-- Widget Title -->		
 		<div class="thinHeader" style="background:white;">
@@ -120,11 +125,12 @@
 				<apex:outputPanel id="StatusPanel">
 					<div class="status" id="status" style="margin: 5px;" >
 						<div class="statusOverlay" id="statusOverlay" style="display:none;">
-							<br /><img src="{!URLFOR($Resource.PeopleResourceFiles, 'images/layout/small_loader.gif')}" alt="Loading..." />						
+							<br />
+							<img src="{!URLFOR($Resource.PeopleResourceFiles, 'images/layout/small_loader.gif')}" alt="Loading..." />						
 						</div>
 						<div id="currentStatus">
-							<p class="status" id="statusParagraph" style="{!IF(ShowStatus,'','display:none;')}"><strong>{!MySidebarProfile.User__r.FirstName}</strong>&nbsp;<span id="status_message">{!Status.Message}</span></p>
-							<p class="last_update" id="statusModifiedParagraph" style="{!IF(ShowStatus,'','display:none;')}"><span id="status_modified">{!Status.Modified}.</span><a href="javascript:;" onclick="editStatus();" id="edit_status">edit</a></p>
+								<p class="status" id="statusParagraph" style="{!IF(ShowStatus,'','display:none;')}"><strong>{!MySidebarProfile.User__r.FirstName}</strong>&nbsp;<span id="status_message">{!Status.Message}</span></p>
+								<p class="last_update" id="statusModifiedParagraph" style="{!IF(ShowStatus,'','display:none;')}"><span id="status_modified">{!Status.Modified}.</span><a href="javascript:;" onclick="editStatus();" id="edit_status">edit</a></p>
 							<a class="setStatus" href="javascript:;" onclick="editStatus();" style="{!IF(ShowStatus,'display:none;','')}" id="newStatusLink">Share with your co-workers what you're doing.</a>							 								
 						</div>
 						<div id="statusEdition" style="display:none;">
@@ -133,27 +139,23 @@
 							<apex:form >
 								<apex:inputHidden value="{!Status.Message}" id="status"/>
 								<script>var InputStatusId = '{!$Component.status}';</script>
-								<div class="div_content_buttons">
-									<div class="buttonSave">
-										<apex:actionStatus id="StatusAS">
-											<apex:facet name="start"><apex:outputText value="Saving..." /></apex:facet>
-							                <apex:facet name="stop">
-												<apex:commandLink action="{!EditStatus}" 
-													id="StatusSaverLink" 
-													status="StatusAS"									 										
-													value="Save" 
-													styleClass="saveLabel" 
-													rerender="StatusPanel" 
-													oncomplete="cancelEditStatus(); setValue('{!Status.Message}');" >
-												</apex:commandLink> 
-											</apex:facet>
-										</apex:actionStatus>
-									</div>
-									<div class="cancel grayButton">
-										<a href="javascript:;" onclick="cancelEditStatus();">Cancel</a>						
-									</div>
+							<!-- <input id="statusField" class="statusInputText"  width="40" style="margin-bottom:3px;"/> -->
+							<div class="div_content_buttons">
+								<div class="buttonSave">
+									<apex:actionStatus id="StatusAS">
+										<apex:facet name="start"><apex:outputText value="Saving..." /></apex:facet>
+						                <apex:facet name="stop">
+											<apex:commandLink action="{!EditStatus}" id="StatusSaverLink" status="StatusAS"									 										
+												value="Save" styleClass="saveLabel" rerender="StatusPanel" oncomplete="cancelEditStatus(); setValue('{!Status.Message}');" >
+											</apex:commandLink>
+										</apex:facet>
+									</apex:actionStatus>
+								</div>
+								<div class="cancel grayButton">
+									<a href="javascript:;" onclick="cancelEditStatus();">Cancel</a>						
 								</div>
 							</apex:form>
+							</div>
 						</div>
 					</div> 
 				</apex:outputPanel>

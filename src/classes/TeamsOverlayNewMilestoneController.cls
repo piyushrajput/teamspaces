@@ -1,52 +1,33 @@
-/**
-*@author Bruno Fagundez @ 07/10/2008
-*/
 public class TeamsOverlayNewMilestoneController {
 	
 	ProjectTask__c theNewTask = new ProjectTask__c();
+   	
    	public String TEAMID = System.currentPageReference().getParameters().get('id');
    	
-    /**
-    * Constructor
-    */
-    public TeamsOverlayNewMilestoneController(){
-    	getCurrentProject();
-    	genPermissions();	
-	}
-
-   	/**
-   	*@return String
-   	*/
    	public String getCurrentTeamId(){
    		return TEAMID;
    	}
    	
-   	/**
-   	*@param String team Id
-   	*/
    	public void setCurrentTeamId(String s) {
    		TEAMID = s;
    	}
    	
    	public Project2__c currentProject = null;
    	
-
-    public ProjectTask__c newProyect = new ProjectTask__c();
+   	//public String name {get; set;}
+   	
     /**
     *@return ProjectTask__c
     */
+    public ProjectTask__c newProyect = new ProjectTask__c();
     public ProjectTask__c getTask(){
     	return newProyect;
     }
     
-    /**
-    *@param ProjectTask__c 
-    */
     public void setNewProyect(ProjectTask__c pT) {
     	newProyect = pT;
     }
-    
-    /**
+     /**
     *@return TeamMember__c
     */
     public TeamMember__c teamMember = new TeamMember__c();
@@ -54,20 +35,14 @@ public class TeamsOverlayNewMilestoneController {
     	return teamMember;
     }
     
-    /**
-    *@param TeamMember__c
-    */
     public void setTeamMember(TeamMember__c tm){
     	teamMember = tm;
     }
     
-    //For rerender use
-    public void dummyRefresh (){}
+    public void dummyRefresh () {   
+		
+	}
     
-    /**
-    * Create members select options
-    *@return List<SelectOption>
-    */
     public List<SelectOption> getTeamMembers() {
     	List<TeamMember__c> teamMembers = new List<TeamMember__c>();  
   	 	List<SelectOption> options = new List<SelectOption>();
@@ -80,43 +55,47 @@ public class TeamsOverlayNewMilestoneController {
   	 	}
   	 	return options;
    	}
-
-	/**
-	* Returns Project for current team
-	*/
+    
+    public TeamsOverlayNewMilestoneController(){
+    	getCurrentProject();
+    	genPermissions();	
+	}
+	
 	public void getCurrentProject(){
 		if(TEAMID != null)
 			currentProject = [select Id from Project2__c where Team__c =: TEAMID limit 1];
 	}
 	
+	/* ---------------------------- */
+   	/*   	 SHARING RULES			*/
+   	/* ---------------------------- */	
 	public UserPermissions userPermissions = TeamsDetailController.userPermission.clone();
-	/**
-	* Read User permissions
-	*/
+	
 	public void genPermissions () {
 		userPermissions.setId(UserInfo.getUserId());
 		userPermissions.setTeam(TEAMID);
 		userPermissions.setObjectType('Project');
 		userPermissions.setPermissions();		
 	}
+
+	/* ---------------------------- */	
 	
-	/**
-	* Returns user location
-	*@return String
-	*/
 	public String getUserLocale(){
 		return Userinfo.getLocale();	
 	}
 	
-   	/**
-   	* Create new Milestone
-   	*@throws CustomExceptions, message Insufficient Privileges
-   	*/
-   	public void insertMilestone (){ 
-   		if(!userPermissions.getCanCreate()){
+	/* ---------------------------- */
+   	/*   	  INSERT MILESTONE		*/
+   	/* ---------------------------- */  
+   	
+   	public void insertMilestone () 
+   	{ 
+   		if(!userPermissions.getCanCreate())
+   		{
         	throw new CustomException('Insufficient Privileges');
    		}		
    		
+		
 		newProyect.Milestone__c = true;
 		newProyect.Team__c = TEAMID;
 		newProyect.StartDate__c = newProyect.EndDate__c;
@@ -131,5 +110,7 @@ public class TeamsOverlayNewMilestoneController {
 		
 		Assign = new ProjectAssignee__c();
 		newProyect = new ProjectTask__c();
+   		
+ 		
    	}
 }

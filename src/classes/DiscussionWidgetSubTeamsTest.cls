@@ -2,6 +2,7 @@
 
 public static String teamId = System.currentPageReference().getParameters().get('id');
     public static testMethod void testDiscussion() {
+    	
     	GenerateEnvironmentTest.gen();
     	Test.startTest();
     	
@@ -18,5 +19,6 @@ public static String teamId = System.currentPageReference().getParameters().get(
         sub.getCount();
         
         Test.stopTest();
+        
     }       
 }

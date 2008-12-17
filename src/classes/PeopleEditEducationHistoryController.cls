@@ -1,72 +1,44 @@
-/**
-*@author Martin Prado @ 06/24/2008
-*/
 public class PeopleEditEducationHistoryController {
 	
+	//####################################//
+	// People Keyword Search 
+	//####################################//
+	
 	//Search Result Page 
-    private static PageReference PEOPLE_SEARCH_RESULTS_PAGE = Page.PeopleKeywordSearchResults;
+    private static String PEOPLE_SEARCH_RESULTS_PAGE = '/apex/PeopleKeywordSearchResults';
     
     //Search Object Initialization
     PeopleSearch peopleSearchObj = new PeopleSearch();    
     
-	/**
-	* Constructor
-	*/
-	public PeopleEditEducationHistoryController(){
-		// If id is not empty
-    	if (param != null){
-    		isNewRecord = false;
-    		getEducationHistory(param);
-    	} else {
-    		isNewRecord = true;    		
-    		ed = new EducationItemObj();
-    		School = new School__c();
-    	}
-    	
-	}    
-    
-    /**
-    * Get PeopleSearch instance
-    *@return PeopleSearch peopleSearchObj
-    */
     public PeopleSearch getPeopleSearchObj (){
-        return peopleSearchObj;
+                return peopleSearchObj;
    	}
         
-    /**
-    * Forward to search result page
-    *@return PageReference
-    */
     public PageReference findPeople() {
-        PageReference pageRef = PEOPLE_SEARCH_RESULTS_PAGE;
-        pageRef.getParameters().put('key', peopleSearchObj.getKeyword());
-        pageRef.setRedirect(true);
-        return pageRef;
+            PageReference pageRef = new PageReference(PEOPLE_SEARCH_RESULTS_PAGE
+                          							+ '?keyword=' + peopleSearchObj.getKeyword());
+            pageRef.setRedirect(true);
+            return pageRef;
     }
           
-	/**
-	* Class PeopleSearch
-	*@author Martin Prado
-	*/
 	public class PeopleSearch {
-        String Keyword;       
-
-        public String getKeyword() {
-                return Keyword;
-        }
-
-        public void setKeyword(String Keyword) {
-                this.Keyword = Keyword;
-        }        
+	         
+	        String Keyword;       
+	
+	        public String getKeyword() {
+	                return Keyword;
+	        }
+	
+	        public void setKeyword(String Keyword) {
+	                this.Keyword = Keyword;
+	        }        
+	                       
 	}
 	
 	// Profile Row
 	PeopleProfile__c p = new PeopleProfile__c();
 	
-	/**
-	* Get current time (apox)
-	*@return String dateString
-	*/	
+	// Send current time (aprox)	
 	public String getCurrentTime(){
 		Datetime now = (System.now()).addHours(7);
 		String s1 = now.format('yyyy-MM-dd');
@@ -75,24 +47,23 @@ public class PeopleEditEducationHistoryController {
 		return dateString;
 	}
 	
-	/**
-	* Get my picture
-	*@return String
-	*/
+	//####################################//
+	// My Profile At Sidebar
+	//####################################//
+	
 	public String getMyPicture(){
+		
 		String MyPictureId;
+		
         if(p.Picture__c == '' || p.Picture__c == null){                	                                          	 
-	     			MyPictureId = '';
+	     			MyPictureId = '01530000000VO5s';
 		} else{
 			MyPictureId = p.Picture__c;
 		} 
+			
 		return MyPictureId;
 	}
 	
-	/**
-	* Get people profile for current user
-	*@return PeopleProfile__c profile
-	*/
 	public PeopleProfile__c getMySidebarProfile(){
 		List<PeopleProfile__c> mySideBarProfileList = [SELECT Id,
  												User__c,
@@ -110,124 +81,109 @@ public class PeopleEditEducationHistoryController {
 		if (mySideBarProfileList.size() > 0) {
 			mySideBarProfile = mySideBarProfileList[0]; 
 		}                                         		
+           
         return mySidebarProfile;      
+        
 	}
+	
+	//####################################//
+	// My Sidebar Status
+	//####################################//
 	
 	// boolean to control showing or not the status
 	boolean showStatus;	
 	
-	/**
-	* Get show status
-	*@return Boolean
-	*/
-	public boolean getShowStatus(){
-		return showStatus;
-	}
+		public boolean getShowStatus(){
+			return showStatus;
+		}
 		
-	/**
-	* Get user status
-	@return Status
-	*/
 	public Status getStatus() {
-    	// Status Obj
-    	Status sObj = new Status();
-    	if((p.Status__c != null) && (p.StatusLastModifiedDate__c != null)){
-          	sObj.setMessage(p.Status__c);
-			sObj.setModified(p.StatusLastModifiedDate__c);
-    	}
-		return sObj;       
-	}
+        	
+        	// Status Obj
+        	Status sObj = new Status();
+        	
+        	if((p.Status__c != null) && (p.StatusLastModifiedDate__c != null)){
+	          	sObj.setMessage(p.Status__c);
+				sObj.setModified(p.StatusLastModifiedDate__c);
+        	}
+			return sObj;       
+		}
 	
-	/**
-	* Class Status
-	*@author Martin Prado
-	*/
 	public class Status {
 		
 		String Message;
 		String Modified = '';		
 		
-		/**
-		* Set status message
-		*@param String message
-		*/
 		public void setMessage(String sMessage){                
-            Message = sMessage;                
+                Message = sMessage;                
         }
         
-        /**
-        * Get status message
-        *@return String
-        */
         public String getMessage() {
-            return Message;
+	            return Message;
 		}
 		
-		/**
-		* Set status modify
-		*@param Datetime date modify
-		*/
 		public void setModified(Datetime sModified){
-			// Get the current time
-			DateTime now = System.now();
-			
-			String todayDateString = '' + now.day() + now.month() + now.year();
-			
-			Integer today = now.dayOfYear();
-			Integer modifiedDay = sModified.dayOfYear();
-			Integer temp = 0;
-			String updateMessage = '';
-			
-			// Check if the update was today
-			if(sModified.isSameDay(now)){
-				// Check how many hours ago
-				temp = now.hour() - sModified.hour();
-				// Check if the timelapse is small than one hour
-				// if that , get the minutes ago  
-				If (temp <= 1 ){
-					temp = now.minute() - sModified.minute();
-					if(temp == 0){
-						temp = now.second() - sModified.second();														
-						updateMessage = 'Updated ' + temp + ' seconds ago';
-					} else {								
-						if(temp == 1){
-							updateMessage = 'Updated ' + temp + ' minute ago';
-						} else {
-							updateMessage = 'Updated ' + temp + ' minutes ago';
+				
+				// Get the current time
+				DateTime now = System.now();
+				
+				String todayDateString = '' + now.day() + now.month() + now.year();
+				
+				Integer today = now.dayOfYear();
+				Integer modifiedDay = sModified.dayOfYear();
+				Integer temp = 0;
+				String updateMessage = '';
+				
+				// Check if the update was today
+				if(sModified.isSameDay(now)){
+					// Check how many hours ago
+					temp = now.hour() - sModified.hour();
+					// Check if the timelapse is small than one hour
+					// if that , get the minutes ago  
+					If (temp <= 1 ){
+						temp = now.minute() - sModified.minute();
+						if(temp == 0){
+							temp = now.second() - sModified.second();														
+							updateMessage = 'Updated ' + temp + ' seconds ago';
+						} else {								
+							if(temp == 1){
+								updateMessage = 'Updated ' + temp + ' minute ago';
+							} else {
+								updateMessage = 'Updated ' + temp + ' minutes ago';
+							}
 						}
-					}
-				} else {						
-						updateMessage = 'Updated ' + temp + ' hours ago';
-				}				
-			} else {
-				Integer rest = today - modifiedDay;
-				// if the update was in the last week
-				if(rest <= 7){
-					updateMessage = 'Updated on ' + sModified.format('EEEEEE');
+					} else {						
+							updateMessage = 'Updated ' + temp + ' hours ago';
+					}				
 				} else {
-					updateMessage = 'expired';
+					Integer rest = today - modifiedDay;
+					//System.debug('#### rest: ' + rest);
+					// if the update was in the last week
+					if(rest <= 7){
+						updateMessage = 'Updated on ' + sModified.format('EEEEEE');
+					} else {
+						updateMessage = 'expired';
+					}
 				}
-			}
-            Modified = updateMessage;
+				
+						
+                Modified = updateMessage;
         }
         
-        /**
-        * Get status date modify
-        *@return String date
-        */
         public String getModified() {
-        	return Modified;
+        			return Modified;
 		}
+		
 		
 	}
 	
+	//####################################//
+	// EDIT EDUCATION HISTORY
+    //####################################// 
+    
     // Error display    
     String error = '';
     
-    /**
-    * Returns error message
-    *@return String
-    */
     public String getError(){
     	return error;
     } 
@@ -236,7 +192,6 @@ public class PeopleEditEducationHistoryController {
     String param = System.currentPageReference().getParameters().get('id');
     
     /**
-    * Set work exp item id
     *@param String param
     */
     public void setParam(String p){
@@ -252,26 +207,14 @@ public class PeopleEditEducationHistoryController {
     // Custom object 
     EducationItemObj ed;
     
-    /**
-    * Returns education history item
-    *@return EducationItemObj
-    */
     public EducationItemObj getEd(){
     	return ed;
     }
     
-    /**
-    * Set education history item
-    *@param EducationItemObj
-    */
     public void setEd(EducationItemObj e){
     	ed = e;
     } 
     
-    /**
-    * Set eudaction item
-    *@param EducationHistory__c ed item
-    */
     public void setEducationItem(EducationHistory__c eh){
     	educationItem = eh;
     }
@@ -279,34 +222,36 @@ public class PeopleEditEducationHistoryController {
     // Boolean to look if the record is new    
     public boolean isNewRecord;
     
-    /**
-    * Get bool is new work exp item
-    *@return Boolean isNewRecord
-    */
     public boolean getIsNewRecord(){
     	return isNewRecord;
     }
     
-    /**
-    * Set bool is new work exp item
-    *@param Boolean b
-    */    
     public void setIsNewRecord(Boolean b){
     	isNewRecord = b;
     } 
     
-    /**
-    * Get school item
-    *@return School__c
-    */
+    // Employer 
     public School__c getSchool(){
     	return School;
     }
     
-	/**
-	* Read education history item by id
-	*@param String education item id
-	*/
+	
+	// Constructor	
+	public PeopleEditEducationHistoryController(){
+		
+		// If id is not empty
+    	if (param != null){
+    		isNewRecord = false;
+    		getEducationHistory(param);
+    	} else {
+    		isNewRecord = true;    		
+    		ed = new EducationItemObj();
+    		School = new School__c();
+    		    	
+    	}
+    	
+	}
+	
 	public void getEducationHistory(String p){
     	  	educationItem = [Select 
     	  						Id,
@@ -336,27 +281,28 @@ public class PeopleEditEducationHistoryController {
 	}
 	
 	
-	/**
-	* Do all the magic to set count and things like these
-	*@return Boolean
-	*/
+	// Do all the magic to set count and things like these
+	/////////////////////////////////////////////////////
 	public boolean getDbOperation() {
 		
 		School__c auxSchool;	
+		
 		// Check if the School exists exists
 		if(ed.School != educationItem.School__r.Name){
+			
 			// Get the list of matching Employers 
 			List<School__c> el = [select Name, Count__c,
 									Id from School__c 
 									where Name =: ed.School];
+			
 			if(el.size() == 0){
+				
 				// Create new School and set first count
 				auxSchool = new School__c();
 				auxSchool.Name = ed.School;
 				auxSchool.City__c = ed.SchoolLocationCity;
 				auxSchool.State__c = ed.SchoolLocationState;
 				auxSchool.Count__c = 1;
-				
 				insert auxSchool;
 				
 				//Check if is new kid on the block
@@ -370,6 +316,7 @@ public class PeopleEditEducationHistoryController {
 					oldSchool.Count__c = oldCount - 1;
 					upsert oldSchool;
 				}
+								
 			} else {
 				// If the record is new, and the school exists , increase the count
 				if(isNewRecord){
@@ -382,6 +329,7 @@ public class PeopleEditEducationHistoryController {
 					upsert auxSchool; 
 				}			
 			}
+			
 		} else {
 			// Set the aux with the old record		
 			auxSchool = School;
@@ -398,16 +346,17 @@ public class PeopleEditEducationHistoryController {
 		educationItem.Activities__c = ed.Activities;
 		educationItem.DateAttendedTo__c = Double.valueOf(fakeDateTo);
 		educationItem.DateAttendedFrom__c = Double.valueOf(fakeDateFrom);
+		// educationItem.User__c = UserInfo.getUserId();
 		
 		return true;
+	
 	}
 	
 	
-	/**
-	* Save education history
-	*@return PageReference pageRef
-	*/
+	//Save command
+	//////////////////
 	public PageReference save() {	
+		
 		// Check if the user are the owner of the record
 		boolean isCurrentUser;
 		
@@ -422,9 +371,10 @@ public class PeopleEditEducationHistoryController {
 				isCurrentUser = false;
 			}
 		}
+		
 		String URL;
 		
-		PageReference pageRef = Page.PeopleProfileDisplay;
+		PageReference pageRef = new PageReference('/apex/PeopleProfileDisplay');
 		pageRef.setRedirect(true);
 		
 		if(isCurrentUser){
@@ -440,14 +390,16 @@ public class PeopleEditEducationHistoryController {
 			error = 'You are not the owner of this Education History Item '; 
 			return null;
 		}
+				
 	}
 	
-	/**
-	* Delete education history
-	*@return PageReference
-	*/
+	// Remove
+	///////////////////////////
+	
 	public PageReference remove(){		
+			
 		boolean isCurrentUser;
+		
 		
 		if(educationItem.User__c == UserInfo.getUserId()){
 			educationItem.User__c = UserInfo.getUserId();
@@ -456,28 +408,30 @@ public class PeopleEditEducationHistoryController {
 			isCurrentUser = false;
 		}
 	
+		
 		if(isCurrentUser){
 		
 			delete educationItem;
+			
 			Double oldCount = School.Count__c;
 			School.Count__c = oldCount - 1;
+			
 			upsert School;
 			
-			PageReference URL = Page.PeopleProfileDisplay;
-			URL.setRedirect(true);
+			String URL = '/apex/PeopleProfileDisplay';
 					
-			return URL;
+			return forwardTo(URL);
+			
 		} else {
 			error = 'You are not the owner of this Education History Item '; 
 			return null;
 		}		
 	}
 	
-	/**
-	* Save and add Another
-	*@return PageReference
-	*/
+	// Save and add Another
+	//////////////////////////////	
 	public PageReference saveAndAddAnother() {
+		
 		// Check if the user are the owner of the record
 		boolean isCurrentUser;
 		
@@ -492,38 +446,37 @@ public class PeopleEditEducationHistoryController {
 				isCurrentUser = false;
 			}
 		}		
-		PageReference pageRef = Page.PeopleEditEducationHistory;
+		
+		PageReference pageRef = new PageReference('/apex/PeopleEditEducationHistory');
 		pageRef.setRedirect(true);
 		
 		if(isCurrentUser){
+			
 			getDbOperation();
 			
-			if(isNewRecord){
+			if(isNewRecord){			
 				insert educationItem;
 			} else {
 				upsert educationItem;
-			}
+			}			
 			return pageRef;
 		} else {
 			error = 'You are not the owner of this Education History Item '; 
 			return null;
 		}				
+		
 	}	
 	
-    /**
-    * Cancel link forward to profile view
-    *@return PageReference
-    */
+	// Cancel Link
+	/////////////////////////////
     public PageReference cancel(){
-		PageReference page1 = Page.PeopleProfileDisplay;
-		page1.setRedirect(true);		
-		return page1;
+		PageReference page = new pageReference('/apex/PeopleProfileDisplay');
+		page.setRedirect(true);		
+		return page;
 	}
 	
-	/**
-	* Class EducationItemObj
-	*@author Martin Prado
-	*/
+	// Inner Class
+	//////////////////////////////	
     public class EducationItemObj {
     	
     	String FieldsOfStudy;
@@ -540,148 +493,76 @@ public class PeopleEditEducationHistoryController {
      
 	 	// Getters / setters 
 	 	
-	 	/**
-	 	* Get school location state
-	 	*@return String
-	 	*/
 	 	public String getSchoolLocationState() {
 	  		return SchoolLocationState;
 	  	}
 	  	
-	  	/**
-	  	* Set school location state
-	  	*@param String
-	  	*/
 	  	public void setSchoolLocationState(String SchoolLocationState) {
 	  	 	this.SchoolLocationState = SchoolLocationState;
 	  	} 	
 	  	
-	 	/**
-	 	* Get school location city
-	 	*@return String
-	 	*/
 	 	public String getSchoolLocationCity() {
 	  		return SchoolLocationCity;
 	  	}
 	  	
-	  	/**
-	  	* Set school location city
-	  	*@param String location city
-	  	*/
 	  	public void setSchoolLocationCity(String SchoolLocationCity) {
 	  	 	this.SchoolLocationCity = SchoolLocationCity;
 	  	} 	
 	 	
-	 	/**
-	 	* Get school name
-	 	*@return String
-	 	*/
 	 	public String getSchool() {
 	  		return School;
 	  	}
 	  	
-	  	/**
-	  	* Set school name
-	  	*@param String
-	  	*/
 	  	public void setSchool(String School) {
 	  	 	this.School = School;
 	  	} 	  	
 	  	
-	  	/**
-	  	* Get fields of study
-	  	*@return String
-	  	*/	 	
 	 	public String getFieldsOfStudy() {
 	  		return FieldsOfStudy;
 	  	}
 	  	
-	  	/**
-	  	* Set fields of study
-	  	*@param String
-	  	*/	  	
 	  	public void setFieldsOfStudy(String FieldsOfStudy) {
 	  	 	this.FieldsOfStudy = FieldsOfStudy;
 	  	} 
 	  	
-	  	/**
-	  	* Get degree
-	  	*@return String
-	  	*/
 	  	public String getDegree() {
 	  		return Degree;
 	  	}
 	  	
-	  	/**
-	  	* Set degree
-	  	*@param String degree
-	  	*/
 	  	public void setDegree(String Degree) {
 	  	 	this.Degree = Degree;
 	  	} 
 	  	
-	  	/**
-	  	* Get additional notes
-	  	*@return String
-	  	*/	  	
 	  	public String getAdditionalNotes() {
 	  		return AdditionalNotes;
 	  	}
 	  	
-	  	/**
-	  	* Set additional notes
-	  	*@param String AdditionalNotes
-	  	*/	  	
 	  	public void setAdditionalNotes(String AdditionalNotes) {
 	  	 	this.AdditionalNotes = AdditionalNotes;
 	  	} 
 	  	
-	  	/**
-	  	* Get activities
-	  	*@return String activities
-	  	*/	  	
 	  	public String getActivities() {
 	  		return Activities;
 	  	}
 	  	
-	  	/**
-	  	* Set activities
-	  	*@param String activities
-	  	*/
 	  	public void setActivities(String Activities) {
 	  	 	this.Activities = Activities;
 	  	} 
 	  	
-	  	/**
-	  	* Get attended to
-	  	*@return Integer attended to
-	  	*/
 	  	public Integer getAttendedTo() {
 	  		return AttendedTo;
 	  	}
 	  	
-	  	/**
-	  	* Set attended to
-	  	*@param Double attended to
-	  	*/	  	
 	  	public void setAttendedTo(Double AttendedTo) {
 	  	 	if(AttendedTo != null) {
 	  	 		this.AttendedTo = AttendedTo.intValue();
 	  	 	}
 	  	} 
 	  	
-	  	/**
-	  	* Get attended from
-	  	*@return Integer attended from
-	  	*/	  	
 	  	public Integer getAttendedFrom() {
 	  		return AttendedFrom;
 	  	}
 	  	
-	  	/**
-	  	* Set attended from
-	  	*@return Double attended from
-	  	*/	  	
 	  	public void setAttendedFrom(Double AttendedFrom) {
 	  	 	if (AttendedFrom != null) {
 	  	 		this.AttendedFrom = AttendedFrom.intValue();
@@ -689,11 +570,8 @@ public class PeopleEditEducationHistoryController {
 	  	}    	
     }
     
-
-	/**
-	* Get states
-	*@return List<SelectOption> states list
-	*/    
+    // Utilities
+    
     public List<SelectOption> getStates() {
   	 	List<SelectOption> options = new List<SelectOption>();
   	 	options.add(new SelectOption('ST','ST'));
@@ -705,11 +583,6 @@ public class PeopleEditEducationHistoryController {
   	 	return options;
    	}	
     
-    /**
-    * Forward to
-    *@param String url
-    *@return PageReference page
-    */
     public PageReference forwardTo (String url) {
 		PageReference page = new pageReference(url);
 		page.setRedirect(true);

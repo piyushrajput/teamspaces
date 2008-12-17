@@ -1,5 +1,5 @@
 <apex:page id="WikiPage" tabStyle="WikiPage__c" controller="WikiPageController" sidebar="false" >
-	<apex:includeScript value="/soap/ajax/11.1/connection.js"/>
+	<script src="/soap/ajax/11.1/connection.js" type="text/javascript" />
 	
 	<script>  
 		var wikiResourcePath = '{!URLFOR($Resource.WikiResource)}';
@@ -7,17 +7,17 @@
 	</script>
 	 
 	<!-- Scripts -->
-	<apex:includeScript value="{!URLFOR($Resource.WikiResource, 'inc/js/common.js')}"/>
-	<apex:includeScript value="{!URLFOR($Resource.Script_aculo_us, 'prototype.js')}"/>
-	<apex:includeScript value="{!URLFOR($Resource.Script_aculo_us, 'scriptaculous.js')}"/>
-	<apex:includeScript value="{!URLFOR($Resource.Script_aculo_us, 'effects.js')}"/>
+	<script src="{!URLFOR($Resource.WikiResource, 'inc/js/common.js')}" />
+	<script src="{!URLFOR($Resource.Script_aculo_us, 'prototype.js')}"></script>
+	<script src="{!URLFOR($Resource.Script_aculo_us, 'scriptaculous.js')}"></script>
+	<script src="{!URLFOR($Resource.Script_aculo_us, 'effects.js')}"></script>
 
 		<!-- Portal Support -->
-	<apex:includeScript value="{!$Resource.portalSupport}"/>
+	<script src="{!$Resource.portalSupport}" />
 
-	<apex:includeScript value="{!URLFOR($Resource.OverlayFunctionsFixed, 'js/overlayFunction.js')}"/>
-	<apex:includeScript value="{!URLFOR($Resource.WikiResource, 'inc/js/WikiPage.js')}"/>
-	<apex:includeScript value="{!URLFOR($Resource.commonResources, 'inc/js/modal.js')}"/>
+	<script src="{!URLFOR($Resource.OverlayFunctionsFixed, 'js/overlayFunction.js')}"></script>
+	<script src="{!URLFOR($Resource.WikiResource, 'inc/js/WikiPage.js')}"></script>
+	<script src="{!URLFOR($Resource.commonResources, 'inc/js/modal.js')}"></script>
 
     <!-- CSS styles for Portal Integration -->
     <apex:stylesheet value="{!URLFOR($Resource.portalStyles, 'portal.css')}" />
@@ -40,6 +40,56 @@
 	<apex:outputpanel rendered="{!userPermissions.canCreate}">
 		<c:WikiNewPageWidget /> 
 	</apex:outputpanel>
+	
+	
+	<style>
+		.saving {
+			margin: 30px; 
+			font-size: 15px; 
+			font-weight: bold; 
+			color: #566A22;
+		}
+		
+		.attachmentTable {
+			margin-left:10px;
+			border: 0px;
+		}
+		
+		.attachmentTable th,
+		.attachmentTable td {
+			padding: 3px 10px;
+		}
+		
+		.attachmentTable .name {
+			width: 410px;
+			overflow: hidden;
+		}
+		
+		.attachmentTable .date {
+			width: 130px;
+		}
+		
+		.attachmentTable .delete {
+			width: 37px;
+		}
+		
+		.attachmentTable .user {
+			width: 250px;
+			overflow: hidden;
+		}
+	</style>
+	
+	<script>
+	
+		function fixHeader () {
+			var inputWidth = 390 - $('labelDisc').getWidth();
+			var inputDisc = $('inputDisc');
+			inputDisc.style.width = inputWidth -2 + 'px';
+		}
+		
+		//window.onload = fixHeader;
+		
+	</script>
 	
 	<apex:outputpanel id="formsOverlays">
 		<!-- 		 Delete Page Form 		-->
@@ -71,6 +121,15 @@
 				</apex:form>
 			</div>
 		</apex:outputpanel>
+	
+		<script>
+			function reloadIframeAttach () {
+				if (Prototype.Browser.IE && parseInt(navigator.userAgent.substring(navigator.userAgent.indexOf("MSIE")+5))==6) {  
+					var iframeAttach = $('iframeUploadAttach');
+					iframeAttach.contentWindow.location.reload(); 
+				}   
+			}
+		</script>
 		<!-- 		 New Attachment Form 		-->
 		<!-- <apex:outputpanel style="display:none;" id="newAttachmentOverlay" rendered="{!userPermissions.canManage}"> -->
 		<apex:outputpanel id="newAttachmentOverlay" style="display:none;" rendered="{!userPermissions.canManage}">
@@ -84,7 +143,7 @@
 					</table>
 				</div>
 				
-				<iframe name="iframeUploadAttach" id="iframeUploadAttach" src="/apex/UploadAttachment?pId={!idWikiPage}" height="150px" width="99%" style="border: 0px;" frameborder="0" marginheight="0" marginwidth="0"></iframe>
+				<iframe name="iframeUploadAttach" id="iframeUploadAttach" src="/apex/UploadAttachment?pId={!idWikiPage}" height="134px" width="99%" style="border: 0px;" frameborder="0" marginheight="0" marginwidth="0"></iframe>
 				
 			</div>
 		</apex:outputpanel>
@@ -132,9 +191,9 @@
 				</div>
 			</div>
 		</apex:outputpanel>
-
+		
 		<!-- 		 New Comment Form 		-->
-		<apex:outputpanel id="newCommentOverlay" rendered="{!userPermissions.canComment}"  style="display:none;" >
+		<apex:outputpanel id="newCommentOverlay" rendered="{!userPermissions.canComment}"  style="display:none;">
 			<div class="forms__Overlay" id="NewCommentForm">	
 				<div class="formsHeader">
 					<table>
@@ -148,7 +207,7 @@
 					<div id="savingComment" class="saving" style="display:none;">
 						Saving...
 					</div>
-					<apex:form id="addCommentForm" >
+					<apex:form id="addCommentForm">
 						<br>
 						<span class="requiredInfoRight">= Required Information</span>
 						<table>
@@ -157,42 +216,99 @@
 								<td class="requiredTD"><span class="requiredInput"></span></td>
 								<td><apex:inputtext id="commentTitle" value="{!commentName}" style="width:98%"/></td>
 							</tr>
-							<tr><td></td><td></td><td><div id="errorTitle" style="color: red; display: none;">The title is empty!</div></td></tr>
 							<tr>
 								<td align="right" valign="top"><span class="inputLabel">Comment</span></td>
 								<td valign="top" class="requiredTD"><span class="requiredTextArea"></span></td>
 								<td class="descriptionInput">
-									<apex:inputtextarea id="commentTextArea" value="{!commentBody}" />
-									<span class="infoText">250 character limit<div id="errorComment" style="color: red; display: none;">The comment is empty or already exist!</div> </span>
-									
+									<apex:inputtextarea id="commentTextArea" value="{!commentBody}"/>
+									<span class="infoText">250 character limit</span>
 								</td>
 							</tr>
 						</table>
+						<br>
 						<div class="separateLine"></div>
 						<div align="center">
-							<apex:commandButton styleclass="saveBtn" onclick="validateCommentForm();" value="Save" rerender="commentsPanel,NewCommentForm"  />
+							<apex:commandButton styleclass="saveBtn" onclick="savingShowWP('{!$Component.addCommentForm}', 'savingComment');" oncomplete="modal.close();" action="{!saveComment}" value="Save" rerender="commentsPanel,NewCommentForm"/>
 							<input class="cancelBtn" type="button" value="Cancel" onclick="modal.close();" />
-							
 						</div>
-						<apex:actionFunction name="saveCommentFunction" action="{!saveComment}" oncomplete="modal.close();" rerender="commentsPanel,NewCommentForm" />
 					</apex:form>
 				</div>
 			</div>
 		</apex:outputpanel>
 	</apex:outputpanel>
-
+	
+	
+	<script>
+		function newChildPreField (wikiName) {
+			var newChildField = $('WikiPage:formNew:nameNew');
+			newChildField.value = wikiName;
+		}
+		
+		var inputSearch;
+					
+		// Begin the search box with the text:
+		// "Enter keyword, name, company or title" at top search box
+		////////////////////////////////////////////
+		function resetSearchInput(){
+			
+			var inputs = $$('.search_box_input input');
+			inputSearch = inputs[0];		
+			inputSearch.style.color = '#999999';
+			inputSearch.value = 'Enter keyword or name';
+		}
+		
+		// Once a user begins to type at top search box, change the font color to   #333333. 
+		function ActionSearchInput(){
+			inputSearch.style.color = '#333333';
+			inputSearch.value = '';
+		}
+		
+		function savingShowWP(formDiv, savingDiv) {
+			$(savingDiv).style.display='';	
+			$(formDiv).style.display='none';
+		}
+	</script>	
 	<div class="BodyPage">
 		
-		<!-- Header -->
-		<apex:composition template="HeaderTemplate">
-			<apex:define name="moduleId"><apex:variable var="moduleId" value="headerWiki"/></apex:define>
-		    <apex:define name="module">Wiki</apex:define>
-		    <apex:define name="title">Pages</apex:define>
-		    <apex:define name="search">
-		    	<c:Search module="wiki" />
-		    </apex:define>
-	    </apex:composition>
-	    	
+		<!-- - - - - - - - - - - - - - - - - - - - - -->	
+		<!-- - - - - - - -   HEADER    - - - - - - - -->
+		<!-- - - - - - - - - - - - - - - - - - - - - -->
+		
+		<div class="header_portal" id="headerWiki">
+	        <!-- Page Section -->
+	        <div class="page_section">
+	            <div>
+	                <h1 class="arial_black">Wiki</h1>
+					<h2 class="arial_black">Pages</h2>
+				</div>		
+			</div>		
+			<!-- Search Box Container (always Centered) -->
+			<div class="searchBox">
+				<div>
+					<div>
+						<div class="center_gray">
+							<form method="get" action="" onsubmit="return checkSearchLength();">
+								<div class="search_box_input f_left">
+									<div id="labelDisc" width="auto" class="legend_portal findDiscussion">
+										<img class="f_left" alt="" src="{!URLFOR($Resource.TeamsResources, 'images/layout/magnifier.gif')}" />
+										<span>Find Wiki Pages</span>
+									</div>
+									<input id="inputDisc" width="auto" type="text" value="Enter keyword or name" name="key" onfocus="setValue('');"  onblur="if(getValue(this)==''){ setValue('Enter keyword or name'); }"/>
+								</div>
+								<input type="submit" value="Search" class="search_btn f_left"/>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div> 
+			<!-- Help for this page -->
+			<div class="help">
+				<div>
+					<a href="javascript:;">Help for this page</a>  <img src="{!URLFOR($Resource.TeamsResources, 'images/layout/help_icon.gif')}" alt="" />
+				</div>
+			</div>
+			<div class="gray_border"></div>
+		</div>	
 		<apex:outputpanel id="breadCrumbringPanel"> 
 			<div  class="breadCrumbring">
 				<apex:outputLabel escape="false" value="{!wikiSiteName} {!breadCrumbing}" /><apex:outputLabel value="{!wikiPageName}"/><br>
@@ -540,7 +656,7 @@
 									<!-- 				COMMENTS	 			 -->
 									<apex:outputpanel id="commentsPanel">
 										<div class="infoSection">
-											<span class="infoTitle">Comment ({!cntComments})</span>&nbsp;<apex:outputpanel rendered="{!userPermissions.canComment}"><span style="font-weight:bold;color:#000000;">+</span>&nbsp;<a href="javascript:;" onclick="createOverlay('','WikiPage:newCommentOverlay','330','');" class="WikiLink">New Comment</a></apex:outputpanel>
+											<span class="infoTitle">Comment ({!cntComments})</span>&nbsp;<apex:outputpanel rendered="{!userPermissions.canComment}"><span style="font-weight:bold;color:#000000;">+</span>&nbsp;<a href="javascript:;" onclick="createOverlay('','WikiPage:newCommentOverlay','302','');" class="WikiLink">New Comment</a></apex:outputpanel>
 										</div>
 										<div id="commentDiv" class="infoExpanded" style="display:none;">
 											<br>
@@ -618,6 +734,24 @@
 		<apex:actionFunction name="refreshAttachments" action="{!refreshAttachs}" rendered="attachmentsPanel" />
 	</apex:form>
 
+	<script>
+		function refreshAttachObserver () {
+			var iframeUploadAttach = $('iframeUploadAttach');
+			if (iframeUploadAttach.contentWindow.document.getElementById('uploadFinished')) {
+				refreshAttachments();   
+				setTimeout('modal.close()',1000);
+			}
+			else {
+				if (iframeUploadAttach.contentWindow.document.getElementById('uploadCancel') && iframeUploadAttach.contentWindow.document.getElementById('uploadCancel').style.display != 'none') {
+					modal.close();
+				}
+				else {
+					setTimeout('refreshAttachObserver()', 500);
+				}
+			}
+		}
+		
+	</script>
 	
 	<apex:outputpanel id="auxPanel" />
 		<script>
@@ -627,9 +761,66 @@
 		
 	<script>
 		
-		auxFunction();
+		var contentPanel = $('WikiPage:bodyPagePanel');
+		var contentPanelTables = contentPanel.getElementsByTagName('table');
+		
+		var contentPanelTrs = contentPanel.getElementsByTagName('tr');
+		
+		
+		for (var i= 0; i< contentPanelTables.length; i++) {
+			var itemTable = contentPanelTables[i];
+			var oldColor = itemTable.style.color;
+			if (oldColor != "" && oldColor != null) {
+				var contentPanelTds = itemTable.getElementsByTagName('td');
+				var contentPanelThs = itemTable.getElementsByTagName('th');
+				var contentPanelCaption = itemTable.getElementsByTagName('caption');
+				
+				for (var j= 0; j< contentPanelTds.length; j++) {
+					var itemTd = contentPanelTds[j];
+					if (itemTd.style.color == "" || itemTd.style.color == null || itemTd.style.color == '#333333') {
+						itemTd.style.color = oldColor;
+					}
+				}
+				
+				for (var j= 0; j< contentPanelThs.length; j++) {
+					var itemTh = contentPanelThs[j];
+					if (itemTh.style.color == "" || itemTh.style.color == null || itemTh.style.color == '#333333') {
+						itemTh.style.color = oldColor;
+					}
+				}
+				
+				for (var j= 0; j< contentPanelCaption.length; j++) {
+					var itemCaption = contentPanelCaption[j];
+					if (itemCaption.style.color == "" || itemCaption.style.color == null || itemCaption.style.color == '#333333') {
+						itemCaption.style.color = oldColor;
+					}
+				}
+			}
+		}
+		
+		for (var i= 0; i< contentPanelTrs.length; i++) {
+			var itemTr = contentPanelTrs[i];
+			var oldColor = itemTr.style.color;
+			if (oldColor != "" && oldColor != null) {
+				var contentPanelTds = itemTr.getElementsByTagName('td');
+				var contentPanelThs = itemTr.getElementsByTagName('th');
+				
+				for (var j= 0; j< contentPanelTds.length; j++) {
+					var itemTd = contentPanelTds[j];
+					if (itemTd.style.color == "" || itemTd.style.color == null || itemTd.style.color == '#333333') {
+						itemTd.style.color = oldColor;
+					}
+				}
+				
+				for (var j= 0; j< contentPanelThs.length; j++) {
+					var itemTh = contentPanelThs[j];
+					if (itemTh.style.color == "" || itemTh.style.color == null || itemTh.style.color == '#333333') {
+						itemTh.style.color = oldColor;
+					}
+				}
+			}
+		}
 
 		readPortalCSSRules();
-
 	</script>  
 </apex:page>

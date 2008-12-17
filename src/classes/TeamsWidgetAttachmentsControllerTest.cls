@@ -14,6 +14,7 @@
 	        //insert new Attachment(Name = 'Name', Body = Blob.valueOf('Some String'), ContentType = 'plain/text', parentId = newTeam.Id);
 	        insert a;
 	        
+	        
 	        TWA.setSidebar(true);
 	        TWA.getSidebar();
 	        TWA.getAttachs();
@@ -29,6 +30,7 @@
 	        TWA.currentTeam();
 	        TWA.PictureID = '';
 	        
+	        
 	        TWA.getUserPermissions();
 	        
 	        String PictureIDGET = TWA.PictureID;
@@ -42,6 +44,8 @@
 	        }
 	        TeamsWidgetAttachmentsController.AttachmentInfo AI = new TeamsWidgetAttachmentsController.AttachmentInfo();
 	        
+	        // List<TeamsWidgetAttachmentsController.AttachmentInfo> myList =  TWA.getAttachments();
+	        
 	        String name = AI.getName();
 	        String attI = AI.getAttachImage();
 	        Attachment at = AI.getAttachment();
@@ -50,6 +54,7 @@
 	        TWA.getAttachCount();
 	        System.currentPageReference().getParameters().put('idAttach',a.Id);
 	        TWA.DeleteAttach();
+	        
 	        
 	        Test.stopTest();
         }catch(Exception e){  

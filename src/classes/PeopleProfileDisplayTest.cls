@@ -2,12 +2,12 @@
 
     public static testMethod void testPeople() { 
         try{
-            GenerateEnvironmentTest.runLite = true;
-            GenerateEnvironmentTest.gen();
-            GenerateEnvironmentPeopleTest.gen();
-            Test.startTest();
-            
-            TeamUtil.isTest = true;
+			GenerateEnvironmentTest.runLite = true;
+			GenerateEnvironmentTest.gen();
+			GenerateEnvironmentPeopleTest.gen();
+			Test.startTest();
+			
+			TeamUtil.isTest = true;
             PeopleProfileDisplayController people= new PeopleProfileDisplayController();
             TeamUtil.isTest = false;
             people.profileExist();
@@ -106,7 +106,8 @@
             PeopleProfileDisplayController.miniFeed miniFeed= new PeopleProfileDisplayController.miniFeed();
             List<PeopleProfileDisplayController.ExternalNetworks> listOtherNetworks = people.getOtherNetworks();
             PeopleProfileDisplayController.ExternalNetworks externalNetworks = new PeopleProfileDisplayController.ExternalNetworks();
-
+            //List<PeopleProfileDisplayController.TeamMember> listTeamspaces = people.getTeamspaces();
+            //PeopleProfileDisplayController.TeamMember teamMember= new PeopleProfileDisplayController.TeamMember();
             Integer getNumberOfDirectReports = people.getNumberOfDirectReports();
             Integer getCompetenciesNumber = people.getCompetenciesNumber();
             List<UserCompetencies__c> getCompetencies = people.getCompetencies();
@@ -138,11 +139,15 @@
             miniFeed= new PeopleProfileDisplayController.miniFeed();
             listOtherNetworks = people.getOtherNetworks();
             externalNetworks = new PeopleProfileDisplayController.ExternalNetworks();
+            //listTeamspaces = people.getTeamspaces();
+            //teamMember= new PeopleProfileDisplayController.TeamMember();
             getNumberOfDirectReports = people.getNumberOfDirectReports();
             getCompetenciesNumber = people.getCompetenciesNumber();
             getCompetencies = people.getCompetencies();
            
             List<PeopleProfile__c> userIds = [select User__c from PeopleProfile__c LIMIT 3];
+          
+            //String getTeamsBullet = people.getTeamsBullet();
             
             // employmentHistory inner
             PeopleProfileDisplayController.employmentHistory employmentHistoryInstance = new PeopleProfileDisplayController.employmentHistory();
@@ -191,7 +196,17 @@
             Integer edHistoryInstancegetDateAttendedTo = edHistoryInstance.getDateAttendedTo();
           
             // Team Member Inner Class
-           
+            /*
+            PeopleProfileDisplayController.TeamMember teamMemberInstance = new PeopleProfileDisplayController.TeamMember();
+            teamMemberInstance.setId(userIds[0].User__c);
+            String tmId = teamMemberInstance.getId();
+            teamMemberInstance.setName('sadsadsadsa');
+            String tmIda = teamMemberInstance.getName();
+            teamMemberInstance.setDescription('fdasfdsafdsaf');
+            String tmIdv = teamMemberInstance.getDescription();
+            teamMemberInstance.setCreatedDate(System.now());            
+            String tmIdd = teamMemberInstance.getCreatedDate(); 
+            */
             
             // Other Networks Inner Class
             PeopleProfileDisplayController.ExternalNetworks exNetsInstance = new PeopleProfileDisplayController.ExternalNetworks();
@@ -200,25 +215,25 @@
             String netInstNetName = exNetsInstance.getNetName();
             String netInstNetLink = exNetsInstance.getLink();
 
-            // GENERATED FOR CODE COVERAGE
-            TeamUtil.isTest = true;
-            UserCompetencies__c usrCompCodCov = new UserCompetencies__c();
-            usrCompCodCov.Rating__c = 0;
-            insert usrCompCodCov;
-            update usrCompCodCov;
-            delete usrCompCodCov;
-            
-            EducationHistory__c eduHistCodCov = [select Name from EducationHistory__c limit 1];
-            update eduHistCodCov;
-            
-            EmploymentHistory__c empHistCodCov = [select Id from EmploymentHistory__c limit 1];
-            delete empHistCodCov;
-            
+			// GENERATED FOR CODE COVERAGE
+			TeamUtil.isTest = true;
+			UserCompetencies__c usrCompCodCov = new UserCompetencies__c();
+			usrCompCodCov.Rating__c = 0;
+			insert usrCompCodCov;
+			update usrCompCodCov;
+			delete usrCompCodCov;
+			
+			EducationHistory__c eduHistCodCov = [select Name from EducationHistory__c limit 1];
+			update eduHistCodCov;
+			
+			EmploymentHistory__c empHistCodCov = [select Id from EmploymentHistory__c limit 1];
+			delete empHistCodCov;
+			
             PeopleProfile__c PeopProfCodCov = [select Name from PeopleProfile__c limit 1];
             update PeopProfCodCov;
-            TeamUtil.isTest = false;
+			TeamUtil.isTest = false;
 
-            Test.stopTest();
+			Test.stopTest();
         }catch(Exception e){
             throw e;
         }

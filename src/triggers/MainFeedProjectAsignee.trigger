@@ -12,6 +12,9 @@ trigger MainFeedProjectAsignee on ProjectAssignee__c bulk (after insert, after d
 			    List<ProjectTask__c> ProjectTaskList =[ SELECT Id, Team__c, Team__r.Id, Team__r.Name , Name FROM  ProjectTask__c WHERE Id in: idsTask];
 			    List<User> userList =[ SELECT Id, Name FROM  User WHERE Id in: idsUser];
 			    
+			    System.debug('\n\n ////////////////////////////// \n Trigger.new : ' + Trigger.new + '\n //////////////////////////////////// \n\n');
+			    System.debug('\n\n ////////////////////////////// \n ProjectTaskList : ' + ProjectTaskList + '\n //////////////////////////////////// \n\n');
+			    
 			    for(Integer i = 0; i < Trigger.new.size(); i++) {
 					// Must do some auxiliar querys
 			        ProjectAssignee__c n = Trigger.new[i];
@@ -28,6 +31,7 @@ trigger MainFeedProjectAsignee on ProjectAssignee__c bulk (after insert, after d
 							countTask++;
 						}	
 					}
+					System.debug('\n\n ////////////////////////////// \n ProjectTask : ' + ProjectTask + '\n //////////////////////////////////// \n\n');
 					
 					User currentUser;
 					Boolean findUser = false;
@@ -42,7 +46,9 @@ trigger MainFeedProjectAsignee on ProjectAssignee__c bulk (after insert, after d
 						}	
 					}
 					
-					// Blurb:	    
+					System.debug('\n\n ////////////////////////////// \n userList : ' + userList + '\n //////////////////////////////////// \n\n');
+					System.debug('\n\n ////////////////////////////// \n currentUser : ' + currentUser + '\n //////////////////////////////////// \n\n');
+			        // Blurb:	    
 			        minifeed.add( new MiniFeed__c( Type__c='TaskAssigned',
 			        									FeedDate__c=System.now(),
 			                                           	Team__c=ProjectTask.Team__c,
@@ -50,6 +56,7 @@ trigger MainFeedProjectAsignee on ProjectAssignee__c bulk (after insert, after d
 			                                           	Message__c='assigned new task ' + ProjectTask.Name + ' to <a href="/apex/PeopleProfileDisplay?id=' + n.User__c + '">' + currentUser.Name +  '</a> in <a href="/apex/TeamsRedirect?id=' + ProjectTask.Team__c + '">' + ProjectTask.Team__r.Name + '</a><span style="display:none;">' + ProjectTask.Id + '</span>'));
 				} 
 				
+				System.debug('\n\n ////////////////////////////// \n MAIN FEED PROJECT ASSIGNEE MINI FEED : ' + minifeed + '\n //////////////////////////////////// \n\n'); 
 				insert minifeed;
 			}
 			

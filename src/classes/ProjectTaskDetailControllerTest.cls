@@ -14,27 +14,45 @@
         ProjectTaskDetailController.TaskDetails a = taskDetailController.getTask();
          
         if(a.StartDate == null )
-            System.assert(true, 'List has no rows assigned to project task'); 
-        if(taskDetailController.getDetailsOk() == null)
+                System.assert(true, 'List has no rows assigned to project task'); 
+        
+        try {  
+            // taskDetailcontroller.getUserProfile();
+        } catch(Exception e){
+            System.assert(true, 'No profile!');  
+        }
+
+        if(taskDetailController.getDetailsOk() == null){
             System.assert(true, 'boolean detailsok not defined'); 
+        }
         
         ProjectTaskDetailController.ProjectAssignee projectAss = new ProjectTaskDetailController.ProjectAssignee();
         
-        if(projectAss.getId() == null) 
+        if(projectAss.getId() == null) {
             System.assert(true, 'Project Assignee Class null var');     
-        if(projectAss.getName() == null) 
+        }
+        
+        if(projectAss.getName() == null) {
             System.assert(true, 'Project Assignee Class null var');     
-        if(projectAss.getPercent() == null) 
+        }
+        
+        if(projectAss.getPercent() == null) {
             System.assert(true, 'Project Assignee Class null var');     
+        }
         
         ProjectTaskDetailController.AttachmentInfo attchInfo = new ProjectTaskDetailController.AttachmentInfo();
         
-        if(attchInfo.getId() == null) 
+        if(attchInfo.getId() == null) {
             System.assert(true, 'Attachment Info Class null var');  
-        if(attchInfo.getName() == null) 
+        }
+        
+        if(attchInfo.getName() == null) { 
             System.assert(true, 'Attachment Info Class null var');  
-        if(attchInfo.getAttachImage() == null) 
+        }
+        
+        if(attchInfo.getAttachImage() == null) {
             System.assert(true, 'Attachment Info Class null var');  
+        }
                 
     	Test.stopTest();
         

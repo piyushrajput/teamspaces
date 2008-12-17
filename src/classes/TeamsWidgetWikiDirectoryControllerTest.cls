@@ -15,11 +15,13 @@
         String idTeam = GenerateEnvironmentTest.newTeam.Id;
         wiki.setTeamId(idTeam);
         
-        if (wiki.getTeamId() == null) 
+        if (wiki.getTeamId() == null) {
             System.assert(true, 'Null Team Id');
+        }
         
-        if (wiki.getUserPermissions() == null) 
+        if (wiki.getUserPermissions() == null) {
             System.assert(true, 'Null User Permissions');
+        }
         
         /* Wikis Class */
       
@@ -35,7 +37,8 @@
         
         try {
             wiki.refresh();
-        }catch (Exception e) {
+        } 
+        catch (Exception e) {
             System.assert(true, e);
         }
         

@@ -18,6 +18,9 @@
         DateTime mod3 = DateTime.newInstance(now.year(),now.month(),now.day(),(now.hour()-4),0,0);
         DateTime mod4 = DateTime.newInstance(now.year(),now.month(),(now.day()-3),0,0,0);
         DateTime mod5 = DateTime.newInstance(now.year(),now.month(),(now.day()-8),0,0,0);
+        System.debug('#####################################');
+        System.debug('now[' + now + '] mod0[' + mod0 + '] mod1[' + mod1 + '] mod2[' + mod2 + '] mod3[' + mod3 + '] mod4[' + mod4 + '] mod5[' + mod5 + ']');
+        System.debug('#####################################');
         status.setModified(now);
         status.setModified(mod0);
         status.setModified(mod1);
@@ -25,7 +28,9 @@
         status.setModified(mod3);
         status.setModified(mod4);
         status.setModified(mod5);
+        //String modified = status.getModified();
         status.setMessage('Message');
+        //String message = status.getMessage();
         status = people.getStatus();
         String message = status.getMessage();
         String modified = status.getModified();

@@ -1,139 +1,78 @@
-/**
-*@author Juan M. Bessonart @ 6-11-2008
-*/
 public with sharing class TeamsNewMemberController {
-
-	/**
-	*@constructor
-	*/
-	public TeamsNewMemberController (){
-		if(idTeam != null)
-			teamName = [select Name from Team__c where id=: idTeam].Name;	
-	}	
-	
-	/**
-	* Return the Namespace Prefix
-	*@return String
-	*/
-	public String getNamespace () {
-        return TeamUtil.getNamespace();
-    } 
 	
 	public String idTeam = System.currentPageReference().getParameters().get('id');
 	
 	public String teamName = null;
 	
-	/**
-	*@return String
-	*/
 	public String getTeamName () {
 		return teamName;	
 	}
 	
-	/**
-	*@param String
-	*/
 	public void setTeamId(String s){
 		idTeam = s;
 	}
 	
-	/**
-	*@return String
-	*/
 	public String getTeamId() { 
 		return idTeam;	
 	}
-
-	/**
-	* Load Select Menu
-	*@return List<SelectOption>
-	*/
+	
+	public TeamsNewMemberController (){
+		if(idTeam != null)
+			teamName = [select Name from Team__c where id=: idTeam].Name;	
+	}
+	
 	public List<SelectOption> getProfilesOptions () {
 		List<SelectOption> options = new List<SelectOption>();
-		for (TeamProfile__c item: [select id, Name from TeamProfile__c order by Name]) 
+		for (TeamProfile__c item: [select id, Name from TeamProfile__c order by Name]) {
 			options.add(new SelectOption(item.id,item.Name));
-
+		}
 		return options;
 	}
 	
 	public Member newMemberVars = new Member();
 	
-	/**
-	*@return Member
-	*/
 	public Member getNewMemberVars () {
 		return newMemberVars;	
 	}
 	
-	/**
-	*@param Member
-	*/
 	public void setNewMemberVars (Member vars) {
 		this.newMemberVars = vars;
 	}
 	
-	/**
-	* Inner class for Member type
-	*@class
-	*/
 	public class Member {
 		String profileId;
 		String message;
 		String teamRole;
 		String colleagueNames;
-		
-		/**
-		*@return String
-		*/
+	
 		public String getColleagueNames () {
 			return colleagueNames;
 		}
 		
-		/**
-		*@param String
-		*/
 		public void setColleagueNames (String names) {
 			this.colleagueNames = names;
 		}
 		
-		/**
-		*@return String
-		*/
 		public String getProfileId () {
 			return profileId;
 		}
 		
-		/**
-		*@param String
-		*/
 		public void setProfileId (String profile) {
 			this.profileId = profile;
 		}	
 		
-		/**
-		*@return String
-		*/
 		public String getMessage () {
 			return message;
 		}
 		
-		/**
-		*@param String
-		*/
 		public void setMessage (String msj) {
 			this.message = msj;
 		}
 		
-		/**
-		*@return String
-		*/
 		public String getTeamRole () {
 			return teamRole;
 		}
 		
-		/**
-		*@param String
-		*/
 		public void setTeamRole (String tRole) {
 			this.teamRole = tRole;
 		}	
@@ -164,6 +103,8 @@ public with sharing class TeamsNewMemberController {
 				}
 			}
 		}
+		
+		//System.debug('\n //////////////// \n NEW MEMBERS LIST: \n Names: ' + newMemberVars.colleagueNames + '\n profileId: ' + newMemberVars.profileId + '\n teamRole: ' + newMemberVars.teamRole + '\n message: ' + newMemberVars.message + '\n userList: ' + userList + '\n ////////////////// \n');
 		for (User user : userList) {
 			Integer isMember = [select count() from TeamMember__c where team__c =:idTeam and user__c =: user.id];
 			if (isMember == 0) {
@@ -175,8 +116,10 @@ public with sharing class TeamsNewMemberController {
 				newMember.TeamRole__c = newMemberVars.teamRole;
 				newMemberList.add(newMember); 
 				SendMail(user,newMemberVars.message); 
+				//System.debug('\n //////////////// \n NEW MEMBERS LIST: \n ' + newMemberList + '\n ////////////////// \n');
 			}
 		}
+		//System.debug('\n //////////////// \n NEW MEMBERS LIST: \n ' + newMemberList + '\n ////////////////// \n');
 		insert newMemberList;
 		
 		newMemberVars.colleagueNames = '';
@@ -210,6 +153,7 @@ public with sharing class TeamsNewMemberController {
 			}
 		}
 		
+		//System.debug('\n //////////////// \n NEW MEMBERS LIST: \n Names: ' + newMemberVars.colleagueNames + '\n profileId: ' + newMemberVars.profileId + '\n teamRole: ' + newMemberVars.teamRole + '\n message: ' + newMemberVars.message + '\n userList: ' + userList + '\n ////////////////// \n');
 		for (User user : userList) {
 			Integer isMember = [select count() from TeamMember__c where team__c =:idTeam and user__c =: user.id];
 			if (isMember == 0) {
@@ -221,8 +165,10 @@ public with sharing class TeamsNewMemberController {
 				newMember.TeamRole__c = newMemberVars.teamRole;
 				newMemberList.add(newMember); 
 				SendMail(user,newMemberVars.message); 
+				//System.debug('\n //////////////// \n NEW MEMBERS LIST: \n ' + newMemberList + '\n ////////////////// \n');
 			}
 		}
+		//System.debug('\n //////////////// \n NEW MEMBERS LIST: \n ' + newMemberList + '\n ////////////////// \n');
 		insert newMemberList;
 		
 		newMemberVars.colleagueNames = '';
@@ -230,8 +176,7 @@ public with sharing class TeamsNewMemberController {
 		newMemberVars.profileId = '';
 		newMemberVars.message = '';
 		
-		PageReference pageRef = Page.TeamsMembersList;
-		pageRef.getParameters().put('id', idTeam);
+		PageReference pageRef = new PageReference('/apex/TeamsMembersList?id=' + idTeam);
 		pageRef.setRedirect(true);
 		return pageRef;	
 	}
@@ -261,6 +206,7 @@ public with sharing class TeamsNewMemberController {
 		// The email address of the user executing the Apex Code will be used.
 		mail.setUseSignature(true);
    
+		//mail.useSignature(false);
 		// Specify the html version of the content as well.
 		message = (message == null) ? '' : message;
 		mail.setHtmlBody(message);

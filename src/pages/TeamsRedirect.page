@@ -1,4 +1,5 @@
 <apex:page controller="TeamsRedirectController" action="{!redirect}" >
+
 	This page will never be rendered.  
 	<br/>
 	It will redirect the user to the appropriate teamspace

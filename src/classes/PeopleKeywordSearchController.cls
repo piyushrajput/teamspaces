@@ -1,6 +1,3 @@
-/**
-*@author Yuri Alvarez @ 04/30/2008
-*/
 public class PeopleKeywordSearchController{	
 
 	//Generate Instance of PaginatorController Class
@@ -10,17 +7,6 @@ public class PeopleKeywordSearchController{
 	
 	public Boolean isTest = false;
 	
-	/**
-	*Constructor Default
-	*/
-	public PeopleKeywordSearchController() {
-		ResultCore('Search');
-	}	
-	
-	/**
-	*Set is test
-	*@param Boolean
-	*/
 	public void setIsTest (Boolean isTest) {
 		this.isTest = isTest;
 	}
@@ -28,10 +14,6 @@ public class PeopleKeywordSearchController{
 	//User Id 
 	protected String userId = Userinfo.getUserId();
 	
-	/**
-	*Set user id
-	*@param String
-	*/
 	public void setUserId(String sUserid){
 		userId = sUserid;
 	}
@@ -41,43 +23,30 @@ public class PeopleKeywordSearchController{
 	// Primary Set to store result values
 	public Set<String> results = new Set<String>();
 	
-	
-	/**
-	*Get Parameter
-	*@param parameter name
-	*@return String parameter
-	*/      
+	//@@ Get Parameters      
 	public String getParam(String nameParam){
 		return System.currentPageReference().getParameters().get(nameParam);
 	}
-     
-     
-       
-    /**
-    *Return like Parameters
-    *@param String 
-    *@return String parameter
-    */ 
+        
+    //@@ Like Parameters 
     public String likeParam(String nameParam){
-        return '%' + nameParam + '%';
+                    return '%' + nameParam + '%';
     }
        
-    /**
-    *Return true if parameter is empty
-    *@param String parameter name
-    *@return Boolean
-    */      
+    //@@ Parameter is empty        
     public boolean paramIsEmpty(String parameterName) {
+
 		String parameterValue = getParam(parameterName);
+
 		boolean emptyParam = false;
-    	if (parameterValue == null) {
-        	emptyParam = true;
-    	} else {
-        	if (parameterValue.equals('')) {
+        	if (parameterValue == null) {
             	emptyParam = true;
-            }
-    	}
-    	return emptyParam;
+        	} else {
+            	if (parameterValue.equals('')) {
+                	emptyParam = true;
+                	}
+        	}
+        	return emptyParam;
     }
     
 	
@@ -86,72 +55,59 @@ public class PeopleKeywordSearchController{
    	/* -------- */
 	
 	
-	/**
-	*Set Size of List
-	*@param Integer size
-	*/
-	public Void setSizeList(Integer size) {
+	//Set Size of List
+	public Void setSizeList(Integer size)
+	{
 		SizeList = size;
 	}
 
+
+	
 	//GET Generic List of Pepole Profile
 	
 	List<PeopleSearchResultItem> searchResultsItems = new List<PeopleSearchResultItem>();
 	
-	/**
-	*Get list of People Profile
-	*@return List<PeopleSearchResultItem> 
-	*/
-	public List<PeopleSearchResultItem> getPeople()	{
+	public List<PeopleSearchResultItem> getPeople()
+	{
 		return searchResultsItems;
 	}
 	
-	
-	/**
-	*Get Instance of Class PaginatorController
-	*@return PaginatorController
-	*/
-	public PaginatorController getPaginator() {
+	//GET Instance of Class PaginatorController
+	public PaginatorController getPaginator()
+	{
 		return paginator;
 	}
 	
-	
-	/**
-	*Get Size of List
-	*@return Integer size
-	*/
-	public Integer getSizeList() {
+	//GET Size of List
+	public Integer getSizeList()
+	{
 		return SizeList;
 	}
-
+	
+	
+	//Constructor Default
+	public PeopleKeywordSearchController() {
+		ResultCore('Search');	
+	}
+	
 	/* ---------------------------- */
    	/*  Public Atributes for Layout */
    	/* ---------------------------- */
-   	
-   	/**
-   	*Get Tilte for page.
-   	*@return String title
-   	*/
-   	public String getTitle () {
+   	// Get Tilte for page.
+   	public String getTitle () 
+   	{
    		return title;
    	}
    	
+   	
    	public static final String KEYWORD = 'key';	
 	
-	/**
-	*get parameter with keyword
-	*@return String parameter
-	*/
 	public String getKeyword(){
 		return getParam(KEYWORD);
 	}
 	
 	public String typeAction = 'Search';
 	
-	/**
-	*get tye action
-	*@return String
-	*/
 	public String getTypeAction(){
 		return typeAction;
 	}
@@ -164,72 +120,21 @@ public class PeopleKeywordSearchController{
 	
 	String keywordString = '';
 	
-	//summary of results
-	Integer nameSearchMatch = 0;
-	Integer formerJobSearchMatch = 0;
-	Integer collegeSearchMatch = 0;
-	Integer competencySearchMatch = 0;
-	Integer teamspaceSearchMatch = 0;
-	
-	/**
-	*Set keyword
-	*@param String
-	*/
 	public void setKeywordString (String sKey){ 
 		keywordString = sKey;
 	} 
 	
-	/**
-	*Returns the number of users whose names match the search condition
-	*@return Integer
-	*/
-	public Integer getNameSearchMatch(){
-		return nameSearchMatch;
-	}
-	
-	/**
-	*Returns the number of users whose job match the search condition
-	*@return Integer
-	*/
-	public Integer getFormerJobSearchMatch(){
-		return formerJobSearchMatch;
-	}
-	
-	/**
-	*Returns the number of users whose college match the search condition
-	*@return Integer
-	*/
-	public Integer getCollegeSearchMatch(){
-		return collegeSearchMatch;
-	}
-	
-	/**
-	*Returns the number of users whose competency match the search condition
-	*@return Integer
-	*/
-	public Integer getCompetencySearchMatch(){
-		return competencySearchMatch;
-	}
-	
-	/**
-	*Returns the number of users whose team name match the search condition
-	*@return Integer
-	*/
-	public Integer getTeamspaceSearchMatch(){
-		return teamspaceSearchMatch;
-	}
-		
-	/**
-	*Executes the search on People Profile
-	*@param String 
-	*/
-	
-	public void ResultCore(String TypeA) {
+	//ResultCore()
+	// @String type { result binding} 
+	public void ResultCore(String TypeA)
+	{
+			
 		if(!(paramIsEmpty(KEYWORD))){
 			keywordString = System.currentPageReference().getParameters().get('key');
 		}
 		TypeA = 'Search';
-		if(userId == null){
+		if(userId == null)
+		{
 			userId = Userinfo.getUserId();
 			myPeople = true;
 		}
@@ -244,6 +149,7 @@ public class PeopleKeywordSearchController{
 			
 		// Search lists
 		if(keywordString != ''){
+			
 			nameSearch = [select id from User WHERE Name LIKE :likeParam(keywordString)];		        	
 	    	formerJobSearch = [select User__c from EmploymentHistory__c WHERE Employer__r.Name LIKE :likeParam(keywordString)];
 	    	collegeSearch = [select User__c from EducationHistory__c WHERE School__r.Name LIKE :likeParam(keywordString)];
@@ -251,23 +157,20 @@ public class PeopleKeywordSearchController{
 	    	
 	    	if (!TeamUtil.isTest) {
 	    		teamspaceSearch = [select User__c from TeamMember__c WHERE Team__r.Name LIKE :likeParam(keywordString) ];
-	    	}else {
+	    	}
+	    	else {
 	    		teamspaceSearch = [select User__c from TeamMember__c WHERE Team__r.Name LIKE :likeParam(keywordString) limit 100];
 	    	}
 			
-			nameSearchMatch = nameSearch.size();
-			formerJobSearchMatch = formerJobSearch.size();
-			collegeSearchMatch = collegeSearch.size();
-			competencySearchMatch = competencySearch.size();
-			teamspaceSearchMatch = teamspaceSearch.size();
 			
 			if(nameSearch.size() > 0 ) {
 	        	for(User userId:nameSearch){
 	        		results.add(userId.id);
 	        	}
         	}
-        	
+        
 			/// Former Job List ////
+	        	       		
 			if(formerJobSearch.size() > 0){
 	        	for(EmploymentHistory__c userId:formerJobSearch){        		
 	        			results.add(userId.User__c);        		 		
@@ -275,6 +178,7 @@ public class PeopleKeywordSearchController{
 			}	        		
 
 	    	/// College List ///
+	    	
        		if(collegeSearch.size() > 0){    			
         		for(EducationHistory__c userId:collegeSearch){	        		
 	        			results.add(userId.User__c);	        		  		
@@ -296,11 +200,14 @@ public class PeopleKeywordSearchController{
 			}
 
 		} else {
+			
 			// Get all users, no keyword given
 			allusers = [SELECT Id FROM User];
+			
 			for(User userId:allusers){        	
-        		results.add(userId.Id);        		 		
-        	}
+	        		results.add(userId.Id);        		 		
+	        	}
+		
 		}
 			
 		List<Id> users = new List<Id>();
@@ -308,6 +215,8 @@ public class PeopleKeywordSearchController{
 		for(String r:results){
 			users.add(r);			
 		}	
+				
+		
 		
 		List<Team__c> commonTeams = new List<Team__c>();
 		if (!TeamUtil.isTest) {
@@ -323,7 +232,8 @@ public class PeopleKeywordSearchController{
 						From User u where u.Id in : users and u.IsActive = true order by u.Name asc];
 						
 			commonTeams = [Select t.Name, (Select id, User__c, Team__c From TeamMembers__r where User__c =:UserInfo.getUserId() or User__c in: result) From Team__c t];
-		}else {
+		}
+		else {
 			result = [Select u.Title, 
 						u.Phone, 
 						u.Name, 
@@ -337,7 +247,6 @@ public class PeopleKeywordSearchController{
 			
 			commonTeams = [Select t.Name, (Select id, User__c, Team__c From TeamMembers__r where User__c =:UserInfo.getUserId() or User__c in: result limit 1) From Team__c t limit 1];	
 		}
-		
 		// Add the values to the list
 		for(User u:result){
 			PeopleSearchResultItem item = new PeopleSearchResultItem();
@@ -355,25 +264,31 @@ public class PeopleKeywordSearchController{
 				Integer countTeam = 0;
 				if (u.People__r[0].isPrivate__c && u.Id != UserInfo.getUserId()) {
 					while (!findJoinTeam && countTeam < commonTeams.size()) {
+						System.debug('\n\n////////////////////////////////////////////\n COMMON TEAMS - CURRENT MEMBERS : '+ commonTeams[countTeam].TeamMembers__r + '\n//////////////////////////////\n\n');
 						Integer countTeamMembers = 0;
 						for (TeamMember__c iterTeamMember : commonTeams[countTeam].TeamMembers__r) {
 							if (iterTeamMember.User__c == u.Id || iterTeamMember.User__c == UserInfo.getUserId()) {
 								countTeamMembers++;
 							}
 						}
+						System.debug('\n\n////////////////////////////////////////////\n COMMON TEAMS - CURRENT MEMBERS COUNT: '+ countTeamMembers + '\n//////////////////////////////\n\n');
 						if (countTeamMembers > 1) {
 							findJoinTeam = true;	
-						}else {
+						}
+						else {
 							countTeam++;
 						}
 					}
 				}
+				System.debug('\n\n////////////////////////////////////////////\n COMMON TEAMS BOOLEANS: \nFind Join Team: '+ findJoinTeam + '\nIs Owner Profile: ' + (u.Id == UserInfo.getUserId()) + '\nIs Private Profile: ' + u.People__r[0].isPrivate__c  + '\n//////////////////////////////\n\n');
 				if (!u.People__r[0].isPrivate__c || findJoinTeam || u.Id == UserInfo.getUserId()) {
 					item.isPrivate = false;
-				}else {
+				}
+				else {
 					if (!u.People__r[0].isPrivate__c) {
 						item.isPrivate = false;	
-					}else {
+					}
+					else {
 						item.isPrivate = true;		
 					}
 				}
@@ -386,18 +301,32 @@ public class PeopleKeywordSearchController{
 			}
 			searchResultsItems.add(item);	
 		}
-	 	//Set the Values of Paginator
-	 	setSizeList(result.size());
-	 	paginator.setTotalItemsNumber(result.size());
-	 	paginator.genCntPagination();
-	 	
-	 	title = 'Search Results from People';	 	
-	}
+							
+		 	//Set the Values of Paginator
+		 	setSizeList(result.size());
+		 	paginator.setTotalItemsNumber(result.size());
+		 	paginator.genCntPagination();
+		 	
+		 	title = 'Search Results from People';	 	
+	   		
+	 	}
 	 	
 	 	/**
-	 	*Class PeopleSearchResultItem wraps the data of the search result
-		*@author Yuri Alvarez
-		*/	
+	 	* inner class to store user profile data
+	 	* @return String Id
+	 	* @return String Title
+	 	* @return String Phone
+	 	* @return String Name
+	 	* @return String Email
+	 	* @return String Division
+	 	* @return String Department
+	 	* @return String CompanyName
+	 	* @return String AboutMe
+	 	* @return String Aol
+	 	* @return String Picture
+	 	* @return String Skype
+	 	* @return String Yahoo
+	 	*/	 	
 	 	public class PeopleSearchResultItem {	 		
 	 		public String Id { get; set; }
 	 		public Boolean isPrivate { get; set; }

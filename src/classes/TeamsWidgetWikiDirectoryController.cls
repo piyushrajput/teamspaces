@@ -1,21 +1,12 @@
-/**
-*@author Marcos Garcia @ 07/09/2008
-*/
 public with sharing class TeamsWidgetWikiDirectoryController {
 
+
  	List<Wikis> resultWikis = new List<Wikis>();
-	
-	/**
-	* Constructor
-	*/
-	public TeamsWidgetWikiDirectoryController (){}	
 	
 	// Get Team Id Attribute
 	String teamId;
 	
-    /**
-    *@param String
-    */
+    // Setter method for Team Id variable
 	public void setTeamId(String tID) {
 		if (teamId == null || teamId != tID) {
 			teamId = tID;
@@ -24,9 +15,6 @@ public with sharing class TeamsWidgetWikiDirectoryController {
 		}
 	}
 	
-	/**
-	*@return String
-	*/
 	public String getTeamId(){
 		return teamId;
 	}
@@ -35,7 +23,7 @@ public with sharing class TeamsWidgetWikiDirectoryController {
 	
 	/**
 	* Set Sidebar
-	*@param Boolean
+	*@void
 	*/
 	public void setSidebar (Boolean b){
 		sidebar = b;
@@ -48,14 +36,16 @@ public with sharing class TeamsWidgetWikiDirectoryController {
 	public Boolean getSidebar(){
 		return sidebar;
 	}		
-
+	
+	public TeamsWidgetWikiDirectoryController (){}
+	
 	Integer wikiPagesCount;
     
+	/* ---------------------------- */
+   	/*   	 SHARING RULES			*/
+   	/* ---------------------------- */	
 	public UserPermissions userPermissions = TeamsDetailController.userPermission;
-
-	/**
-	* Read user psrmissions
-	*/
+		
 	public void genPermissions () {
 		userPermissions.setId(UserInfo.getUserId());
 		userPermissions.setTeam(teamId);
@@ -63,40 +53,26 @@ public with sharing class TeamsWidgetWikiDirectoryController {
 		userPermissions.setPermissions();		
 	}
 	
-	/**
-	*@return UserPermissions
-	*/
 	public UserPermissions getUserPermissions () {
+		System.debug('\n //////////////////////// \n USER PERMISSIONS: \n' + userPermissions + '\n //////////////////////////////// \n');
 		return userPermissions;
 	}
+	/* ---------------------------- */	
 
-	/**
-	* Class Wikis
-	*/
 	public class Wikis {
 	
 		WikiPage__c wikiPage;
 		String name;
 		String createdByName;
 		
-		/**
-		* Constructor
-		*@param WikiPage__c
-		*/
 		public Wikis (WikiPage__c wiki) {
 			wikiPage = wiki;
 		}
 		
-		/**
-		*@return WikiPage__c
-		*/
 		public WikiPage__c getWikiPage () {
 			return wikiPage;
 		}
 		
-		/**
-		*@return String
-		*/
 		public String getName () {
 			String trunkName = wikiPage.Name;
 			if(wikiPage.Name.length() > 17) {
@@ -105,11 +81,9 @@ public with sharing class TeamsWidgetWikiDirectoryController {
 			return trunkName; 
 		}
 		
-		/**
-		*@return String
-		*/
 		public String getCreatedByName () {
 			String trunkCreatedByName = '';
+			System.debug('\n\n///////////////////////////////////\n WIKI PAGE CREATED BY: ' + wikiPage + '\n/////////////////////////////////\n\n');
 			if (wikiPage.CreatedBy != null) {
 				trunkCreatedByName = wikiPage.CreatedBy.Name;
 				if(wikiPage.CreatedBy.Name.length() > 17) {
@@ -122,9 +96,6 @@ public with sharing class TeamsWidgetWikiDirectoryController {
 
     
     
-    /**
-    * Load wiki pages
-    */
     public void readWikis() {
 		List<WikiPage__c> wikis = new List<WikiPage__c>();
 	   	
@@ -145,30 +116,18 @@ public with sharing class TeamsWidgetWikiDirectoryController {
  		setWikiPagesCount(wikis.size());
     }
     
-    /**
-    *@return List<Wikis>
-    */
     public List<Wikis> getWikis(){
     	return resultWikis;
     } 
     
-    /**
-    *@return Integer
-    */
     public Integer getWikiPagesCount(){
     	return wikiPagesCount;
     }
     
-    /**
-    *@param Integer
-    */
     public void setWikiPagesCount(Integer count){
     	wikiPagesCount = count;
     }
     
-    /**
-    * For rerender use
-    */
     public void refresh() {
     	readWikis();
     }

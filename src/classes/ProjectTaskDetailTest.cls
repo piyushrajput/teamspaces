@@ -1,10 +1,16 @@
 @IsTest private class ProjectTaskDetailTest {
     public static testMethod void testProject() {
 		try{
-			GenerateEnvironmentTest.gen();
+
+
+	        GenerateEnvironmentTest.gen();
         	Test.startTest();	
        	
        		ProjectTaskDetailController project = new ProjectTaskDetailController();
+	
+	
+	
+	        //
 	        ProjectTask__c projectTask = [select 	p.Id,
 				                                    p.Team__c,
 				                                    p.Team__r.Name,
@@ -20,23 +26,29 @@
 				                                    p.Description__c,
 				                                    p.CreatedById,
 				                                    (Select Id, User__c From ProjectAssignee__r)
-				         						from ProjectTask__c p limit 1];			         						
+				         						from ProjectTask__c p limit 1];
+				         						
+						         						
 			project.param = projectTask.Id;
 			project.getTask(projectTask.Id);
 	        project.genPermissions();
 	        project.getUserPermissions();			
-			
+			//project.markComplete();		
+
+	        //
 	        ProjectTaskDetailController.TaskDetails TaskDetail   = new ProjectTaskDetailController.TaskDetails();
 	        TaskDetail.id = projectTask.Id;
 	        String id = TaskDetail.id;
-			
+	
+	        //
 	        ProjectTaskDetailController.ProjectAssignee assigns = new ProjectTaskDetailController.ProjectAssignee();
 	        assigns.getId();
 	        assigns.setId('Id');
 	        assigns.setName('Name');
 	        assigns.getPercent();
 	        assigns.setPercent(1);
-			
+	
+	        //
 	        ProjectTaskDetailController.AttachmentInfo attach = new ProjectTaskDetailController.AttachmentInfo();
 	        attach.getId();
 	        attach.setId('');
@@ -44,7 +56,8 @@
 	        attach.setName('Name');
 	        attach.getAttachImage();
 	        attach.setAttachImage('');
-			
+	
+	        //
 	        TaskDetail.Name = projectTask.Name;
 	        String name = TaskDetail.Name;
 	
@@ -71,12 +84,14 @@
 			ProjectTaskDetailController.TaskDetails td = project.getTask();
 
 			Test.stopTest();
+			
 		}catch(Exception e){
 			throw e;
 		}
     } 
 
-    public static testMethod void testProject2(){
+    public static testMethod void testProject2() 
+    {
         GenerateEnvironmentTest.gen();
     	Test.startTest();	
 

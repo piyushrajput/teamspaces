@@ -35,7 +35,7 @@ trigger TeamMemberAfterDelete on TeamMember__c bulk (before delete) {
 											t.CreateBookmarks__c, 
 											t.CreateBlogs__c from TeamProfile__c t];
 			
-			
+			//List<Group> allQueue = [ select Id, Name From Group where Type = 'Queue'];
 			List<String> groupsNames = new List<String>();
 			List<String> userIds = new List<String>();
 			for (TeamMember__c tm : Trigger.old) {

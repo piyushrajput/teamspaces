@@ -1,16 +1,21 @@
 <apex:page controller="DiscussionWidgetMostReadController" >
- 
- 	
+
 	<style>
-		.minifeed_discussion li{
-			background: url('{!URLFOR($Resource.commonResources, 'images/icons/minifeeds/minifeed_discussion.gif')}') no-repeat scroll 4px 4px;
-			padding: 3px 0px 3px 25px !important;		
-		}		
-	</style>
+		
+		div.box_round_blue.no_subtitle h3 {
+			padding: 13px;
+		}	
+		
+		div.box_round_blue.no_subtitle div.box_content div.contentHolder div.team {
+			margin:4px 0pt;
+		}
+		
+		div.box_round_blue.no_subtitle div.box_content div.contentHolder div.team div.desc {
+			height:auto;
 	
-	<!-- discussionWidgetMostRead CSS -->
-	<apex:stylesheet value="{!URLFOR($Resource.discussionResources, 'inc/css/discussionWidgetNewDiscussion.css')}" />
-	 
+		}
+		
+	</style>
 
 	<div class="teamWidget mySmallWidget" >
 		<!-- Widget Title -->
@@ -24,9 +29,8 @@
 					<div class="desc">
 						<ul class="minifeed_discussion">
 							<apex:repeat value="{!mostRead}" var="dt" >						
-								<li>
-									<a href="/apex/DiscussionDetail?id={!dt.Id}">
-										{!dt.Subject__c} 
+								<li><a href="/apex/DiscussionDetail?id={!dt.Id}">
+									{!dt.Subject__c} 
 									</a>
 								</li>
 							</apex:repeat>
@@ -41,4 +45,5 @@
 		</div>
 	</div>
 	<div class="clear"></div>
+
 </apex:page>

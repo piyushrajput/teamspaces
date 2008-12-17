@@ -1,7 +1,5 @@
-/**
-*@author Martin Prado @ 09/15/2008
-*/
-public without sharing class TeamsSubscribersEmailServices{
+public without sharing class TeamsSubscribersEmailServices 
+{
 	
 	//E-mail services instance
 	Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();
@@ -9,42 +7,34 @@ public without sharing class TeamsSubscribersEmailServices{
 	
 	public Boolean isTest = false;
 	
-	/**
-	* Constructor (def)
-	*/
-	public TeamsSubscribersEmailServices(){}
-
-	/**
-	*@param Boolean isTest
-	*/
 	public void setIsTest (Boolean isTest) {
 		this.isTest = isTest;	
 	}
 	
-	/**
-	*@param Boolean
-	*/
 	public void setIsTaskEdit (Boolean isTaskEdit) {
 		this.isTaskEdit = isTaskEdit;
 	}
-
+		
+	//Default Constructor
+	public TeamsSubscribersEmailServices(){}
+	
 	/**
-	* Constructor
-	* Search TeamMember for this team, Call Send Mail Method
-	*@param String Id of Team
-	*@param MiniFeed__c
-	*@param String message
+	 * Search TeamMember for this team, Call Send Mail Method
+	 * @TeamId Id of Team
+	 * @IdFeed Id of feed
 	*/
+	
 	public MiniFeed__c mf = new MiniFeed__c();
 
-	public void TeamsMembersSubscribers(String TeamId,  MiniFeed__c feed, String compareDetail){
+	public void TeamsMembersSubscribers(String TeamId,  MiniFeed__c feed, String compareDetail)
+	{
 		List<TeamSubscription__c> TeamMemberSubscription = new List<TeamSubscription__c>();
 		String emailMsj = '';
 		String emailSub = '';
 		
 		if (feed != null && !isTest) {
 			mf = new MiniFeed__c();
-			mf = [select 
+			mf = 	[select 
 		    			m.User__c,
 		    			m.User__r.Name,
 		    			m.User__r.Id, 
@@ -64,28 +54,40 @@ public without sharing class TeamsSubscribersEmailServices{
 	    			where m.Id =: feed.Id
 	    			limit 1]; 
 		}
+		
 		if (teamId != null && mf != null) {
 			//Select Current MiniFeed
+			
+			System.debug('\n\n/////////////// MINI FEED: ' + mf + '\n/////////////////////////////\n\n');
 			//All Member Subscribe to Team
 			//Select the Path of Host //sample: na1.saleforce.com
 			PageReference PR =  ApexPages.currentPage(); 
 			
 			String newPath ='';
 			//In Gannt Page Reference is null
-			if(PR !=  null){
+			if(PR !=  null)
+			{
 				String props = '';
-				if(PR.getHeaders() != null){
+				if(PR.getHeaders() != null)
+				{
 					props = (PR.getHeaders()).get('Host');
 				}
 				//Remove HTML tag of Path
+				System.debug('\n\n///////////////////////////// SAVE THIS PROPS HOST: ' + props + '\n/////////////////////////\n\n');
 				if (props == '' || props == null) {
 					newPath = '';	
-				}else {
+				}
+				else {
 					String [] path = props.split('</?[a-z][a-z0-9]*[^<>]*>');
-					if(path.size() == 0){
+					
+					if(path.size() == 0)
+					{
 						newPath = path[0];
-					}else{
-						for(Integer i = 0; i < path.size(); i++){	
+					}
+					else 
+					{
+						for(Integer i = 0; i < path.size(); i++)
+						{	
 							newPath += path[i];
 						}
 					}
@@ -103,19 +105,24 @@ public without sharing class TeamsSubscribersEmailServices{
 				
 					emailMsj = oldMemberName + ' has left team <a href="https://' + newPath + '/apex/TeamsRedirect?id=' + mf.Team__r.Id + '">' +  mf.Team__r.Name + '</a>.';
 					emailSub = 'Team Member has Left the team ';
-				}else {
+				}
+				else {
 					//Sub:New Team Member
 					//Body: A new team member has joined team {}. Please welcome {name} to the team. 
+					
 					String newMemberName ='';
 					if (mf.Message__c.indexOf('joined') == 0) {
 						newMemberName = mf.User__r.Name;
-					}else {
+					}
+					else {
 						newMemberName = mf.Message__c.replaceFirst('added ', '');
 						newMemberName = newMemberName.replaceFirst(' to the team <a href=.*','');
 					}
+					
 					emailMsj = 'A new team member has joined team <a href="https://' + newPath + '/apex/TeamsRedirect?id=' + mf.Team__r.Id + '">' +  mf.Team__r.Name + '</a>. Please welcome ' + newMemberName + ' to the team.';
 					emailSub = 'New Team Member';
 				}
+				
 				if (!isTest) {
 					TeamMemberSubscription = [Select 
 							t.WikiPageUpdated__c, 
@@ -144,11 +151,13 @@ public without sharing class TeamsSubscribersEmailServices{
 				}
 			} 
 			
+			
 			//////////////////////////////////////
 			//////		DISCUSSION		//////////
 			if (mf.Type__c == 'DiscussionNewTopic') {
 				//Sub: {Message Subject} from Teamspace {Team Name}
 				//Body:{Topic Body} 
+				
 				String newTopicId = mf.Message__c.replaceFirst('created new discussion topic <a href="/apex/DiscussionDetail\\?id=', '');
 				newTopicId = newTopicId.replaceFirst('"/>.*','');
 				
@@ -190,19 +199,20 @@ public without sharing class TeamsSubscribersEmailServices{
 						From TeamSubscription__c t
 						where Team__c =: TeamId and (DiscussionNewTopic__c = true or DiscussionNewReply__c = true)];
 				}
-				
 			}
+			
 			if (mf.Type__c == 'DiscussionNewReply') {
 				//Sub: RE:{Reply Subject} from Teamspace {Team Name}
 				//Body:{Reply Body}
 				//
 				//.......Reponding to.....
 				// {Topic or Reply User is responding} 
+								
 				String newReplyId = mf.Message__c.replaceFirst('.*<span style="display:none;">', '');
 				newReplyId = newReplyId.replaceFirst('</span>','');
 				
 				List<DiscussionMessage__c> newTopicList = [select ParentMessage__r.Message__c, ParentMessage__c, Subject__c, DiscussionTopic__c, DiscussionTopic__r.Subject__c, Message__c from DiscussionMessage__c where id =:newReplyId];
-				System.debug('\n\n********************************************\n'+newTopicList+'\n********************************');
+				
 				String topicSubject = '';
 				String topicBody = '';
 				String respondingTo = '';
@@ -211,7 +221,8 @@ public without sharing class TeamsSubscribersEmailServices{
 					topicBody = newTopicList[0].Message__c;
 					if (newTopicList[0].ParentMessage__c != null) {
  						respondingTo = newTopicList[0].ParentMessage__r.Message__c;
-					}else {
+					}
+					else {
 						List<DiscussionMessage__c> parentTopic = [select Message__c from DiscussionMessage__c where DiscussionTopic__c =:newTopicList[0].DiscussionTopic__c order by PostedDate__c];
 						if (parentTopic.size() > 0) {
 							respondingTo = parentTopic[0].Message__c;
@@ -221,16 +232,15 @@ public without sharing class TeamsSubscribersEmailServices{
 				
 				mf.Message__c = mf.Message__c.replaceAll('<span style="display:none;">.*','');
 				update mf;
+				
 				emailSub = 'RE: ' + topicSubject + ' from Teamspace ' +  mf.Team__r.Name + '.';
 				emailMsj = topicBody;
+				
 				emailMsj += '<br>.......Reponding to.....<br>';
 				emailMsj += respondingTo;
 				
-				
-				List<TeamSubscription__c> TmpTeamMemberSubscription = new List<TeamSubscription__c>();
-				List<TeamSubscription__c> Tmp2TeamMemberSubscription = new List<TeamSubscription__c>();
 				if (!isTest) {
-					TmpTeamMemberSubscription = [Select 
+					TeamMemberSubscription = [Select 
 							t.WikiPageUpdated__c, 
 							t.WikiNewPage__c, 
 							t.WikiCreatedByMeUpdated__c, 
@@ -253,19 +263,7 @@ public without sharing class TeamsSubscribersEmailServices{
 							t.DiscussionNewTopic__c, 
 							t.DiscussionNewReply__c
 						From TeamSubscription__c t
-						where Team__c =: TeamId];
-				}
-				String DiscussionTopicOwnerId = [Select d.PostedBy__c From DiscussionTopic__c d where ( Id =: newTopicList[0].DiscussionTopic__c )][0].PostedBy__c;
-				System.debug('\n\n\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\n POSTEDBy:'+ DiscussionTopicOwnerId);
-				for(TeamSubscription__c tmp : TmpTeamMemberSubscription){
-					if(tmp.DiscussionNewReply__c == true){
-						TeamMemberSubscription.add(tmp);
-						System.debug('\n\n\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\n All subscripted  \n\n\\\\\\');
-					}
-					else if(tmp.DiscussionReplyToMe__c == true && tmp.User__r.Id == DiscussionTopicOwnerId){
-						TeamMemberSubscription.add(tmp);
-					}
-					System.debug('\n\n\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\n MailingList'+TeamMemberSubscription+'  \n\n\\\\\\');						
+						where Team__c =: TeamId and (DiscussionNewReply__c = true)];
 				}
 			}
 			
@@ -281,6 +279,8 @@ public without sharing class TeamsSubscribersEmailServices{
 				
 				List<MiniFeed__c> pastMiniFeedsList = new List<MiniFeed__c>();
 				pastMiniFeedsList = [select id, Type__c, User__c, Team__c, FeedDate__c, CreatedById, OwnerId, LastModifiedById, CreatedDate from MiniFeed__c where CreatedDate <: mf.CreatedDate order by CreatedDate desc limit 2];
+				
+				System.debug('\n\n///////////////////////\n pastMiniFeedsList PARTIAL : ' + pastMiniFeedsList + '\n///////////////////////////\n\n');
 				// Check if this minifeed is product of the edition of a Task.
 				if (mf.Type__c == 'TaskAssigned') {
 					assignAction = 'assigned';
@@ -305,7 +305,9 @@ public without sharing class TeamsSubscribersEmailServices{
 							isTaskEdit = true;	
 						}		
 					}
-				}else {
+						
+				}
+				else {
 					assignAction = 'unassigned';
 					String auxInfo = mf.Message__c.replaceFirst('.*<span style="display:none;">', '');
 					auxInfo = auxInfo.replaceFirst('</span>','');
@@ -330,8 +332,14 @@ public without sharing class TeamsSubscribersEmailServices{
 						}		
 					}
 				}
+				
+				
+				System.debug('\n\n///////////////////////\n isTaskEdit : ' + isTaskEdit + '\n///////////////////////////\n\n');
+				
 				if (!isTaskEdit) {
+					
 					isTaskEdit = false;
+					
 					List<ProjectTask__c> taskList = [select 
 														p.Team__c, 
 								                        p.Project__c,
@@ -346,33 +354,36 @@ public without sharing class TeamsSubscribersEmailServices{
 								                        p.StartDate__c,
 								                        p.Duration__c, 
 								                        p.Description__c from ProjectTask__c p where id =:taskId];
+					
 					String taskDetail = '';
 					if (taskList.size() > 0) {
 						ProjectTask__c task = taskList[0];
 						taskName = task.Name;
 						taskDetail = 'Name: ' + task.Name + '<br>';
-						if (task.Priority__c != null) 
+						if (task.Priority__c != null) {
 							taskDetail += 'Priority: ' + task.Priority__c + '<br>';
-						
-						if (task.Percent_Completed__c != null) 
+						}
+						if (task.Percent_Completed__c != null) {	
 							taskDetail += 'Percent Completed: ' + task.Percent_Completed__c + '<br>';
-						
+						}
 						taskDetail += 'Is Milestone: ' + task.Milestone__c + '<br>';
 						taskDetail += 'Duration: ' + task.Duration__c + ' hours<br>';
-						if (task.StartDate__c != null) 
+						if (task.StartDate__c != null) {	
 							taskDetail += 'Start Date: ' + task.StartDate__c.format() + '<br>';
-						
-						if (task.EndDate__c != null) 
+						}
+						if (task.EndDate__c != null) {	
 							taskDetail += 'End Date: ' + task.EndDate__c.format() + '<br>';
-						
+						}
 						taskDetail += 'Created By: ' + task.createdBy.Name + '<br>';
-						if (task.Description__c != null) 
+						if (task.Description__c != null) {	
 							taskDetail += 'Description: ' + task.Description__c + '<br>';
+						}
 					}
 					
 					if (taskName != '' && taskDetail != '') {
 						emailSub = taskName + ' has been ' + assignAction + ' to you';
 						emailMsj = taskDetail;
+					
 						TeamMemberSubscription = [Select 
 								t.WikiPageUpdated__c, 
 								t.WikiNewPage__c, 
@@ -398,9 +409,11 @@ public without sharing class TeamsSubscribersEmailServices{
 							From TeamSubscription__c t
 							where Team__c =: TeamId and User__c =:assignToId and ProjectTaskAssignedToMe__c = true];
 					}
+					
 					mf.Message__c = mf.Message__c.replaceAll('<span style="display:none;">.*','');
 					update mf;
 				}
+				
 			}
 			
 			if (mf.Type__c == 'TaskEdited' || mf.Type__c == 'TaskCompleted' || mf.Type__c == 'MilestoneEdited' || mf.Type__c == 'MilestoneCompleted') {
@@ -416,6 +429,7 @@ public without sharing class TeamsSubscribersEmailServices{
 						usersAssigned.add(iterAssignee.User__c);
 						taskName = iterAssignee.ProjectTask__r.Name;	
 					}
+					
 					String taskChangesDetail = changesInfo.replaceFirst('.*////' ,'');
 					
 					emailSub = taskName + ' has changed';
@@ -449,9 +463,11 @@ public without sharing class TeamsSubscribersEmailServices{
 					}
 				}
 			}
+			
 			if (mf.Type__c == 'TaskDelete' || mf.Type__c == 'MilestoneDelete') {
 				//Sub:{Task name} has been removed
 				//Body: {Task Name} has been removed 
+				
 				String taskName = mf.Message__c.replaceFirst(' in <a href="/apex/TeamsRedirect\\?id=.*','');
 				taskName = taskName.replaceFirst('deleted [^ ]* ','');
 				
@@ -485,6 +501,7 @@ public without sharing class TeamsSubscribersEmailServices{
 						where Team__c =: TeamId and ProjectTaskDeleted__c = true];
 				}
 			}
+			
 			//////////////////////////////////////
 			//////		 WIKI PAGE		//////////
 			if (mf.Type__c == 'WikiEditPage') {
@@ -492,6 +509,7 @@ public without sharing class TeamsSubscribersEmailServices{
 				//Body:Wiki page {Name} has been edited by {User Name} . 
 				//
 				//Click here to see the page {link} 
+				
 				String wikiName = '';
 				String wikiId = '';
 				String editedByName = mf.User__r.Name;
@@ -536,11 +554,13 @@ public without sharing class TeamsSubscribersEmailServices{
 						where Team__c =: TeamId and ((WikiPageUpdated__c = true and User__c !=:createdById) or (WikiCreatedByMeUpdated__c = true and User__c =:createdById))];
 				}
 			}
+			
 			if (mf.Type__c == 'WikiNewPage') {
 				//Sub: Wiki page {wiki name} has been added to the Team {Team Name}'s wiki
 				//Body: Wiki page {wiki name} has been added to the Team {Team Name}'s wiki
 				//
 				//Click here to see the page {link} 
+				
 				String wikiName = '';
 				String wikiId = ''; 
 				
@@ -580,26 +600,45 @@ public without sharing class TeamsSubscribersEmailServices{
 						where Team__c =: TeamId and WikiNewPage__c = true];
 				}
 			}
+			
+			
+				
 			//Array address
 			String[] address = new String[]{}; 
 			Integer it = 0;
-			if(TeamMemberSubscription.size() > 10){
-				for(Integer i =0; i < TeamMemberSubscription.size(); i++ ){	
-					if(it < 10 || i == TeamMemberSubscription.size() ){
+			if(TeamMemberSubscription.size() > 10)
+			{
+				for(Integer i =0; i < TeamMemberSubscription.size(); i++ )
+				{	
+					if(it < 10 || i == TeamMemberSubscription.size() )
+					{
 						address.add(TeamMemberSubscription[i].User__r.Email);
 						it ++;
-					}else{
+					}
+					else
+					{
 						SendMail(address, TeamMemberSubscription[0].Team__r, emailMsj, emailSub);
 						it = 0;
 					}
 				}
-			}else if(TeamMemberSubscription.size() > 0 && TeamMemberSubscription != null){	
-				for(TeamSubscription__c ts : TeamMemberSubscription){
+			}
+			else if(TeamMemberSubscription.size() > 0 && TeamMemberSubscription != null)
+			{	
+				for(TeamSubscription__c ts : TeamMemberSubscription)
+				{
 					address.add(ts.User__r.Email);
 				}
+				
+				System.debug('\n\n/////////////// EMAIL ADDRESS : ' + address + '\n/////////////////////////////\n\n');	
+				System.debug('\n\n/////////////// EMAIL TeamMemberSubscription[0].Team__r: ' + TeamMemberSubscription[0].Team__r + '\n/////////////////////////////\n\n');	
 				SendMail(address, TeamMemberSubscription[0].Team__r, emailMsj, emailSub);
 			}
-		}else if (mf != null){
+		}
+		else if (mf != null){
+			//Select Current MiniFeed
+			
+			System.debug('\n\n/////////////// MINI FEED: ' + mf + '\n/////////////////////////////\n\n');
+			
 			//////////////////////////////////////
 			//////		TEAM MEMBER		//////////
 			if (mf.Type__c == 'PeopleChangeStatus') {
@@ -645,56 +684,79 @@ public without sharing class TeamsSubscribersEmailServices{
 			
 			String[] address = new String[]{}; 
 			Integer it = 0;
-			if(TeamMemberSubscription.size() > 10){
-				for(Integer i =0; i < TeamMemberSubscription.size(); i++ ){	
-					if(it < 10 || i == TeamMemberSubscription.size() ){
+			if(TeamMemberSubscription.size() > 10)
+			{
+				for(Integer i =0; i < TeamMemberSubscription.size(); i++ )
+				{	
+					if(it < 10 || i == TeamMemberSubscription.size() )
+					{
 						address.add(TeamMemberSubscription[i].User__r.Email);
 						it ++;
-					}else{
+					}
+					else
+					{
 						SendMail(address, TeamMemberSubscription[0].Team__r, emailMsj, emailSub);
 						it = 0;
 					}
 				}
-			}else if(TeamMemberSubscription.size() > 0 && TeamMemberSubscription != null){	
-				for(TeamSubscription__c ts : TeamMemberSubscription){
+			}
+			else if(TeamMemberSubscription.size() > 0 && TeamMemberSubscription != null)
+			{	
+				for(TeamSubscription__c ts : TeamMemberSubscription)
+				{
 					address.add(ts.User__r.Email);
 				}
+				
+				System.debug('\n\n/////////////// EMAIL ADDRESS : ' + address + '\n/////////////////////////////\n\n');	
+				System.debug('\n\n/////////////// EMAIL TeamMemberSubscription[0].Team__r: ' + TeamMemberSubscription[0].Team__r + '\n/////////////////////////////\n\n');	
 				SendMail(address, TeamMemberSubscription[0].Team__r, emailMsj, emailSub);
 			}	
 		}
 	}
 	
 	/**
-	* SEND MAIL
-	*@param String[] e-mails Array
-	*@param Team__c team
-	*@param String message
-	*@param String subject
+	 * SEND MAIL
+	 * @toAddresses  - Array of E-Mail
+	 * @team - Team__c Object
+	 * @Message - Message String
 	*/
 	Boolean alreadySent = false;
 	public void SendMail(String[] toAddresses , Team__c team,  String Message, String subject) {
+		
  		// Assign thsetReplyToe addresses for the To and CC lists to the mail object.
 		mail.setToAddresses(toAddresses);
+           
 		// Specify the address used when the recipients reply to the email.
-		if(team.ContactEmail__c != null){
+		if(team.ContactEmail__c != null)
+		{
 			mail.setReplyTo(team.ContactEmail__c);
-		}else{
+		}
+		else
+		{
 			mail.setReplyTo('forwardtosfdc@gmail.com');
 		}
+           
 		// Specify the name used as the display name.
-		mail.setSenderDisplayName('Team Subscribe');  
+		mail.setSenderDisplayName('Team Subscribe');
+           
 		//Specify the subject line for your email address.
 		mail.setSubject(subject);
 
 		mail.setSenderDisplayName(team.Name);
+		
 		// Set to True if you want to BCC yourself on the email.
 		mail.setBccSender(false);
+           
 		// Optionally append the salesforce.com email signature to the email.
 		// The email address of the user executing the Apex Code will be used.
 		mail.setUseSignature(true); 
+   
 		//Set Content Mail
 		mail.setHtmlBody(Message);
+		
 		// Send the email you have created.
+        
+        System.debug('\n\n/////////////// EMAIL RESULT: ' + mail + '\n/////////////////////////////\n\n');	
         if(!alreadySent)
         	Messaging.sendEmail(new Messaging.SingleEmailMessage[]{mail});
     	alreadySent = true;

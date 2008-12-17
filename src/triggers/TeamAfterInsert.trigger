@@ -46,7 +46,22 @@ trigger TeamAfterInsert on Team__c bulk (after insert) {
 				gdqw.Name = 'Wiki' + team.Id;
 				newGroups.add(gdqw);
 					
-											
+				// Create Blog Queue
+				/*
+				Group gdqb = new Group();
+				gdqb.Type = 'Queue';
+				gdqb.Name = 'Blog' + team.Id;
+				newGroups.add(gdqb);
+				*/
+						
+				// Create Bookmark Queue
+				/*
+				Group gdqbb = new Group();
+				gdqbb.Type = 'Queue';
+				gdqbb.Name = 'Bookmark' + team.Id;
+				newGroups.add(gdqbb);
+				*/	
+							
 				// Rename this to project 		
 				// Create Task Queue
 				Group gdqt = new Group();
@@ -59,12 +74,18 @@ trigger TeamAfterInsert on Team__c bulk (after insert) {
 				String teamQueueId = lsr[0].getId();
 				String discussionQueueId = lsr[1].getId();
 				String wikiQueueId = lsr[2].getId();
+				//String blogQueueId = lsr[3].getId();
+				//String bookmarkQueueId = lsr[4].getId();
+				//String taskQueueId = lsr[5].getId();
 				String taskQueueId = lsr[3].getId();
 				
 				// ### Allow SObjects to be managed by recently created queues ###
 				List<QueueSobject> sobjectsQueueAllowed = new List<QueueSobject>();
 				
 				// Discussion allows
+				
+				
+				
 				QueueSobject allowForum = new QueueSobject(SobjectType = Schema.SObjectType.DiscussionForum__c.getName() ,QueueId = discussionQueueId);
 			   	sobjectsQueueAllowed.add(allowForum);
 				
@@ -75,6 +96,7 @@ trigger TeamAfterInsert on Team__c bulk (after insert) {
 			   	sobjectsQueueAllowed.add(allowMessages);
 						
 			   	// Wiki allows
+				
 				QueueSobject allowWikiPages = new QueueSobject(SobjectType = Schema.SObjectType.WikiPage__c.getName() ,QueueId = wikiQueueId);
 			   	sobjectsQueueAllowed.add(allowWikiPages);
 			   	
@@ -92,6 +114,7 @@ trigger TeamAfterInsert on Team__c bulk (after insert) {
 			   	
 			   	
 			   	// Project Tasks - assignees
+			   	
 				QueueSobject allowAsignee = new QueueSobject(SobjectType = Schema.SObjectType.ProjectAssignee__c.getName() ,QueueId = taskQueueId);
 			   	sobjectsQueueAllowed.add(allowAsignee);
 				
@@ -105,6 +128,7 @@ trigger TeamAfterInsert on Team__c bulk (after insert) {
 			   	sobjectsQueueAllowed.add(allowProjectTaskPred);
 			   	
 			   	// Team
+			   	
 				QueueSobject allowTeams = new QueueSobject(SobjectType = Schema.SObjectType.Team__c.getName() ,QueueId = teamQueueId);
 			   	sobjectsQueueAllowed.add(allowTeams);
 			   	

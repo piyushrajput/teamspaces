@@ -1,8 +1,9 @@
 <apex:component allowDML="true">
 	<!-- Modal JS -->
-	<apex:includeScript value="{!URLFOR($Resource.commonResources, 'inc/js/modal.js')}"/>
+	<script type="text/javascript" src="{!URLFOR($Resource.commonResources, 'inc/js/modal.js')}"></script>
 	<!-- Overlay Styles -->
 	<apex:stylesheet value="{!URLFOR($Resource.TeamsResources, 'inc/css/teamsOverlaysTemplate.css')}" />
+	
 	<script>
 		function showOverlayStatus ( formId ) {
 			var statusDiv = $('overlayFormStatus');
@@ -11,12 +12,14 @@
 			mainForm.style.display= 'none';
 		}
 	</script>
+	
 	<!-- Initialize the overlay box for modal.js -->
 	<a href="#modal_container" id="initializeModalOverlay" style="display:none;"></a>
 	<div id="modal_container" style="display:none;"></div>
 	<script>
 		createOverlay('initializeModalOverlay');
 	</script>
+	
 	<div id="overlayFormId" style="display:none;" class="overlayForm">	
 		<!-- Overlay Title -->
 		<div class="overlayTitleContent">
@@ -27,6 +30,7 @@
 				</a>
 			</div>
 		</div>
+		
 		<!-- Overlay Content -->
 		<div class="overlayMainContent">
 			<!-- Required Information -->
@@ -41,6 +45,7 @@
 				<div class="overlayFormContent">
 					{Overlay Content}
 				</div>
+				
 				<div class="overlaySeparateLine" />
 				<!-- Saven and Cancel Buttons -->
 				<div class="overlayFromButtons" align="center">

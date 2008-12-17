@@ -7,12 +7,12 @@
     	TeamsWidgetMyTasksAndMilController con = new TeamsWidgetMyTasksAndMilController();
     	TeamsWidgetMyTasksAndMilController.ProjectTasks pT = new TeamsWidgetMyTasksAndMilController.ProjectTasks();
     	
-    	if (con.getAllProjectTasks() == null) 
+    	if (con.getAllProjectTasks() == null) {
     		System.assert(true,'getAllProjectTasks failed');
-    		
-    	if (pT.getDaysCount() == null) 
+    	}
+    	if (pT.getDaysCount() == null) {
     		System.assert(true,'getDaysCount failed');
-    	
+    	} 
     	Test.stopTest();
 	}
 

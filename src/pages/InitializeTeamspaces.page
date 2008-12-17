@@ -1,4 +1,5 @@
 <apex:page controller="InitializeTeamspacesController" sidebar="false" tabStyle="Team__c">
+	
 	<script>
 		function initActionButton(command){
 			if(!command.disabled){
@@ -7,6 +8,7 @@
 			}
 		}
 	</script>
+	
 	<style>
 		div.initEvent{
 			margin: 10px 10px 10px 0px;
@@ -25,6 +27,8 @@
 			width: 500px;
 		}
 	</style>
+	
+	
 	<apex:pageBlock title="Initialize {!$ObjectType.Team__c.labelPlural}">
 		<apex:form >
 			<div class="initEvent">

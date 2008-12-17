@@ -2,10 +2,11 @@
 	<!-- Attribute Definitions -->
 	<apex:attribute name="team" description="The team ID" type="String" required="true" assignTo="{!teamId}" />
 	<apex:attribute name="sidebar" description="Holder" type="Boolean" required="false" assignTo="{!sidebar}" />	
+	
 	<!-- ### Wide Widget ### -->
 	<apex:outputPanel layout="block" rendered="{!IF(!sidebar, true, false)}">
 		<div class="myBigWidget">
-			<!-- Widget Title -->
+			<!-- Widget Title -->		
 			<div class="wideHeader">
 				<h4>Recent Wiki Pages</h4>
 			</div>
@@ -16,8 +17,8 @@
 			</div>
 			<!-- Widget Container --> 		
 			<div class="wideBody">
-				<div class="threads">
-					<div>
+				<div class="threads">					
+					<div>		
 						<apex:outputPanel layout="block" id="theFeeds" >
 							<table class="pageList">
 								<thead>
@@ -49,6 +50,10 @@
 			</div>
 		</div>
 	</apex:outputPanel>	
+	
+
+	
+	
 	<!--  ### Thin Widget ###  -->
 	<apex:outputPanel layout="block" rendered="{!IF(sidebar, true, false)}">
 		<div class="teamWidget mySmallWidget" >
@@ -61,16 +66,17 @@
 				<!-- Widget Links Holder -->
 				<div class="thinWidgetLinkAction">
 					<a href="/apex/WikiTeamOverview?tid={!teamId}">Go To Team Wiki&#187;</a>
-				</div>
+				 </div>
 				<div class="thinBody">
-					<div class="center" style="{!IF(WikiPagesCount > 0, 'display:none', '' )}" >
+					 <div class="center" style="{!IF(WikiPagesCount > 0, 'display:none', '' )}" >
 						No Wiki Pages Yet
 					</div>
 					<div>
 						<ul class="minifeed_wikis">	
-							<apex:repeat value="{!Wikis}" var="wiki" rows="5" >
-								<li><a href="/apex/WikiPage?idWP={!wiki.Id}" class="weight_bold"><apex:outputText escape="false" value="{!wiki.Name}" /></a></li>						
-							</apex:repeat>
+						<apex:repeat value="{!Wikis}" var="wiki" rows="5" >
+							<li><a href="/apex/WikiPage?idWP={!wiki.Id}" class="weight_bold"><apex:outputText escape="false" value="{!wiki.Name}" /></a></li>						
+						</apex:repeat>
+		
 						</ul>
 					</div>  
 				</div>				
@@ -82,4 +88,5 @@
 		</div>
 		<div class="clear"></div>
 	</apex:outputPanel>
+	
 </apex:component>

@@ -12,6 +12,7 @@
 			background:url('{!URLFOR($Resource.PeopleResourceFiles, 'images/layout/icons/delete.png')}') no-repeat top center;
 			width:14px;			
 		}
+		
 	</style>	
 	<div style="display:none;">{!SubscriptionStatus}</div>
 	<apex:outputpanel layout="block" rendered="{!IF((currentId == personId),'false','true')}">

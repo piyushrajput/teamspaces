@@ -1,13 +1,12 @@
 @IsTest private class AdminProfileListTest {
     public static testMethod void testAdmin() {
-        try{
+        try
+        {
             GenerateEnvironmentTest.gen();
              
             Test.startTest();
             
             AdminProfileListController admin = new AdminProfileListController();
-            admin.getNamespace();
-            
             TeamProfile__c profile = [select t.Id, t.CreatedById, t.CreatedDate, 
 						t.Name, (Select Id From TeamMember__r) from TeamProfile__c t order by t.CreatedDate desc limit 1];
             
@@ -33,11 +32,12 @@
             String str3 = admin.getOldIdProfile();
             admin.reAssignUsers();
 			admin.setIdTeamProfileNoMembers(profile.Id);
+			//admin.removeTeamProfileNoMembers();
 			
 			Test.stopTest();
 			
         } catch (DmlException e) {
-  			
+  
         }
     }
 }

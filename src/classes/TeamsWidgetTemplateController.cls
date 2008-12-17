@@ -1,6 +1,3 @@
-/**
-*@author Nicolas Gunther @ 08/05/2008
-*/
 public class TeamsWidgetTemplateController {
     
     public TeamsWidgetTemplateController(){}
@@ -24,16 +21,10 @@ public class TeamsWidgetTemplateController {
         return teamId;
     }
     
-    /**
-    *@param UserPermissions
-    */
     public void setPermission (UserPermissions up){
     	u = up;
     }
     
-    /**
-    *@return UserPermissions
-    */    
     public UserPermissions getPermission (){
     	return u;
     }

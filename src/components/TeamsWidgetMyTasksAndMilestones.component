@@ -50,6 +50,7 @@
 			font-weight: bold;
 		}
 	</style>
+
 	<div class="teamWidget mySmallWidget" >
 		<!-- Widget Title -->		
 		<div class="thinHeader">
@@ -82,7 +83,9 @@
 								<div style="{!IF(task.Priority == 'Low', '', 'display:none')}; width: 13px; margin-top: 3px;" class="center f_left" >
 									<img alt="" src="{!URLFOR($Resource.TeamsResources, '/images/layout/icons/lowPriority.png')}"/>
 								</div>
-								<div style="{!IF(task.Priority == 'Normal', '', 'display:none')}; width: 13px; margin-top: 3px;" class="center f_left" ></div>
+								<div style="{!IF(task.Priority == 'Normal', '', 'display:none')}; width: 13px; margin-top: 3px;" class="center f_left" >
+								
+								</div>
 								<div class="f_left {!task.isToLate}">
 									<a href="/apex/projecttaskdetail?id={!task.TaskId}">{!task.TaskName}</a><br/>
 									<apex:outputPanel rendered="{!IF((task.isToLate == 'latter'),true,false)}" layout="block">

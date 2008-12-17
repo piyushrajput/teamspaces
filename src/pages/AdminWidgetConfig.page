@@ -1,18 +1,18 @@
 <apex:page sidebar="false" id="AdminWidgetConfig" tabStyle="Team__c" controller="AdminWidgetConfigController" action="{!verifyAdminPerm}">
- 	
+    
     <!-- ### Prototype + Scriptaculous ### -->
-	<apex:includeScript value="{!URLFOR($Resource.Script_aculo_us, 'prototype.js')}"/>
-	<apex:includeScript value="{!URLFOR($Resource.Script_aculo_us, 'scriptaculous.js')}"/>
-	<apex:includeScript value="{!URLFOR($Resource.Script_aculo_us, 'effects.js')}"/>
+	<script type="text/javascript" src="{!URLFOR($Resource.Script_aculo_us, 'prototype.js')}"></script>
+	<script type="text/javascript" src="{!URLFOR($Resource.Script_aculo_us, 'scriptaculous.js')}"></script>
+	<script type="text/javascript" src="{!URLFOR($Resource.Script_aculo_us, 'effects.js')}"></script>
 
 		<!-- Portal Support -->
-	<apex:includeScript value="{!$Resource.portalSupport}"/>
+	<script src="{!$Resource.portalSupport}" />
 
 	<!-- ### Common Js ### -->
-    <apex:includeScript value="{!URLFOR($Resource.TeamsResources, 'inc/js/common.js')}"/>
-	<!--<apex:includeScript value="{!URLFOR($Resource.TeamsResources, 'inc/js/AdminWidgetConfig.js')}"/>-->
-	<apex:includeScript value="{!URLFOR($Resource.commonResources, 'inc/js/modal.js')}"/>
-	<apex:includeScript value="{!URLFOR($Resource.TeamsResources, 'inc/js/AddWidget.js')}"/>	   
+    <script src="{!URLFOR($Resource.TeamsResources, 'inc/js/common.js')}" />
+	<!--<script src="{!URLFOR($Resource.TeamsResources, 'inc/js/AdminWidgetConfig.js')}"></script>-->
+	<script src="{!URLFOR($Resource.commonResources, 'inc/js/modal.js')}"></script>
+	<script src="{!URLFOR($Resource.TeamsResources, 'inc/js/AddWidget.js')}"></script>	   
 
     <!-- ### Common Layout ### -->
     <apex:stylesheet value="{!URLFOR($Resource.TeamsResources, 'inc/css/commonLayout.css')}" />
@@ -27,186 +27,18 @@
     <apex:stylesheet value="{!URLFOR($Resource.TeamsResources, 'inc/css/headerTeams.css')}" />
 	<apex:stylesheet value="{!URLFOR($Resource.TeamsResources, 'inc/css/widgetTeam.css')}" />
 
-	<!-- Common CSS  -->
-	<apex:stylesheet value="{!URLFOR($Resource.TeamsResources, 'inc/css/AdminWidgetConfig.css')}" />
-
-	<!-- Common JS  -->
-	<apex:includeScript value="{!URLFOR($Resource.TeamsResources, 'inc/js/AdminWidgetConfig.js')}" />
-	
-	
-	
-	
-	 <!-- ### Ajax Toolkit Include ### -->
-	<apex:includeScript value="/soap/ajax/13.0/connection.js"/>
+	<!-- ### Ajax Toolkit Include ### -->
+	<script src="/soap/ajax/13.0/connection.js" type="text/javascript" />
 
 	<script>
         var l = window.location;
-        
-		/**
-        * Namespace Prefix Getter
-        */
-        var namespace = "{!namespace}";
-        
-		/**
-		* Initialize toolkit connection
-		* @void
-		*/
-		function init(){
-			sforce.connection.sessionId = '{!$Api.Session_ID}';
-			sforce.connection.defaultNamespace = namespace;
-		}
-		
-		var globalWidgetImage = '{!URLFOR($Resource.TeamsResources, 'images/AddWidget/widgetImage.jpg')}';
-		var globalEditWhite = '{!URLFOR($Resource.TeamsResources, 'images/layout/icons/WidgetConfig/editWhite.gif')}';
-		var globalRemoveWhite = '{!URLFOR($Resource.TeamsResources, 'images/layout/icons/WidgetConfig/removeWhite.gif')}';
-		var globalEditGray = '{!URLFOR($Resource.TeamsResources, 'images/layout/icons/WidgetConfig/editGrey.gif')}';
-		var globalRemoveGray = '{!URLFOR($Resource.TeamsResources, 'images/layout/icons/WidgetConfig/removeGrey.gif')}';
-		var globalInfoBig = '{!URLFOR($Resource.TeamsResources, 'images/layout/icons/WidgetConfig/infoBig.gif')}';
-		var globalCheckNew = '{!URLFOR($Resource.TeamsResources, 'images/layout/icons/WidgetConfig/checkNew.gif')}';
-		var globalTeamLabel = '{!$ObjectType.Team__c.label}';
 
-		document.observe("dom:loaded", InitializeWidgetConfig);
-	</script> 
-	
-	<!-- ### AjaxProxy response container ### -->	
-	<div id="response" style="display:none;"></div>	
-	
-	<!-- ### Initialize the overlay box for modal.js ### -->
-	<a href="#modal_container" id="initializeModal" style="display:none;"></a>
-	<div id="modal_container"></div>
-	<script>createOverlay('initializeModal')</script>	
-	
-	<!-- ### Overlay's Includes ### -->
-	<apex:include pageName="AdminOverlayAddWidget" />
-	<apex:include pageName="AdminOverlayRemoveWidget" />
-	
-	<div id="loadMessage" style="display:none;">
-		<span id="loadMessageText"></span>
-	</div>
-	<!-- 
-	<style>
-			div#modal_container div#loadMessage span{
-			text-align: center !important;
-			font-weight: bold;
-		}
-		
-		.buttonColor{
-			background:#21637D none repeat scroll 0%;
-			border:0px solid;
-			color:#FFFFFF;
-			cursor:pointer;
-			font-size:12px;
-			xheight:22px;
-			margin-top:0px;
-			margin-left:10px;
-			text-align:center;
-			xwidth:190px;
-			font-weight:bold;
-			padding:6px 17px;
-			text-decoration:none;
-			float:left;
-		}
-		
-		div.widgetContainer {
-			background:#FFFFFF none repeat scroll 0%;
-			border:0px none;
-			float:left;
-			height:92px;
-			margin:0px;
-			padding:5px;
-			width:84px;
-		}
-		
-		div.widgetContainer div {
-			background:#FFFFFF none repeat scroll 0%;
-			border:1px solid #FFFFFF;
-			height:80px;
-			margin:0px;
-			padding:5px;
-			text-align:center;
-			width:70px;
-		}
-		
-		
-		div.widgetContainerSelected {
-			background:#DDF0F7 none repeat scroll 0%;
-			border:0px none;
-			float:left;
-			height:92px;
-			margin:0px;
-			padding:5px;
-			width:84px;
-		}
-		
-		div.widgetContainerSelected div {
-			background:#EFEFEF none repeat scroll 0%;
-			border:1px solid #99CCE7;
-			height:80px;
-			margin:0px;
-			padding:5px;
-			text-align:center;
-			width:70px;
-		}
-		
-		/* Overlay */
-		
-		div#overlayLoader {
-			background:#FFFFFF;
-			height:79%;
-			position:absolute;
-			bottom:0;
-			left:0;
-			z-index:9999;
-			width:100%;
-			opacity: 0.6;
-			-moz-opacity: 0.6;
-			filter: alpha(opacity=60);
-		}
-		
-		div#overlayLoader div.loader {
-			width:60px;
-			margin:0 auto;
-			height:60px;
-			margin-top:145px;
-		}
-		
-		.main_content .widgetConfigForm {
-			position:relative;
-			overflow:hidden;
-			clear:both;		
-		}
-		
-		* html .main_content .widgetConfigForm .teamTypeForm {
-			padding:0px !important;
-			clear:both;
-			width:100%;
-			overflow:hidden;
-		}
-		
-		div.rightGroup {
-			height: 165px;
-		}
-	
-		div.leftGroup {
-			height: 165px;
-		}
-	
-	</style>
-		<script>
-        var l = window.location;
-        
-		/**
-        * Namespace Prefix Getter
-        */
-        var namespace = "{!namespace}";
-        
 		/**
 		* Initialize toolkit connection
 		* @void
 		*/
 		function init(){
 			sforce.connection.sessionId = '{!$Api.Session_ID}';
-			sforce.connection.defaultNamespace = namespace;
 		}
 		
 		/* ### Temporal Soruce - Should be in JS include ### */
@@ -253,7 +85,6 @@
 		var currentTeam = (getURLParam('team')) ? getURLParam('team') : 'a0B30000001u1fEEAQ';
 		var backupMarkup = null;
 		var backupClass = null;
-		var isEditWidget = false;
 		
 		var WidgetConfig = {
 			
@@ -273,7 +104,7 @@
 				markup +=	'				<a class="removeLink" href="Javascript:;" onclick="WidgetConfig.removeHolder(\''+ currentId +'\')" title="Delete this holder">Remove This Placeholder</a>';
 				markup +=	'			</div>';
 				markup +=	'			<div class="event">';		
-				markup +=	'				<a style="background-position-y:-25%" onmouseover="underLineLink(this)" onmouseout="underLineLink(this)" href="javascript:;" onclick="createOverlay(\'\',\'addWidget\', 490, \'WidgetConfig.getSalesforceWidgetList(\\\''+ currentId +'\\\',false)\');">';
+				markup +=	'				<a style="background-position-y:-25%" onmouseover="underLineLink(this)" onmouseout="underLineLink(this)" href="javascript:;" onclick="createOverlay(\'\',\'addWidget\', 490, \'WidgetConfig.getSalesforceWidgetList(\\\''+ currentId +'\\\')\');">';
 				markup +=	'					Click to add side module widget';
 				markup +=	'				</a>';
 				markup +=	'			</div>';		
@@ -283,8 +114,6 @@
 				rightHoldersCount++;
 				rightColum.innerHTML += markup;
 				normalizeHeight();
-				Effect.Appear(rightColum);
-				
 			
 			},
 			
@@ -304,7 +133,7 @@
 				markup +=	'				<a class="removeLink" href="Javascript:;" onclick="WidgetConfig.removeHolder(\''+ currentId + '\')" title="Delete this holder">Remove This Placeholder</a>';
 				markup +=	'			</div>';
 				markup +=	'			<div class="event">';
-				markup +=	'				<a onmouseover="underLineLink(this)" onmouseout="underLineLink(this)" href="Javascript:;" onclick="createOverlay(\'\',\'addWidget\', 490, \'WidgetConfig.getSalesforceWidgetList(\\\''+ currentId +'\\\', false)\');">';
+				markup +=	'				<a onmouseover="underLineLink(this)" onmouseout="underLineLink(this)" href="Javascript:;" onclick="createOverlay(\'\',\'addWidget\', 490, \'WidgetConfig.getSalesforceWidgetList(\\\''+ currentId +'\\\')\');">';
 				markup +=	'					Click to add widget';
 				markup +=	'				</a>';
 				markup +=	'			</div>';		
@@ -314,7 +143,6 @@
 				leftHoldersCount++;
 				leftColum.innerHTML += markup;
 				normalizeHeight();	
-				Effect.Appear(leftColum);				
 			},
 
 			/**
@@ -348,15 +176,12 @@
 				}
 			},
 			
-			
-			
 			/**
 			* Get salesforce widget list
 			*@void
 			*@param string holder
 			*/
-			getSalesforceWidgetList: function (holder, isEdit){
-				isEditWidget = isEdit;
+			getSalesforceWidgetList: function (holder){
 				
 				//Set current holder
 				currentHolder = holder;
@@ -459,7 +284,7 @@
 					markup+= '	</div>';
 					markup+= '	<div class="headerButtons">';
 					markup+= '		<img src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/WidgetConfig/editWhite.gif')}" width="17" height="16" />';
-					markup+= '		<span><a href="javascript:;" title="Edit Widget" onclick="createOverlay(\'\',\'addWidget\', 490, \'WidgetConfig.getSalesforceWidgetList(\\\''+ currentHolder +'\\\',true)\');">Edit</a></span>';
+					markup+= '		<span><a href="javascript:;" title="Edit Widget" onclick="createOverlay(\'\',\'addWidget\', 490, \'WidgetConfig.getSalesforceWidgetList(\\\''+ currentHolder +'\\\')\');">Edit</a></span>';
 					markup+= '		&nbsp;&nbsp;';
 					markup+= '		<img style="float" src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/WidgetConfig/removeWhite.gif')}" alt="test"/>';
 					markup+= '		<span>';
@@ -485,7 +310,7 @@
 					markup+= '		<div class="headerBtn">';
 					markup+= '			<div class="headerButtons">';
 					markup+= '				<img style="float" src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/WidgetConfig/editGrey.gif')}" alt="test"/>';
-					markup+= '				<span><a href="javascript:;" onclick="createOverlay(\'\',\'addWidget\', 490, \'WidgetConfig.getSalesforceWidgetList(\\\''+ currentHolder +'\\\',true)\');">Edit</a></span>';
+					markup+= '				<span><a href="javascript:;" onclick="createOverlay(\'\',\'addWidget\', 490, \'WidgetConfig.getSalesforceWidgetList(\\\''+ currentHolder +'\\\')\');">Edit</a></span>';
 					markup+= '				&nbsp;&nbsp;';
 					markup+= '				<img style="float" src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/WidgetConfig/removeGrey.gif')}" alt="test"/>';
 					markup+= '				<span><a href="Javascript:;" title="Edit Widget" onclick="deleteWidgetOverlay(\'' + currentHolder + '\')" title="Delete Widget">Delete</a></span>';
@@ -507,16 +332,9 @@
 				//Reinitialize sortable for drag holders
 				initializeSortable();
 				if(isNew){
-					//Message when editing a widget
-					if(isEditWidget){
-						showMessageToUser('Widget Modified <a href="Javascript:;" onclick="WidgetConfig.unsetWidget(\''+ currentHolder +'\')">Undo</a>', 'success');				
-					}
-					else{
-						showMessageToUser('New widget added <a href="Javascript:;" onclick="WidgetConfig.unsetWidget(\''+ currentHolder +'\')">Undo</a>', 'success');				
-					}
+					showMessageToUser('New widget added <a href="Javascript:;" onclick="WidgetConfig.unsetWidget(\''+ currentHolder +'\')">Undo</a>', 'success');				
 					effectBorder(currentHolder);
 				}
-				
 				else{
 					showMessageToUser('To rearrange your widgets, drag and drop the title bars.', 'info');
 				}					
@@ -541,7 +359,6 @@
 				var holder = $(holder);
 				holder.innerHTML = backupMarkup;
 				holder.className = backupClass;
-				Effect.Appear(holder);
 				initializeSortable();
 				showMessageToUser('To rearrange your widgets, drag and drop the title bars.', 'info');
 			},
@@ -596,7 +413,6 @@
 				if(teamType.Name == ''){
 					modal.close();
 					alert('{!$ObjectType.Team__c.label} Type name is required.');
-					hideLoader();
 					return;
 				}
 				
@@ -634,7 +450,7 @@
 						return;					
 					}
 				}
-				
+				// console.info(currentTeamType);
 				
 				//Get left widgets
 				for(var it=0; it < leftDivs.length; it++){
@@ -1368,17 +1184,165 @@
 				}
 			}				
 	</script>
- -->
- 
- 	<!-- Header -->
-	<apex:composition template="HeaderTemplate">
-		<apex:define name="moduleId"><apex:variable var="moduleId" value="headerTeams"/></apex:define>
-	    <apex:define name="module">{!$ObjectType.Team__c.label}</apex:define>
-	    <apex:define name="title">Administrator</apex:define>
-	    <apex:define name="search">
-	    	<c:Search module="team" />
-	    </apex:define>
-    </apex:composition>
+	
+	<style>
+		div#modal_container div#loadMessage span{
+			text-align: center !important;
+			font-weight: bold;
+		}
+		
+		.buttonColor{
+			background:#21637D none repeat scroll 0%;
+			border:0px solid;
+			color:#FFFFFF;
+			cursor:pointer;
+			font-size:12px;
+			xheight:22px;
+			margin-top:0px;
+			margin-left:10px;
+			text-align:center;
+			xwidth:190px;
+			font-weight:bold;
+			padding:6px 17px;
+			text-decoration:none;
+			float:left;
+		}
+		
+		div.widgetContainer {
+			background:#FFFFFF none repeat scroll 0%;
+			border:0px none;
+			float:left;
+			height:92px;
+			margin:0px;
+			padding:5px;
+			width:84px;
+		}
+		
+		div.widgetContainer div {
+			background:#FFFFFF none repeat scroll 0%;
+			border:1px solid #FFFFFF;
+			height:80px;
+			margin:0px;
+			padding:5px;
+			text-align:center;
+			width:70px;
+		}
+		
+		
+		div.widgetContainerSelected {
+			background:#DDF0F7 none repeat scroll 0%;
+			border:0px none;
+			float:left;
+			height:92px;
+			margin:0px;
+			padding:5px;
+			width:84px;
+		}
+		
+		div.widgetContainerSelected div {
+			background:#EFEFEF none repeat scroll 0%;
+			border:1px solid #99CCE7;
+			height:80px;
+			margin:0px;
+			padding:5px;
+			text-align:center;
+			width:70px;
+		}
+		
+		/* Overlay */
+		
+		div#overlayLoader {
+			background:#FFFFFF;
+			height:79%;
+			position:absolute;
+			bottom:0;
+			left:0;
+			z-index:9999;
+			width:100%;
+			opacity: 0.6;
+			-moz-opacity: 0.6;
+			filter: alpha(opacity=60);
+		}
+		
+		div#overlayLoader div.loader {
+			width:60px;
+			margin:0 auto;
+			height:60px;
+			margin-top:145px;
+		}
+		
+		.main_content .widgetConfigForm {
+			position:relative;
+			overflow:hidden;
+			clear:both;		
+		}
+		
+		* html .main_content .widgetConfigForm .teamTypeForm {
+			padding:0px !important;
+			clear:both;
+			width:100%;
+			overflow:hidden;
+		}
+		
+		div.rightGroup {
+			height: 165px;
+		}
+	
+		div.leftGroup {
+			height: 165px;
+		}
+	
+	</style>   	
+	
+	<!-- ### AjaxProxy response container ### -->	
+	<div id="response" style="display:none;"></div>	
+	
+	<!-- ### Initialize the overlay box for modal.js ### -->
+	<a href="#modal_container" id="initializeModal" style="display:none;"></a>
+	<div id="modal_container"></div>
+	<script>createOverlay('initializeModal')</script>	
+	
+	<!-- ### Overlay's Includes ### -->
+	<apex:include pageName="AdminOverlayAddWidget" />
+	<apex:include pageName="AdminOverlayRemoveWidget" />
+	
+	<div id="loadMessage" style="display:none;">
+		<span id="loadMessageText"></span>
+	</div>
+
+	<!-- Header -->
+	<div class="header_portal" id="headerTeams">
+		<div class="page_section">
+			<div>
+				<h1 class="arial_black">{!$ObjectType.Team__c.label}</h1>
+				<h2 class="arial_black">Administrator</h2>
+			</div>  
+		</div>  
+		<div class="searchBox">
+			<div>
+				<div>
+					<div class="center_gray">
+						<form method="get" action="/apex/TeamSearchResult" onsubmit="return checkSearchLength();">
+							<div class="search_box_input f_left">
+								<div class="legend_portal">
+									<img class="f_left" alt="" src="{!URLFOR($Resource.TeamsResources, 'images/layout/magnifier.gif')}" />
+									<span>Find {!$ObjectType.Team__c.labelPlural}  </span>
+								</div>
+								<input type="text" value="Enter keyword or name" name="key" onfocus="setValue('');"  onblur="if(getValue(this)==''){ setValue('Enter keyword or name'); }"/>
+							</div>
+							<input type="submit" value="Search" class="search_btn f_left"/>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div> 
+		<div class="help">
+			<div>
+				<a href="javascript:;">Help for this page</a>  <img src="{!URLFOR($Resource.TeamsResources, 'images/layout/help_icon.gif')}" alt="" />
+			</div>
+		</div> 
+		<div class="gray_border"></div>
+	</div>
 
 	<div class="breadcrumbs">
 		<div class="map">

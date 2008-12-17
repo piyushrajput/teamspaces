@@ -15,7 +15,7 @@
             
             people.getEducationHistory(edh.Id);
             PeopleEditEducationHistoryController.PeopleSearch reference = new PeopleEditEducationHistoryController.PeopleSearch();
-            reference.setKeyword('key');
+            reference.setKeyword('keyword');
             PeopleProfile__c peopleProfile = people.getMySidebarProfile();
             
             PeopleEditEducationHistoryController.Status status= new PeopleEditEducationHistoryController.Status();
@@ -26,6 +26,9 @@
 	        DateTime mod3 = DateTime.newInstance(now.year(),now.month(),now.day(),(now.hour()-4),0,0);
 	        DateTime mod4 = DateTime.newInstance(now.year(),now.month(),(now.day()-3),0,0,0);
 	        DateTime mod5 = DateTime.newInstance(now.year(),now.month(),(now.day()-8),0,0,0);
+	        System.debug('#####################################');
+	        System.debug('now[' + now + '] mod0[' + mod0 + '] mod1[' + mod1 + '] mod2[' + mod2 + '] mod3[' + mod3 + '] mod4[' + mod4 + '] mod5[' + mod5 + ']');
+	        System.debug('#####################################');
 	        status.setModified(now);
 	        status.setModified(mod0);
 	        status.setModified(mod1);
@@ -43,7 +46,7 @@
             String picture = people.getMyPicture();
             
             people.setEducationItem(new EducationHistory__c());
-            PageReference page1 = people.save();
+            PageReference page = people.save();
             
             people.setEducationItem(new EducationHistory__c());         
             PageReference page3 = people.saveAndAddAnother();
@@ -58,7 +61,7 @@
             PageReference page8 = people.saveAndAddAnother();           
             
             PageReference page4 = people.cancel();
-            PageReference page5 = people.forwardTo('/apex/TeamsOverview');
+            PageReference page5 = people.forwardTo('/apex/teamsOverview');
             PageReference page6 = people.findPeople();
                         
             education.setSchoolLocationState('School State');

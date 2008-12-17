@@ -8,8 +8,6 @@
             System.currentPageReference().getParameters().put('id',t.Id);
             
             TeamsNewMemberController team = new TeamsNewMemberController();
-            
-            team.getNamespace();
             List<SelectOption> option = team.getProfilesOptions ();
 
             team.setTeamId(t.Id);
@@ -18,6 +16,8 @@
             //** getTeamId method
             String id = team.getTeamId();
             
+           
+           	
             TeamsNewMemberController.Member mem = team.getNewMemberVars();
             
             TeamsNewMemberController.Member member = new TeamsNewMemberController.Member();
@@ -38,10 +38,11 @@
             
             i = i/2;
             
-            if( Math.mod(i,2) != 0 && i > 1) {
+            if( Math.mod(i,2) != 0 && i > 1)
+            {
             	i = i-1;
             	i = i/2;
-            }else {
+            }else{
             	i = 1;
             }
             

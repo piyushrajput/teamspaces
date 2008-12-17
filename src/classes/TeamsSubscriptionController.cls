@@ -1,51 +1,31 @@
-/**
-*@author Juan Bessonart @ 09/22/2008
-*/
 public class TeamsSubscriptionController {
 	
 	public String idTeam = System.currentPageReference().getParameters().get('id');
-	Integer subscriptionCount;
-
-	/**
-	* Constructor
-	*/
-	public TeamsSubscriptionController () {
-		constructMethods(); 
-	}
 	
-	/**
-	*@return Integer
-	*/
+	Integer subscriptionCount;
+	
 	public Integer getSubscriptionCount () {
 		return subscriptionCount;
 	}
 	
 	public TeamSubscription__c subscription = new TeamSubscription__c();
 	
-	/**
-	*@return TeamSubscription__c
-	*/
 	public TeamSubscription__c getSubscription () {
 		return subscription;
 	}
 	
-	/**
-	*@param String
-	*/
 	public void setIdTeam (String idTeam) {
 		this.idTeam = idTeam; 
 	}
 	
-	/**
-	*@return String
-	*/
 	public String getIdTeam () {
 		return idTeam;
 	}
-
-	/**
-	* Execute on Construct
-	*/
+	
+	public TeamsSubscriptionController () {
+		constructMethods(); 
+	}
+	
 	public void constructMethods () {
 		if (idTeam != null) {
 			List<TeamSubscription__c> teamSubList = new List<TeamSubscription__c>();
@@ -72,47 +52,34 @@ public class TeamsSubscriptionController {
 		}
 	}
 	
-	/**
-	* Save suscription
-	*@return PageReference
-	*/
 	public PageReference saveSubscription () {
 		if (subscriptionCount > 0) {
 			update 	subscription;	
-		}else {
+		}	
+		else {
 			subscription.Team__c = idTeam;
 			subscription.User__c = UserInfo.getUserId();
 			insert subscription;
 		}
-		PageReference pageRef = Page.TeamsRedirect;
-		pageRef.getParameters().put('id', idTeam);
+		PageReference pageRef = new PageReference('/apex/TeamsRedirect?id=' + idTeam);
 		pageRef.setRedirect(true);
 		return pageRef;
 	}
 	
-	/**
-	* Cancel suscription
-	*@return PageReference
-	*/
 	public PageReference cancelSubscription () {
-		PageReference pageRef = Page.TeamsRedirect;
-		pageRef.getParameters().put('id', idTeam);
+		PageReference pageRef = new PageReference('/apex/TeamsRedirect?id=' + idTeam);
 		pageRef.setRedirect(true);
 		return pageRef;
 	}
 	
-	/**
-	* Delete suscription
-	*@return PageReference
-	*/
 	public PageReference deleteSubscription () {
-		if (subscription != null && subscriptionCount > 0 ) 
+		if (subscription != null && subscriptionCount > 0 ) {
 			delete subscription;
-		
-		PageReference pageRef = Page.TeamsRedirect;
-		pageRef.getParameters().put('id', idTeam);
+		}
+		PageReference pageRef = new PageReference('/apex/TeamsRedirect?id=' + idTeam);
 		pageRef.setRedirect(true);
 		return pageRef;
 	}
+	
 	
 }

@@ -1,18 +1,11 @@
-/**
-*@author Marc Ferrentino @ 07/31/2008
-*/
 public class TeamsWidgetAttachmentsController {
 	
 	String teamId;
-	public List<AttachmentInfo> attachs = new List<AttachmentInfo>();	
-	public Boolean sidebar = false;
+	public List<AttachmentInfo> attachs = new List<AttachmentInfo>();
 	
-	/**
-	* Constructor
-	*/
-	public TeamsWidgetAttachmentsController(){
-		
-	}
+	
+	
+	public Boolean sidebar = false;
 	
 	/**
 	* Set Sidebar
@@ -30,9 +23,7 @@ public class TeamsWidgetAttachmentsController {
 		return sidebar;
 	}
 	
-	/**
-	*@param String team id
-	*/
+	// Setter method for Team Id variable
 	public void setTeamId(String id) {
 		if(teamId == null || teamId == ''){
 			teamId = id;
@@ -42,9 +33,7 @@ public class TeamsWidgetAttachmentsController {
 		}
 	}
 	
-	/**
-	*@return String
-	*/
+	// Getter Team Id variable
 	public String getTeamId(){
 		return teamId;
 	}
@@ -56,16 +45,15 @@ public class TeamsWidgetAttachmentsController {
 		return attachs;
 	}
 	
-	/**
-	* Refresh attachment list
-	*/
 	public void refresh() {
 		getAttachments();
 	} 
-
-	/**
-	* Set current team pic
-	*/
+	
+	//Constructor
+	public TeamsWidgetAttachmentsController(){
+	}
+	
+	//set the current team Picture
 	public void currentTeam() {
 		teamInfo = [Select 
 	                t.Picture__c, CreatedById
@@ -74,10 +62,8 @@ public class TeamsWidgetAttachmentsController {
 	}
 	
 	public String PictureID{get; set;}
- 
-	/**
-	* Set Id of current Picture inside Team__c.Picture__c
-	*/
+
+	//set Id of current Picture inside Team__c.Picture__c 
 	public void PictureIDSet () {
 		if(teamInfo.Picture__c != null){
 			PictureID = teamInfo.Picture__c;	    	
@@ -86,24 +72,16 @@ public class TeamsWidgetAttachmentsController {
 	
 	public Team__c teamInfo = new Team__c();
 	
-	/**
-	*@return Team__c
-	*/
 	public Team__c getTeamInfo () {
 		return teamInfo;
 	}
 	
-	/**
-	*@param Team__c 
-	*/
 	public void setTeamInfo (Team__c teamInfo) {
 		this.teamInfo = teamInfo;
 	}
 	
-    /**
-    * Read attachments for current team
-    */
     public void getAttachments() {
+    	
     	List<Attachment> Attachments = [select name, 
     											id, 
     											parentid, 
@@ -114,7 +92,7 @@ public class TeamsWidgetAttachmentsController {
     									from attachment 
     									where parentid=:teamId 
     									order by name];		
-    	
+    									
 		List<AttachmentInfo> infos = new List<AttachmentInfo>();
 
 		for (Attachment item: Attachments){	
@@ -149,10 +127,12 @@ public class TeamsWidgetAttachmentsController {
        			};
            		if(typesExt.containsKey(extension)) {
            			image = typesExt.get(extension);
-           		}else {
+           		}
+           		else {
            			image = 'generic.gif';
            		}
-            }else {
+            }
+            else {
            		// Using mime type
            		Map<String, String> typesMime = new Map<String, String>{
            			'image/jpeg' => 'images.gif', 
@@ -172,10 +152,12 @@ public class TeamsWidgetAttachmentsController {
        			};	
            		if(typesMime.containsKey(ContentType)) {
            			image = typesMime.get(ContentType);
-           		}else {
+           		}
+           		else {
            			image = 'generic.gif';
            		}
             }
+            
             info.setAttachImage(image);
             infos.add(info);
         }
@@ -183,44 +165,47 @@ public class TeamsWidgetAttachmentsController {
 		attachs = infos;   	    									
     }     
     
-    /**
-    *@return Integer
-    */
     public Integer getAttachCount () {
     	return attachs.size();
     }
     
+    
+    /* ---------------------------- */
+   	/*   	 SHARING RULES			*/
+   	/* ---------------------------- */	
 	public UserPermissions userPermissions = TeamsDetailController.userPermission.clone();
 	
-	/**
-	* Read user permissions
-	*/
 	public void genPermissions () {
 		userPermissions.setId(UserInfo.getUserId());
 		userPermissions.setTeam(teamId);
 		userPermissions.setOwnerId(teamInfo.CreatedById);
 		userPermissions.setObjectType('Team');
+//System.debug('>>>>>>>>>>>>>>>>>>>>>>>>>>> 1) userPermissions:' + userPermissions);
 		userPermissions.setPermissions();
+//System.debug('>>>>>>>>>>>>>>>>>>>>>>>>>>> 2) userPermissions:' + userPermissions);
 		if(!userPermissions.getCanManage()) {
 			userPermissions.setObjectType('Attachment');
+//System.debug('>>>>>>>>>>>>>>>>>>>>>>>>>>> 3) userPermissions:' + userPermissions);
 			userPermissions.setPermissions();
+//System.debug('>>>>>>>>>>>>>>>>>>>>>>>>>>> 4) userPermissions:' + userPermissions);
 		}
 	}
 	
-	/**
-	*@return UserPermissions
-	*/
 	public UserPermissions getUserPermissions () {
 		return userPermissions;
 	}
+    
+    
 
-   	/**
-   	* Delete Attachment
-   	*/
+   	/* ---------------------------- */
+   	/*   	  DELETE ATTACH			*/
+   	/* ---------------------------- */  
+   	
    	public void DeleteAttach () { 
    		String idAttach = System.currentPageReference().getParameters().get('idAttach');
    		Attachment delAttach;
-   		if(idAttach != null && idAttach!= ''){
+   		if(idAttach != null && idAttach!= '')
+   		{
    			try{
 	   			delAttach = [select Id, Name from Attachment where id =:idAttach ];
 	   			delete delAttach; 
@@ -230,11 +215,12 @@ public class TeamsWidgetAttachmentsController {
    				throw e;
    			}
    		}
+   		
    	}
 
-	/**
-	* Class AttachmentInfo
-	*/ 
+   	/* ---------------------------- */
+   	/*   	  ATTACH WIKI PAGE		*/
+   	/* ---------------------------- */	 	 
 	public class AttachmentInfo {
         
         String name;
@@ -242,58 +228,34 @@ public class TeamsWidgetAttachmentsController {
 		String id;
 		Attachment attach;
 		      
-        /**
-        *@return String Attach id
-        */
         public String getId () {
         	return id;
         }
         
-        /**
-        *@param String Attach id
-        */
         public void setId (String id) {
         	this.id = id;
         }
         
-        /**
-        *@return String Attach name
-        */        
         public String getName() {
                 return name;
         }
 
-        /**
-        *@param String Attach name
-        */
         public void setName(String name) {
                 this.name = name;
         }  
         
-		/**
-		*@return String attach type icon
-		*/       
         public String getAttachImage() {
                 return attachImage;
         }
 
-        /**
-        *@param String attach type icon
-        */
         public void setAttachImage (String attachImage) {
                 this.attachImage = attachImage;
         }          
 
-        /**
-        *@param Attachment
-        */
         public void setAttachment (Attachment attach) {
                 this.attach = attach;
         }
         
-        /**
-        *@return Attachment
-        */
         public Attachment getAttachment() {
                 return attach;
         }

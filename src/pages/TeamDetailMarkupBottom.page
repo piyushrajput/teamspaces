@@ -1,18 +1,65 @@
 <apex:page id="TeamDetailMarkupBottom" controller="TeamsDetailController">
-	
-	<iframe name="iframeUpload" id = 'iframeUpload__Ann' style="display:none;position:absolute;"></iframe>
-	
+	 <iframe name="iframeUpload" id = 'iframeUpload__Ann' style="display:none;position:absolute;"></iframe>
 	<!-- End Announcement Overlay  -->
+	<script>
+		/*if (Prototype.Browser.IE){
+			resizeAnnouncements();
+		}*/
+	</script>
 	<apex:outputpanel rendered="{!userPermissionsWiki.canCreate}">
 		<c:WikiNewPageWidget />
 	</apex:outputpanel>
-	
-	<!-- TeamDetailMarkupBottom JS -->
-	<apex:includeScript value="{!URLFOR($Resource.TeamsResources, 'inc/js/teamDetailMarkupBottom.js')}"/>
-	
 	<script>
-		$(document).observe('dom:loaded', footerBug);
-		$(document).observe('dom:loaded', Done);
+		/* scripts to reset the hieght of the lower bar so that it show correctly at the bottom of it all */
+		// setTimeout('redim();', 2000);
+		window.onload = footerBug; 
+		function footerBug(){
+			
+			reinicializeSB();
+			//alert('footer bug');
+			
+		}
+		
+		readPortalCSSRules();
+		
+		function reinicializeSB () {
+			if($("Scroller-1")){
+  				scroller  = new jsScroller(document.getElementById("Scroller-1"), 400, 200);
+  				scrollbar = new jsScrollbar (document.getElementById("Scrollbar-Container"), scroller, false);
+ 			}
+			if($("Scroller-2")){
+				scroller2  = new jsScroller2(document.getElementById("Scroller-2"), 500, 240);
+				scrollbar2 = new jsScrollbar2 (document.getElementById("Scrollbar-Container2"), scroller2, false);
+			}
+		}
+		
+		function footer(){
+			var rc = $$('.rightCol')[0].getHeight();
+			var cc = $$('.centerCol')[0].getHeight();
+			var sidebar = $$('.sidebar')[0].getHeight();
+
+			if(rc >= cc && rc >= sidebar){
+			    $$('.centerCol')[0].style.marginBottom = (rc-cc)+'px';
+			}
+			
+			else if(sidebar >= cc && sidebar  >= rc)
+			{
+				$$('.centerCol')[0].style.marginBottom = (sidebar-cc)+'px';
+			
+			}
+			else 
+			{
+				$$('.centerCol')[0].style.height = 'auto'; 
+			}
+		}
+		
+		function Done (){
+			pageLoaded = true;
+			reinicializeSB();
+			setTimeout('footer();', 500);
+		}
+		
+		window.onload = Done();
 	</script>
 
 </apex:page>

@@ -1,50 +1,55 @@
 var PageStyles = null;
+
 /**
 * Portal Rules Object
 */
 function Portal() {
-	//Tabs Properties
-	this.TabCurrentTabTextColor = '';
-	this.TabCurrentTabBackground = '';
-	this.TabCurrentTabBorderColor = '';
-	this.TabOtherTabTextColor = '';
 
-	//Page Properties
-	this.PageBackground = '';
-	this.PageFontFamily = '';
-	this.PageTextFontSize = '';
-	this.PageTextColor = '';
-	this.PageLinkColor = '';
-	this.PageLinkColorHover = '';
-	this.PageFieldLabelFontFamily = '';
-	this.PageFieldLabelFontColor = '';
-	this.PageFieldSeparatorColor = '';
-	this.PageBorderBottom = '';
+	  //Tabs Properties
+	  this.TabCurrentTabTextColor = '';
+	  this.TabCurrentTabBackground = '';
+	  this.TabCurrentTabBorderColor = '';
+	  this.TabOtherTabTextColor = '';
 
-	//Section Properties
-	this.SectionHeaderBackground = '';
-	this.SectionHeaderTextFontFamily = '';
-	this.SectionHeaderTextFontColor = '';
-	this.SectionBorderRight = '';
-	this.SectionBorderLeft = '';
-	this.SectionBorderBottom = '';
-	this.SectionBorderTop = '';
-	this.SectionBackground = '';
+	  //Page Properties
+	  this.PageBackground = '';
+	  this.PageFontFamily = '';
+	  this.PageTextFontSize = '';
+	  this.PageTextColor = '';
+	  this.PageLinkColor = '';
+	  this.PageLinkColorHover = '';
+	  this.PageFieldLabelFontFamily = '';
+	  this.PageFieldLabelFontColor = '';
+	  this.PageFieldSeparatorColor = '';
+	  this.PageBorderBottom = '';
 
-	//List Properties
-	this.ListHeaderText = '';
-	this.ListHeaderUnderline = '';
-	this.ListHighlightRow = '';
-	this.ListBorderBottom = '';
-	this.ListHeaderFontFamily = '';
+	  //Section Properties
+	  this.SectionHeaderBackground = '';
+	  this.SectionHeaderTextFontFamily = '';
+	  this.SectionHeaderTextFontColor = '';
+	  this.SectionBorderRight = '';
+	  this.SectionBorderLeft = '';
+	  this.SectionBorderBottom = '';
+	  this.SectionBorderTop = '';
+	  this.SectionBackground = '';
+
+	  //List Properties
+	  this.ListHeaderText = '';
+	  this.ListHeaderUnderline = '';
+	  this.ListHighlightRow = '';
+	  this.ListBorderBottom = '';
+	  this.ListHeaderFontFamily = '';
+
 }
 var Portal = new Portal();
+
 /**
 * Get portal.css rules.
 *@void
 */
-function readPortalCSSRules() {
-	// ### Apply Body Id for current module
+function readPortalCSSRules(){
+	
+	/* ### Apply Body Id for current module*/
 	applyBodyId();
 	
 	var styles  = document.styleSheets;
@@ -52,6 +57,7 @@ function readPortalCSSRules() {
 	var rules   = null;
 	var propAll	= '';
 	var settingProp = new Array();
+
 	//Find portal.css
 	for(var it = 0; it < styles.length; it++){
 		if(styles[it].href){
@@ -63,40 +69,49 @@ function readPortalCSSRules() {
 	}
 
 	if(portal){
+
 		//Browser detection
-		if (document.all)
-			rules = portal.rules;
-		else
-			rules = portal.cssRules;	
-			
+		if (document.all){
+			  rules = portal.rules;
+		}else{
+			  rules = portal.cssRules;	
+		}
+
 		//Iterate style rules
 		for(it = 0; it < rules.length; it++){
+
 			//Normalize Selector
 			selector = trim(rules[it].selectorText.replace(/[*|]/g, '').toLowerCase());
 			propAll += selector + '<br />'
-			
+
 			//# Get Tabs Settings
+
 			// Tabs Current Tab Text Color
 			if(selector.search('body .currenttab a') > -1){
 				if(!Portal.TabCurrentTabTextColor)	
 					Portal.TabCurrentTabTextColor = rules[it].style.color;
 			}
+
 			//Tabs Current Tab Background
 			if(selector == '.tabnavigation'){
 				if(!Portal.TabCurrentTabBackground)
 					Portal.TabCurrentTabBackground = rules[it].style.backgroundImage;
 			}
+
 			//Tabs Border Color
 			if(selector == '.tab td'){
 				if(!Portal.TabCurrentTabBorderColor)
 					Portal.TabCurrentTabBorderColor = rules[it].style.borderBottomColor;
 			}
+
 			// Tabs Other Tab Text Color
 			if(selector.search('body .tab a') > -1){
 				if(!Portal.TabOtherTabTextColor)
 					Portal.TabOtherTabTextColor = rules[it].style.color;
 			}
+
 			//# Get Page Settings
+
 			//Page Background
 			if(selector == trim('.bodydiv')){
 				if(!Portal.PageBackground)
@@ -104,6 +119,7 @@ function readPortalCSSRules() {
 				if(!Portal.PageBorderBottom) 	                    	
 					Portal.PageBorderBottom = rules[it].style.borderBottom;
 			}
+
 			//Page Text Font
 			if(selector == trim('body')){
 				if(!Portal.PageFontFamily)
@@ -111,11 +127,13 @@ function readPortalCSSRules() {
 				if(!Portal.PageTextFontSize)
 					Portal.PageTextFontSize = rules[it].style.fontSize; 
 			}
+
 			//Page Text Color
 			if(selector.search('.bwizardblock .pbtopbuttons') > -1){
 				if(!Portal.PageTextColor)	                    	
 					Portal.PageTextColor = rules[it].style.color;
 			}
+
 			//Page Field Label Text
 			if(selector.search(".bpageblock .labelcol a") > -1){
 				if(!Portal.PageFieldLabelFontFamily)	                    	
@@ -123,27 +141,33 @@ function readPortalCSSRules() {
 				if(!Portal.PageFieldLabelFontColor)
 					Portal.PageFieldLabelFontColor = rules[it].style.color;
 			}
+
 			//Page Link
 			if(selector.search('.minitab .currenttab a') > -1){
 				if(!Portal.PageLinkColor)	                    	
 					Portal.PageLinkColor = rules[it].style.color;
 			}
+
 			//Page Link Hover
 			if(selector.search('.minitab .currenttab a:hover') > -1){
 				if(!Portal.PageLinkColorHover)                   	
 					Portal.PageLinkColorHover = rules[it].style.color;
 			}
+
 			//Page Field Separator
 			if(selector.search('.bpageblock .detaillist tr th') > -1){
 				if(!Portal.PageFieldSeparatorColor)
 					Portal.PageFieldSeparatorColor = rules[it].style.borderBottomColor;
 			} 
+
 			//# Get Section Settings
+
 			//Section Header Background
 			if(selector.search('.bpageblock .pbheader') > -1){
 				if(!Portal.SectionHeaderBackground)
 					Portal.SectionHeaderBackground = rules[it].style.backgroundColor;
 			}                 	
+
 			//Section Header Text
 			if(selector.search('.nestedmodule .sidebarmoduleheader') > -1){
 				if(!Portal.SectionHeaderTextFontFamily)
@@ -151,6 +175,7 @@ function readPortalCSSRules() {
 				if(!Portal.SectionHeaderTextFontColor)
 					Portal.SectionHeaderTextFontColor = rules[it].style.color;
 			} 
+
 			//Section Borders
 			if(selector == trim('.bsubblock')){
 				if(!Portal.SectionBorderLeft)
@@ -162,12 +187,15 @@ function readPortalCSSRules() {
 				if(!Portal.SectionBorderTop)
 					Portal.SectionBorderTop = rules[it].style.borderTop;                  			                  			
 			}
+
 			//Section Background
 			if(selector == trim('.sidebarmodule')){
 				if(!Portal.SectionBackground)
 					Portal.SectionBackground = rules[it].style.backgroundColor;
 			}
+
 			//# Get List Settings
+
 			//List Header
 			if(selector.search('.list .headerrow th a') > -1){
 				if(!Portal.ListHeaderText)
@@ -177,11 +205,13 @@ function readPortalCSSRules() {
 				if(!Portal.ListHeaderUnderline)
 					Portal.ListHeaderUnderline = rules[it].style.borderBottomColor;
 			}
+
 			//List Row Highlight
 			if(selector.search('.highlight th') > -1){
 				if(!Portal.ListHighlightRow)
 					Portal.ListHighlightRow = rules[it].style.backgroundColor;
 			}
+
 			//List Border Bottom
 			if(selector.search('body.oldforecast .list .last th') > -1){
 				if(!Portal.ListBorderBottom)
@@ -197,6 +227,7 @@ function readPortalCSSRules() {
 *@void
 */
 function applyPortalStyles(){
+
 	/* ### Create style object for overwrite default app styles with portal settings ### */
 	var head   = document.getElementsByTagName('head')[0];
 	var style  = document.createElement('style');
@@ -215,6 +246,7 @@ function applyPortalStyles(){
 		portalStyles.insertRule('div.thinHeader' + '{' + sectionHeaderThin + '}', 0);
 		portalStyles.insertRule('div.subHeader' + '{' + sectionHeaderThin + '}', 1);
 	}
+
 	/* ### Apply Section Header Styles for WidgetsWide [border-bottom] ### */
 	var sectionHeaderWide  = 'border-bottom: 4px solid ' + Portal.SectionHeaderBackground + ' !important;';
 	sectionHeaderWide += 'color:' + Portal.SectionHeaderBackground + ' !important;';
@@ -223,7 +255,7 @@ function applyPortalStyles(){
 		portalStyles.addRule('div.wideHeader', sectionHeaderWide);
 	else
 		portalStyles.insertRule('div.wideHeader' + '{' + sectionHeaderWide + '}', 2);
-		
+
 	/* ### Page Link Styles ### */
 	linkRule = 'color:' + Portal.PageLinkColor + ' !important'
 	if(document.all)
@@ -285,6 +317,8 @@ function applyPortalStyles(){
 		portalStyles.insertRule('table.pageList thead td' + '{' + listHeaderBorders + '}', 12);		
 		portalStyles.insertRule('table.pageList tbody td' + '{' + listBorderBody + '}', 13);										
 	}
+	
+	
 	/** ### Apply styles for other areas ### **/
 	var buttonColor = 'background: ' + Portal.SectionHeaderBackground + ' !important'; 
 	
@@ -315,8 +349,11 @@ function applyPortalStyles(){
 	}else{
 		portalStyles.insertRule('div.bodyDiv' + '{' + fixBodyDiv + '}', 20);
 	}	
+
 }
+
 /* ### Utiles ### */
+
 /**
 * Apply id to body
 *@void
@@ -327,27 +364,31 @@ function applyBodyId(){
 	var body = $$('body')[0];
 	body.id = 'body' + module;	
 }
-/**
-* Trim
-*@param String
-*@return String
-*/
-function trim(s) {
- var temp = s.replace(/^\s+/, "");
- return temp.replace(/\s+$/, "");
-}
-//Overwrite rollover methods for template
-/**
-*@param HTML <TR> object
-*@void
-*/
-function rollOver(tr){
-	  tr.style.background = (Portal.ListHighlightRow) ? Portal.ListHighlightRow : '#EFEFEF';
-}
-/**
-*@param HTML <TR> object
-*@void
-*/			
-function rollOut(tr){
-	  tr.style.background = '';
-}				
+
+  /**
+  * Trim
+  *@param String
+  *@return String
+  */
+  function trim(s) {
+	 var temp = s.replace(/^\s+/, "");
+	 return temp.replace(/\s+$/, "");
+  }
+
+  //Overwrite rollover methods for template
+
+  /**
+  *@param HTML <TR> object
+  *@void
+  */
+  function rollOver(tr){
+		  tr.style.background = (Portal.ListHighlightRow) ? Portal.ListHighlightRow : '#EFEFEF';
+  }
+
+  /**
+  *@param HTML <TR> object
+  *@void
+  */			
+  function rollOut(tr){
+		  tr.style.background = '';
+  }				

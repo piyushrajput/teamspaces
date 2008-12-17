@@ -13,6 +13,7 @@
 			TeamsWidgetActivityFeedController.MiniFeeds miniFeeds  = new TeamsWidgetActivityFeedController.MiniFeeds(newMini);
 			miniFeeds.getFeed();
 			miniFeeds.getFormatedDate();
+			
 
             Test.stopTest(); 
         }catch(Exception e){

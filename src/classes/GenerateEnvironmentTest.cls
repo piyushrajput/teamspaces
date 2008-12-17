@@ -14,10 +14,10 @@ public class GenerateEnvironmentTest {
     public static Boolean runLite = false;
     
     public static testMethod void gen(){
-        
-        TeamUtil.isTest = true;
-        
         if (!TeamUtil.alreadyGenEnv) {
+            
+            System.debug('\n\n///////////////////////////////////////////\n INTO GENERATE ENVIROMENT TEST \n///////////////////////////////////////////\n\n');
+            
             // Create a new Team Administrator Profile
             newTeamProfile.Name = 'Team Administrator';
             newTeamProfile.PostWikiComments__c = true; 
@@ -122,7 +122,7 @@ public class GenerateEnvironmentTest {
             upsert newAssignee; 
             
             //
-            TeamUtil.alreadyGenEnv = true;
+            TeamUtil.alreadyGenEnv = true; 
         }
     }
     

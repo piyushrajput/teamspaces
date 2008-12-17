@@ -1,0 +1,42 @@
+
+.headerbordertaskpreview
+{
+	vertical-align : middle;
+	background-Color:#77b900; 
+	height:26; 
+	border-Color:#f3f3ec;
+	border-Thickness:1; 
+	border-Style:solid; 
+	border-Sides:bottom;
+}
+
+.headerlabeltaskpreview
+{
+	font-family : verdana, arial;
+	font-weight:bold;
+	text-align:left;
+	font-size:11px;
+	horizontal-align:center;
+}
+/*cambie el estilo de cada item en el Form*/
+.FormItemtaskpreview
+{
+	border-style : solid; 
+	border-sides : bottom; 
+	border-color : #e3deb8;
+	background-Color:#f3f3ec; 
+	horizontal-align : center;
+}
+.FormItemLabelText
+{
+	text-align:right;
+	font-weight:bold;
+}
+.FontCornerRadius
+{
+	border-style : solid; 
+	border-sides : bottom, right;
+	border-thickness:4;
+	corner-radius:10;
+}
+

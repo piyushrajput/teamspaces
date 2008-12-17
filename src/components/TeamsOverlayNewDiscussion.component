@@ -1,9 +1,11 @@
 <!-- **** Template ***** -->
+
 <apex:component allowDML="true" controller="OverlayNewDiscussionController">
 	<!-- Modal JS -->
-	<apex:includeScript value="{!URLFOR($Resource.commonResources, 'inc/js/modal.js')}"/>
+	<script type="text/javascript" src="{!URLFOR($Resource.commonResources, 'inc/js/modal.js')}"></script>
 	<!-- Overlay Styles -->
 	<apex:stylesheet value="{!URLFOR($Resource.TeamsResources, 'inc/css/teamsOverlaysTemplate.css')}" />
+	
 	<script>
 		function showOverlayStatus ( formId ) {
 			var statusDiv = $('overlayFormStatus');
@@ -13,46 +15,54 @@
 		}
 		
 		//this method is to execute after the fckEditor is created
-		function FCKeditor_OnComplete( editorInstance ) {	
-			Effect.Fade('FCKloader');
-			assignFCKHTML(topicFirstMessage);
-			var divContentFck = $('fckContentDiv');
-			divContentFck.style.visibility = 'visible';
-			topicFirstMessage = '';
-		}
-	
-		//this var contains the first topic message id 
-		var topicFirstMessageId;
-		var topicFirstMessage='';
-		/* it indecate when you have to insert or update, if this var is null you are going to insert else update*/
-		var topicId = null;
-		// Get X and Y						
-		function getXY(obj){				
-			var pos = Position.cumulativeOffset(obj)
-			var y = pos[1];
-			var x = pos[0];
-			var x2 = x + parseInt(obj.offsetWidth);
-			var y2 = y + parseInt(obj.offsetHeight);
-			return {'x':x, 'y':y, 'x2':x2, 'y2':y2};
-		}
+	function FCKeditor_OnComplete( editorInstance ) {	
+
+		Effect.Fade('FCKloader');
+		assignFCKHTML(topicFirstMessage);
+		var divContentFck = $('fckContentDiv');
+		divContentFck.style.visibility = 'visible';
+		topicFirstMessage = '';
 		
-		function getFCKContent(){
-			try {
-				var b = document.getElementsByTagName('iframe');
-				for(var it = 0; it < b.length; it++){
-					var aux = b[it].src.split('fckeditor');
-					if(aux.length > 1){
-						var iframes = b[it].contentWindow.document.getElementsByTagName('iframe');
-						var markup = iframes[0].contentWindow.document.body.innerHTML; 
-					}
+	}
+
+	//this var contains the first topic message id 
+	var topicFirstMessageId;
+	var topicFirstMessage='';
+	/* it indecate when you have to insert or update, if this var is null you are going to insert else update*/
+	var topicId = null;
+	
+	// Get X and Y						
+	function getXY(obj){				
+		var pos = Position.cumulativeOffset(obj)
+		var y = pos[1];
+		var x = pos[0];
+		var x2 = x + parseInt(obj.offsetWidth);
+		var y2 = y + parseInt(obj.offsetHeight);
+		return {'x':x, 'y':y, 'x2':x2, 'y2':y2};
+	}
+	
+	function getFCKContent(){
+		try {
+			var b = document.getElementsByTagName('iframe');
+			for(var it = 0; it < b.length; it++){
+				var aux = b[it].src.split('fckeditor');
+				if(aux.length > 1){
+					var iframes = b[it].contentWindow.document.getElementsByTagName('iframe');
+					var markup = iframes[0].contentWindow.document.body.innerHTML; 
 				}
-				setFocus();
-				return markup;		 	
-						
-			} catch(e){
-				
 			}
+			setFocus();
+			return markup;		 	
+			
+			/*var b = document.getElementsByTagName('iframe');
+			var c = b[3].contentWindow.document.getElementById('xEditingArea').getElementsByTagName('iframe');
+			var d = c[0].contentWindow.document.body.innerHTML;
+			return d;*/
+		
+		} catch(e){
+			
 		}
+	}
 
 		function getIframe() {
 			var b = document.getElementsByTagName('iframe');
@@ -70,74 +80,91 @@
 			frame[0].contentWindow.document.body.innerHTML = newContent;
 		}
 		
-		//set the fields to show in the overlay
-		function getTopicToEdit(topicIdToEdit,  topicFirstMessageToEditId, page){
-		 	topicId = topicIdToEdit;
-			createFCKEditor('discussionMessage');
-			var title = document.getElementById('overlaytitle');
-			var topicName = document.getElementById('topicName');
-			title.innerHTML = 'Edit Discussion Topic';
-			topicFirstMessageId = topicFirstMessageToEditId;
+		
+	
+	//set the fields to show in the overlay
+	function getTopicToEdit(topicIdToEdit,  topicFirstMessageToEditId, page){
+	 	
+	 	topicId = topicIdToEdit;
+		createFCKEditor('discussionMessage');
+		var title = document.getElementById('overlaytitle');
+		var topicName = document.getElementById('topicName');
+		title.innerHTML = 'Edit Discussion Topic';
+		topicFirstMessageId = topicFirstMessageToEditId;
+		
+		if(page == 'details'){
+			var discussiontitle = $('DiscussionTopicTitle').innerHTML; 
+			topicName.value = discussiontitle;
 			
-			if(page == 'details'){
-				var discussiontitle = $('DiscussionTopicTitle').innerHTML; 
-				topicName.value = discussiontitle;
-				
-				
-				var m = $('{!$Component.DiscussionTopicMessage}').innerHTML;
-				
-				topicFirstMessage = m;
-			}else{
-				if(page == 'topics'){
-					var idtitle = 'topicTitle-' + topicIdToEdit;
-					var idMessage = 'topicMessage-' + topicIdToEdit;
-					var discussionTitle = document.getElementById(idtitle);
-					var discussionMessage = document.getElementById(idMessage);
-					topicName.value = discussionTitle.innerHTML;
-					topicFirstMessage = discussionMessage.innerHTML;
-				}
-			}
-			setFocus();
-		}
-		
-		function saveTopic(teamID, forumID, teamName, topicId , auxInputSubject, auxInputId, auxInputForum, auxInputContent, formId){
-			var topicName = $F('topicName');
-			var topicContent = getFCKContent();
-			$(auxInputSubject).value = topicName;
-			$(auxInputId).value = topicId;
-			$(auxInputForum).value = forumID;
-			$(auxInputContent).value = topicContent;
-		}
-		
-		function validateRequiredFields(formId) {
-			var topicName = $F('topicName');
-			var topicContent = getFCKContent();
-			if(topicName == '' || topicContent == ''  || topicContent == '<p><br></p>'|| topicContent == '<p></p>' || topicContent == '<p>&nbsp;</p> ' || topicContent == '<p>&nbsp;<br></p>' || topicContent == null){
-				$(formId).style.display = 'block';
-				alert('Information requeried');
-				return false;
-			}
-			return true;
-		}
-		
-		function refreshPage () {
-			var buttonForm = $$('.auxLinkClass');
-			buttonForm[0].onclick();
 			
-		}		
-		
-		function setNewFocus(){ 
-			createFCKEditor('discussionMessage');
-			document.getElementById('topicName').focus();	
+			var m = $('{!$Component.DiscussionTopicMessage}').innerHTML;
+			
+			topicFirstMessage = m;
 		}
-		
-		function setFocus(){
-			document.getElementById('topicName').focus();		
+		else{
+			if(page == 'topics'){
+				var idtitle = 'topicTitle-' + topicIdToEdit;
+				var idMessage = 'topicMessage-' + topicIdToEdit;
+				var discussionTitle = document.getElementById(idtitle);
+				var discussionMessage = document.getElementById(idMessage);
+				
+				
+				topicName.value = discussionTitle.innerHTML;
+				
+				topicFirstMessage = discussionMessage.innerHTML;
+				
+			}
 		}
+		setFocus();
+	}
+	
+	
+	function saveTopic(teamID, forumID, teamName, topicId , auxInputSubject, auxInputId, auxInputForum, auxInputContent, formId){
+		var topicName = $F('topicName');
+		var topicContent = getFCKContent();
+		//alert(topicContent);	
+		$(auxInputSubject).value = topicName;
+		$(auxInputId).value = topicId;
+		$(auxInputForum).value = forumID;
+		$(auxInputContent).value = topicContent;
+	}
+	
+	function validateRequiredFields(formId) {
+		var topicName = $F('topicName');
+		var topicContent = getFCKContent();
+		if(topicName == '' || topicContent == ''  || topicContent == '<p><br></p>'|| topicContent == '<p></p>' || topicContent == '<p>&nbsp;</p> ' || topicContent == '<p>&nbsp;<br></p>' || topicContent == null){
+			$(formId).style.display = 'block';
+			alert('Information requeried');
+			return false;
+		}
+		return true;
+	}
+	
+	function refreshPage () {
+		var buttonForm = $$('.auxLinkClass');
+		//buttonForm.focus();
+		buttonForm[0].onclick();
+		
+	}		
+	
+	function setNewFocus(){ 
+		createFCKEditor('discussionMessage');
+		document.getElementById('topicName').focus();	
+	}
+	
+	function setFocus(){
+		document.getElementById('topicName').focus();		
+	}
 	
 	</script>
 	
 	<!-- Initialize the overlay box for modal.js -->
+	<a href="#modal_container" id="initializeModalOverlay" style="display:none;"></a>
+	<div id="modal_container" style="display:none;"></div>
+	<script>
+		createOverlay('initializeModalOverlay');
+	</script>
+	
 	<div id="NewTopicForm" style="display:none;" class="overlayForm">	
 		<!-- Overlay Title -->
 		<div class="overlayTitleContent">
@@ -174,19 +201,22 @@
 										<div id="fckContentDiv" style="visibility:hidden;">
 											<textarea escape="false" id="discussionMessage" name="discussionMessage" style="width:98%;height:110px;"></textarea>
 										</div>
+										<!-- <input type="checkbox" id="emailNewDiscussion" name="email" /><span class="inputInfo">Email new team members about new discussion topic</span>-->
 									</td>
 								</tr>
 							</table>
 						</div>
+						<!--  <apex:commandButton action="{!saveTopic}" rerender="topicList, noTopicList" styleclass="saveBtn" value="Save" onclick="saveTopic('{!forumData.Team__c}','{!forumData.Id}','{!forumData.Team__r.Name}', topicId);" /> -->
 						<div class="overlaySeparateLine"></div>
 						<!-- Saven and Cancel Buttons -->
 						<div class="overlayFromButtons" align="center">
-							<apex:inputText id="auxInputSubject" value="{!newTopic.subject}" style="display:none;" />
-							<apex:inputText id="auxInputId" value="{!newTopic.id}" style="display:none;" />
-							<apex:inputText id="auxInputForum" value="{!newTopic.forum}" style="display:none;" />
-							<apex:inputTextArea id="auxInputContent" value="{!newTopic.content}" style="display:none;" />
-							<apex:commandButton status="NewDiscussionStatus" rerender="auxNewTopicPanel, TaskWidgetLeft,TaskWidgetFull, replysHolder" styleClass="overlaySaveBtn" value="Save" onclick="saveTopic('{!forumData.Team__c}','{!forumData.Id}','{!forumData.Team__r.Name}', topicId, '{!$Component.auxInputSubject}', '{!$Component.auxInputId}', '{!$Component.auxInputForum}', '{!$Component.auxInputContent}', '{!$Component.overlayForm}');" action="{!saveNewTopic}" oncomplete="modal.close();reloadDiscussionList();showSwirly('swirly_discussion');"  />
-							<apex:commandButton styleClass="overlayCancelBtn" value="Cancel" onclick="modal.close(); return false;"  />
+								<apex:inputText id="auxInputSubject" value="{!newTopic.subject}" style="display:none;" />
+								<apex:inputText id="auxInputId" value="{!newTopic.id}" style="display:none;" />
+								<apex:inputText id="auxInputForum" value="{!newTopic.forum}" style="display:none;" />
+								<apex:inputTextArea id="auxInputContent" value="{!newTopic.content}" style="display:none;" />
+																				
+								<apex:commandButton status="NewDiscussionStatus" rerender="auxNewTopicPanel, TaskWidgetLeft,TaskWidgetFull, replysHolder" styleClass="overlaySaveBtn" value="Save" onclick="saveTopic('{!forumData.Team__c}','{!forumData.Id}','{!forumData.Team__r.Name}', topicId, '{!$Component.auxInputSubject}', '{!$Component.auxInputId}', '{!$Component.auxInputForum}', '{!$Component.auxInputContent}', '{!$Component.overlayForm}');" action="{!saveNewTopic}" oncomplete="modal.close();reloadDiscussionList();showSwirly('swirly_discussion');"  />
+								<apex:commandButton styleClass="overlayCancelBtn" value="Cancel" onclick="modal.close(); return false;"  />
 						</div>
 					</apex:form>
 				</apex:facet>

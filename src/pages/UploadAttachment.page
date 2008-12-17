@@ -1,15 +1,93 @@
 <apex:page sidebar="false" showHeader="false" controller="UploadAttachmentController">
-	
-	<apex:stylesheet value="{!URLFOR($Resource.WikiResource, 'inc/css/uploadAttachment.css')}" />
-
-	<apex:includeScript value="{!URLFOR($Resource.WikiResource, 'inc/js/uploadAttachment.js')}" />
+	<style>
+		.inputFileDiv {
+			margin: 20px 5px 5px 5px;
+		}
+		
+		.inputFileDiv .inputFileContent {
+			margin: 10px;
+		}
+		
+		.inputFileDiv .inputFileLine {
+			background:#999999 none repeat scroll 0 0;
+			border:0 none;
+			clear:both;
+			height:1px;
+			margin:8px 0;
+			overflow:hidden;
+			position:relative;
+			width:100%;
+		}
+		
+		.inputFileDiv .inputFileSave {
+			
+			border:0 solid !important;
+			color:#FFFFFF;
+			cursor:pointer;
+			font-size:95% !important;
+			font-weight:bold;
+			height:22px !important;
+			margin-top:0 !important;
+			text-align:center;
+			width:56px !important;
+		}
+		
+		.inputFileDiv .wiki {
+			background: #556A2F none repeat scroll 0 50% !important;
+		}
+		
+		.inputFileDiv .team {
+			background: #004F6D none repeat scroll 0 50% !important;
+		}
+		
+		.inputFileDiv .inputFileCancel {
+			background:#999999 none repeat scroll 0 50% !important;
+			border:0 solid !important;
+			color:#FFFFFF;
+			cursor:pointer;
+			font-size:95% !important;
+			font-weight:bold;
+			height:22px !important;
+			margin-top:0 !important;
+			text-align:center;
+			width:56px !important;
+		}
+		
+		.inputFileDiv .infoText {
+			color: #989999;
+		}
+		
+		body div.overlayMainContent .overlaySaveBtn, body div.overlayMainContent .overlayCancelBtn  {
+			font-size: 13px;
+		}
+		
+		 body div.overlayMainContent .overlayCancelBtn  {
+			font-size: 13px;
+			background: #989999;
+		}
+		
+		body div.overlayMainContent .overlaySaveBtn {
+			font-size: 13px;
+			background: #21637D;
+		}
+	</style>
 	
 	<apex:stylesheet value="{!URLFOR($Resource.portalStyles, 'portal.css')}" />
+	
 	<link rel="stylesheet" media="screen" href="{!URLFOR($Resource.TeamsResources, 'inc/css/teamsOverlaysTemplate.css')}" />
-	<apex:includeScript value="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/prototype.js')}"/>
+	
+	<script src="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/prototype.js')}" />
+	
 	<!-- Portal Support -->
-	<apex:includeScript value="{!$Resource.portalSupport}"/>	
-
+	<script src="{!$Resource.portalSupport}" />	
+	
+	<script>
+		function cancelAction () {
+			var uploadCancelDiv = document.getElementById('uploadCancel');
+			uploadCancelDiv.style.display = '';
+		}
+	</script>
+	
 	<apex:outputpanel rendered="{!IF(parentId == null, true, false)}">
 		<div id="uploadFinished"></div>
 	</apex:outputpanel>
@@ -19,16 +97,13 @@
 				<div class="inputFileDiv">	
 					<div class="overlayFormContent">
 						<strong>Select the File</strong><br>
-						<span class="infoText">Type the path of the file or click the Browse button to find the file.</span><br/>
-						<apex:inputFile value="{!newAttach.Body}" id="newAttach" contentType="{!newAttach.ContentType}" filename="{!newAttach.Name}" fileSize="{!newAttach.BodyLength}"/><br/>
-						<apex:outputPanel rendered="{!NOT validAttSize}">
-							<span class="errorText"><b>Error:</b> The attachment size must be less than 5 mb</span>
-						</apex:outputPanel>
+						<span class="infoText">Type the path of the file or click the Browse button to find the file.</span><br>
+						<apex:inputFile value="{!newAttach.Body}" id="newAttach" contentType="{!newAttach.ContentType}" filename="{!newAttach.Name}"/>
 					</div>
 					<div class="overlaySeparateLine"></div>
 					<!-- Saven and Cancel Buttons -->
 					<div class="overlayFromButtons" align="center">
-						<apex:commandButton styleclass="overlaySaveBtn" action="{!saveNewAttach}" value="Done"/>
+						<apex:commandButton styleclass="overlaySaveBtn" action="{!saveNewAttach}" value="Done" />
 						<apex:commandButton styleClass="overlayCancelBtn" value="Cancel" onclick="cancelAction(); return false;"  />
 					</div>
 				</div>

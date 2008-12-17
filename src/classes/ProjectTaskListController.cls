@@ -1,6 +1,3 @@
-/**
-*@author Bruno Fagundez @ 06/23/2008
-*/
 public with sharing class ProjectTaskListController {
     
     //Get Team Id 
@@ -17,9 +14,10 @@ public with sharing class ProjectTaskListController {
     List<TaskDetails> taskList = new List<TaskDetails>();
     String option = 'all';
     
-    /**
-    *Constructor
-    */
+    public void reConstruct(){
+        ListTask.clear();
+    }
+    
     public ProjectTaskListController(){
 		genPermissions();   
 		editDeletePer = userPermissions.getCanManage();
@@ -30,74 +28,40 @@ public with sharing class ProjectTaskListController {
     	}
 		genCntPagination();
 		getUserProfile();    
-    }    
-    
-    /**
-    *Clear the task list
-    */
-    public void reConstruct(){
-        ListTask.clear();
     }
-
-    /**
-    *Get option
-    *@return String
-    */
+    
     public String getOption() {
         return option;
     }
     
-    /**
-    *Set option
-    *@param String
-    */
     public void setOption(String option) {
         this.option = option;
     }
     
-    /**
-    *Get team id
-    *@return String 
-    */
     public String getTeamId() {
         return TEAMID;
     }
     
-    /**
-    *Set team id
-    *@param String
-    */
     public void setTeamId(String sTEAMID) {
         TEAMID = sTEAMID;
     }
     
-    /**
-    *Set user id
-    *@param String
-    */
     public void setUserId(String sUSERID) {
         USERID = sUSERID;
     }
     
-    /**
-    *Returns true if has edit/delete permission
-    *@return Boolean
-    */
     public Boolean getEditDeletePer(){
         return editDeletePer;
     }
     
-    /**
-    *Returns true if user is team member
-    *@return Boolean
-    */
     public Boolean getIsTeamMember(){
         return isTeamMember;
     }
 
     /**
-    *Get user profile
-    */
+    *
+    *
+    */ 
     public void getUserProfile(){
         
         List<TeamMember__c> members = new List<TeamMember__c>();
@@ -107,12 +71,16 @@ public with sharing class ProjectTaskListController {
                     where tm.Team__c =: TEAMID and tm.User__c =: USERID];
         
         if(members.size() > 0){
+            
             isTeamMember = true;
+            
             List<TeamProfile__c> profile = new List<TeamProfile__c>();
+                        
             profile = [select p.Id, p.Name, p.ManageTeams__c 
                                         from TeamProfile__c p
                                         where p.Id =: members[0].TeamProfile__c];		
         }       
+                     
     }
     
     
@@ -121,9 +89,6 @@ public with sharing class ProjectTaskListController {
    	/* ---------------------------- */	
 	public UserPermissions userPermissions = new UserPermissions();
 	
-	/**
-	*Generates user permissions
-	*/
 	public void genPermissions () {
 		userPermissions.setId(UserInfo.getUserId());
 		userPermissions.setTeam(TEAMID);
@@ -131,36 +96,24 @@ public with sharing class ProjectTaskListController {
 		userPermissions.setPermissions();		
 	}
 	
-	/**
-	*Get user permissions
-	*return UserPermission
-	*/
 	public UserPermissions getUserPermissions () {
 		return userPermissions;
 	}
 	/* ---------------------------- */	
     
-    /**
-    *Refresh task list
-    */
-    public void  refresh(){
+    public void  refresh()
+    {
     	genTaskList();
     }
     
-    /**
-    *Get task list
-    *@return List<TaskDetails>
-    */
-    public List<TaskDetails> getTaskList(){
+    public List<TaskDetails> getTaskList () {
     	return taskList;
     }
     
-    /**
-    *Generates task list
-    */
     public void genTaskList(){ 
 
 		if((TEAMID != null) && (TEAMID != ' ')){
+	        
 	        setAllUsers();
 			ListTask = [select 
 	                    p.Team__c, 
@@ -177,6 +130,9 @@ public with sharing class ProjectTaskListController {
 	                    (select Id, User__c from ProjectAssignee__r),
 	                    p.Description__c                                                
 	                    from ProjectTask__c p where Team__c =: TEAMID order by EndDate__c asc];
+
+			//List<TaskDetails> tl = new List<TaskDetails>();                           
+			//tl = new List<TaskDetails>();
 	        
 		     if(ListTask.size() > 0){
 			     for(Integer i=0; i<ListTask.size();i++){
@@ -253,28 +209,17 @@ public with sharing class ProjectTaskListController {
 	            genCntPagination(); 
 	        }
 		}    
+		
     }
     
-    
-    /**
-    *Get team's name
-    *@return String
-    */
     public String getNameTeam(){
         return this.name;
     }
     
-    /**
-    *Set team's name
-    *@param String
-    */
     public void setNameTeam(String name){
         this.name=name;
     }       
-	
-	/**
-	*Set the map assignes Map<userID, User> 
-	*/
+
 	public void setAllUsers() {
 		// LOADING THE ASIGNEES ONLY ONCE
 		if(mapAsignees.size() == 0) {
@@ -284,36 +229,24 @@ public with sharing class ProjectTaskListController {
 		}
 	}
 
-    
-    /**
-    *Class TaskDetails
-    *@author Bruno Fagundez
-    */
     public class TaskDetails {
-
+            
             // Task Id
             public String id { get; set; }
             
             // Task Asignee
 			public String AsigneeName = null;         
             
-            /**
-            *Assignes user to task
-            *@param User
-            */
+            
             public void setAsigneeName(User u){ 
             	this.userTask = u;
             }            
             
-            /**
-            *Get User assigned to task
-            *@return String
-            */
             public String getAsigneeName (){
 			   	if(this.userTask != null){
 			    	if(userTask.People__r.size() <= 0){
 			        	return '';
-					}else {
+					}else{
 			        	return userTask.People__r[0].Picture__c;
 			        }
 			   	}else {
@@ -358,27 +291,19 @@ public with sharing class ProjectTaskListController {
                 }
             }
             
-            public Integer Percent_Completed { 
-            	get; set; 
-            }  
+            public Integer Percent_Completed { get; set; }  
             
-            public boolean comparoFecha { 
-            	get; set; 
-            }
+            public boolean comparoFecha  { get; set; }
             
-            public Integer cantDias { 
-            	get; set; 
-            }  
+            public Integer cantDias  { get; set; }  
             
-            public User userTask { 
-            	get; set; 
-            }  
+            public User userTask     { get; set; }  
             
-            public Boolean canEditAndDelete { 
-            	get; set; 
-            } 
+            public Boolean canEditAndDelete { get; set; } 
+             
                 
     }
+    
     
     /**
     * Pagination
@@ -401,28 +326,21 @@ public with sharing class ProjectTaskListController {
     public boolean prevPageShow  = false;
     public boolean nextPageLinkShow  = false;
     public boolean nextPageShow  = false;
-    
-    /**
-    *Generates number of pages
-    */
+        
     public void genCntPagination () {
+        
         cntPagination = (totalItemsNumber - (Math.mod(totalItemsNumber, numberOfItemsToShow))) / numberOfItemsToShow;
         if (Math.mod(totalItemsNumber, numberOfItemsToShow) != 0 ) {
             cntPagination++;
         }   
+        
     }
     
-    /**
-    *Set next page
-    */
     public void nextPage () {
         currentPagination++;
         firstRow = firstRow + numberOfItemsToShow;          
     }
     
-    /**
-    *Set previous page
-    */
     public void prevPage () {
         currentPagination--;
         firstRow = firstRow - numberOfItemsToShow;  
@@ -435,35 +353,18 @@ public with sharing class ProjectTaskListController {
     * Pagination Integer Getters
     */
     
-    
-    /**
-    *Get the current page
-    *@return Integer
-    */
     public Integer getCurrentPagination () {
         return currentPagination;
     }
 
-	/**
-    *Get the number of pages
-    *@return Integer
-    */
     public Integer getCntPagination () {
         return cntPagination;
     }
     
-    /**
-    *Get the number of items to show
-    *@return Integer
-    */
     public Integer getNumberOfItemsToShow () {
         return numberOfItemsToShow;
     }
     
-    /**
-    *Get the number of first row in page
-    *@return Integer
-    */
     public Integer getFirstRow () {
         return firstRow;
     }
@@ -472,10 +373,6 @@ public with sharing class ProjectTaskListController {
     * Pagination Boolean Getters
     */
     
-    /**
-    *Returns true if should show prev page link
-    *@return Boolean
-    */
     public boolean getPrevPageLinkShow () {
         if(currentPagination == 1){
         	prevPageLinkShow = false;       
@@ -485,10 +382,6 @@ public with sharing class ProjectTaskListController {
         return prevPageLinkShow;
     }
     
-    /**
-    *Returns true if should show prev page
-    *@return Boolean
-    */
     public boolean getPrevPageShow () {
         if(currentPagination == 1){ 
         	prevPageShow = true; 
@@ -498,10 +391,6 @@ public with sharing class ProjectTaskListController {
         return prevPageShow;
     }
     
-    /**
-    *Returns true if should show next page link
-    *@return Boolean
-    */
     public boolean getNextPageLinkShow () {
         if((currentPagination == cntPagination) || (cntPagination == 0)){   
         	nextPageLinkShow = false; 
@@ -511,10 +400,6 @@ public with sharing class ProjectTaskListController {
         return nextPageLinkShow;
     }
     
-    /**
-    *Returns true if should show next page
-    *@return Boolean
-    */
     public boolean getNextPageShow () {
         if((currentPagination == cntPagination) || (cntPagination == 0)){ 
         	nextPageShow = true; 
@@ -530,34 +415,34 @@ public with sharing class ProjectTaskListController {
     
     public String sortBy = 'EndDate__c';
     
-    /**
-    *Returns true if is sort by description
-    *@return Boolean
-    */
     public Boolean getSortByDesc () {
         return !sortByDesc;
     }
     
-	/**
-	*Returns sort criteria
-	*@return String
-	*/
+
     public String getSortBy () {
         String sbCol = '';
-        if (sortBy == null || sortBy == 'Milestone__c') 
+        if (sortBy == null || sortBy == 'Milestone__c') {
             sbCol = 'type'; 
-        if (sortBy == 'Priority__c') 
+        }
+        if (sortBy == 'Priority__c') {
             sbCol = 'priority'; 
-        if (sortBy == 'Name') 
+        }   
+        if (sortBy == 'Name') {
             sbCol = 'name'; 
-        if (sortBy == 'User__c.Name') 
+        }
+        if (sortBy == 'User__c.Name') {
             sbCol = 'assigned'; 
-        if (sortBy == 'Percent_Completed__c') 
+        }
+        if (sortBy == 'Percent_Completed__c') {
             sbCol = 'completed';    
-        if (sortBy == 'Duration__c') 
+        }
+        if (sortBy == 'Duration__c') {
             sbCol = 'est';  
-        if (sortBy == 'EndDate__c') 
+        }
+        if (sortBy == 'EndDate__c') {
             sbCol = 'date'; 
+        }
         return sbCol;
     }
     
@@ -565,10 +450,6 @@ public with sharing class ProjectTaskListController {
     
     public boolean sortByParamSet = false;
     
-    /**
-    *Set Sort criteria
-    *@param String
-    */
     public void setSORTBYPARAM (String SortVal){
     	sortByParamSet = true;
     	SORTBYPARAM = SortVal;
@@ -580,7 +461,7 @@ public with sharing class ProjectTaskListController {
     	sortByExt = s;
     }
      
-    /**
+    /*
 	 * This is a temporary method to cover us until dynamic apex is back.  This will use hard coded
 	 * SOQL statements in place of the dynamic statements
 	 */
@@ -590,7 +471,7 @@ public with sharing class ProjectTaskListController {
         setAllUsers();
         String SortByCriteria = '';
         
-        if(sortByParamSet){
+        If(sortByParamSet){
         	SortByCriteria = SORTBYPARAM;
         } else {     
         	if((System.currentPageReference().getParameters().get('sb') != 'refresh')){   	
@@ -606,6 +487,7 @@ public with sharing class ProjectTaskListController {
 	    } else {
 	       	sortByDesc = false;
 	    }
+       	
        	
     	sortBy = SortByCriteria;
         String sortByAux=sortBy;
@@ -630,7 +512,7 @@ public with sharing class ProjectTaskListController {
 		                                 (Select Id, 
 		                                 		 User__r.Name,
 		                                 		 User__c 
-		                                 	From ProjectAssignee__r), 
+		                                  From ProjectAssignee__r), 
 		                                 p.Description__c 
 		                                 From ProjectTask__c p 
 		                                 where Team__c =: TEAMID  
@@ -900,21 +782,22 @@ public with sharing class ProjectTaskListController {
         }                
         
         if (sortBy == 'Priority__c'){
-    		insertionSort(resultTaskList,sortByDesc);
+        		insertionSort(resultTaskList,sortByDesc);
         }
         
         for(Integer i=0; i < resultTaskList.size();i++){
             TaskDetails TaskDetail = new TaskDetails();
             TaskDetail.id = resultTaskList[i].Id;
-            
             if(resultTaskList[i].ProjectAssignee__r.size() > 0){
             	TaskDetail.setAsigneeName(mapAsignees.get(resultTaskList[i].ProjectAssignee__r[0].User__c));
-            	if(resultTaskList[i].ProjectAssignee__r[0].User__c == USERID){
-	                TaskDetail.isTaskOwner = true; 
-	            } else {
-	                TaskDetail.isTaskOwner = false; 
-	            }   
+            	 if(resultTaskList[i].ProjectAssignee__r[0].User__c == USERID){
+		                TaskDetail.isTaskOwner = true; 
+		            } else {
+		                TaskDetail.isTaskOwner = false; 
+		            }   
             }
+            
+           
             TaskDetail.Name = resultTaskList[i].Name;
             String picture = TaskDetail.getAsigneeName();
             TaskDetail.Priority = resultTaskList[i].Priority__c;
@@ -922,30 +805,27 @@ public with sharing class ProjectTaskListController {
             TaskDetail.Estimate = (resultTaskList[i].Duration__c).intValue();
             TaskDetail.Description = resultTaskList[i].Description__c;
             TaskDetail.Milestone = resultTaskList[i].Milestone__c;
-            
             if(resultTaskList[i].Percent_Completed__c != null){
                 TaskDetail.Percent_Completed= (resultTaskList[i].Percent_Completed__c).intValue();
             }else{
-            	TaskDetail.Percent_Completed= 0;
+            TaskDetail.Percent_Completed= 0;
             }
-            
-            if(resultTaskList[i].EndDate__c < System.now()){
-                TaskDetail.comparoFecha=true;
-                long fechaInicialMs = resultTaskList[i].EndDate__c.getTime();
-                long fechaFinalMs = System.now().getTime();
-                long diferencia = fechaFinalMs - fechaInicialMs;
-                TaskDetail.cantDias = (Math.floor(diferencia / (1000 * 60 * 60 * 24))).intValue();
-            }else{
-                TaskDetail.comparoFecha=false;  
+                if(resultTaskList[i].EndDate__c < System.now()){
+                    TaskDetail.comparoFecha=true;
+                    long fechaInicialMs = resultTaskList[i].EndDate__c.getTime();
+                    long fechaFinalMs = System.now().getTime();
+                    long diferencia = fechaFinalMs - fechaInicialMs;
+                    TaskDetail.cantDias = (Math.floor(diferencia / (1000 * 60 * 60 * 24))).intValue();
+                    
+                }else{
+                    TaskDetail.comparoFecha=false;  
+                }
+                td.add(TaskDetail);
             }
-            
-            td.add(TaskDetail);
-        }
             
         totalItemsNumber = td.size();
         firstRow = 0;
         currentPagination = 1;
-        
         if (totalItemsNumber == 0) {
             cntPagination = 0;  
         } else {
@@ -953,87 +833,196 @@ public with sharing class ProjectTaskListController {
         } 
 
         if (sortByAux.equals('User__c.Name')){
-	        sortBy='User__c.Name';
-	        Integer n;
-	        Integer i;
-	        Integer j;
-	        
-	        n = td.size() - 1;  
-	        for (i = 1; i <= n; i++) {  
-	            for (j = n; j >= i ; j--) {
-	                if (sortByDesc) {
-	                    if (td.get(j).userTask.name >= td.get(j - 1).userTask.name) {
-	                        TaskDetails tempTaskDetail;
-	                        tempTaskDetail = td.get(j - 1);
-	                        td.set(j - 1, td.get(j));
-	                        td.set(j, tempTaskDetail);  
-	                    }   
-	                } else {
-	                    if (td.get(j).userTask.name <= td.get(j - 1).userTask.name) {
-	                        TaskDetails tempTaskDetail;
-	                        tempTaskDetail = td.get(j - 1);
-	                        td.set(j - 1, td.get(j));
-	                        td.set(j, tempTaskDetail); 
-	                    }   
-					}
+        sortBy='User__c.Name';
+        Integer n;
+        Integer i;
+        Integer j;
+        
+        n = td.size() - 1;  
+        for (i = 1; i <= n; i++) {  
+            for (j = n; j >= i ; j--) {
+                if (sortByDesc) {
+                    if (td.get(j).userTask.name >= td.get(j - 1).userTask.name) {
+                        TaskDetails tempTaskDetail;
+                        tempTaskDetail = td.get(j - 1);
+                        td.set(j - 1, td.get(j));
+                        td.set(j, tempTaskDetail);  
+                    }   
+                } else {
+                    if (td.get(j).userTask.name <= td.get(j - 1).userTask.name) {
+                        TaskDetails tempTaskDetail;
+                        tempTaskDetail = td.get(j - 1);
+                        td.set(j - 1, td.get(j));
+                        td.set(j, tempTaskDetail); 
+                    }   
 				}
-	        }
-    	}
+			}
+          }
+        }
         taskList = td;  
+            
     } 
 	 
-	
-	/**
-	*Set map piority
-	*@param String key
-	*@param Boolean search criteria is Description
-	*@return Integer
-	*/
-	private Integer mapPriority(String key, Boolean sortByDesc){
-		if (!sortByDesc){
-			if (key == 'High')
-				return 3;
-			else if (key == 'Normal')
-				return 2;
-			else if (key == 'Low')
-				return 1;
-			else return 4; // null value
-		}else{
-			if (key == 'High')
-				return 1;
-			else if (key == 'Normal')
-				return 2;
-			else if (key == 'Low')
-				return 3;
-			else 
-				return 4; // null value
+	 private Integer mapPriority(String key, Boolean sortByDesc){
+	 	
+	 	if (!sortByDesc){
+		 if (key == 'High')
+		 	return 3;
+		 else if (key =='Normal')
+		 	return 2;
+		 else if (key == 'Low')
+		 	return 1;
+		 else return 4; // null value
 	 	}
-	}
+	 	else{
+	 		if (key == 'High')
+		 		return 1;
+		 	else if (key =='Normal')
+		 		return 2;
+		 	else if (key == 'Low')
+		 		return 3;
+		 	else return 4; // null value
+	 	}
+	 }
 	 
-	/**
-	*Sort list of task 
-	*@param List<ProjectTask__c>
-	*@param Boolean search criteria is Description
-	*/
-	private void insertionSort(List<ProjectTask__c> listToOrder, Boolean sortByDesc) {
+	 private void insertionSort(List<ProjectTask__c> listToOrder, Boolean sortByDesc) {
 		Integer i, j, current_prio;
 		ProjectTask__c current;
 		Integer list_size = listToOrder.size();
-		for (i=1; i < list_size; i++){
+		for (i=1; i < list_size; i++)
+		{
 			current = listToOrder.get(i);
 			current_prio = mapPriority(listToOrder.get(i).Priority__c,sortByDesc);
 		  	j = i; // index of the end of sorted region
-		  	while ((j > 0) && (mapPriority(listToOrder.get(j-1).Priority__c,sortByDesc) > current_prio)){
+		  	while ((j > 0) && (mapPriority(listToOrder.get(j-1).Priority__c,sortByDesc) > current_prio))
+		  	{
 		    	listToOrder.set(j,listToOrder.get(j-1));
 		    	j = j - 1;
 		  	}
 		  	listToOrder.set(j,current);
 		}
-	}
-	
-	/**
-	* Get sort list option
-	*/
+	 }
+
+    /*
+	 * We have to remove all elements of dynamic apex in order to put this application in the
+	 * 62 org.  This code will be added back in once dynamic apex is released GA
+	 *
+	public void sortList () {
+        List<TaskDetails> td = new List<TaskDetails>();
+        
+        String SortByCriteria = '';
+        
+        If(sortByParamSet){
+        	SortByCriteria = SORTBYPARAM;
+        } else {     
+        	if((System.currentPageReference().getParameters().get('sb') != 'refresh')){   	
+        		SortByCriteria = System.currentPageReference().getParameters().get('sb'); 
+        	} else {
+        		SortByCriteria = System.currentPageReference().getParameters().get('criteria');
+        	}
+        }
+       	
+       	
+	   	if ((sortBy == SortByCriteria) && (System.currentPageReference().getParameters().get('criteria') == null)) {
+	       	sortByDesc = !sortByDesc;        	
+	    } else {
+	       	sortByDesc = false;
+	    }
+       	
+       	
+    	sortBy = SortByCriteria;
+        String sortByAux=sortBy;
+        
+        List<ProjectTask__c> resultTaskList = new List<ProjectTask__c>();
+        
+        if (sortBy.equals('User__c.Name'))
+            sortBy='Name';
+        
+        String queryStr ='Select p.Team__c, p.Project__c,p.Priority__c, p.Percent_Completed__c,p.OwnerId, p.Name, p.Milestone__c, p.Id,p.EndDate__c,p.Duration__c,(Select Id, User__r.Name,User__c From ProjectAssignee__r), p.Description__c From ProjectTask__c p where Team__c = \'' + TEAMID + '\'  order by ' + sortBy;
+        if (sortByDesc) {
+            queryStr += ' desc';
+        } 
+        
+        resultTaskList = Database.query(queryStr); 
+        for(Integer i=0; i < resultTaskList.size();i++){
+            TaskDetails TaskDetail = new TaskDetails();
+            TaskDetail.id = resultTaskList[i].Id;
+            TaskDetail.AsigneeName = resultTaskList[i].ProjectAssignee__r[0].User__c;
+            if(resultTaskList[i].ProjectAssignee__r[0].User__c == USERID){
+                TaskDetail.isTaskOwner = true; 
+            } else {
+                TaskDetail.isTaskOwner = false; 
+            }   
+            TaskDetail.Name = resultTaskList[i].Name;
+            String picture=TaskDetail.AsigneeName;
+            TaskDetail.Priority = resultTaskList[i].Priority__c;
+            TaskDetail.DueDate = ((resultTaskList[i].EndDate__c).format('MM/dd/yyyy'));
+            TaskDetail.Estimate = (resultTaskList[i].Duration__c).intValue();
+            TaskDetail.Description = resultTaskList[i].Description__c;
+            TaskDetail.Milestone = resultTaskList[i].Milestone__c;
+            if(resultTaskList[i].Percent_Completed__c != null){
+                TaskDetail.Percent_Completed= (resultTaskList[i].Percent_Completed__c).intValue();
+            }else{
+            TaskDetail.Percent_Completed= 0;
+            }
+                if(resultTaskList[i].EndDate__c < System.now()){
+                    TaskDetail.comparoFecha=true;
+                    long fechaInicialMs = resultTaskList[i].EndDate__c.getTime();
+                    long fechaFinalMs = System.now().getTime();
+                    long diferencia = fechaFinalMs - fechaInicialMs;
+                    TaskDetail.cantDias = (Math.floor(diferencia / (1000 * 60 * 60 * 24))).intValue();
+                    
+                }else{
+                    TaskDetail.comparoFecha=false;  
+                }
+                td.add(TaskDetail);
+            }
+            
+        totalItemsNumber = td.size();
+        if (totalItemsNumber == 0 ) {
+            cntPagination = 0;  
+            firstRow = 0;
+            currentPagination = 1;
+        }
+        else {
+            firstRow = 0;
+            currentPagination = 1;
+            genCntPagination(); 
+        }
+        
+        if (sortByAux.equals('User__c.Name')){
+        sortBy='User__c.Name';
+        Integer n;
+        Integer i;
+        Integer j;
+        
+        n = td.size() - 1;  
+        for (i = 1; i <= n; i++) {  
+            for (j = n; j >= i ; j--) {
+                if (sortByDesc) {
+        
+                        if (td.get(j).userTask.name >= td.get(j - 1).userTask.name) {
+                            TaskDetails tempTaskDetail;
+                            tempTaskDetail = td.get(j - 1);
+                            td.set(j - 1, td.get(j));
+                            td.set(j, tempTaskDetail);  
+                        }   
+                }else{
+                        if (td.get(j).userTask.name <= td.get(j - 1).userTask.name) {
+                            TaskDetails tempTaskDetail;
+                            tempTaskDetail = td.get(j - 1);
+                            td.set(j - 1, td.get(j));
+                            td.set(j, tempTaskDetail); 
+                
+                        }   
+             }
+           }
+         }
+        }
+        taskList = td;  
+            
+    }*/
+  
 	public void getsortListOption () {
         List<TaskDetails> td = new List<TaskDetails>();
         List<TaskDetails> tdoTask = new List<TaskDetails>();
@@ -1079,7 +1068,8 @@ public with sharing class ProjectTaskListController {
             
             if(resultTaskList[i].EndDate__c != null) {
             	TaskDetail.DueDate = ((resultTaskList[i].EndDate__c).format('MM/dd/yyyy'));
-            }else {
+            }
+            else {
             	TaskDetail.DueDate = '';
             }
             
@@ -1092,7 +1082,6 @@ public with sharing class ProjectTaskListController {
             }else{
 	            TaskDetail.Percent_Completed= 0;
             }
-            
             if(resultTaskList[i].EndDate__c < System.now()){
                 TaskDetail.comparoFecha=true;
                 long fechaInicialMs = resultTaskList[i].EndDate__c.getTime();
@@ -1103,7 +1092,6 @@ public with sharing class ProjectTaskListController {
             }else{
                 TaskDetail.comparoFecha=false;  
             }
-            
             if(TaskDetail.comparoFecha==true && opciones.equals('oTask'))
             	tdoTask.add(TaskDetail);
             if(TaskDetail.comparoFecha==true && TaskDetail.Milestone==true && opciones.equals('oMiles'))
@@ -1114,8 +1102,8 @@ public with sharing class ProjectTaskListController {
 				listAllMilestones.add(TaskDetail);
             if(TaskDetail.Percent_Completed==100 && opciones.equals('complete'))
             	tdoComplete.add(TaskDetail);
-            	
-            if(TaskDetail.userTask != null){   
+            if(TaskDetail.userTask != null)
+            {   
                 if(TaskDetail.userTask.Id==USERID && opciones.equals('my'))
                 tdoUser.add(TaskDetail);
             }
@@ -1135,7 +1123,8 @@ public with sharing class ProjectTaskListController {
         }
         if(opciones.equals('allMilestones')){
             totalItemsNumber = listAllMilestones.size();
-        	//THERE MUST BE A SORTING BY DATE ASC
+            // THERE MUST BE A SORTING BY DATE ASC
+            
             this.taskList = listAllMilestones;
         }
         if(opciones.equals('complete')){
@@ -1154,6 +1143,7 @@ public with sharing class ProjectTaskListController {
         } else {
             genCntPagination(); 
         } 
+        
     }
   
   	/* ---------------------------- */
@@ -1161,22 +1151,13 @@ public with sharing class ProjectTaskListController {
     /* ---------------------------- */
 	public String idTaskToComplete = '';
 	
-	/**
-	*Get task to complete
-	*@return String task id
-	*/
 	public String getIdTaskToComplete () {
 		return idTaskToComplete;	
 	}
 	
-	/**
-	*Set task to complete
-	*@return String task id
-	*/
 	public void setIdTaskToComplete (String idTaskToComplete) {
 		this.idTaskToComplete = idTaskToComplete;	
 	}
-	
 	
 	public void markComplete () {
 		List<String> idsUpdate = new List<String>();
@@ -1186,6 +1167,7 @@ public with sharing class ProjectTaskListController {
 		}
 		
 		if(idsUpdate.size()>0){
+			
 			List<ProjectTask__c> tasksUpdate = [select (Select User__c from ProjectAssignee__r ), id from ProjectTask__c where id in: idsUpdate];
 			
 			if (tasksUpdate.size() > 0) {
@@ -1195,24 +1177,29 @@ public with sharing class ProjectTaskListController {
 					while (!cantEditAndDelete && countAssignee < iterTask.ProjectAssignee__r.size()) {
 						if(iterTask.ProjectAssignee__r[countAssignee].User__c != USERID) {
 							cantEditAndDelete =  true;
-						}else {
+						}
+						else {
 							countAssignee++;
 						}
 		            }
 					
 					if(!cantEditAndDelete || editDeletePer || iterTask.createdById == USERID){
 						iterTask.Percent_Completed__c = 100;
-					}else {
+					}
+					else {
 						throw new CustomException('Insufficient Privileges');	
 					}
 						
 				}	
+				
 				update tasksUpdate;
-			}else{
+			}
+			else 
+			{
 				throw new CustomException('Insufficient Privileges');
 			}
 		}
-		idTaskToComplete = '';
+			idTaskToComplete = '';
 	}
 	
 	/* ---------------------------- */
@@ -1222,55 +1209,70 @@ public with sharing class ProjectTaskListController {
     //String 
     public String idDeletes = '';
 	
-	/**
-	*@return String
-	*/
 	public String getIdDeletes () {
 		return idDeletes;	
 	}
 	
-	/**
-	*@param String
-	*/
 	public void setIdDeletes (String sidDeletes) {
 		idDeletes = sidDeletes;	
 	}
+
     
-    /**
-    *Delete Task
-    */
-    public void deleteTask(){
+    public void deleteTask()
+    {
     	List<String> myIds = new List<String>();
 		
-		if (idDeletes != '' && idDeletes != null){
+		if (idDeletes != '' && idDeletes != null) 
+		{
 			myIds = idDeletes.split(':'); 
 		}
-		if(myIds.size()>0){
+		
+		if(myIds.size()>0)
+		{
+			System.debug('\n\n////////////////////////////////\n PROJECT TASK TO DELETE: ' + myIds + '\n/////////////////////////////////\n\n');
+			
 			List<ProjectTask__c> tasksToDelete = [select (Select User__c from ProjectAssignee__r ), id from ProjectTask__c where id in: myIds];
 			
-			if (tasksToDelete.size() > 0){
+			if (tasksToDelete.size() > 0) 
+			{
 				List<ProjectTask__c> taskListToDelete = new List<ProjectTask__c>(); 
-				for (ProjectTask__c iterTask : tasksToDelete){
+				for (ProjectTask__c iterTask : tasksToDelete) 
+				{
 					Boolean cantEditAndDelete = false;
 					Integer countAssignee = 0;
-					while (!cantEditAndDelete && countAssignee < iterTask.ProjectAssignee__r.size()){
-						if(iterTask.ProjectAssignee__r[countAssignee].User__c != USERID){
+					while (!cantEditAndDelete && countAssignee < iterTask.ProjectAssignee__r.size()) 
+					{
+						if(iterTask.ProjectAssignee__r[countAssignee].User__c != USERID) 
+						{
 							cantEditAndDelete =  true;
-						}else {
+						}
+						else 
+						{
 							countAssignee++;
 						}
 		            }
-					if(!cantEditAndDelete || editDeletePer || iterTask.createdById == USERID){
+					
+					if(!cantEditAndDelete || editDeletePer || iterTask.createdById == USERID)
+					{
 						taskListToDelete.add(iterTask);
-					}else {
+						
+					}
+					else 
+					{
 						throw new CustomException('Insufficient Privileges');	
 					}
+						
 				}
 				if(taskListToDelete.size() > 0) {
+					
+					System.debug('\n\n////////////////////////////////\n PROJECT TASK TO DELETE (final): ' + taskListToDelete + '\n/////////////////////////////////\n\n');
 					delete taskListToDelete;
 				}
-			}else if (tasksToDelete.size() == 0){
 				
+			}
+			else if (tasksToDelete.size() == 0)
+			{
+				//throw new CustomException('Insufficient Privileges');
 			}
 		}
 		idDeletes = '';

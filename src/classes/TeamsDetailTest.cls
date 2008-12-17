@@ -15,7 +15,11 @@
             t = team.getTeamspace();
             Boolean open = team.getTeamIsOpen();
             String param = team.getTeamIdParam();
-            Boolean message = team.showJoinEvent();
+            Boolean message = team.getShowJoinTeamMessage();
+            System.currentPageReference().getParameters().put('j','true');
+            team.assignShowJoinTeamMessage();
+            System.currentPageReference().getParameters().put('j','false');
+            team.assignShowJoinTeamMessage();
             UserPermissions up = team.getUserPermissionsWiki();
             String image = team.getTeamspaceImage();
             team.joinTeam();

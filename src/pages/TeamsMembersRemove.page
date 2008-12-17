@@ -1,7 +1,47 @@
 <apex:page sidebar="false" tabStyle="Team__c" controller="TeamMembersListController">
+	<style>
+		.ContinueBtn {
+			background:#287B9B none repeat scroll 0%;
+			border:0px solid;
+			color:#FFFFFF;
+			cursor:pointer;
+			font-size:74% !important;
+			height:26px;
+			margin:0px 3px 0px 3px;
+			text-align:center;
+			width:62px;
+			font-weight:bold;
+		}
+		
+		.inputInfoDark {
+			color:#333333;
+			font-weight:bold;
+			margin-left:20px;
+			text-align:left;
+		}
+		
+		.inputInfo {
+			color:#666666;
+			font-weight:bold;
+			margin-left:20px;
+			text-align:left;
+		
+		}	
+		
+		.removeBtn {
+			background:#287B9B none repeat scroll 0% 50%;
+			border:0px solid;
+			color:#FFFFFF;
+			cursor:pointer;
+			font-size:13px;
+			font-weight:bold;
+			height:26px;
+			margin:3px;
+			text-align:center;
+			width:110px;
+		}	
+	</style>
 	
-	<apex:stylesheet value="{!URLFOR($Resource.TeamsResources, 'inc/css/teamsMembersRemove.css')}" />
-
 	<!-- Content  -->
 	<div id="removeMemberOverlay" style="display:none;" class="overlayForm">	
 		<!-- Overlay Title -->
@@ -13,6 +53,7 @@
 				</a>
 			</div>
 		</div>
+		 
 		<div class="overlayMainContent">
 			<apex:form id="newMemberForm">
 				<div class="overlayFormContent" style="padding-bottom: 10px;">
@@ -25,11 +66,13 @@
 						</tr>			
 					</table>
 				</div>
+				
 				<div class="overlaySeparateLine" />
 				<!-- Saven and Cancel Buttons -->
 				<div class="overlayFromButtons" align="center">
 					<apex:commandButton styleclass="overlaySaveBtn" action="{!removeMember}" oncomplete="modal.close();" value="Continue" rerender="auxPanel"/> 
 					<input class="overlayCancelBtn" type="button" value="Cancel" onclick="modal.close();"/>
+					<!-- <input class="InviteBtn" type="button" value="Send"/> <input class="InviteAndAddBtn" type="button" value="Send & add more members"/><input class="cancelBtn" type="button" value="Cancel" onclick="modal.close();"/> -->
 				</div>
 			</apex:form>
 		</div>

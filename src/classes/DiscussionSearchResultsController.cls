@@ -1,82 +1,50 @@
-/**
-*@author: Juan M. Bessonart @ 06-02-2008
-*/
 public class DiscussionSearchResultsController {
 	
-	/**
-	* Constructor
-	*/
-	public DiscussionSearchResultsController () {
-		contructorFunction();
-	}	
-	
 	public String paramKey = System.currentPageReference().getParameters().get('key');
-	/**
-	* Set keyword to search
-	*@param String key
-	*/
+	
 	public void setParamkey (String paramKey) {
 		this.paramKey = paramKey;
 	}
 	
 	public Boolean isTestController = false;
-	/**
-	* Set isTest (for Code Coverage use)
-	*@param Boolean
-	*/
 	public void setIsTestController (Boolean isTestController) {
 		this.isTestController = isTestController;
 	}
 	
-	/**
-	* Get isTest (for Code Coverage use)
-	*@return Boolean
-	*/
 	public Boolean getIsTestController () {
 		return isTestController;
 	}
 	
-	/**
-	* Executes on constructor for do search
-	*/
+	public DiscussionSearchResultsController () {
+		contructorFunction();
+	}
+	
 	public void contructorFunction () {
 		if (paramKey != null) {
 			criteria = paramKey;
 			search();
-		}
+		}	
 	}
 	
+	/* ************************ */
+	/*			Search			*/
+	/* ************************ */
+	
 	public String criteria;
-	/**
-	* Get criteria to search
-	*@return String
-	*/	
+	
 	public String getCriteria () {
 		return criteria;
 	}
 	
-	/**
-	* Set criteria to search
-	*@param String
-	*/
 	public void setCriteria (String criteria) {
 		this.criteria = criteria;
 	}
 	
-	/**
-	* Class for search results
-	*@author Juan Bessonart
-	*/
 	public class searchResult {
 		String title;
 		String matches;
 		String url;
 		
-		/**
-		* Set title highlight
-		*@param String title
-		*@param String criteria
-		*/
 		public void setTitle (String title, String criteria) {
 			String highlight = '';
 			if (title != null) {
@@ -85,18 +53,14 @@ public class DiscussionSearchResultsController {
 				
 				if (criteria != null && criteria != '' && titleLow.indexOf(criteriaLow) != -1) {
 					highlight = title.replaceAll('(?i)' + criteria, '<span class="highlight">$0</span>');
-				}else {
+				}
+				else {
 					highlight = title;
 				}
 			}
 			this.title = highlight;	
 		}
 		
-		/**
-		* Add highlight to criteria matches
-		*@param String matches
-		*@param String criteria
-		*/
 		public void setMatches (String matches, String criteria) {
 			String highlight = '';
 			Integer maxLength = 50;
@@ -112,25 +76,34 @@ public class DiscussionSearchResultsController {
 					if (iniHighLight < 0) {
 						if (endHighLight > msjLength) {
 							highlight = matches.substring(0,msjLength);	
-						}else {
+						}
+						else {
 							highlight = matches.substring(0,endHighLight) + '...';	
 						}
-					}else {
+					}
+					else {
+						System.debug('\n\n//////////////end \n\n'+endHighLight+'\n\n//////////////');	
+							System.debug('\n\n////////////// ini \n\n'+iniHighLight+'\n\n//////////////');
+							System.debug('\n\n////////////// matches n\n'+matches.length()+'\n\n//////////////');
 						if (endHighLight > msjLength) {
 							if(matches.length() >= iniHighLight) {
 								highlight = '...' + matches.substring(iniHighLight,msjLength);
 							}
 
-						}else {
+						}
+						else {
 							highlight = '...' + matches.substring(iniHighLight,endHighLight) + '...';	
 						}		
 					}
+					
 					highlight = highlight.replaceAll('(?i)' + criteria, '<span class="highlight">$0</span>');
-				}else {
+				}
+				else {
 					if(matches.length() <= maxLength*2) {
 						highlight = matches;	
-					}else {
-						
+					}
+					else {
+						//highlight = matches;
 						highlight = matches.substring(0,maxLength*2) + '...';	
 					}	
 				}
@@ -138,12 +111,6 @@ public class DiscussionSearchResultsController {
 			this.matches = highlight;
 		}
 		
-		/**
-		* Set detail url to results item.
-		*@param List<DiscussionMessage__c> messages list
-		*@param String topic Id
-		*@param Datetime message date
-		*/
 		public void setUrl (List<DiscussionMessage__c> messageList, String topicId , Datetime msjDate) {
 			
 			Boolean find = false;
@@ -157,6 +124,7 @@ public class DiscussionSearchResultsController {
 			if (messageList.size() != 0) {
 				posDown = 0;
 				posTop = messageList.size() - 1;
+				
 				posD = Decimal.valueOf(posTop + posDown);
 				posDecimal = posD.divide(2,1);
 				posDR = posDecimal.round(RoundingMode.DOWN);
@@ -165,23 +133,30 @@ public class DiscussionSearchResultsController {
 				for(Integer i = 0; i < messageList.size(); i++){
 					if (messageList.get(posMiddle).PostedDate__c == msjDate) {
 						find = true;
-					}else{
+					}
+					else {
 						if (msjDate < messageList.get(posMiddle).PostedDate__c) {
 							posTop = posMiddle;	
 							posD = Decimal.valueOf(posTop + posDown);
 							posDecimal = posD.divide(2,1);
 							posDR = posDecimal.round(RoundingMode.DOWN);
 							posMiddle = posDR.intValue();
-						} else {
+						}
+						else {
 							posDown = posMiddle;
 							posD = Decimal.valueOf(posTop + posDown);
 							posDecimal = posD.divide(2,1);
 							posDR = posDecimal.round(RoundingMode.UP);
 							posMiddle = posDR.intValue();
 						}
+						
 					}
+				
+				
 				}
-			}else{
+				
+			}
+			else {
 				posTop = 0;
 				posDown = 0;
 				posMiddle = 0;	
@@ -194,16 +169,20 @@ public class DiscussionSearchResultsController {
 				if (Math.mod(posMiddle, numItemPerPage) != 0 ) {
 		   			numPage++;
 		   		} 
+				
 				if (numPage <= 1) {
 					this.url = 'https://na1.salesforce.com/apex/DiscussionDetail?id='+ topicId;
-				}else{
+				}
+				else {
 					this.url = 'https://na1.salesforce.com/apex/DiscussionDetail?id='+ topicId +'&p=' + numPage;	
 				}
-			}else {
+			}
+			else {
 				numPage = 1;
 				this.url = 'https://na1.salesforce.com/apex/DiscussionDetail?id='+ topicId;
 			}
 		}
+		
 		
 		public String getTitle () {
 			return title;
@@ -219,44 +198,30 @@ public class DiscussionSearchResultsController {
 	}	
 	
 	public List<searchResult> results = new List<searchResult>();
-	/**
-	* Returns result list
-	*@return List<searchResult>
-	*/
+	
 	public List<searchResult> getResults () {
 		return results;
 	}
 	
 	public Integer totalItemsNumber= 0;
-	/**
-	* Returns total items number 
-	*@return Integer
-	*/	
+	
 	public Integer getTotalItemsNumber () {
 		return totalItemsNumber;
 	}
 	
 	public Boolean noMatches;
-	/**
-	* Returns boolean no matches
-	*@return Boolean
-	*/
+	
 	public Boolean getNoMatches () {
 		return noMatches;	
 	}
 	
 	public Integer rowsCount = 499;
-	/**
-	* Set number of rows (for Code Coverage use)
-	*@param Integer
-	*/
-	public void setrowsCount(Integer value){
+	public void setrowsCount(Integer value)
+	{
 		rowsCount = value;
 	}
 	
-	/**
-	* Do search for current criteria
-	*/
+	
 	public void search () { 
 		List<searchResult> resultList = new List<searchResult>();
 		criteria = criteria.trim();
@@ -264,7 +229,8 @@ public class DiscussionSearchResultsController {
 		
 		if(getIsTestController()){
 			listTopicsMsj = [Select d.Id, (Select PostedDate__c, Id, Subject__c From DiscussionTopic__r order by PostedDate__c desc limit 1) from DiscussionTopic__c d order by CreatedDate desc limit 1];
-		}else{
+		}
+		else{
 			listTopicsMsj = [Select d.Id, (Select PostedDate__c, Id, Subject__c From DiscussionTopic__r order by PostedDate__c) from DiscussionTopic__c d];
 		}
 			 
@@ -288,8 +254,12 @@ public class DiscussionSearchResultsController {
 				resultItem.setUrl(topicMsj, item.DiscussionTopic__c, item.PostedDate__c); 
 				resultList.add(resultItem);
 			}
-		}else{
+			
+			System.debug('\n \n ////////////////////////////////// \n SAVE THIS resultList: ' + resultList.size() + '\n //////////////////////////// \n \n');
+		}
+		else {
 			results = null;
+			//System.debug('\n /////////////////////////// \n SAVE THIS RESULTS FOR: \n \t CRITERIA: ' + criteria + '\n \t RESULTS: ' + (List<DiscussionMessage__c>)[FIND :(criteria + '*') IN ALL FIELDS RETURNING DiscussionMessage__c (Subject__c, Message__c, Id ORDER BY Subject__c)][0] + '\n ///////////////////// \n');
 			for(DiscussionMessage__c item: (List<DiscussionMessage__c>)[FIND :(criteria + '*') IN ALL FIELDS RETURNING DiscussionMessage__c (PostedDate__c , Subject__c, Message__c, DiscussionTopic__c, Id ORDER BY Subject__c)][0]) {
 				searchResult resultItem = new searchResult();
 				resultItem.setTitle(item.Subject__c, criteria);
@@ -301,9 +271,12 @@ public class DiscussionSearchResultsController {
 						topicMsj = listTopicsMsj.get(it).DiscussionTopic__r;
 					}
 				}
+				
+				
 				resultItem.setUrl(topicMsj, item.DiscussionTopic__c, item.PostedDate__c); 
 				resultList.add(resultItem);
 			}
+			System.debug('\n \n ////////////////////////////////// \n SAVE THIS resultList: ' + resultList.size() + '\n //////////////////////////// \n \n');
 		}
 		totalItemsNumber = resultList.size();
 		if (totalItemsNumber == 0 ) {
@@ -312,7 +285,8 @@ public class DiscussionSearchResultsController {
 			firstRow = 0;
 			currentPagination = 1;
 			jumpPage = 1;
-		}else{
+		}
+		else {
 			noMatches = false;
 			firstRow = 0;
 			currentPagination = 1;
@@ -323,6 +297,8 @@ public class DiscussionSearchResultsController {
 		resultList = null;
 		listTopicsMsj = null;
 	}
+	
+	
 	
 	/* ************************ */
 	/*		  Pagination		*/
@@ -344,190 +320,139 @@ public class DiscussionSearchResultsController {
    	public boolean nextPageLinkShow  = false;
    	public boolean nextPageShow  = false;
    	   	
-   	/**
-   	* Get total number of pages
-   	*/
    	public void genCntPagination () {
+   		
    		cntPagination = (totalItemsNumber - (Math.mod(totalItemsNumber, numberOfItemsToShow)))/ numberOfItemsToShow;	
    		if (Math.mod(totalItemsNumber, numberOfItemsToShow) != 0 ) {
    			cntPagination++;
    		} 	
+   		
    	}
    	
-   	/**
-   	* Move to next page
-   	*/
    	public void nextPage () {
    		currentPagination++;
    		jumpPage = currentPagination;
    		firstRow = firstRow + numberOfItemsToShow;   		
    	}
    	
-   	/**
-   	* Move to previus page
-   	*/
    	public void prevPage () {
    		currentPagination--;
    		jumpPage = currentPagination;
    		firstRow = firstRow - numberOfItemsToShow;	
    	}
 
-	/**
-	* Move to last page
-	*/
+	/* Last Page */
    	public void lastPage () {
    		currentPagination = cntPagination;
 		jumpPage = cntPagination;
 		firstRow = (jumpPage - 1)* numberOfItemsToShow;		
    	}
    	
-	/**
-	* Move to first page
-	*/
-	public void firstPage () {
+   	/* First Page */
+   	public void firstPage () {
    		currentPagination = 1;
    		jumpPage = 1;
    		firstRow = (jumpPage - 1)* numberOfItemsToShow;	
    	}
 
-   	/**
-   	* Method for rerender use
-   	*/
-   	public void refreshPages(){}
-   	
-   	
+   	public void refreshPages () {
+   		
+   	}
    	/**
    	* Pagination Integer Getters
-   	*@return Boolean
    	*/
    	public Integer getFirstItem () {
 		return (firstRow + 1);
 	}
 	
-	/**
-	* Returns position of last item
-	*@return Integer
-	*/
 	public Integer getLastItem () {
 		Integer lastItem;
 		if ((currentPagination == cntPagination) || (currentPagination == 1 && (totalItemsNumber < numberOfItemsToShow))) {
 			lastItem = firstRow + Math.mod(totalItemsNumber, numberOfItemsToShow);
-		}else {
+		}
+		else {
 			lastItem = firstRow + 10;
 		}
 		return lastItem;
 	}
    	
-   	/**
-   	* Get current page number
-   	*@return Integer
-   	*/
    	public Integer getCurrentPagination () {
    		return currentPagination;
    	}
    	
-   	/**
-   	* Returns number of pages
-   	*@return Integer
-   	*/
    	public Integer getCntPagination () {
    		return cntPagination;
    	}
    	
-   	/**
-   	* Get number of rows to show
-   	*@return Integer
-   	*/
    	public Integer getNumberOfItemsToShow () {
    		return numberOfItemsToShow;
    	}
    	
-   	/**
-   	* Set first row to show
-   	*@return Integer
-   	*/
    	public Integer getFirstRow () {
    		return firstRow;
    	}
    	
    	/**
-   	* Returns boolean show previus page link
-   	*@return Boolean
+   	* Pagination Boolean Getters
    	*/
+   	
 	public boolean getPrevPageLinkShow () {
+		
 		if(currentPagination == 1){ prevPageLinkShow = false;		
 		} else {prevPageLinkShow = true;}
+		
    		return prevPageLinkShow;
    	}
    	
-   	/**
-   	* Returns boolean show previus page
-   	*@return Boolean
-   	*/
    	public boolean getPrevPageShow () {
+   		
    		if(currentPagination == 1){	prevPageShow = true; 
    		} else {prevPageShow = false;}
+   		
    		return prevPageShow;
    	}
    	
-   	/**
-   	* Returns boolean show next page link
-   	*@return Boolean
-   	*/
    	public boolean getNextPageLinkShow () {
-   		if((currentPagination == cntPagination) || (cntPagination == 0)){
-   			nextPageLinkShow = false; 
-		}else{ 
-			nextPageLinkShow = true;
-		}   		
+   		
+   		if((currentPagination == cntPagination) || (cntPagination == 0)){	nextPageLinkShow = false; 
+		} else { nextPageLinkShow = true;}   		
+   		
    		return nextPageLinkShow;
    	}
    	
-   	/**
-   	* Returns boolean show next page
-   	*@return Boolean
-   	*/
    	public boolean getNextPageShow () {
-   		if((currentPagination == cntPagination) || (cntPagination == 0)){
-   			nextPageShow = true; 
-		}else{ 
-			nextPageShow = false;
-		} 
+   		
+   		if((currentPagination == cntPagination) || (cntPagination == 0)){ nextPageShow = true; 
+		} else { nextPageShow = false;} 
+   		
    		return nextPageShow;
    	}	
    	
 	/* ************************ */
 	/*		  Jump to Page		*/
 	/* ************************ */
+	
 	public Integer jumpPage = 1;
-	/**
-	* Returns current page to jump
-	*@return Integer
-	*/
+	
 	public Integer getJumpPage () {
 		return jumpPage;
 	}
 	
-	/**
-	* Set page to jump
-	*@param Integer
-	*/
 	public void setJumpPage (Integer jumpPage) {
 		this.jumpPage = jumpPage;
 	}
 	
-	/**
-	* Do jump
-	*/
 	public void JumpToPage () {
 		if (jumpPage > cntPagination) {
 			currentPagination = cntPagination;
 			jumpPage = cntPagination;
-		}else{
+		}
+		else {
 			if (jumpPage < 1) {
 				currentPagination = 1;
 				jumpPage = 1;
-			}else{	
+			}
+			else {	
 				currentPagination = jumpPage;
 			}
 		}

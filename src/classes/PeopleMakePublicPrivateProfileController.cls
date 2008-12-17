@@ -1,13 +1,10 @@
-/**
-*@author Martin Prado @ 03/09/08
-*/
-public with sharing class PeopleMakePublicPrivateProfileController {
+public with sharing class PeopleMakePublicPrivateProfileController 
+{
 	private PeopleProfile__c PP = new PeopleProfile__c();
 	
-	/**
-	*Constructor
-	*/
-	public PeopleMakePublicPrivateProfileController(){
+	//Default Constructor
+	public PeopleMakePublicPrivateProfileController()
+	{
 		//set Current user Id
 		CurrentId = UserInfo.getUserId();
 		//Current Usert Profile
@@ -22,16 +19,16 @@ public with sharing class PeopleMakePublicPrivateProfileController {
 	/***********
 	** UPDATE **
 	************/
-	
-	/**
-	*Update Profile
-	*/
-	public void updateProfile()	{
+	public void updateProfile()
+	{
 		//Check the current value to toggle this
 		boolean nowValue = PP.isPrivate__c;
-		if(nowValue){
+		if(nowValue)
+		{
 			PP.isPrivate__c = false;
-		}else{
+		}
+		else
+		{
 			PP.isPrivate__c = true;
 		}
 		update PP;

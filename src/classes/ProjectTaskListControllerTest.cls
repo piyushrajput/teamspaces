@@ -15,7 +15,7 @@
         taskList.setTeamId(t.Id);    
         taskList.setUserId(UserInfo.getUserId());
           
-              
+        // getTaskList()        
         List<ProjectTaskListController.TaskDetails> listTaskDetails = taskList.getTaskList();
     
         if(listTaskDetails == null) 
@@ -23,7 +23,7 @@
         
         
         taskList.setOption('Name');         
-        
+        // getOption()
         // @return String
         String listOptions = taskList.getOption();
         if(listOptions == null) 
@@ -36,13 +36,20 @@
             System.assert(true, 'getOption() method >> does not work correctly');
         }
         
-       
+        // getTeamId() 
         // @return String
         String teamidHere = taskList.getTeamId();
         if(teamidHere == null) 
             System.assert(true, 'getTeamId() method >> return null');
             
-        
+        // getIsAdmin() 
+        // @return String
+        /*  boolean isadmin = taskList.getIsAdmin();
+        if(isadmin == null) 
+            System.assert(true, 'getIsAdmin() method >> return null');
+        */
+       // 
+        // getIsTeamMember() 
         // @return String
         boolean teamMember = taskList.getIsTeamMember();
         if(teamMember == null) 
@@ -159,16 +166,19 @@
         taskList.refresh();
         taskList.refreshPages();
         Boolean SortByDesc = taskList.getSortByDesc();
-        if(SortByDesc == null) 
+        if(SortByDesc == null) {
             System.assert(true, 'getSortByDesc() method >> does not work');
+        }
         
         String IdTaskToComplete = taskList.getIdTaskToComplete();
-        if(IdTaskToComplete == null) 
+        if(IdTaskToComplete == null) {
             System.assert(true, 'getIdTaskToComplete() method >> does not work');
+        }
         
         String IdDeletes = taskList.getIdDeletes();
-        if(IdDeletes == null) 
+        if(IdDeletes == null) {
             System.assert(true, 'getIdDeletes() method >> does not work');
+        }
         
         taskList.setIdDeletes('test');
         

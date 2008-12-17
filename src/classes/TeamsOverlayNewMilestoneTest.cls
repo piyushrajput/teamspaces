@@ -6,19 +6,22 @@
     	Test.startTest();
     	TeamsOverlayNewMilestoneController con = new TeamsOverlayNewMilestoneController();
     	con.setCurrentTeamId(GenerateEnvironmentTest.newTeam.Id);
-    	if (con.getCurrentTeamId() == null) 
+    	if (con.getCurrentTeamId() == null) {
     		System.assert(true,'getCurrentTeamId failed');
-    	if (con.getTask() == null) 
+    	}
+    	if (con.getTask() == null) {
     		System.assert(true,'getTask failed');
-    	if (con.getTeamMember() == null) 
+    	}
+    	if (con.getTeamMember() == null) {
     		System.assert(true,'getTeamMember failed');
-    	if (con.getTeamMembers() == null) 
+    	}
+    	if (con.getTeamMembers() == null) {
     		System.assert(true,'getTeamMembers failed');
-    		
+    	}
     	con.genPermissions();
-    	if(con.getUserLocale() == null) 
+    	if(con.getUserLocale() == null) {
     		System.assert(true,'getUserLocale failed');
-    	
+    	}
     	con.getCurrentProject();
     	
     	ProjectTask__c pT = new ProjectTask__c();

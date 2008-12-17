@@ -15,6 +15,7 @@
 			ad.getSidebar();
 			ad.getActiveDiscussionsSize();
 			ad.refresh();
+			// ad.getnewPrivileges();
 			List<DiscussionTopic__c> discussions = [select d.ViewCount__c, d.Subject__c, d.OwnerId, d.Name, d.MessageCount__c, 
 										d.LastModifiedDate, d.LastModifiedById, d.Id, d.CreatedDate, d.CreatedById, d.PostedBy__c, 
 										PostedBy__r.Name, LastPostedMessage__r.PostedBy__c, LastPostedMessage__r.PostedDate__c,
