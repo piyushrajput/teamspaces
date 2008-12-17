@@ -1,52 +1,26 @@
-/**
-*@author Bruno Fagundez @ 07/10/2008
-*/
 public class TeamsOverlayNewMilestoneController {
 	
 	ProjectTask__c theNewTask = new ProjectTask__c();
+   	
    	public String TEAMID = System.currentPageReference().getParameters().get('id');
    	
-    /**
-    * Constructor
-    */
-    public TeamsOverlayNewMilestoneController(){
-    	getCurrentProject();
-    	genPermissions();	
-	}
-
-   	/**
-   	*@return String
-   	*/
    	public String getCurrentTeamId(){
    		return TEAMID;
    	}
    	
-   	/**
-   	*@param String team Id
-   	*/
-   	public void setCurrentTeamId(String s) {
-   		TEAMID = s;
-   	}
-   	
    	public Project2__c currentProject = null;
    	
-
-    public ProjectTask__c newProyect = new ProjectTask__c();
+   	//public String name {get; set;}
+   	
     /**
     *@return ProjectTask__c
     */
+    public ProjectTask__c newProyect = new ProjectTask__c();
     public ProjectTask__c getTask(){
     	return newProyect;
     }
     
-    /**
-    *@param ProjectTask__c 
-    */
-    public void setNewProyect(ProjectTask__c pT) {
-    	newProyect = pT;
-    }
-    
-    /**
+     /**
     *@return TeamMember__c
     */
     public TeamMember__c teamMember = new TeamMember__c();
@@ -54,20 +28,7 @@ public class TeamsOverlayNewMilestoneController {
     	return teamMember;
     }
     
-    /**
-    *@param TeamMember__c
-    */
-    public void setTeamMember(TeamMember__c tm){
-    	teamMember = tm;
-    }
     
-    //For rerender use
-    public void dummyRefresh (){}
-    
-    /**
-    * Create members select options
-    *@return List<SelectOption>
-    */
     public List<SelectOption> getTeamMembers() {
     	List<TeamMember__c> teamMembers = new List<TeamMember__c>();  
   	 	List<SelectOption> options = new List<SelectOption>();
@@ -80,56 +41,60 @@ public class TeamsOverlayNewMilestoneController {
   	 	}
   	 	return options;
    	}
-
-	/**
-	* Returns Project for current team
-	*/
+    
+    public TeamsOverlayNewMilestoneController(){
+    	getCurrentProject();
+    	genPermissions();	
+	}
+	
 	public void getCurrentProject(){
 		if(TEAMID != null)
 			currentProject = [select Id from Project2__c where Team__c =: TEAMID limit 1];
 	}
 	
-	public UserPermissions userPermissions = TeamsDetailController.userPermission.clone();
-	/**
-	* Read User permissions
-	*/
+	/* ---------------------------- */
+   	/*   	 SHARING RULES			*/
+   	/* ---------------------------- */	
+	public UserPermissions userPermissions = null;
+	
 	public void genPermissions () {
+		userPermissions = new UserPermissions();
 		userPermissions.setId(UserInfo.getUserId());
 		userPermissions.setTeam(TEAMID);
 		userPermissions.setObjectType('Project');
 		userPermissions.setPermissions();		
 	}
+
+	/* ---------------------------- */	
 	
-	/**
-	* Returns user location
-	*@return String
-	*/
-	public String getUserLocale(){
-		return Userinfo.getLocale();	
-	}
 	
-   	/**
-   	* Create new Milestone
-   	*@throws CustomExceptions, message Insufficient Privileges
-   	*/
-   	public void insertMilestone (){ 
-   		if(!userPermissions.getCanCreate()){
-        	throw new CustomException('Insufficient Privileges');
-   		}		
-   		
-		newProyect.Milestone__c = true;
-		newProyect.Team__c = TEAMID;
-		newProyect.StartDate__c = newProyect.EndDate__c;
-		newProyect.Percent_Completed__c = 0;
-		newProyect.Project__c = currentProject.Id;
-  		insert newProyect; 
+	/* ---------------------------- */
+   	/*   	  INSERT MILESTONE		*/
+   	/* ---------------------------- */  
+   	
+   	public void insertMilestone () 
+   	{ 
+   		if(!userPermissions.getCanCreate())
+        		throw new CustomException('Insufficient Privileges');
+        		
+   		ProjectTask__c myTask = new ProjectTask__c();
+		
+		myTask.Milestone__c = true;
+		myTask.Team__c = TEAMID;
+		myTask.Name = newProyect.name;
+		myTask.StartDate__c = newProyect.EndDate__c;
+		myTask.EndDate__c = newProyect.EndDate__c;
+		myTask.Percent_Completed__c = 0;
+		myTask.Project__c = currentProject.Id;
+  		insert myTask; 
+  		
+  		
   		
   		ProjectAssignee__c Assign = new ProjectAssignee__c();
 		Assign.User__c = teamMember.User__c;
-		Assign.ProjectTask__c = newProyect.Id;
+		Assign.ProjectTask__c = myTask.Id;
 		insert Assign;
-		
-		Assign = new ProjectAssignee__c();
-		newProyect = new ProjectTask__c();
+   		
+ 		
    	}
 }

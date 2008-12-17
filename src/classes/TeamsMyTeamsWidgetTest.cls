@@ -1,4 +1,4 @@
-@IsTest private class TeamsMyTeamsWidgetTest {
+public class TeamsMyTeamsWidgetTest {
 	public static testMethod void testTeam() {
   		try{
   			TeamsMyTeamsWidgetController team = new TeamsMyTeamsWidgetController();
@@ -20,8 +20,6 @@
 
   			team.setSortBy('TeamProfile__r.Name');
   			team.sortList(); 
-  			
-  			team.getNamespace();
 	
   		}catch(Exception e){
   			throw e;

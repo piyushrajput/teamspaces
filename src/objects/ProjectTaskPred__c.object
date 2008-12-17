@@ -61,8 +61,7 @@
         <fullName>Parent__c</fullName>
         <label>Parent</label>
         <referenceTo>ProjectTask__c</referenceTo>
-        <relationshipLabel>Project Task Predecessors (Parent)</relationshipLabel>
-        <relationshipName>Parent</relationshipName>
+        <relationshipName>ProjectTaskPred</relationshipName>
         <type>Lookup</type>
     </fields>
     <fields>

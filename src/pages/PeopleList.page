@@ -1,78 +1,65 @@
 <apex:page tabStyle="PeopleProfile__c" sidebar="false" >
-    
     <!-- Ajax Toolkit SDFC -->
-    <apex:includeScript value="/soap/ajax/11.1/connection.js"/>
-    
+    <script src="/soap/ajax/11.1/connection.js" type="text/javascript"></script>
     <script>
         var API_SESSION_ID = '{!$Api.Session_ID}';
     </script>
-    
     <!-- Prototype / Scriptaculous Framework -->
-    <apex:includeScript value="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/prototype.js')}"/>
-    <apex:includeScript value="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/scriptaculous.js')}"/>
-    <apex:includeScript value="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/effects.js')}"/>
-	
-	<!-- Portal Support -->
-	<apex:includeScript value="{!$Resource.portalSupport}"/>
-    
+    <script src="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/prototype.js')}" />
+    <script src="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/scriptaculous.js')}" />
+    <script src="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/effects.js')}" />
     <!-- Common Js to all people Sections -->
-    <apex:includeScript value="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/common.js')}"/>
-    
-    <!-- CSS styles for Portal Integration -->
-    <apex:stylesheet value="{!URLFOR($Resource.portalStyles, 'portal.css')}" />
-    <apex:stylesheet value="{!URLFOR($Resource.TeamsResources, 'inc/css/headerTeams.css')}" />
-	<apex:stylesheet value="{!URLFOR($Resource.TeamsResources, 'inc/css/widgetTeam.css')}" />
-	<apex:stylesheet value="{!URLFOR($Resource.commonResources, 'inc/css/fonts.css')}" />
-    
+    <script src="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/common.js')}" />
     <!-- Common CSS Styling  -->
     <apex:stylesheet value="{!URLFOR($Resource.PeopleResourceFiles, 'inc/css/commonLayout.css')}" />
-    
     <!-- People Browsing CSS Styling  -->
     <apex:stylesheet value="{!URLFOR($Resource.PeopleResourceFiles, 'inc/css/peopleBrowsing.css')}" />
-     
     <style>
-        h4{
+        h4 {
+            color:#3B4872;
+            font-family:'Arial','Helvetica',sans-serif;
             font-size:16px;
             font-weight:bold;
         }
     </style>
-    
-	<!-- PeopleEditCompetency CSS  -->
-	<apex:stylesheet value="{!URLFOR($Resource.PeopleResourceFiles, 'inc/css/peopleList.css')}" />
- 
- 
- 	<!-- Header -->
-	<apex:composition template="HeaderTemplate">
-		<apex:define name="moduleId"><apex:variable var="moduleId" value="headerPeople"/></apex:define>
-	    <apex:define name="module">People</apex:define>
-	    <apex:define name="title">Browsing</apex:define>
-	    <apex:define name="search">
-	    	<c:Search module="people_keyword" />
-	    </apex:define>
-    </apex:composition>
-    
+        
+    <!-- Header -->
+    <div class="header">
+        <!-- Page Section -->
+        <div class="page_section">
+            <div>
+                <h1 class="arial_black">People</h1>
+                <h2 class="arial_black">Browsing</h2>
+            </div>      
+        </div>      
+        <!-- Search Box -->
+        <div class="searchBox">
+            <c:PeopleFinder />
+        </div>
+        <!-- Help for this page --> 
+        <div class="help">
+            <div>
+                <a href="javascript:;">Help for this page</a>&nbsp; <img src="{!URLFOR($Resource.PeopleResourceFiles, 'images/layout/icons/help_icon.gif')}" alt="" />
+            </div>
+        </div>
+    </div>
     <div class="leftBar">
-    
-    	<!-- Sidebar -->
+    <!-- Sidebar -->
         <div class="sidebar">
             <apex:include pageName="PeopleSidebarProfile" />            
         </div>
-    
         <!-- Contain All -->
         <div class="two_colsContainer">     
-    
             <!--  Central content -->
             <div class="content">       
-    
             <!-- The center div at content -->
                 <div class="holder">
+                    
                     <!-- People List Container  -->
                     <c:SearchResult type="{!$CurrentPage.parameters.Type}" /> 
+    
                 </div>
             </div>              
         </div>
     </div>
-	<script>
-		readPortalCSSRules();
-	</script>
 </apex:page>

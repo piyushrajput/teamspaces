@@ -27,13 +27,17 @@ trigger ProjectAssigneeBeforeInsert on ProjectAssignee__c (before insert) {
 	        }
 	        
 	        // Check to see if this is an admin user.  If so they can create in any team 
-	        List<User> teamAdmin = [Select id, Profile.PermissionsModifyAllData, ProfileId, Name From User where id =:UserInfo.getUserId() limit 1];
+	        Group teamAdmin = [select Id from Group where Name = 'Team Admin'];	
 			Boolean isAdmin = false;
 		
-			if(teamAdmin[0].Profile.PermissionsModifyAllData){
+			if(teamAdmin != null){
 				//Is SysAdmin
 				// Might need to do this per author.  What if mutiple authors come through the trigger???
-				isAdmin = true;			
+				List<GroupMember> groupMember= [select Id from GroupMember where GroupId =: teamAdmin.Id and UserOrGroupId =: UserInfo.getUserId()];        	
+				
+				if(groupMember.size() > 0){
+					isAdmin = true;
+				}			
 			}		
 	        
 	        Map<Id, TeamProfile__c> profileMap = new Map<Id, TeamProfile__c>();
@@ -74,6 +78,8 @@ trigger ProjectAssigneeBeforeInsert on ProjectAssignee__c (before insert) {
 	        	TeamProfile__c profile = profileMap.get(newAssignee.Team__c);
 	        	
 	        	List<ProjectAssignee__c> assignees  = taskMap.get(newAssignee.ProjectTask__c ).ProjectAssignee__r;
+	        	
+	        	System.debug('Project Assignee number: ' + assignees.size() + ' for task id: ' + newAssignee.ProjectTask__c);
 	        	
 	        	if(!isAdmin && !profile.CreateProjectTasks__c && !profile.ManageProjectTasks__c && assignees.size() == 0)
 	        		newAssignee.addError('Cannot Insert A Task Assignee. Insufficient Privileges');

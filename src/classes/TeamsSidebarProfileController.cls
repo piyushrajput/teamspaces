@@ -1,6 +1,3 @@
-/**
-*@author Martin Prado @ 08/06/2008
-*/
 public class TeamsSidebarProfileController {
 	
 	PeopleProfile__c profile = null;
@@ -8,16 +5,18 @@ public class TeamsSidebarProfileController {
 	// Status Obj
     Status sObj = new Status();
         	
-	/**
-	* Costructor
-	*/
 	public TeamsSidebarProfileController(){}
 
+	//####################################//
+	// My Profile At Sidebar
+	//####################################//
+	
 	/**
 	* Get people profile for current user
 	*@return PeopleProfile__c
 	*/
 	public PeopleProfile__c getPeopleProfile(){
+
 		if(profile == null) {
 			List<PeopleProfile__c> profileList = [SELECT 	Id,
 									 						User__c,
@@ -32,17 +31,16 @@ public class TeamsSidebarProfileController {
 									                        CreatedDate                                                
 									                        FROM PeopleProfile__c
 									                        WHERE User__c =: UserInfo.getUserId()];
-		    if(profileList.size() > 0) 
-		    	profile = profileList[0];
-		    else
-		    	profile = new PeopleProfile__c();
+		                        
+		    if(profileList.size() > 0) profile = profileList[0];
+		    else                       profile = new PeopleProfile__c();
 		}
+								                        
 		return profile;	
 	}
 		
-	/**
-	*@return String time
-	*/	
+	// Send current time (aprox)
+	//  	
 	public String getCurrentTime(){
 		Datetime now = (System.now()).addHours(7);
 		String s1 = now.format('yyyy-MM-dd');
@@ -51,107 +49,96 @@ public class TeamsSidebarProfileController {
 		return dateString;
 	}
 	
-	/**
-	* Edit user status
-	*/
-	public void EditStatus(){
-		List<PeopleProfile__c> p = [SELECT 	Id, 
+	public void EditStatus()
+	{
+		PeopleProfile__c p = [SELECT 	Id, 
 											User__c,	
 											Status__c, 
 											StatusLastModifiedDate__c
                         			FROM PeopleProfile__c
                         			WHERE User__c =: UserInfo.getUserId()];
-        if (p.size() > 0) {
-			p[0].Status__c = sObj.Message;
-			p[0].StatusLastModifiedDate__c = System.now();
-			update p[0];
-			profile = p[0];
-        }
+        
+		p.Status__c = sObj.Message;
+		p.StatusLastModifiedDate__c = System.now();
+		
+		update p;
+		
+		profile = p;
 	}
 	
-	/**
-	* Returns user current avatar
-	*@return String
-	*/
+	
 	public String getMyPicture(){
+		
 		String MyPictureId;
 		PeopleProfile__c p = null;
+		
 		try{
 			p = getPeopleProfile();
+				   
 		    if((p.Picture__c == '') ||( p.Picture__c == null )){ 
-				MyPictureId = null;
+					MyPictureId = null;
 			} else{
-				MyPictureId = p.Picture__c;
+					MyPictureId = p.Picture__c;
 			} 
+			
 		} catch(Exception e) {
 			MyPictureId = null;
 		}
 		return MyPictureId;
 	}
 	
-	/**
-	* Retruns profile for current user
-	*@return PeopleProfile__c
-	*/
+	// This entire func should be deleted
 	public PeopleProfile__c getMySidebarProfile(){
+		
         return getPeopleProfile();       
 	}
 	
-
-	/**
-	*@return Boolean
-	*/
-	public boolean getShowStatus(){		
+	//####################################//
+	// My Sidebar Status
+	//####################################//
+	public boolean getShowStatus(){
+		
 		PeopleProfile__c p = getPeopleProfile();
+		
 		if((p.Status__c != null) && (p.Status__c != '')){
 			return true;     
 		}else{
 			return false;	
 		}
+
 	}
 		
-	/**
-	* Returns status for current user profile
-	*@return Status
-	*/
+		
 	public Status getStatus() {
-	    PeopleProfile__c p = getPeopleProfile();
-	    
-    	if((p.Status__c != null) && (p.StatusLastModifiedDate__c != null)){
-          	sObj.setMessage(p.Status__c);
-			sObj.setModified(p.StatusLastModifiedDate__c);
-    	}else if ((p.Status__c == null)){
-    		sObj.setMessage('is ');        		
-    	}
-		return sObj;       
-	}
+		
+		    PeopleProfile__c p = getPeopleProfile();
+		    
+        	if((p.Status__c != null) && (p.StatusLastModifiedDate__c != null)){
+	          	sObj.setMessage(p.Status__c);
+				sObj.setModified(p.StatusLastModifiedDate__c);
+        	}
+        	else if ((p.Status__c == null)){
+        		sObj.setMessage('is ');        		
+        	}
+        	
+			return sObj;       
+		}
 	
-	/**
-	* Class Status
-	*/
 	public class Status {
 		
 		String Message;
 		String Modified = '';		
 		
-		/**
-		*@param String message
-		*/
 		public void setMessage(String sMessage){                
-            Message = sMessage;                
+                Message = sMessage;                
         }
         
-        /**
-        *@return String
-        */
         public String getMessage() {
-            return Message;
+	            return Message;
 		}
 		
-		/**
-		*@param Datetime modified
-		*/
 		public void setModified(Datetime sModified){
+				
 				// Get the current time
 				DateTime now = System.now();
 				
@@ -161,30 +148,39 @@ public class TeamsSidebarProfileController {
 				Integer modifiedDay = sModified.dayOfYear();
 				Integer temp = 0;
 				String updateMessage = '';
+				
 				// Check if the update was today
 				if(sModified.isSameDay(now)){
 					// Check how many hours ago
 					temp = now.hour() - sModified.hour();
 					// Check if the timelapse is small than one hour
 					// if that , get the minutes ago  
-					if (temp <= 1 ){
+					If (temp <= 1 ){
 						temp = now.minute() - sModified.minute();
 						if(temp == 0){
 							temp = now.second() - sModified.second();
-							if(temp < 60){
+							if(temp < 60)
+							{
 								updateMessage = 'Updated right now';
 							}													
+							
 						} else {			
-							if(temp == 1){
+							System.debug('\n\n-----\n\n Now.Minute -->'+now.minute()+'\n\n sModified.Minute -->'+sModified.minute()+'\n\n temp -->'+temp+'\n\n-----\n\n');					
+							if(temp == 1)
+							{
 								updateMessage = 'Updated ' + temp + ' minute ago';
-							}else if(temp < 0){
+							} 
+							else if(temp < 0)
+							{
 								updateMessage = 'Updated ' + (60 - (temp*-1)) + ' minutes ago';
-							}else{
+							}
+							else 
+							{
 								updateMessage = 'Updated ' + temp + ' minutes ago';
 							}
 						}
-					} else {					
-						updateMessage = 'Updated ' + temp + ' hours ago';
+					} else {						
+							updateMessage = 'Updated ' + temp + ' hours ago';
 					}				
 				} else {
 					Integer rest = today - modifiedDay;
@@ -195,49 +191,49 @@ public class TeamsSidebarProfileController {
 						updateMessage = 'expired';
 					}
 				}
+				
+						
                 Modified = updateMessage;
         }
         
-        /**
-        *@return String modified
-        */
         public String getModified() {
-        	return Modified;
+        			return Modified;
 		}
+		
+		
 	}
 	
 	// Get people subscriptions Info 
     public Integer countImSubscribedTo = 0;
     public Integer countSubscribedToMe = 0;
     
-    /**
-    * Returns show suscribe
-    *@return Boolean
-    */
     public boolean getShowSubscribedPeople(){
+    	
     	if(getCountSubscribedToMe() > 0 || getCountImSubscribedTo() > 0)
     		return true;
     	else
     		return false;
     }    
     
-    /**
-    *@return Integer
-    */
     public Integer getCountSubscribedToMe(){
+    	
     	List<PeopleSubscription__c> subscriptionInfo = new List<PeopleSubscription__c>();
+    	
     	subscriptionInfo = [Select p.Id, p.Subscriber__c, p.Person__c From PeopleSubscription__c p where p.Person__c =: UserInfo.getUserId()];
+    	
     	countSubscribedToMe = subscriptionInfo.size();
+    	
     	return countSubscribedToMe;
     }
     
-    /**
-    *@return Integer
-    */
     public Integer getCountImSubscribedTo(){
-    	List<PeopleSubscription__c> subscriptionInfo = new List<PeopleSubscription__c>();    	
+    	
+    	List<PeopleSubscription__c> subscriptionInfo = new List<PeopleSubscription__c>();
+    	
     	subscriptionInfo = [Select p.Id, p.Subscriber__c, p.Person__c From PeopleSubscription__c p where p.Subscriber__c =: UserInfo.getUserId()];
+    	
     	countImSubscribedTo = subscriptionInfo.size();
+    	
     	return countImSubscribedTo;
     }
     

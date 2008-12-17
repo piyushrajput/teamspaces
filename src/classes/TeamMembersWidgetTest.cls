@@ -1,28 +1,19 @@
 @IsTest private class TeamMembersWidgetTest {
     public static testMethod void testTeam() {
         try{ 
-            
-            GenerateEnvironmentTest.gen();
-            Test.startTest();            
-                    
             TeamMembersWidgetController team = new TeamMembersWidgetController();
-            String curUser = team.getCurrentUser(); 
-            
-            team.getNamespace();
-            Team__c t = GenerateEnvironmentTest.newTeam;
+            Team__c t = [select Id from Team__c limit 1];
             team.setIdTeam(t.Id);
             team.setTeam(t.Id);
-            team.setTypeList('test');
-            String result = team.getComponentHeader ();
             team.setTypeList('adminList');
-            result = team.getComponentHeader ();
+            String result = team.getComponentHeader ();
             Boolean render = team.getRenderLinkAction ();
             String teamName = team.getTeam();
             String teamId = team.getTeamId();
             team.getIsTeamAdmin();
             String typeList = team.getTypeList();
             
-            TeamMember__c m = GenerateEnvironmentTest.newTeamMember;
+            TeamMember__c m = new TeamMember__c();
             TeamMembersWidgetController.TeamMember teamMember= new TeamMembersWidgetController.TeamMember(m, null);
             m = teamMember.getMember();
             String userName = teamMember.getUsername();
@@ -35,58 +26,25 @@
             TeamMembersWidgetController.Member member = new TeamMembersWidgetController.Member();
             member = team.getNewMemberVars();
             
-            Profile p = [select id from profile where name='System Administrator'];
-            User newUser1 = new User(alias = 'test1', email='test1@testorg.com', 
-                                    emailencodingkey='UTF-8', lastname='Testing2', languagelocalekey='en_US', 
-                                    localesidkey='en_US', profileid = p.Id, 
-                                    timezonesidkey='America/Los_Angeles', username='test1@testorg.com');
-            insert newUser1;
-            
-            User newUser2 = new User(alias = 'test2', email='test2@testorg.com', 
-                                    emailencodingkey='UTF-8', lastname='Testing2', languagelocalekey='en_US', 
-                                    localesidkey='en_US', profileid = p.Id, 
-                                    timezonesidkey='America/Los_Angeles', username='test2@testorg.com');
-            
-            insert newUser2;
-            
-            User newUser3 = new User(alias = 'test3', email='test3@testorg.com', 
-                                    emailencodingkey='UTF-8', lastname='Testing3', languagelocalekey='en_US', 
-                                    localesidkey='en_US', profileid = p.Id, 
-                                    timezonesidkey='America/Los_Angeles', username='test3@testorg.com');
-            
-            insert newUser3;
-            
-            List<User> users = new User[3];
-            users[0] = newUser1;
-            users[1] = newUser2;
-            users[2] = newUser3;
-            
-            
+            List<User> users = [select Id, Name from User where isActive = true limit 3];
             String names = null;
             for (User u : users){
                 names += u.Name + ',';  
             }
-    
             member.setColleagueNames(names);
             team.setNewMemberVars(member);
-            
-            team.setTypeList('test');
-            team.getTeamspaceMembers();
-            team.setTypeList('adminList');
             team.getTeamspaceMembers();
             
             List<SelectOption> options = team.getProfilesOptions();
             List<TeamMember__c> members = team.getMemberListToolkit();
             Integer cnt = team.getMemberListToolkitCount();
             
-			team.saveMembersNew();
-            team.saveMembers();            
             
-            team.syncSaveMembers();
+            team.saveMembersNew();
+            team.saveMembers();
             User user = [select Name, Email from User limit 1];
             team.SendMail(user, 'Message');
 
-            Test.stopTest();
         }catch(Exception e){
             throw e;
         }

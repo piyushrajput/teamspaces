@@ -1,25 +1,18 @@
-/**
-*@author Marcos Solari @ 06/19/2008
-*/
 public with sharing class TeamsRecentlyCreated {
 
-	/**
-	* Constructor
-	*/
 	public TeamsRecentlyCreated(){
 		getRecentTeamsList();		
 	}	
 	
 	public List<RecentTeams> recentTeams = new List<RecentTeams>();
-	/**
-	*@return List<RecentTeams>
-	*/
+	
 	public List<RecentTeams> getRecentTeams(){
 		return recentTeams;
 	} 
 	
 	/**
 	* Get list of recently created teams
+	*@void
 	*/
 	public void getRecentTeamsList (){
 		List<Team__c> teams = new List<Team__c>();		
@@ -29,9 +22,6 @@ public with sharing class TeamsRecentlyCreated {
 		}
 	}
 	
-	/**
-	* Class RecnetTeams
-	*/
 	public class RecentTeams{
 		
 		Team__c team;
@@ -69,18 +59,19 @@ public with sharing class TeamsRecentlyCreated {
 			return createdBy;
 		}
 		
+
 		/**
 		* Get picture for current team
 		*@void
 		*/
 		public void getTeamPicture (){
-			
+			/*List<Attachment> at = new List<Attachment>();
+			at = [select Id, parentId from Attachment where parentId =: team.Id limit 1];
+			if(at.size() > 0)
+				picture = '/servlet/servlet.FileDownload?file=' + at[0].Id;*/
 			if(team.Picture__c != null) picture = '/servlet/servlet.FileDownload?file=' + team.Picture__c;
 		}	
 		
-		/**
-		* Load User instance for team author
-		*/
 		public void getCreator(){
 			List<User> u = new List<User>();
 			u = [select u.Id, u.Name from User u where u.Id =: team.TeamCreatedBy__c];

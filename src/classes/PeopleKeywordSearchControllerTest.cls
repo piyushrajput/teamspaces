@@ -1,14 +1,10 @@
 @IsTest private class PeopleKeywordSearchControllerTest {
     
     public static testMethod void PeopleKeywordSearchController() {
-        TeamUtil.isTest = true;
         PeopleKeywordSearchController keywordSearchController = new PeopleKeywordSearchController();
-        
-        keywordSearchController.setIsTest(true);
-        
-        keywordSearchController.setUserId(UserInfo.getUserId());
+        keywordSearchController.setUserId('00530000001IOnRAAW');
         try { 
-            keywordSearchController.setKeywordString('keyword');
+            keywordSearchController.setKeywordString('m');
         } catch(Exception e){
             System.assert(true, 'error setting keyword string'); 
         }
@@ -43,15 +39,15 @@
             System.assert(true, 'TypeAction  getter wrong'); 
         } 
         
+        
+        
+        
         try {
             keywordSearchController.ResultCore('Search');
         } catch(Exception e){
             System.assert(true, 'Result Core broken :('); 
         }
-        
-        TeamUtil.isTest = false;
-        
-        PaginatorControllerTest.PaginatorController();
+    
     }
     
 }

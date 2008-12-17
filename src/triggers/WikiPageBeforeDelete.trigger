@@ -38,22 +38,22 @@ trigger WikiPageBeforeDelete on WikiPage__c bulk (before delete) {
 					if (wikiObj[countWiki].id == oldWiki.Id) {
 						findWiki = true;
 						if(wikiObj[countWiki].WikiVersions1__r.size() > 0) {
-							wikiVersions.addAll(wikiObj[countWiki].WikiVersions1__r);
+							wikiVersions.add(wikiObj[countWiki].WikiVersions1__r);
 						}
 						if (wikiObj[countWiki].RecentlyViewed__r.size() > 0) {
-							wikiRecentlyViewed.addAll(wikiObj[countWiki].RecentlyViewed__r);
+							wikiRecentlyViewed.add(wikiObj[countWiki].RecentlyViewed__r);
 						}
 						if (wikiObj[countWiki].ToLink__r.size() > 0) {
-							wikiLinksTo.addAll(wikiObj[countWiki].ToLink__r);
+							wikiLinksTo.add(wikiObj[countWiki].ToLink__r);
 						}
 						if (wikiObj[countWiki].FromLink__r.size() > 0) {
-							wikiLinksFrom.addAll(wikiObj[countWiki].FromLink__r);
+							wikiLinksFrom.add(wikiObj[countWiki].FromLink__r);
 						}
 						if (wikiObj[countWiki].FavoriteWikis__r.size() > 0) {
-							wikiFavorites.addAll(wikiObj[countWiki].FavoriteWikis__r);
+							wikiFavorites.add(wikiObj[countWiki].FavoriteWikis__r);
 						}
 						if (wikiObj[countWiki].Comments__r.size() > 0) {
-							wikiComments.addAll(wikiObj[countWiki].Comments__r);	
+							wikiComments.add(wikiObj[countWiki].Comments__r);	
 						}
 					}
 					countWiki++;	

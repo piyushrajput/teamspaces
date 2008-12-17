@@ -1,35 +1,24 @@
-/**
-*@author Martin Prado @ 08/07/2008
-*/
 public with sharing class TeamsWidgetMyTasksAndMilController {
     
-    /**
-    * Constructor
-    */
-    public TeamsWidgetMyTasksAndMilController(){
+    
+    //Constructor
+    public TeamsWidgetMyTasksAndMilController()
+    {
         
     }
     
     public Boolean displayTitle = false;
-    
-    /**
-    *@return Integer
-    */
     public Integer getOverdueAlreadyShow(){
     	return overdueAlreadyShow;
     }
-    
 	public String currentDate = '';
-	public Integer overdueAlreadyShow = 0;
-	public Integer countTask = 0;
+	public	Integer overdueAlreadyShow = 0;	
     
     public Integer listSize{ get; set; }
     
-    /**
-    * Read all task list
-    *@return List<ProjectTasks>
-    */
-    public List<ProjectTasks> getAllProjectTasks(){
+    // List Of Task
+    public List<ProjectTasks> getAllProjectTasks() 
+    {
 	    //All Project task
 	    List<ProjectTask__c> allProjects = new List<ProjectTask__c>();
 	    //5 Project assign to Me
@@ -40,21 +29,18 @@ public with sharing class TeamsWidgetMyTasksAndMilController {
 	    //Populate allProjects  
 	    allProjects = [Select  p.Id, 
 	                        (Select User__c From ProjectAssignee__r) 
-	                        From ProjectTask__c  p];
+	                        From ProjectTask__c  p 
+	                        ];
 	                          
 	    // Set id of Project assign to me
 	    Set<Id> projToMe = new Set<Id>();
-	    
 	    for( ProjectTask__c project : allProjects) {
-	        if(project.ProjectAssignee__r.size() > 0){
-	        	for(Integer i=0; i<project.ProjectAssignee__r.size(); i++){
-	        		if(project.ProjectAssignee__r[i].User__c == Userinfo.getUserId()){
-	        			projToMe.add(project.Id);
-	        		}	        		
-	        	}
+	        if(project.ProjectAssignee__r.size() > 0 && project.ProjectAssignee__r[0].User__c == Userinfo.getUserId())
+	        {
+	            projToMe.add(project.Id);
 	        }
 	    }
-
+	    
 	    //Populate myProjects
 	    myProjects = [ Select 
 	     				p.Priority__c, 
@@ -63,58 +49,68 @@ public with sharing class TeamsWidgetMyTasksAndMilController {
 	     				p.Id, p.EndDate__c,
 	     				p.Percent_Completed__c, 
 	     				p.Duration__c
-	     				From ProjectTask__c  p where p.Id in : projToMe and p.EndDate__c != null  order by p.EndDate__c asc ];
-  	    
+	     				From ProjectTask__c  p where p.Id in : projToMe and p.EndDate__c != null  order by p.EndDate__c asc limit 5 ];
+	     
+	   
+		    	    
         for( ProjectTask__c pro : myProjects) {
-            if(pro.Percent_Completed__c < 100 || pro.Percent_Completed__c == null){
+            
+            if(pro.Percent_Completed__c < 100){
+                	
                 	ProjectTasks myTask = new ProjectTasks();
-                	if(pro.EndDate__c < System.now()){
+                	if(pro.EndDate__c < System.now())
+	                {
 	                	myTask.overDue = true;	                
 	                	overdueAlreadyShow = overdueAlreadyShow + 1;	                	
 	                } else {
 	                	myTask.overDue = false;
 	                }
-                	if((currentDate != (pro.EndDate__c).format('MM/dd/yyyy') )){
-                		if(myTask.overDue){
-	                		if(overdueAlreadyShow > 1){              		
-	                			myTask.displayTitle = false;
+	                
+	                if(pro.EndDate__c != null )
+	                {
+	                	if((currentDate != (pro.EndDate__c).format('MM/dd/yyyy') )){
+	                		if(myTask.overDue){
+		                		if(overdueAlreadyShow > 1){              		
+		                			myTask.displayTitle = false;
+		                		} else {
+		                			myTask.displayTitle = true;
+		                		}
 	                		} else {
 	                			myTask.displayTitle = true;
 	                		}
-                		}else {
-                			myTask.displayTitle = true;
-                		}
-                	}else {
-                		myTask.displayTitle = false;
-                	}
-	                myTask.TaskName = pro.Name;
-	                myTask.TaskId = pro.Id;
-					myTask.setDaysCount(pro.EndDate__c, pro.Duration__c);
-					
-	                if(pro.Priority__c == '' || pro.Priority__c == null){
-	                	myTask.Priority = 'Normal';
-	                }else {
-	                	myTask.Priority = pro.Priority__c;
+	                	} else {
+	                		myTask.displayTitle = false;
+	                	}  
+		                        
+		                myTask.TaskName = pro.Name;
+		                myTask.TaskId = pro.Id;
+		                
+		                
+		                	myTask.setDaysCount(pro.EndDate__c, pro.Duration__c);
+		                
+		                if(pro.Priority__c == '' || pro.Priority__c == null){
+		                	myTask.Priority = 'Normal';
+		                }
+		                else {
+		                	myTask.Priority = pro.Priority__c;
+		                }
+		                
+		                myTask.setEndDate(pro.EndDate__c);            
+		                myTask.setIsToLate(pro.EndDate__c);  
+		                myTask.isMilestone  = pro.Milestone__c;	        	
+		                result.add(myTask);
+		                currentDate = (pro.EndDate__c).format('MM/dd/yyyy');
 	                }
-	                myTask.setEndDate(pro.EndDate__c);            
-	                myTask.setIsToLate(pro.EndDate__c);  
-	                myTask.isMilestone  = pro.Milestone__c;	
-	                
-	            	if(countTask < 5 && countTask < myProjects.size()){
-	            		result.add(myTask);
-	            		countTask ++;
-	            	}
-	                currentDate = (pro.EndDate__c).format('MM/dd/yyyy');
-               }
-     		} 
-			listSize = result.size();
-	        return result;
+                
+            }
+            
+         } 
+         
+		listSize = result.size();
+        return result;
     }
     
-    /**
-    * Class ProjectTasks
-    */
-    public class ProjectTasks {
+     public class ProjectTasks {
 
         public String DaysCount;
         public String UserId;
@@ -125,110 +121,92 @@ public with sharing class TeamsWidgetMyTasksAndMilController {
         
         DateTime now = System.now();
         
-        //current task id
         public String TaskId{ get; set; }
-        
-        //task priority
         public String Priority{ get; set; }
-
-        /**
-        * Returns task name
-        *@retrun String
-        */
-        public String TaskName{ 
+        public String TaskName
+        { 
         	get; 
-        	set{
-        		if(value.length() > 22){
+        	set
+        	{
+        		if(value.length() > 22)
+        		{
         			TaskName = value.substring(0,20) + '...';
-        		}else {
+        		}
+        		else
+        		{
         			TaskName = value;
         		}
+        		
         	} 
         }
-        
-		//is milestone bool
-		public Boolean isMilestone{ 
-			get; set; 
-		}
-		
-		//current task date class
-		public String taskDateClass{ 
-			get; set; 
-		}
-		
-		//overdue bool
-		public Boolean overDue{ 
-			get; set; 
-		}
-		
-		//show title bool
-		public Boolean displayTitle{ 
-			get; set; 
-		}
+		public Boolean isMilestone{ get; set; }
+		public String taskDateClass{ get; set; }
+		public Boolean overDue{ get; set; }
+		public Boolean displayTitle{ get; set; }
 
-        /**
-        *@return String
-        */
         public String getEndDate() {
             return EndDate;
         }
         
-        /**
-        *@param Datetime end time
-        */
-        public void setEndDate(Datetime endD){           
+        public void setEndDate(Datetime endD)
+        {           
+             
             EndDate =  endD.format('MM/dd/yyyy');
         }
         
-        /**
-        *@return String
-        */
         public String getIsToLate() {
             return isToLate;
         }
-                
-        /**
-        *@param Datetime end time
-        */
-        public void setIsToLate(Datetime endD){    
+        
+
+        
+        public void setIsToLate(Datetime endD){
+            
             Date miToday = Date.today();
             Date myEndDate = Date.newInstance(endD.year(), endD.month(),endD.day());
             Integer DayDiference = miToday.daysBetween(myEndDate);  
             
             if(DayDiference < 1){
                 isToLate = 'latter';    
-            }else {
+            }
+            else {
                 isToLate = '';
             }
         }
         
-        /**
-        *@return String
-        */
         public String getDaysCount() {
             return DaysCount;
         }
        
-        /**
-        *@param Datetime end date
-        *@param Double duration
-        */
         public void setDaysCount(Datetime endD, Double dur){
+            
             Date miToday = Date.today();
             Date endDate = Date.newInstance(endD.year(), endD.month(),endD.day());
             Integer DayDiference = miToday.daysBetween(endDate);   
                
-            if(DayDiference < 2){   
-                if(DayDiference == 1 ){
+            if(DayDiference < 2)
+            {   
+                if(DayDiference == 1 )
+                {
                     DaysCount = 'Due Tomorrow';
-                }else if(DayDiference == 0 ){
+                }
+                else if(DayDiference == 0 )
+                {
                     DaysCount = 'Due Today';
-                }else{
+                }
+                else 
+                {
+                    
                     DaysCount =  (DayDiference*-1) +' days late,';
                 }
-            }else {
+                
+            }
+            else 
+            {
                  DaysCount = 'Due in ' + DayDiference +' days';
+                
             }
         }
      }
+
 }

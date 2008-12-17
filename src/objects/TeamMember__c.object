@@ -5,8 +5,6 @@
         <fullName>TeamProfile__c</fullName>
         <label>Team Profile</label>
         <referenceTo>TeamProfile__c</referenceTo>
-        <relationshipLabel>Team Members</relationshipLabel>
-        <relationshipName>TeamMember</relationshipName>
         <type>Lookup</type>
     </fields>
     <fields>

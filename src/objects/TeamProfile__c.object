@@ -39,13 +39,6 @@
         <visibleLines>3</visibleLines>
     </fields>
     <fields>
-        <fullName>ManageAttachments__c</fullName>
-        <defaultValue>false</defaultValue>
-        <description>Property used to control the permissions of the Team Profile with the management of the attachments.</description>
-        <label>ManageAttachments</label>
-        <type>Checkbox</type>
-    </fields>
-    <fields>
         <fullName>ManageBlogs__c</fullName>
         <defaultValue>false</defaultValue>
         <label>ManageBlogs</label>

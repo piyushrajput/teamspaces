@@ -1,11 +1,15 @@
 <apex:page sidebar="false" showHeader="false">
+
 	<!-- CSS de TS -->
+	
 	<apex:stylesheet value="{!URLFOR($Resource.commonResources, '/inc/css/modal.css')}" />
     <!-- Common Layout -->
     <apex:stylesheet value="{!URLFOR($Resource.TeamsResources, 'inc/css/commonLayout.css')}" />
     <apex:stylesheet value="{!URLFOR($Resource.TeamsResources, 'inc/css/teamDetailEdit.css')}" />
     <apex:stylesheet value="{!URLFOR($Resource.TeamsResources, 'inc/css/teamMemberList.css')}" />
     <apex:stylesheet value="{!URLFOR($Resource.TeamsResources, 'inc/css/adminMainSetUp.css')}" />
+    
+    
 	<div class="box_round_blue">
 		<!-- Header -->
 		<div class="header">

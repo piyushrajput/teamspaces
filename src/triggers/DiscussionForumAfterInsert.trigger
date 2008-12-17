@@ -3,12 +3,8 @@ trigger DiscussionForumAfterInsert on DiscussionForum__c bulk (after insert) {
 		try {	
 			
 			if(trigger.isInsert){
-				List<String> teamSharingNames = new List<String>();
-				for(DiscussionForum__c newForum : trigger.new) {
-					teamSharingNames.add('teamSharing' + newForum.team__c);
-				}
-		       	List<Group> groupTeam = [select id, Name from Group where Name in:teamSharingNames];
-		       	
+				
+		       	List<Group> groupTeam = [select id, Name from Group where Name like 'teamSharing%'];
 		       	List<DiscussionForum__Share> newDiscussionForumShare = new List<DiscussionForum__Share>();	
 		       		
 		        for(DiscussionForum__c newForum : trigger.new){

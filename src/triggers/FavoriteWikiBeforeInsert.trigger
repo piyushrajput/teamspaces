@@ -28,13 +28,17 @@ trigger FavoriteWikiBeforeInsert on FavoriteWikis__c (before insert) {
 	        }
 	        
 	        // Check to see if this is an admin user.  If so they can create in any team 
-	        List<User> teamAdmin = [Select id, Profile.PermissionsModifyAllData, ProfileId, Name From User where id =:UserInfo.getUserId() limit 1];
+	        Group teamAdmin = [select Id from Group where Name = 'Team Admin'];	
 			Boolean isAdmin = false;
 		
-			if(teamAdmin[0].Profile.PermissionsModifyAllData){
+			if(teamAdmin != null){
 				//Is SysAdmin
 				// Might need to do this per author.  What if mutiple authors come through the trigger???
-				isAdmin = true;			
+				List<GroupMember> groupMember= [select Id from GroupMember where GroupId =: teamAdmin.Id and UserOrGroupId =: UserInfo.getUserId()];        	
+				
+				if(groupMember.size() > 0){
+					isAdmin = true;
+				}			
 			}		
 	        
 	        Map<Id, Id> profileMap = new Map<Id, Id>();
@@ -69,10 +73,7 @@ trigger FavoriteWikiBeforeInsert on FavoriteWikis__c (before insert) {
 	        for(FavoriteWikis__c newFav : trigger.new){
 	        	
 	        	// Check to see if this user can create a wiki page
-	        	TeamProfile__c profile;
-	        	if (profileMap.get(newFav.Team__c) != null) {
-	        	 	profile = [select id from TeamProfile__c where id=:profileMap.get(newFav.Team__c)];
-	        	}
+	        	TeamProfile__c profile = [select id from TeamProfile__c where id=:profileMap.get(newFav.Team__c)];
 	        	
 	        	if(!isAdmin && profile == null)
 	        		newFav.addError('Cannot Insert A Favorite Wiki Record. Insufficient Privileges');

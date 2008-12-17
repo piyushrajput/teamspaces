@@ -1,21 +1,34 @@
-@IsTest private class WikiNewPageWidgetControllerTest {  
+@IsTest private class WikiNewPageWidgetControllerTest {
 	public static testMethod void testWiki() {
-		GenerateEnvironmentTest.gen();
-		
-		Test.startTest();
-		System.currentPageReference().getParameters().put('id', GenerateEnvironmentTest.newTeam.id);
-		
 		WikiNewPageWidgetController wiki = new WikiNewPageWidgetController(); 	
 		
-		wiki.saveWiki();
-		System.currentPageReference().getParameters().remove('id');
+		try {
+			wiki.setIdTeam('');    
+		}
+		catch (exception e) {
+			System.assert(true, e);
+		}
 		
-		wiki.setIdWikiPage(GenerateEnvironmentTest.newWiki.id);   
+		try {
+			wiki.setIdTeamOverview('');    
+		}
+		catch (exception e) {
+			System.assert(true, e);
+		}
 		
-		wiki.constructMethods(); 
+		try {
+			wiki.setIdWikiPage('a0l300000009a92AAA');    
+		}
+		catch (exception e) {
+			System.assert(true, e);
+		}
 		
-		wiki.saveWiki();
-		wiki.saveWikiAndEdit();
+		try {
+			wiki.constructMethods();    
+		}
+		catch (exception e) {
+			System.assert(true, e);
+		}
 		
 		wiki.getIdTeam();
 		wiki.getIdTeamOverview();
@@ -23,20 +36,9 @@
 		
 		try {
 			wiki.refreshWikis();    
-		}catch (exception e) {
+		}
+		catch (exception e) {
 			System.assert(true, e);
 		}
-		
-		
-		wiki.setIdTeam(GenerateEnvironmentTest.newTeam.id);
-		wiki.setIdTeamOverview(GenerateEnvironmentTest.newTeam.id);
-		
-		wiki.getNamespace();
-		wiki.constructMethods();    
-		
-		wiki.getNewWikiPage();
-		
-		
-		Test.stopTest();
 	}
 }

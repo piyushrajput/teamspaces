@@ -52,15 +52,8 @@ trigger MainFeedDiscussionMessage on DiscussionMessage__c bulk (after insert) {
 		                                           	User__c=n.CreatedById,
 		                                           	FeedDate__c=System.now(),
 		                                           	Team__c=n.Team__c,
-		                                           	Message__c='replied to discussion topic <a href="/apex/DiscussionDetails?id=' + n.DiscussionTopic__c + '>' + Topic.Name + '</a> in <a href="/apex/TeamsRedirect?id=' + n.Team__c + '">' + Team.Name + '</a><span style="display:none;">' + n.id + '</span>'));
+		                                           	Message__c='replied to discussion topic <a href="/apex/DiscussionDetails?id=' + n.DiscussionTopic__c + '>' + Topic.Name + '</a> in <a href="/apex/TeamsRedirect?id=' + n.Team__c + '">' + Team.Name + '</a>'));
 				
-			    }
-			    else {
-			    	 minifeed.add( new MiniFeed__c( Type__c='DiscussionNewTopic',
-		        									FeedDate__c=System.now(),
-		                                           	Team__c=n.Team__c,	        
-		                                           	User__c=n.CreatedById,
-		                                          	Message__c='created new discussion topic <a href="/apex/DiscussionDetail?id=' + n.DiscussionTopic__c +'"/>' + Topic.Name + '</a> in <a href="/apex/TeamsRedirect?id=' + n.Team__c + '">' + Team.Name + '</a>'));	
 			    }
 		    }  
 		    insert minifeed;

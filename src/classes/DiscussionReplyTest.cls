@@ -1,19 +1,16 @@
 @IsTest private class DiscussionReplyTest {
-    public static testMethod void testDiscussion() {   
+    public static testMethod void testDiscussion() {
          
-        try{ 
-        	GenerateEnvironmentTest.gen();
-    		Test.startTest();
-    		  
+        try{
             DiscussionReplyController dis = new DiscussionReplyController();
-            Team__c myTeam = [Select Id from Team__c limit 1];
-            dis.setTEAMID(myTeam.Id);
             DiscussionTopic__c newTopic = new DiscussionTopic__c();
             newTopic.ViewCount__c = 1;
             newTopic.Threaded__c = false;
             
             String idTeam = [select id from Team__c limit 1].id;
-            newTopic.Team__c = idTeam;   
+            newTopic.Team__c = idTeam;
+            
+            UserPermissionsTest.UserPermissionsTest();
             
             String idDiscussionForum = [select id from DiscussionForum__c where team__c =: idTeam limit 1].id;
             newTopic.DiscussionForum__c = idDiscussionForum;
@@ -44,7 +41,12 @@
             newReply.DiscussionTopic__c = newTopic.id;
             newReply.Team__c = idTeam;
             newReply.Subject__c = 'Reply to Message';
-       
+            
+            //insert newReply;
+            
+            //String idDiscussionTopic = [select id from DiscussionTopic__c limit 1].id;
+            // I have to hardcode the id because it has to
+            //String idDiscussionTopic = 'a0730000002qnVHAAY';
             String idDiscussionTopic = newTopic.Id;
             dis.setParamId(idDiscussionTopic);
             
@@ -69,6 +71,10 @@
             
             if (dis.getNoForums() == null) {
                 System.assert(true, 'Null getNoForums boolean');
+            }
+            
+            if (dis.getQueueGroupId() == null) {
+                System.assert(true, 'Null Queue Group Team Admin');
             }
              
             dis.setTopicIdParam(idDiscussionTopic);
@@ -131,19 +137,7 @@
             
             DiscussionReplyController.replyMessage rplget2 = dis.getQuoteReply();
             dis.saveNewTopicReply();
-            dis.saveQuoteReply();  
-            
-            Id ide = dis.getTopicId();
-            DiscussionMessage__c fstMsg = dis.getFirstMessage();
-
-			dis.setParamId('1');
-			dis.setPageNumberParam('1');
-			dis.constructorMethods();
-			dis.getPrevPageLinkShow();
-
-            
-            
-            Test.stopTest();
+            dis.saveQuoteReply();   
         }catch(Exception e){
             throw e;
         }

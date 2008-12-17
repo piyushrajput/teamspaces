@@ -1,48 +1,80 @@
 <apex:page id="DiscussionSearchresults" sideBar="false" tabStyle="DiscussionForum__c" controller="DiscussionSearchResultsController">
-	
 	<!-- Scriptaculous / Prototype -->
 	<script type="text/javascript" src="{!URLFOR($Resource.Script_aculo_us, 'prototype.js')}"></script>
 	<script type="text/javascript" src="{!URLFOR($Resource.Script_aculo_us, 'scriptaculous.js')}"></script>
 	<script type="text/javascript" src="{!URLFOR($Resource.Script_aculo_us, 'effects.js')}"></script>
-	
-	<!-- Portal Support -->
-	<script src="{!$Resource.portalSupport}" />
-	
 	<!-- Common Js -->
 	<script type="text/javascript" src="{!URLFOR($Resource.discussionResourceFiles, 'inc/js/common.js')}"></script>
-	<script type="text/javascript" src="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/common.js')}"></script>
-    
-    <!-- CSS styles for Portal Integration -->
-    <apex:stylesheet value="{!URLFOR($Resource.portalStyles, 'portal.css')}" />
-    <apex:stylesheet value="{!URLFOR($Resource.TeamsResources, 'inc/css/headerTeams.css')}" />
-	<apex:stylesheet value="{!URLFOR($Resource.TeamsResources, 'inc/css/widgetTeam.css')}" />
-	
 	<!-- Common Layout -->
 	<link rel="stylesheet" media="screen" href="{!URLFOR($Resource.discussionResourceFiles, 'inc/css/commonLayout.css')}" /> 
 	<link rel="stylesheet" media="screen" href="{!URLFOR($Resource.discussionResourceFiles, 'inc/css/discussionOverview.css')}" />
 	<link rel="stylesheet" media="screen" href="{!URLFOR($Resource.discussionResourceFiles, 'inc/css/DiscussionSearchResults.css')}" />
 	
-	<!-- DiscussionSearchResults CSS -->
-	<apex:stylesheet value="{!URLFOR($Resource.discussionResources, 'inc/css/discussionSearchResults.css')}" />
+	<script>
+		function showHideOverlay(){
+			var a = $('paginationOverlay');
+			if(a.style.display == 'none'){
+				Effect.Appear(a,{duration:0.3,to:0.6});
+			} else {
+				Effect.Fade(a,{duration:0.3,to:0.0});
+			}
+		}
 	
-	<!-- DiscussionSearchResults JS -->
-	<apex:includeScript value="{!URLFOR($Resource.discussionResources, 'inc/js/discussionSearchResults.js')}" />
-	
-	
+		function submitForm (e,idButton) {
+			if (e.keyCode == 13) {
+				var buttonForm = document.getElementById(idButton);
+				buttonForm.focus();
+				buttonForm.click();
+				return false;
+			}
+			else {
+				return true;
+			}
+		}
+		
+		function submitForm2 (e) {
+			return (e.keyCode!=13);
+		}
+	</script>
 	<!-- Header -->
-	<apex:composition template="HeaderTemplate">
-		<apex:define name="moduleId"><apex:variable var="moduleId" value="headerDiscussion"/></apex:define>
-	    <apex:define name="module">Discussions</apex:define>
-	    <apex:define name="title">Overview</apex:define>
-	    <apex:define name="search">
-	    	<c:Search module="discussion" />
-	    </apex:define>
-    </apex:composition>
-    
-	<!-- BreadCrumbs -->
-	<div class="breadcrumbs" >
-		<div class="map">
+	<div class="header">
+		<!-- Page Section -->
+		<div class="page_section">
+			<div>
+				<h1 class="arial_black">Discussions</h1>
+				<h2 class="arial_black">Overview</h2>
+			</div>		
+		</div>		
+		<!-- Search Box Container -->
+		<div class="searchBox">
+			<div>
+				<div>
+					<!-- Search Form -->
+					<apex:form id="searchForm" onkeypress="return submitForm(event, '{!$Component.mainSearchBtn}')">
+						<div class="search_box_input f_left">
+							<div class="legend">Find Discussions</div>
+							<apex:inputText id="searchInput" value="{!criteria}" onkeypress="submitForm(event, '{!$Component.mainSearchBtn}')"/>								
+						</div>
+						<apex:commandButton id="mainSearchBtn" value="Search" action="{!search}" styleclass="search_btn f_left normalWeight" rerender="searchResult"/>								
+					</apex:form>
+					<!-- Advanced Search Link -->
+					<div class="advanced_search_cont">							
+						<a href="javascript:;" >Advanced Search</a>
+					</div>							
+				</div>
+			</div>
+		</div>
+		<!-- Help for this page -->
+		<div class="help">
+			<div>
+				<a href="javascript:;">Help for this page</a>&nbsp; <img src="{!URLFOR($Resource.discussionResourceFiles, 'images/common/icons/help_icon.gif')}" alt="" />
+			</div>
+		</div>
+		<!-- BreadCrumbs -->
+		<div class="breadcrumbs" >
+			<div class="map">
 			Discussions Overview 
+			</div>
 		</div>
 	</div>
 	<div class="leftBar">
@@ -52,12 +84,12 @@
 			<apex:include pageName="DiscussionWidgetMostRead" /> 
 			<!-- New Discussions Widget -->
 			<apex:include pageName="DiscussionWidgetNewDiscussions" />
-		</div>
-		<!-- /Left Column container -->
+						
+		</div><!-- /Left Column container -->
 		<!-- 
-		#################
+		############
 		# Center Column 
-		#################
+		################
 		-->	
 		<div class="main_content" id="main_content">  
 			<div>
@@ -88,19 +120,23 @@
 													<img class="disabled" src="{!URLFOR($Resource.discussionResourceFiles, 'images/searchresults/search_result_first_disabled.gif')}" alt="" />
 												</apex:outputpanel>
 											</li>
+											
 											<li>
 												<apex:commandLink styleclass="prevPage" action="{!prevPage}" value="Previous Page" rerender="searchResult" rendered="{!prevPageLinkShow}"/>	
 												<apex:outputpanel rendered="{!prevPageShow}">
 													<a href="javascript:;" class="prevPageDisabled">Previous Page </a>
 												</apex:outputpanel>
 											</li>
+											
 											<li>&nbsp; | &nbsp; </li>
+											
 											<li>
 												<apex:commandLink styleclass="nextPage" action="{!nextPage}" value="Next Page" rerender="searchResult" rendered="{!nextPageLinkShow}"/>	
 												<apex:outputPanel rendered="{!nextPageShow}">
 													<a href="javascript:;" class="nextPageDisabled">Next Page</a>
 												</apex:outputPanel>
 											</li>
+											
 											<li>
 												<apex:commandLink action="{!lastPage}" rerender="searchResult" rendered="{!nextPageLinkShow}" >
 													<img src="{!URLFOR($Resource.discussionResourceFiles, 'images/searchresults/search_result_last.gif')}" alt="" />
@@ -120,6 +156,7 @@
 								</div>
 							</div>
 							<apex:repeat var="item" value="{!results}" rows="{!numberOfItemsToShow}" first="{!firstRow}">
+							
 								<div class="searchResultItem">
 									<a class="title" href="javascript:;" onclick="location.href='{!item.url}'"><apex:outputtext value="{!item.title}" escape="false" /></a><br />
 									<div class="matches">
@@ -127,7 +164,9 @@
 									</div>
 									<a class="linktoMessage" href="javascript:;" onclick="location.href='{!item.url}'">{!item.url}</a><br />
 								</div>
+								
 							</apex:repeat>
+							
 							<div class="searchResultsPagination"> 
 								<div class="data">
 									Results {!firstItem} - {!lastItem} of {!totalItemsNumber} 
@@ -146,19 +185,23 @@
 													<img class="disabled" src="{!URLFOR($Resource.discussionResourceFiles, 'images/searchresults/search_result_first_disabled.gif')}" alt="" />
 												</apex:outputpanel>
 											</li>
+											
 											<li>
 												<apex:commandLink styleclass="prevPage" action="{!prevPage}" value="Previous Page" rerender="searchResult" rendered="{!prevPageLinkShow}"/>	
 												<apex:outputpanel rendered="{!prevPageShow}">
 													<a href="javascript:;" class="prevPageDisabled">Previous Page </a>
 												</apex:outputpanel>
 											</li>
+											
 											<li>&nbsp; | &nbsp; </li>
+											
 											<li>
 												<apex:commandLink styleclass="nextPage" action="{!nextPage}" value="Next Page" rerender="searchResult" rendered="{!nextPageLinkShow}"/>	
 												<apex:outputPanel rendered="{!nextPageShow}">
 													<a href="javascript:;" class="nextPageDisabled">Next Page</a>
 												</apex:outputPanel>
 											</li>
+											
 											<li>
 												<apex:commandLink action="{!lastPage}" rerender="searchResult" rendered="{!nextPageLinkShow}" >
 													<img src="{!URLFOR($Resource.discussionResourceFiles, 'images/searchresults/search_result_last.gif')}" alt="" />
@@ -178,13 +221,10 @@
 								</div>
 							</div>
 						</apex:outputpanel>
-					</div>
-					<!-- Holder End -->	
+					</div><!-- Holder End -->	
 				</apex:outputpanel> 
 			</div>
 		</div>							
 	</div>	
-	<script>
-		readPortalCSSRules();
-	</script>
+
 </apex:page>

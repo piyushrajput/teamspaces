@@ -1,9 +1,6 @@
 @IsTest private class TeamsWidgetRecentActivityTest {
     public static testMethod void testTeam() {
         try{
-	        GenerateEnvironmentTest.gen();
-	        Test.startTest();		        
-	        
 	        TeamsWidgetRecentActivityController team= new TeamsWidgetRecentActivityController();
 	        List<TeamsWidgetRecentActivityController.miniFeed> feeds = team.getMiniFeeds();   
 	       
@@ -22,8 +19,6 @@
 	        feed.getFeedDateClass();
 	        feed.setFeedDateClass('String');
 
-	
-			Test.stopTest();
         }catch(Exception e){
     		throw e;
     	}

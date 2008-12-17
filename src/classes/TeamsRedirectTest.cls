@@ -2,18 +2,11 @@
     
     public static testMethod void testTeam() {
         try{
-			GenerateEnvironmentTest.gen();
-
-            Test.startTest();            
-			
-			GenerateEnvironmentTest.createTeamType();            
             TeamsRedirectController team = new TeamsRedirectController();
-            Team__c t = GenerateEnvironmentTest.newTeam;
-            team.setTeamId(t.Id);
+            List<Team__c> t = [select Id from Team__c limit 70];
+            team.setTeamId(t[10].Id);
             team.getTeam();
-            PageReference page = team.redirect();
-            
-            Test.stopTest();   
+            PageReference page = team.redirect();   
         }catch(Exception e){
             throw e;
         }

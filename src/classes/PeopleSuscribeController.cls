@@ -1,31 +1,19 @@
-/**
-*@author Bruno Fagundez @ 06/30/2008
-*/
 public class PeopleSuscribeController {
 	
 		public Id personId;
+		
 		public String SubscriptionStatus;
+		
 		public String SubsRow;
+		
 		public String SubsName;
 		
-		/**
-		*@Constructor
-		*/
-		public PeopleSuscribeController(){
-			
-		}
-				
-		/**
-		*Setter method for personId variable
-		*@param String id
-		*/
+		// Setter method for personId variable
 		public void setPersonId(String id) {
 			personId = id;	
 		}
 		
-		/**
-		*@return Id
-		*/
+		// Get personId Attribute
 		public Id getPersonId(){
 			return personId;
 		}
@@ -33,9 +21,6 @@ public class PeopleSuscribeController {
 		// Userid
 		public String USERID = UserInfo.getUserId();
 		
-		/**
-		*@return Id
-		*/
 		public Id getCurrentId(){
 			return USERID;		
 		}
@@ -46,31 +31,31 @@ public class PeopleSuscribeController {
 		// Suscription row to this user (if any)
 		List<PeopleSubscription__c> Subscription = new List<PeopleSubscription__c>();
 		
-		public boolean isSuscribed;
+		public boolean isSuscribed ;
 		
 		public boolean isCurrentUser = false;
 		
-		/**
-		*@return boolean
-		*/
 		public boolean getIsCurrentUser(){
 			return isCurrentUser;		
 		} 
-
-		/**
-		* Return a string for subsribe or unsuscribe, depending the user's status
-		*@return String
-		*/
+		
+		public PeopleSuscribeController(){
+		}
+		
 		public String getSubscriptionStatus() {
+			
 			if(personId==null)
 				personId = System.currentPageReference().getParameters().get('id');			
 			
 			u = [select FirstName from User where Id =: personId];	
+			
 			Subscription = [Select p.Subscriber__c, p.Person__c, p.Person__r.FirstName, p.Name, p.Id, p.CreatedById From PeopleSubscription__c p where Person__c =: personId and p.Subscriber__c =: UserInfo.getUserId()];		
 			
 			if( personId == UserInfo.getUserId() ){
 				isCurrentUser = true;
 			}
+			
+			System.Debug('\n//////////////////////////////////////////\n ' + personId);
 			
 			if(Subscription.size() > 0){
 				isSuscribed = true;
@@ -86,12 +71,9 @@ public class PeopleSuscribeController {
 				
 			return SubscriptionStatus;		
 		} 
-		
-		/**
-		* Subscribe an user
-		*@void
-		*/
+		           
         public void Subscribe() {
+        	
         	if(isSuscribed){
 	        	PeopleSubscription__c SubObj = new PeopleSubscription__c();
 	        	SubObj = Subscription[0];	        	
@@ -106,26 +88,17 @@ public class PeopleSuscribeController {
 	        	SubscriptionStatus = 'Unsubscribe';
 	        	isSuscribed = true;
         	}      
+            
         }
         
-        /**
-        * Return if current user is subscribed
-        *@return boolean
-        */
         public boolean getSubscribedBoolean(){
 			return isSuscribed;
 		}
 		
-        /**
-        *@return String
-        */
 		public String getSubscribedName(){
 			return SubsName;
 		}
 		
-        /**
-        *@return String
-        */
 		public String getSubsRow(){
 			return SubsRow;
 		}

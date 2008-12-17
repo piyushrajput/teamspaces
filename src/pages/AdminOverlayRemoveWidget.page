@@ -18,6 +18,7 @@
 				</span>
 			  	<a  onclick="modal.close();" class="button gray">Cancel</a>
 			</div>
+			
 		</div>
 	</div>
 </apex:page>

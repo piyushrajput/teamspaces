@@ -1,91 +1,115 @@
-<apex:page sidebar="false" controller="PeopleProfileDisplayController" tabStyle="PeopleProfile__c" id="ProfileDisplay" action="{!profileExist}">
-
-	<apex:stylesheet value="{!URLFOR($Resource.commonResources, 'inc/css/fonts.css')}" />
-    
+<apex:page sidebar="false" controller="PeopleProfileDisplayController" tabStyle="PeopleProfile__c">
     <!-- Ajax Toolkit SDFC -->
-    <apex:includeScript value="/soap/ajax/11.1/connection.js"/>    
-
+    <script src="/soap/ajax/11.1/connection.js" type="text/javascript"></script>    
+    <script>    
+        var API_SESSION_ID = '{!$Api.Session_ID}';
+        
+        function trunkText(text, len){
+            if(text.length > len){
+                text = text.substring(0, len) + '...';
+            }
+            document.write(text);
+        }
+        
+        function expandReports(){
+            var div = $('expandReports');
+            var link = $('expandReportsEvent');
+            if(div.style.display == 'none'){
+                div.style.display = 'block';
+                link.innerHTML = 'Collapse';
+            }else{
+                div.style.display = 'none';
+                link.innerHTML = 'Expand';
+            }
+        }
+    </script>
+    <style>
+        ul.peopleList li{
+            margin-bottom: 5px;
+        }
+        
+        div.box_round div.edition div div a.edit{
+            width: 55px !important;
+        }
+        
+        div.rightCol{
+            top: 90px !important;
+        }
+        
+        a.subscribedToMe {
+            background:url('{!URLFOR($Resource.PeopleResourceFiles, 'images/layout/icons/user_rss.gif')}') no-repeat top left;
+            padding-left:20px;          
+        }
+        
+        ul.peopleList.toogle {
+			height: 32px;
+		}
+        
+        div.my_info table{ float:right;}
+    	
+    	/**
+    	* div.my_card div.my_info div.mylinks {
+		* 	bottom:4px;
+		* 	float:right;
+		*	font-size:11px;		
+		*	width:193px;
+		* }
+		**/
+		div.my_card div.my_info div.mylinks {
+			bottom: 4px;
+			font-size:11px;
+			position: absolute;
+			right: 0;		
+		}
+		
+		* html div.my_card div.my_info div.name_and_role {
+			float: none;
+		}
+		
+		div.my_card div.my_info.full {
+			border-bottom:1px solid #666666;
+			float:none;
+			margin-bottom:4px;
+			overflow:hidden;
+			padding-bottom:4px;
+			position:relative;
+			width:auto;
+		}
+		
+		* html div.my_card div.my_info.full {
+			height: 100%;
+		}
+		
+    </style>
+    
     <!-- Prototype / Scriptaculous Framework -->
-    <apex:includeScript value="{!URLFOR($Resource.Script_aculo_us, 'prototype.js')}"/>
-    <apex:includeScript value="{!URLFOR($Resource.Script_aculo_us, 'scriptaculous.js')}"/>
-    <apex:includeScript value="{!URLFOR($Resource.Script_aculo_us, 'effects.js')}"/>
-    <apex:includeScript value="{!URLFOR($Resource.Script_aculo_us, 'modal.js')}"/>
-	
-	<!-- Portal Support -->
-	<apex:includeScript value="{!$Resource.portalSupport}"/>
-    
+    <script src="{!URLFOR($Resource.Script_aculo_us, 'prototype.js')}" />
+    <script src="{!URLFOR($Resource.Script_aculo_us, 'scriptaculous.js')}" />
+    <script src="{!URLFOR($Resource.Script_aculo_us, 'effects.js')}" />
+    <script src="{!URLFOR($Resource.Script_aculo_us, 'modal.js')}" />
     <!-- Common Js to all people Sections -->
-    <apex:includeScript value="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/common.js')}"/>
-    <apex:includeScript value="http://download.skype.com/share/skypebuttons/js/skypeCheck.js"/>
-    
-    <!-- CSS styles for Portal Integration -->
-    <apex:stylesheet value="{!URLFOR($Resource.portalStyles, 'portal.css')}" />
-    <apex:stylesheet value="{!URLFOR($Resource.TeamsResources, 'inc/css/headerTeams.css')}" />
-	<apex:stylesheet value="{!URLFOR($Resource.TeamsResources, 'inc/css/widgetTeam.css')}" />
-    
+    <script src="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/common.js')}" />
+    <script type="text/javascript" src="http://download.skype.com/share/skypebuttons/js/skypeCheck.js"></script>
     <!-- Common CSS Styling  -->
     <apex:stylesheet value="{!URLFOR($Resource.PeopleResourceFiles, 'inc/css/commonLayout.css')}" />
-    
     <!-- People Profile CSS Styling  -->
     <apex:stylesheet value="{!URLFOR($Resource.PeopleResourceFiles, 'inc/css/peopleProfile.css')}" />
-    
     <!-- People Profile Scripts  -->
-    <apex:includeScript value="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/peopleProfileDisplay.js')}"/>
-    
+    <script src="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/peopleProfileDisplay.js')}" />
     <!-- MiniFeeds CSS Styling  -->
     <apex:stylesheet value="{!URLFOR($Resource.TeamsResources, 'inc/css/miniFeeds.css')}" />
-    
     <!-- Subscribe Module Js  -->
-    <apex:includeScript value="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/subscribing.js')}"/>
-    
+    <script src="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/subscribing.js')}" />
     <!-- Page Begin  -->
-    
     <!-- Initialize Modal Overlay for Remove Topic Replies -->
     <a href="#modal_container" id="initializeModal" style="display:none;"></a>
     <div id="modal_container" style="display:none;"></div>
     <script>createOverlay('initializeModal')</script> 
-    
-    <!-- WidgetCollpase -->
-	<apex:includeScript value="{!URLFOR($Resource.commonResources, 'inc/js/collpaseWidget.js')}" />
-	
-	<!-- Cookies support -->
-	<apex:includeScript value="{!URLFOR($Resource.commonResources, 'inc/js/cookies.js')}" />
-	
- 	<!-- PeopleProfileDisplay css -->
-    <apex:stylesheet value="{!URLFOR($Resource.PeopleResourceFiles, 'inc/css/peopleProfileDisplay.css')}" />
- 	
-	<!-- PeopleProfileDisplay JS  -->
-	<apex:includeScript value="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/peopleProfileDisplay.js')}" />
-	     
     <script>
-         var API_SESSION_ID = '{!$Api.Session_ID}';
-  		document.observe("dom:loaded", loadCollapsableWidgets);
-    </script>
-    <style>
-    
-    	div.profileBlockTitle div.options div.button {
-    		width:130px;
-    	}
-    	
-    	.employTitle{
-    		clear:both;
-    		font-size:13px;
-			font-weight:bold;
-			color:#333333;
-		}
-		
-		ul.teamspaces li span a {
-			color:#666666 !important;
-			font-size:11px !important;
-		}	
-		
-		div.name_and_role h1{
-			display:block;
-			z-index:1000;
-		}
-		
-    </style>
-	
+    	function expandReportsUl(){
+    		$('peopleList').toggleClassName('toogle');    		
+    	} 
+    </script>  
     <!-- Delete Competency Overlay -->
     <div id="deleteCompetencyDialog" style="display:none;">
         <div class="modalTitle">
@@ -100,175 +124,201 @@
             </div>
             <div class="actions">
                 <div id="removeButtonContainer">
-                    <a href="javascript:;" onclick="removeCompetency();" class="button">Remove</a>
+                    <a href="javascript:;" onclick="removeCompetency();" class="button">
+                        Remove
+                    </a>
                 </div>
                 <a href="javascript:;" onclick="modal.close();" class="button gray">Cancel</a>
             </div>
         </div>
+    </div><!-- Header -->
+    <div class="header">
+        <!-- Page Section -->
+        <div class="page_section">
+            <div>
+                <h1 class="arial_black">People</h1>
+                <h2 class="arial_black">{!IF(isCurrentUser,'My ','View ')}Profile</h2>
+            </div>      
+        </div>      
+        <!-- Search Box -->
+        <div class="searchBox">
+            <apex:include pageName="PeopleHeaderSearch" />
+        </div>
+        <!-- Help for this page -->
+        <div class="help">
+            <div>
+                <a href="javascript:;">Help for this page</a>&nbsp; <img src="{!URLFOR($Resource.PeopleResourceFiles, 'images/layout/icons/help_icon.gif')}" alt="" />
+            </div>
+        </div>
     </div>
-    <!-- Header -->
-	<apex:composition template="HeaderTemplate">
-		<apex:define name="moduleId"><apex:variable var="moduleId" value="headerPeople"/></apex:define>
-	    <apex:define name="module">People</apex:define>
-	    <apex:define name="title">{!IF(isCurrentUser,'My ','View ')}Profile</apex:define>
-	    <apex:define name="search">
-	    	<c:Search module="people_keyword" />
-	    </apex:define>
-    </apex:composition>
-    
     <!-- /Header -->
     <!-- Sidebar -->
     <div class="sidebar" id="sidebar">
         <!-- Status Container -->
-        <apex:outputPanel layout="block" rendered="{!ShowStatus}" id="statusPanel">
-			<div class="teamWidget mySmallWidget" >
-				<!-- Widget Title -->		
-				<div class="thinHeader">
-					<div><div><h4>Status</h4></div></div>
-				</div>
-				<!-- Widget Container -->   		
-				<div class="box_content">
-					<div class="thinBody">
+        <apex:outputPanel layout="block" rendered="{!IF(ShowStatus,'true',IF(isCurrentUser,'true','false'))}">
+            <div class="box_round_blue" >
+                <!-- Header -->
+                <div class="header">
+                    <div><div><h3>Status</h3></div></div>
+                </div>
+                <!-- Rounded Box Content -->
+                <div class="box_content">
+                    <div class="contentHolder">
                         <div class="status" id="status">
                             <div class="statusOverlay" id="statusOverlay" style="display:none;">
-                                <br /><img src="{!URLFOR($Resource.PeopleResourceFiles, 'images/layout/small_loader.gif')}" alt="Loading..." />                       
+                                <br />
+                                <img src="{!URLFOR($Resource.PeopleResourceFiles, 'images/layout/small_loader.gif')}" alt="Loading..." />                       
                             </div>
                             <div id="currentStatus">
-                                <p class="status" id="statusParagraph" style="{!IF(ShowStatus,'','display:none;')}"><strong>{!Profile.FirstName}</strong>&nbsp;<span id="status_message">{!Profile.Status}</span></p>
+                                <p class="status" id="statusParagraph" style="{!IF(ShowStatus,'','display:none;')}"><strong>{!Profile.FirstName}</strong>&nbsp;<span id="status_message">{!Status.Message}</span></p>
                                 <p class="last_update" id="statusModifiedParagraph" style="{!IF(ShowStatus,'','display:none;')}"><span id="status_modified">{!Status.Modified}.</span>
-                                <apex:outputPanel rendered="{!isCurrentUser}"><a href=javascript:; onclick="editStatusJs();">edit</a></apex:outputPanel></p> 
-                                <a class="setStatus" href="javascript:;" onclick="editStatusJs();" style="{!IF(ShowStatus,'display:none;',IF(isCurrentUser,'','display:none;'))}" id="newStatusLink">Share with your co-workers what you're doing.</a>                                                            
+                                <apex:outputPanel rendered="{!isCurrentUser}"><a href=javascript:; onclick=editStatus();>edit</a></apex:outputPanel></p> 
+                                <a class="setStatus" href="javascript:;" onclick="editStatus();" style="{!IF(ShowStatus,'display:none;',IF(isCurrentUser,'','display:none;'))}" id="newStatusLink">Share with your co-workers what you're doing.</a>                                                            
                             </div>
                             <div id="statusEdition" style="display:none;">
-							<input type="text" id="UserStatus" onkeyup="sendEnterKey(event)" class="statusInputText"/>
-                                <apex:form id="StatusForm">
-	                                <p class="status"><strong>{!Profile.FirstName}</strong></p>
-	                                <apex:inputHidden id="StatusMessage" value="{!Status.Message}" />
-	                                <div class="div_content_buttons statusEdition" >
-	                                    <div class="buttonSave">
-											<apex:actionStatus id="StatusAS">
-												<apex:facet name="start"><apex:outputText value="Saving..." /></apex:facet>
-								                <apex:facet name="stop">	                                        
-	                                        		<apex:commandLink styleClass="saveButton" action="{!EditStatus}" rerender="statusPanel" value="Save" status="StatusAS" /> 
-	                                    		</apex:facet>
-	                                    	</apex:actionStatus>
-	                                    </div>
-	                                    <div class="cancel grayButton statusEditionCancel" >
-	                                        <a href="javascript:;" onclick="cancelEditStatusJs();">Cancel</a>
-	                                    </div>
-	                                </div>
-	                        	</apex:form>                               
+                                <p class="status"><strong>{!Profile.FirstName}</strong></p>
+                                <input id="statusField" value="is " width="40"/>
+                                <div class="div_content_buttons statusEdition" >
+                                    <div class="buttonSave">
+                                        <a class="saveLabel" href="javascript:;" onclick="saveStatus('{!currentTime}');">Save</a> 
+                                    </div>
+                                    <div class="cancel grayButton statusEditionCancel" >
+                                        <a href="javascript:;" onclick="cancelEditStatus();">Cancel</a>
+                                    </div>
+                                </div>                               
                             </div>
                         </div>
-					</div>				
-				</div>
-				<!-- Widget Holder Foot -->
-				<div class="bottom_borders">
-					<div><div></div></div>
-				</div>
-			</div>
-			<div class="clear"></div>
+                    </div>
+                </div>
+                <div class="bottom_borders"><div><div></div></div></div>
+            </div>
         </apex:outputPanel>
         <!-- People Following me and Followers -->
-		<div class="teamWidget mySmallWidget" >
-			<!-- Widget Title -->		
-			<div class="thinHeader">
-				<div><div><h4>Most Connected</h4></div></div>
-			</div>
-			<!-- Widget Container -->   		
-			<div class="box_content">
-				<div class="thinBody">
+        <div class="box_round_blue">
+            <!-- Header -->
+            <div class="header">
+                <div><div><h3>Most Connected</h3></div></div>
+            </div>
+            <!-- Rounded Box Content -->
+            <div class="box_content">
+                <div class="contentHolder"> 
+                
+                <!-- Commenting for now untill we define what 'see more' is going to do. -->
+                <!--
+                    <div class="linkContainer align-right" >
+                        <a href="javascript:;" class="topRightLinks">See More&#187;</a>
+                    </div>
+                    
+                -->
                     <ul class="peopleListSidebar">
+                        
+                        
                         <apex:repeat value="{!mostConnectedUsers}" var="m">
+
                             <li>
                                 <div class="photoWrapper_32px">
                                     <a href="/apex/PeopleProfileDisplay?id={!m.id}">
-                                        <apex:outputpanel >
-                                            <img alt="{!m.Name}" width="32" src="{!IF((m.userPicture != ''), '/servlet/servlet.FileDownload?file='+m.userPicture, URLFOR($Resource.PeopleResourceFiles, 'images/layout/user.gif'))}"  />
+                                        <apex:outputpanel rendered="{!IF((m.userPicture == ''),true,false)}">
+                                            <img alt="{!m.Name}" width="32" src="{!URLFOR($Resource.commonResources, 'images/placeholders/unknownperson32x32.jpg')}" />
+                                        </apex:outputpanel>
+                                        <apex:outputpanel rendered="{!IF((m.userPicture == ''),false,true)}">
+                                            <img alt="{!m.Name}" src="/servlet/servlet.FileDownload?file={!m.userPicture}" width="32">
                                         </apex:outputpanel>
                                     </a>
                                 </div>
-                                <div class="status">
-                                	<a href="/apex/PeopleProfileDisplay?id={!m.id}">{!m.name}</a>
-                                	<br />{!m.status}
-                                </div>
+                                <div class="status"><a href="/apex/PeopleProfileDisplay?id={!m.id}">{!m.name}</a><br />{!m.status}</div>
                             </li>                           
+                        
+                        
                         </apex:repeat>
+                        
+                        
+                        <!-- 
+                        <li>
+                            <div class="photoWrapper_32px">
+                                <img src="{!URLFOR($Resource.PeopleResourceFiles, 'images/people_profile/cont/av1.jpg')}" alt="" />
+                            </div>
+                            <div class="status"><a href="peoplenewdesign_profile">Naomi Milleris</a><br /> dreaming of eating pho.</div>
+                        </li>
+                        <li>
+                            <div class="photoWrapper_32px">
+                                <img src="{!URLFOR($Resource.PeopleResourceFiles, 'images/people_profile/cont/av2.jpg')}" alt="" />
+                            </div>
+                            <div class="status"><a href="peoplenewdesign_profile">Jack Black</a><br /> is heading out Seattl...</div>
+                        </li>
+                        <li>
+                            <div class="photoWrapper_32px">
+                                <img src="{!URLFOR($Resource.PeopleResourceFiles, 'images/people_profile/cont/av2.jpg')}" alt="" />
+                            </div>
+                            <div class="status"><a href="peoplenewdesign_profile">Bob White</a><br /> is not feeling well toda... </div>
+                        </li>
+                        <li>
+                            <div class="photoWrapper_32px">
+                                <img src="{!URLFOR($Resource.PeopleResourceFiles, 'images/people_profile/cont/av4.jpg')}" alt="" />
+                            </div>
+                            <div class="status"><a href="peoplenewdesign_profile">Jamie Hallis</a><br />is working with Patty t...</div>
+                        </li>
+                        <li>
+                            <div class="photoWrapper_32px">
+                                <img src="{!URLFOR($Resource.PeopleResourceFiles, 'images/people_profile/cont/av5.jpg')}" alt="" />
+                            </div>
+                            <div class="status"><a href="peoplenewdesign_profile">Rick Trumanis</a><br />looking for lunch opt...</div>
+                        </li>           
+                        
+                        
+                        -->         
                     </ul>                   
-				</div>				
-			</div>
-			<!-- Widget Holder Foot -->
-			<div class="bottom_borders">
-				<div><div></div></div>
-			</div>
-		</div>
-		<div class="clear"></div>
+                </div>
+            </div>
+            <div class="bottom_borders"><div><div></div></div></div>
+        </div>
         <!-- People Updates -->
-        <apex:outputPanel layout="block" rendered="{!displayInfo}">
-	        <apex:outputpanel styleClass="teamWidget mySmallWidget" layout="block" rendered="{!showSubscribedPeople}">
-				<!-- Widget Title -->		
-				<div class="thinHeader">
-					<div><div><h4>People Updates</h4></div></div>
-				</div>
-				<!-- Widget Container -->   		
-				<div class="box_content">
-					<div class="thinBody">
-	                    <apex:outputpanel layout="block" rendered="{!IF((countImSubscribedTo == 0),false,true)}">               
-	                        <table>
-	                            <tr>
-	                                <td valign="top" width="25" align="center"><img src="{!URLFOR($Resource.PeopleResourceFiles, 'images/layout/icons/users_rss.gif')}" alt="{!Profile.FirstName}'s Suscribers" /></td>
-	                                <td valign="top"><a href="/apex/PeopleList?type=MyPeople&id={!ProfileUserId}">{!Profile.FirstName} subscribed to {!countImSubscribedTo} People Updates</a></td>
-	                            </tr>
-	                        </table>
-	                    </apex:outputpanel>
-	                    <apex:outputpanel layout="block" rendered="{!IF((countSubscribedToMe == 0),false,true)}">
-	                        <table class="pageList">
-	                            <tr>
-	                                <td valign="top" width="25" align="center"><img src="{!URLFOR($Resource.PeopleResourceFiles, 'images/layout/icons/user_rss.gif')}" alt="{!Profile.FirstName}'s Suscribers" /></td>
-	                                <td valign="top"><a href="/apex/PeopleList?type=SubscribesToMe&id={!ProfileUserId}">{!countSubscribedToMe} subscribers to {!Profile.FirstName}'s updates</a></td>
-	                            </tr>
-	                        </table>
-	                    </apex:outputpanel>     
-					</div>				
-				</div>
-				<!-- Widget Holder Foot -->
-				<div class="bottom_borders">
-					<div><div></div></div>
-				</div>
-			</apex:outputpanel>
-			<div class="clear"></div>
+        <apex:outputpanel styleClass="box_round_blue" layout="block" rendered="{!showSubscribedPeople}">
+            <!-- Header --> 
+            <div class="header">
+                <div><div><h3>People Updates</h3></div></div>
+            </div>
+            <!-- Rounded Box Content -->
+            <div class="box_content">
+                <div class="contentHolder peopleUpdates">
+                    <apex:outputpanel layout="block" rendered="{!IF((countImSubscribedTo == 0),false,true)}">               
+                        <table>
+                            <tr>
+                                <td valign="top" width="25" align="center"><img src="{!URLFOR($Resource.PeopleResourceFiles, 'images/layout/icons/users_rss.gif')}" alt="{!Profile.FirstName}'s Suscribers" /></td>
+                                <td valign="top"><a href="/apex/PeopleList?type=MyPeople&id={!ProfileUserId}">{!Profile.FirstName} subscribed to {!countImSubscribedTo} People Updates</a></td>
+                            </tr>
+                        </table>
+                    </apex:outputpanel>
+                    <apex:outputpanel layout="block" rendered="{!IF((countSubscribedToMe == 0),false,true)}">
+                        <table>
+                            <tr>
+                                <td valign="top" width="25" align="center"><img src="{!URLFOR($Resource.PeopleResourceFiles, 'images/layout/icons/user_rss.gif')}" alt="{!Profile.FirstName}'s Suscribers" /></td>
+                                <td valign="top"><a href="/apex/PeopleList?type=SubscribesToMe&id={!ProfileUserId}">{!countSubscribedToMe} subscribers to {!Profile.FirstName}'s updates</a></td>
+                            </tr>
+                        </table>
+                    </apex:outputpanel>     
+                </div>
+            </div>
+            <div class="bottom_borders"><div><div></div></div></div>
         </apex:outputpanel>
-        <script>
-    	
-		document.observe("dom:loaded", checkNetwork);
-        
-        function  checkNetwork(){
-        	var lis = $$('.other_networks')[0].getElementsByTagName('li');
-			lis[lis.length - 1].style.borderBottom='none';
-		}	 
-    	</script>
         <!-- Additional Networks -->
-		<div class="teamWidget mySmallWidget" style="{!IF(showOtherNetworks,'','display:none')};">
-			<!-- Widget Title -->		
-			<div class="thinHeader">
-				<div><div><h4>Additional Networks</h4></div></div>
-			</div>
-			<!-- Widget Container -->   		
-			<div class="box_content">
-				<div class="thinBody">
+        <div class="box_round_blue" style="{!IF(showOtherNetworks,'','display:none')};">
+            <!-- Header -->
+            <div class="header">
+                <div><div><h3>Additional Networks</h3></div></div>
+            </div>
+            <!-- Rounded Box Content -->
+            <div class="box_content">
+                <div class="contentHolder">
                     <ul class="other_networks">
-                        <apex:repeat value="{!otherNetworks}" var="net" >
+                        <apex:repeat value="{!otherNetworks}" var="net">
                             <li style="{!IF((net.Link == ''),'display:none;','')}"><a href="{!net.Link}" target="_blank"><img src="{!URLFOR($Resource.PeopleResourceFiles, '/images/people_profile/')}net_{!net.NetName}.gif" alt="" /></a></li>
                         </apex:repeat>
                     </ul>                   
-				</div>				
-			</div>
-			<!-- Widget Holder Foot -->
-			<div class="bottom_borders">
-				<div><div></div></div>
-			</div>
-		</div>
-		<div class="clear"></div>
+                </div>
+            </div>
+            <div class="bottom_borders"><div><div></div></div></div>
+        </div>          
     </div>
     <!-- Main Content Div -->
     <div class="main_content">      
@@ -279,9 +329,9 @@
                     <!-- Photo -->                  
                     <div class="photo">
                         <div class="photoWrapper_98px">
-                        	<apex:outputPanel >
-                        		<img src="{!IF((Picture != ''), Picture, URLFOR($Resource.PeopleResourceFiles, 'images/layout/user.gif'))}"  alt="{!Profile.Name}" width="98" />
-                        	</apex:outputPanel> 
+                        	<apex:outputPanel rendered="{!IF((Picture == null) ,'true','false')}"><img src="{!URLFOR($Resource.PeopleResourceFiles, 'images/layout/user.gif')}" alt="{!Profile.Name}" width="98" /></apex:outputPanel> 
+							<apex:outputPanel rendered="{!IF((Picture == null) ,'false','true')}"><img src="{!Picture}" width="98" alt="{!Profile.Name}" title="{!Profile.Name}"  /></apex:outputPanel>	
+                            
                         </div>
                         <apex:outputPanel styleClass="editlink" layout="block" rendered="{!isCurrentUser}">
                             <a href="peoplephotogallery?pid={!Profile.Id}" class="clear">Edit Photo</a>
@@ -290,403 +340,276 @@
                     <!-- Info -->
                     <div class="my_info full">
                         <div class="name_and_role" >
-							<h1>{!Profile.Name}</h1>                        
-							<apex:outputPanel rendered="{!IF((Profile.Title == null),'false','true')}">
-								<h2>{!Profile.Title}</h2>
-							</apex:outputPanel>	                                
+                                <h1>{!Profile.Name}</h1>                        
+                            	<apex:outputPanel rendered="{!IF((Profile.Title == null),'false','true')}">
+                               		<h2>{!Profile.Title}</h2>
+                                </apex:outputPanel>	                                
                         </div>
-                        <br/>
                         <!-- Profile Edition -->
                         <apex:outputPanel styleClass="mylinks" layout="block" rendered="{!isCurrentUser}">
-                            <a href="PeopleEditProfile?id={!Profile.UserId}" class="f_left" alt="Edit Photo">Edit</a>
-                        </apex:outputPanel> 
-                        <apex:outputPanel styleClass="mylinks" layout="block" rendered="{!isCurrentUser}">
-                            <c:PeopleMakePublicPrivateProfile />
+                            <a href="PeopleEditProfile?id={!Profile.UserId}" alt="Edit Photo">Edit</a>
                         </apex:outputPanel> 
                         <apex:outputPanel styleClass="mylinks" layout="block" rendered="{!IF(!isCurrentUser,true,false)}">
-                           	<apex:outputPanel layout="block" rendered="{!displayInfo}">
-                            	<c:PeopleSuscribe subscribeId="{!ProfileUserId}"/>
-                           	</apex:outputPanel>    
+                            <c:PeopleSuscribe subscribeId="{!ProfileUserId}"/>
                         </apex:outputPanel>      
+                 
                     </div>
                     <dl>
                         <dt {!IF((Profile.Department == ''),'style=\"display:none;\"','')}>Department:</dt>
                         <dd><a href="PeopleEditProfile?id={!Profile.UserId}">{!Profile.Department}</a>&nbsp;</dd>
                         <dt {!IF((Profile.Division == ''),'style=\"display:none;\"','')}>Division:</dt>
                         <dd><a href="PeopleEditProfile?id={!Profile.UserId}">{!Profile.Division}</a>&nbsp;</dd>                     
-                    </dl>
+                    </dl>               
+                </div>              
+                <!-- About Me -->
+                <div class="profileBlockTitle" style="{!IF(OR(isCurrentUser, showAboutMe),'','display:none')};">
+                    <h4>
+                        About <apex:outputPanel rendered="{!isCurrentUser}">Me</apex:outputPanel>
+                        <apex:outputPanel rendered="{!IF(!isCurrentUser,true,false)}">{!Profile.FirstName}</apex:outputPanel>
+                    </h4>
                 </div>
-                <apex:outputPanel layout="block" rendered="{!displayInfo}">       
-	                <!-- About Me -->
-	                <div class="profileBlockTitle" style="{!IF(OR(isCurrentUser, showAboutMe),'','display:none')};">
-	                	<h4>About <apex:outputPanel rendered="{!isCurrentUser}">Me</apex:outputPanel>
-	                    <apex:outputPanel rendered="{!IF(!isCurrentUser,true,false)}">{!Profile.FirstName}</apex:outputPanel></h4>
-	                    <apex:outputPanel styleClass="options" rendered="{!isCurrentUser}" layout="block">
-	                        <div class="button">
-	                            <a href="PeopleEditProfile?id={!Profile.UserId}">+ Edit Profile</a>
-	                        </div>
-		                </apex:outputPanel>
-	                </div>
-	                <div class="{!IF(isCurrentUser,'profile_section_editable','profile_section')}">
-	                    <apex:outputPanel layout="block" styleClass="editLink" rendered="{!isCurrentUser}">
-	                        <a href="PeopleEditProfile?id={!Profile.UserId}">Edit</a>
-	                    </apex:outputPanel>
-	                    <p>{!Profile.AboutMe}</p>
-	                </div>
-	                <!-- Direct Reports -->
-	                <div class="profileBlockTitle" style="{!IF(numberOfDirectReports == 0,'display:none;','')}">
-	                    <h4>Direct Reports</h4> &nbsp;({!numberOfDirectReports}) 
-	                    <div class="options">
-	                        <apex:outputPanel rendered="{!hasDirectReportsExpand}" layout="block">
-	                            <a href="javascript:;" id="expandReportsEvent" class="topRightLinks" onclick="expandReportsUl();">Expand</a>
-	                        </apex:outputPanel>
-	                    </div>
-	                </div>
-	                <div class="profile_section" style="{!IF(numberOfDirectReports == 0,'display:none;','')}">
-	                    <ul class="peopleList toogle" id="peopleList" >
-	                        <apex:repeat value="{!directReports}" var="p" first="0" >
-	                            <li>
-	                                <div class="photoWrapper_32px">
-	                                    <img src="{!IF(p.image != null, p.image, '/resource/1214683293000/TeamsResources/images/layout/icons/no_image_small.gif')}" alt="" width="32" />
-	                                </div>
-	                                <div class="status">
-	                                    <apex:outputLink value="PeopleProfileDisplay" style="oveflow:hidden;">
-	                                        <apex:param name="id" value="{!p.person.User__r.Id}"/>
-	                                        {!p.person.User__r.Name}
-	                                    </apex:outputLink>
+                <div class="{!IF(isCurrentUser,'profile_section_editable','profile_section')}">
+                    <apex:outputPanel layout="block" styleClass="editLink" rendered="{!isCurrentUser}">
+                        <a href="PeopleEditProfile?id={!Profile.UserId}">Edit</a>
+                    </apex:outputPanel>
+                    <p>{!Profile.AboutMe}</p>
+                </div>
+                <!-- Direct Reports -->
+                <div class="profileBlockTitle" style="{!IF(numberOfDirectReports == 0,'display:none;','')}">
+                    <h4>Direct Reports</h4> &nbsp;({!numberOfDirectReports}) 
+                    <div class="options">
+                        <apex:outputPanel rendered="{!hasDirectReportsExpand}" layout="block">
+                            <a href="javascript:;" id="expandReportsEvent" class="topRightLinks" onclick="expandReportsUl();">Expand</a>
+                        </apex:outputPanel>
+                    </div>
+                </div>
+                <div class="profile_section" style="{!IF(numberOfDirectReports == 0,'display:none;','')}">
+                
+                    <ul class="peopleList toogle" id="peopleList" >
+                        <apex:repeat value="{!directReports}" var="p" first="0" >
+                            <li>
+                                <div class="photoWrapper_32px">
+                                    <img src="{!IF(p.image != null, p.image, '/resource/1214683293000/TeamsResources/images/layout/icons/no_image_small.gif')}" alt="" width="32" />
+                                </div>
+                                
+                                <div class="status">
+                                    <apex:outputLink value="PeopleProfileDisplay" style="oveflow:hidden;">
+                                        <apex:param name="id" value="{!p.person.User__r.Id}"/>
+                                        {!p.person.User__r.Name}
+                                    </apex:outputLink>
                                         <span style="color:#666666;font-size:11px;">
                                         {!p.person.User__r.Division}
-                                        </span><br />
-	                                </div>
-	                            </li>
-	                        </apex:repeat>
-	                    </ul>
-	                </div><!-- Direct Reports END -->
-                	<!-- Reporting Manager -->
-	                <div class="profileBlockTitle" style="{!IF(displayManager,'','display:none;')}">
-	                    <h4>Reporting Manager</h4>
-	                </div>
-	                <div class="profile_section" style="{!IF(displayManager,'','display:none;')}">
-	                    <ul class="peopleList">
-	                        <li>
-	                            <div class="photoWrapper_32px">
-	                                <img src="{!IF(Manager.image != null, Manager.image, '/resource/1214683293000/TeamsResources/images/layout/icons/no_image_small.gif')}" alt="" width="32" />
-	                            </div>
-	                            <div class="status">
-	                                <apex:outputLink value="Peopleprofiledisplay" style="text-decoration:none; oveflow:hidden;">
-	                                    <apex:param name="id" value="{!Manager.person.User__r.Id}"/>
-	                                    {!Manager.person.User__r.Name}
-	                                </apex:outputLink> 
-	                                <br />{!Manager.person.User__r.Title} 
-	                            </div>                          
-	                        </li>                   
-	                    </ul>
-	                </div>
-	                <!-- Activities -->
-	                <div class="profileBlockTitle" style="{!IF(OR(isCurrentUser, showMiniFeeds),'','display:none')};">
-	                    <h4>{!Profile.FirstName}'s Updates</h4>
-	                </div>
-	                <div class="profile_section">
-	                    <div class="linkContainer align-right" >
-	                       	<a href="peopleactivityfeed" class="topRightLinks" >See More&#187;</a>
-	                    </div>
-	                    <table class="minifeeds" cellpadding="0" cellspacing="0">
-	                        <apex:repeat value="{!miniFeeds}" var="miniFeed">
-	                            <tr style="{!IF((miniFeed.FeedDateClass == 'miniFeedDate_empty'),'display:none', '' )}">
-	                                <td class="date blue weight_bold" colspan="2">{!miniFeed.FeedDateString}</td>
-	                            </tr>
-	                            <tr>
-	                                <td class="feed_type {!miniFeed.TypeOfFeed}"></td>
-	                                <td>
-	                                	<a href="/apex/PeopleProfileDisplay?id={!miniFeed.User}" class="weight_bold">
-	                                		<apex:outputText escape="false" value="{!miniFeed.Name}" />
-	                                	</a>&nbsp;<apex:outputText escape="false" value="{!miniFeed.Message}" />
-	                                </td>                     
-	                            </tr>                
-	                        </apex:repeat>
-	                    </table>
-	                </div>
-	                
-	                <!-- Competencies -->
-	                <apex:outputpanel rendered="{!NOT(isCurrentUser)}">
-		                <div class="profileBlockTitle">
-		                    <h4>Competencies</h4>
-		                    <apex:outputPanel styleClass="options" rendered="{!isCurrentUser}" layout="block">
-		                        <div class="button">
-		                        	<a href="peopleeditcompetency" >+ New Competency</a>
-		                        </div>
-		                    </apex:outputPanel>
-		                </div>
-		                <div class="profile_section">
-		                	<apex:outputpanel rendered="{!competenciesNumber==0}">
-						    	<div>No competencies found</div><br/>
-							</apex:outputpanel>
-							<apex:outputpanel rendered="{!competenciesNumber>0}">
-								 <div class="competencies_container">
-				                    <table class="competencies" cellspacing="0" cellpadding="0" width="100%">
-				                        <thead>
-				                            <tr>
-				                                <th width="50%">Name</th>
-				                                <th width="15%">Rating</th>
-				                                <th width="15%">Scale</th>
-				                            </tr>
-				                        </thead>
-				                        <apex:repeat value="{!competencies}" var="competency" >
-					                        <tr id="{!competency.Id}">
-					                            <td class="name" style="overflow:hidden;">{!competency.Competency__r.Name}</td>
-					                            <td>{!competency.Rating__c}</td>
-					                            <td>1/10</td>
-					                        </tr>
-				                        </apex:repeat>
-				                    </table>
-				                </div>
-				        	</apex:outputpanel>        
-		                </div>
-	                </apex:outputpanel>
-	                <!-- Competencies END-->
-	                <!-- Experience -->
-	                <apex:outputpanel rendered="{!isCurrentUser}">
-		                <div class="profileBlockTitle" style="{!IF(OR(isCurrentUser, showEmploymentHistories),'','display:none')};">
-		                    <h4>Experience</h4>
-		                    <apex:outputPanel styleClass="options" rendered="{!isCurrentUser}" layout="block">
-		                        <div class="button">
-		                        	<a href="peopleEditEmploymentHistory" >+ Add Experience</a>
-		                        </div>
-		                    </apex:outputPanel>
-		                </div>
-		                <div class="profile_section">
-		                    <dl class="{!IF(isCurrentUser,'experience_editable','experience')}">
-			                    <apex:repeat value="{!employmentHistories}" var="employ">
-			                        <dt>
-			                            <span class="title">{!employ.Position}</span> at <span class="title"><a href="/apex/PeopleKeywordSearchResults?keyword={!employ.Name}">{!employ.Name}</a></span>
-			                            <br />
-			                            <span class="period" style="color:#000000">{!employ.WorkedFrom} - {!employ.WorkedTo}</span>
-			                            <apex:outputPanel styleClass="editLink" rendered="{!isCurrentUser}" layout="block" >
-			                                <a href="peopleEditEmploymentHistory?id={!employ.Id}">Edit</a>
-			                            </apex:outputPanel>
-			                        </dt>
-			                        <dd style="color:#666666">{!employ.Description}</dd>
-			                    </apex:repeat>
-		                    </dl>
-		                </div>
-		            </apex:outputpanel>                
-	                <!-- Education -->
-	                <apex:outputpanel rendered="{!isCurrentUser}">
-		                <div class="profileBlockTitle" style="{!IF(OR(isCurrentUser, showEducationHistories),'','display:none')};">
-		                    <h4>Education</h4>
-		                    <apex:outputPanel styleClass="options" rendered="{!isCurrentUser}" layout="block">
-		                        <div class="button">
-		                            <a href="peopleEditEducationHistory">+ Add Education</a>
-		                        </div>
-		                    </apex:outputPanel>
-		                </div>
-		                <div class="profile_section">
-		                    <ul class="{!IF(isCurrentUser,'education_edit','education')}">
-			                    <apex:repeat value="{!educationHistories}" var="education">
-			                        <li>
-			                            <apex:outputPanel styleClass="editLink" layout="block" rendered="{!isCurrentUser}" ><a href="peopleediteducationhistory?id={!education.Id}">Edit</a></apex:outputPanel>
-			                            <a href="/apex/PeopleKeywordSearchResults?keyword={!education.School}">{!education.School}</a><br />
-			                            {!education.Degree} of {!education.FieldsOfStudy}, {!education.DateAttendedFrom} - {!education.DateAttendedTo}
-			                        </li>
-			                    </apex:repeat>                      
-		                    </ul>
-		                </div>
-		             </apex:outputpanel>   
-	        	</apex:outputPanel>
-	        </div>
-        </div>
-    </div>   
-                   
+                                        </span>
+                                    <br />
+                                </div>
+                            </li>                                    
+                        </apex:repeat>
+                    </ul>
+                    
+                </div><!-- Direct Reports END -->
+                <!-- Reporting Manager -->
+                <div class="profileBlockTitle" style="{!IF(displayManager,'','display:none;')}">
+                    <h4>Reporting Manager</h4>
+                </div>
+                <div class="profile_section" style="{!IF(displayManager,'','display:none;')}">
+                    <ul class="peopleList">
+                        <li>
+                            <div class="photoWrapper_32px">
+                                <img src="{!IF(Manager.image != null, Manager.image, '/resource/1214683293000/TeamsResources/images/layout/icons/no_image_small.gif')}" alt="" width="32" />
+                            </div>
+                            <div class="status">
+                                <apex:outputLink value="Peopleprofiledisplay" style="text-decoration:none; oveflow:hidden;">
+                                    <apex:param name="id" value="{!Manager.person.User__r.Id}"/>
+                                    {!Manager.person.User__r.Name}
+                                </apex:outputLink> 
+                                <br />{!Manager.person.User__r.Title} 
+                            </div>                          
+                        </li>                   
+                    </ul>
+                </div>
+                
+                <!-- Activities -->
+                <div class="profileBlockTitle" style="{!IF(OR(isCurrentUser, showMiniFeeds),'','display:none')};">
+                    <h4>{!Profile.FirstName}'s Updates</h4>
+                </div>
+                <div class="profile_section">
+                    <div class="linkContainer align-right" >
+                        <a href="peopleactivityfeed" class="topRightLinks" >See More&#187;</a>
+                    </div>
+                    <table class="minifeeds" cellpadding="0" cellspacing="0">
+                        <apex:repeat value="{!miniFeeds}" var="miniFeed">
+                            <tr style="{!IF((miniFeed.FeedDateClass == 'miniFeedDate_empty'),'display:none', '' )}">
+                                <td class="date blue weight_bold" colspan="2">{!miniFeed.FeedDateString}</td>
+                            </tr>
+                            <tr>
+                                <td class="feed_type {!miniFeed.TypeOfFeed}"></td><td><a href="/apex/PeopleProfileDisplay?id={!miniFeed.User}" class="weight_bold"><apex:outputText escape="false" value="{!miniFeed.Name}" /></a>&nbsp;<apex:outputText escape="false" value="{!miniFeed.Message}" /></td>                     
+                            </tr>                
+                        </apex:repeat>
+                    </table>
+                </div>
+                <!-- Experience -->
+                <div class="profileBlockTitle" style="{!IF(OR(isCurrentUser, showEmploymentHistories),'','display:none')};">
+                    <h4>Experience</h4>
+                    <apex:outputPanel styleClass="options" rendered="{!isCurrentUser}" layout="block">
+                        <div class="button">
+                                <a href="peopleEditEmploymentHistory" >+ Add Experience</a>
+                        </div>
+                    </apex:outputPanel>
+                </div>
+                <div class="profile_section">
+                    <dl class="{!IF(isCurrentUser,'experience_editable','experience')}">
+                    <apex:repeat value="{!employmentHistories}" var="employ">
+                        <dt>
+                            <span class="title">{!employ.Position}</span> at <span class="title"><a href="/apex/PeopleKeywordSearchResults?keyword={!employ.Name}">{!employ.Name}</a></span>
+                            <br />
+                            <span class="period" style="color:#000000">{!employ.WorkedFrom} - {!employ.WorkedTo}</span>
+                            <apex:outputPanel styleClass="editLink" rendered="{!isCurrentUser}" layout="block" >
+                                <a href="peopleEditEmploymentHistory?id={!employ.Id}">Edit</a>
+                            </apex:outputPanel>
+                        </dt>
+                        <dd style="color:#666666">{!employ.Description}</dd>
+                    </apex:repeat>
+                    </dl>
+                </div>              
+                <!-- Education -->
+                <div class="profileBlockTitle" style="{!IF(OR(isCurrentUser, showEducationHistories),'','display:none')};">
+                    <h4>Education</h4>
+                    <apex:outputPanel styleClass="options" rendered="{!isCurrentUser}" layout="block">
+                        <div class="button">
+                            <a href="peopleEditEducationHistory">+ Add Education</a>
+                        </div>
+                    </apex:outputPanel>
+                </div>
+                <div class="profile_section">
+                    <ul class="{!IF(isCurrentUser,'education_edit','education')}">
+                    <apex:repeat value="{!educationHistories}" var="education">
+                        <li>
+                            <apex:outputPanel styleClass="editLink" layout="block" rendered="{!isCurrentUser}" ><a href="peopleediteducationhistory?id={!education.Id}">Edit</a></apex:outputPanel>
+                            <a href="/apex/PeopleKeywordSearchResults?keyword={!education.School}">{!education.School}</a><br />
+                            {!education.Degree} {!education.FieldsOfStudy}, {!education.DateAttendedFrom} - {!education.DateAttendedTo}
+                        </li>
+                    </apex:repeat>                      
+                    </ul>
+                </div>
+            </div>      
+        </div>  
+    </div>                  
     <!-- Widget Cool -->
-    <div class="rightCol" id="right_people">
-    	<apex:outputPanel layout="block" rendered="{!displayInfo}"> 
-	    	<div class="teamWidget mySmallWidget" >
-				<!-- Widget Title -->		
-				<div class="thinHeader">
-					<div><div><h4>Contact Info</h4></div></div>
-				</div>
-				<!-- Widget Container -->   		
-				<div class="box_content">
-					<!-- Widget Links Holder -->
-					<div class="thinWidgetLinkAction">
-						<apex:outputPanel rendered="{!isCurrentUser}"><a class="edit" href="PeopleEditProfile?id={!Profile.UserId}">Edit</a></apex:outputPanel>
-					</div>
-					<div class="thinBody collapsable">
-						<div class="contentHolder">
-		                    <dl class="contact_info" {!IF(( (Profile.Email == '') && (Profile.Phone == '') && (Profile.MobilePhone == '') && (Profile.Fax == '')),'style=\"display:none;\"','')} >
-		                        <dt {!IF((Profile.Email == ''),'style=\"display:none;\"','')} >Email address:</dt>
-		                        <dd {!IF((Profile.Email == ''),'style=\"display:none;\"','')}><script>trunkText('{!Profile.Email}', 25);</script>&nbsp;</dd>
-		                        <dt {!IF((Profile.Phone == ''),'style=\"display:none;\"','')}>Business Phone:</dt>
-		                        <dd {!IF((Profile.Phone == ''),'style=\"display:none;\"','')}>{!Profile.Phone}&nbsp;</dd>
-		                        <dt {!IF((Profile.MobilePhone == ''),'style=\"display:none;\"','')}>Mobile Phone:</dt>
-		                        <dd {!IF((Profile.MobilePhone == ''),'style=\"display:none;\"','')}>{!Profile.MobilePhone}&nbsp;</dd>
-		                        <dt {!IF((Profile.Fax == ''),'style=\"display:none;\"','')}>Business fax:</dt>
-		                        <dd {!IF((Profile.Fax == ''),'style=\"display:none;\"','')}>{!Profile.Fax}&nbsp;</dd>
-		                    </dl>
-	                    	<div class="widget_divisor" {!IF(( (Profile.YahooIM == '') && (Profile.Skype == '') && (Profile.Aol == '') && (Profile.Gtalk == '')),'style=\"display:none;\"','')} ></div>
-		                    <dl class="contact_info" >
-		                        <dt {!IF((Profile.YahooIM == ''),'style=\"display:none;\"','')}>Yahoo IM:</dt> 
-		                        <dd {!IF((Profile.YahooIM == ''),'style=\"display:none;\"','')}>
-		                            <apex:outputPanel rendered="{!IF((Profile.YahooIM != null),'true','false')}" >
-		                                <a href="http://edit.yahoo.com/config/send_webmesg?.target={!Profile.YahooIM}&.src=pg"><img src="http://opi.yahoo.com/online?u={!Profile.YahooIM}" /></a> (<script>trunkText('{!Profile.YahooIM}', 18);</script>)
-		                            </apex:outputPanel> &nbsp;</dd>
-		                        <dt {!IF((Profile.Skype == ''),'style=\"display:none;\"','')}>Skype:</dt>
-		                        <dd {!IF((Profile.Skype == ''),'style=\"display:none;\"','')}>
-		                            <apex:outputPanel rendered="{!IF((Profile.Skype != null),'true','false')}" >
-		                                <a href="skype:{!Profile.Skype}?call"><img src="http://mystatus.skype.com/smallicon/{!Profile.Skype}" style="border: none;" width="16" height="16" alt="My status" /></a> (<script>trunkText('{!Profile.Skype}', 18)</script>)                              
-		                            </apex:outputPanel>&nbsp;
-		                        </dd>
-		                        <!--<dt {!IF((Profile.Aol == ''),'style=\"display:none;\"','')} >AIM:</dt>
-		                        <dd {!IF((Profile.Aol == ''),'style=\"display:none;\"','')} class="aim"><apex:outputPanel rendered="{!IF((Profile.Aol != null),'true','false')}" >
-		                            Available (<a href="{!Profile.Aol}"><script>trunkText('{!Profile.Aol}', 16)</script></a>)</apex:outputPanel>&nbsp;</dd>
-		                        <dt {!IF((Profile.Gtalk == ''),'style=\"display:none;\"','')} >Gtalk:</dt> 
-		                        <dd {!IF((Profile.Gtalk == ''),'style=\"display:none;\"','')} class="gtalk"><apex:outputPanel rendered="{!IF((Profile.Gtalk != null),'true','false')}" >
-		                            Available (<a href="{!Profile.Gtalk}"><script>trunkText('{!Profile.Gtalk}', 16)</script></a>)</apex:outputPanel>&nbsp;
-		                        </dd>-->
-		                    </dl>
-	                    	<div class="clear"></div>
-	                    	<div {!IF((Profile.BussinessAddress == ''),'style=\"display:none;\"','')} class="widget_divisor"></div>
-		                    <dl class="contact_info">
-		                        <dt {!IF((Profile.BussinessAddress == ''),'style=\"display:none;\"','')}>Bussiness Address:</dt>
-		                        <dd {!IF((Profile.BussinessAddress == ''),'style=\"display:none;\"','')}><apex:outputText escape="false" value="{!Profile.BussinessAddress}"></apex:outputText></dd>
-		                    </dl>
-	                	</div>
-					</div>				
-				</div>
-				<!-- Widget Holder Foot -->
-				<div class="bottom_borders">
-					<div><div></div></div>
-				</div>
-			</div>
-			<div class="clear"></div>
-	        <!-- Competency info Box -->
-	        <apex:outputpanel rendered="{!isCurrentUser}">
-		        <div class="teamWidget mySmallWidget" >
-					<!-- Widget Title -->		
-					<div class="thinHeader">
-						<div><div><h4>Competencies</h4></div></div>
-					</div>
-					<!-- Widget Container -->   		
-					<div class="box_content">
-						<div class="thinWidgetLinkAction">
-							<apex:outputPanel rendered="{!isCurrentUser}"><a class="edit" href="peopleeditcompetency">New</a></apex:outputPanel>
-						</div>
-						<div class="thinBody collapsable">
-							<apex:outputpanel rendered="{!competenciesNumber==0}">
-						    	<div style="margin:5px;">No competencies found</div>
-							</apex:outputpanel>
-					    	<apex:outputpanel rendered="{!competenciesNumber>0}">
-								 <div class="competencies_container">
-				                    <table class="competencies" cellspacing="0" cellpadding="0">
-				                        <thead>
-				                            <tr>
-				                                <th width="20%"></th>
-				                                <th width="50%">Name</th>
-				                                <th width="15%">Rating</th>
-				                                <th width="15%">Scale</th>
-				                            </tr>
-				                        </thead>
-				                        <apex:repeat value="{!competencies}" var="competency" >
-					                        <tr id="{!competency.Id}">
-					                            <td><apex:outputPanel rendered="{!isCurrentUser}"><a href="peopleeditcompetency?id={!competency.Id}"><img src="{!URLFOR($Resource.PeopleResourceFiles, 'images/layout/icons/pencil.gif')}" alt="Edit" title="Edit"></a>&nbsp;&nbsp;<a href="javascript:;" onclick="deleteCompetencyDialog('{!competency.Id}');"><img src="{!URLFOR($Resource.PeopleResourceFiles, 'images/layout/icons/cross.gif')}" alt="Delete" title="Delete"></a></apex:outputPanel></td>
-					                            <td class="name" style="overflow:hidden;">{!competency.Competency__r.Name}</td>
-					                            <td>{!competency.Rating__c}</td>
-					                            <td>1/10</td>
-					                        </tr>
-				                        </apex:repeat>
-				                    </table>
-				                </div>
-				        	</apex:outputpanel>        
-						</div>				
-					</div>
-					<!-- Widget Holder Foot -->
-					<div class="bottom_borders">
-						<div><div></div></div>
-					</div>
-				</div>
-			</apex:outputpanel>
-			<!--Experience Widget-->
-			<apex:outputpanel rendered="{!NOT(isCurrentUser)}">
-		        <div class="teamWidget mySmallWidget" >
-					<!-- Widget Title -->		
-					<div class="thinHeader">
-						<div><div><h4>Experience</h4></div></div>
-					</div>
-					<!-- Widget Container -->   		
-					<div class="box_content">
-						<div class="thinWidgetLinkAction">
-						</div>
-						<div class="thinBody collapsable">
-							<apex:outputpanel rendered="{!employmentListSize==0}">
-						    	<div style="margin:5px;">No experience found</div>
-							</apex:outputpanel>
-							<div class="contentHolder">
-					        	<ul class="teamspaces">
-					        		<apex:repeat value="{!employmentHistories}" var="employ">
-										<li>
-											<span class="employTitle">{!employ.Position}</span><br/> at 
-											<span><a href="/apex/PeopleKeywordSearchResults?keyword={!employ.Name}">{!employ.Name}</a></span>
-						                    ({!employ.WorkedFrom} - {!employ.WorkedTo})
-										</li>
-					            	</apex:repeat>
-					            </ul>
-					        </div>      
-						</div>				
-					</div>
-					<!-- Widget Holder Foot -->
-					<div class="bottom_borders">
-						<div><div></div></div>
-					</div>
-				</div>
-			</apex:outputpanel>
-			<!-- Experience Widget END -->
-			<!-- Education Widget Widget-->
-			<apex:outputpanel rendered="{!NOT(isCurrentUser)}">
-		        <div class="teamWidget mySmallWidget" >
-					<!-- Widget Title -->		
-					<div class="thinHeader">
-						<div><div><h4>Education</h4></div></div>
-					</div>
-					<!-- Widget Container -->   		
-					<div class="box_content">
-						<div class="thinWidgetLinkAction">
-						</div>
-						<div class="thinBody collapsable">
-							<apex:outputpanel rendered="{!NOT(ShowEducationHistories)}">
-						    	<div style="margin:5px;">No education found</div>
-							</apex:outputpanel>
-							<div class="contentHolder">
-					        	<ul class="teamspaces">
-					        		<apex:repeat value="{!educationHistories}" var="education">
-										<li>
-											<apex:outputLink value="/apex/PeopleKeywordSearchResults">
-						                    	{!education.School}
-						                    	<apex:param name="keyword" value="{!education.School}" />
-						                    </apex:outputLink><br />
-						                    <strong>
-						                        {!education.Degree} of {!education.FieldsOfStudy}
-						                    </strong>
-						                    ({!education.DateAttendedFrom} - {!education.DateAttendedTo})
-										</li>
-					            	</apex:repeat>
-					            </ul>
-					        </div> 
-						</div>				
-					</div>
-					<!-- Widget Holder Foot -->
-					<div class="bottom_borders">
-						<div><div></div></div>
-					</div>
-				</div>
-			</apex:outputpanel>
-			<!-- Education Widget END -->
-			<div class="clear"></div>
-	        <!-- Teamspaces Box -->
-	        <c:PeopleProfileTeamWidget />
-	    </apex:outputPanel>
+    <div class="rightCol" id="rightCol">        
+        <!-- Contact Info Box -->
+        <div class="box_round">
+            <!-- Header -->
+            <div class="header {!IF(isCurrentUser,'edition','')}">
+                <div><div><h4>Contact Info</h4><apex:outputPanel rendered="{!isCurrentUser}"><a class="edit" href="PeopleEditProfile?id={!Profile.UserId}">Edit</a></apex:outputPanel></div></div>
+            </div>
+            <!-- Rounded Box Content -->
+            <div class="box_content">
+                <div class="contentHolder">
+                    <dl class="contact_info" {!IF(( (Profile.Email == '') && (Profile.Phone == '') && (Profile.MobilePhone == '') && (Profile.Fax == '')),'style=\"display:none;\"','')} >
+                        <dt {!IF((Profile.Email == ''),'style=\"display:none;\"','')} >Email address:</dt>
+                        <dd {!IF((Profile.Email == ''),'style=\"display:none;\"','')}><script>trunkText('{!Profile.Email}', 25);</script>&nbsp;</dd>
+                        <dt {!IF((Profile.Phone == ''),'style=\"display:none;\"','')}>Business Phone:</dt>
+                        <dd {!IF((Profile.Phone == ''),'style=\"display:none;\"','')}>{!Profile.Phone}&nbsp;</dd>
+                        <dt {!IF((Profile.MobilePhone == ''),'style=\"display:none;\"','')}>Mobile Phone:</dt>
+                        <dd {!IF((Profile.MobilePhone == ''),'style=\"display:none;\"','')}>{!Profile.MobilePhone}&nbsp;</dd>
+                        <dt {!IF((Profile.Fax == ''),'style=\"display:none;\"','')}>Business fax:</dt>
+                        <dd {!IF((Profile.Fax == ''),'style=\"display:none;\"','')}>{!Profile.Fax}&nbsp;</dd>
+                    </dl>
+                    <div class="widget_divisor" {!IF(( (Profile.YahooIM == '') && (Profile.Skype == '') && (Profile.Aol == '') && (Profile.Gtalk == '')),'style=\"display:none;\"','')} ></div>
+                    <dl class="contact_info" >
+                        <dt {!IF((Profile.YahooIM == ''),'style=\"display:none;\"','')}>Yahoo IM:</dt> 
+                        <dd {!IF((Profile.YahooIM == ''),'style=\"display:none;\"','')}>
+                            <apex:outputPanel rendered="{!IF((Profile.YahooIM != null),'true','false')}" >
+                                <a href="http://edit.yahoo.com/config/send_webmesg?.target={!Profile.YahooIM}&.src=pg"><img src="http://opi.yahoo.com/online?u={!Profile.YahooIM}" /></a> (<script>trunkText('{!Profile.YahooIM}', 18);</script>)
+                            </apex:outputPanel> &nbsp;</dd>
+                        <dt {!IF((Profile.Skype == ''),'style=\"display:none;\"','')}>Skype:</dt>
+                        <dd {!IF((Profile.Skype == ''),'style=\"display:none;\"','')}>
+                            <apex:outputPanel rendered="{!IF((Profile.Skype != null),'true','false')}" >
+                                <a href="skype:{!Profile.Skype}?call"><img src="http://mystatus.skype.com/smallicon/{!Profile.Skype}" style="border: none;" width="16" height="16" alt="My status" /></a> (<script>trunkText('{!Profile.Skype}', 18)</script>)                              
+                            </apex:outputPanel>&nbsp;
+                        </dd>
+                        <!--<dt {!IF((Profile.Aol == ''),'style=\"display:none;\"','')} >AIM:</dt>
+                        <dd {!IF((Profile.Aol == ''),'style=\"display:none;\"','')} class="aim"><apex:outputPanel rendered="{!IF((Profile.Aol != null),'true','false')}" >
+                            Available (<a href="{!Profile.Aol}"><script>trunkText('{!Profile.Aol}', 16)</script></a>)</apex:outputPanel>&nbsp;</dd>
+                        <dt {!IF((Profile.Gtalk == ''),'style=\"display:none;\"','')} >Gtalk:</dt> 
+                        <dd {!IF((Profile.Gtalk == ''),'style=\"display:none;\"','')} class="gtalk"><apex:outputPanel rendered="{!IF((Profile.Gtalk != null),'true','false')}" >
+                            Available (<a href="{!Profile.Gtalk}"><script>trunkText('{!Profile.Gtalk}', 16)</script></a>)</apex:outputPanel>&nbsp;
+                        </dd>-->
+                    </dl>               
+                    <div {!IF((Profile.BussinessAddress == ''),'style=\"display:none;\"','')} class="widget_divisor"></div>
+                    <dl class="contact_info">
+                        <dt {!IF((Profile.BussinessAddress == ''),'style=\"display:none;\"','')}>Bussiness Address:</dt>
+                        <dd {!IF((Profile.BussinessAddress == ''),'style=\"display:none;\"','')}>{!Profile.BussinessAddress}</dd>
+                    </dl>               
+                </div>
+            </div>
+            <div class="bottom_borders"><div><div></div></div></div>
+        </div>
+        
+        
+        
+        <!-- Competency info Box -->
+        <div class="box_round">
+            <!-- Header -->
+            <div class="header {!IF(isCurrentUser,'edition','')}">
+                <div><div><h4>Competencies</h4><apex:outputPanel rendered="{!isCurrentUser}"><a class="edit" href="peopleeditcompetency">New</a></apex:outputPanel></div></div>
+            </div>
+            <!-- Rounded Box Content -->
+            <div class="box_content">
+                <div class="competencies_container">
+                    <table class="competencies" cellspacing="0" cellpadding="0">
+                        <thead>
+                            <tr>
+                                <th width="50%">Name</th>
+                                <th width="15%">Rating</th>
+                                <th width="15%">Scale</th>
+                                <th width="20%"></th>
+                            </tr>
+                        </thead>
+                        <apex:repeat value="{!competencies}" var="competency" >
+                        <tr id="{!competency.Id}">
+                            <td class="name" style="overflow:hidden;">{!competency.Competency__r.Name}</td>
+                            <td>{!competency.Rating__c}</td>
+                            <td>1/10</td>
+                            <td><apex:outputPanel rendered="{!isCurrentUser}"><a href="peopleeditcompetency?id={!competency.Id}"><img src="{!URLFOR($Resource.PeopleResourceFiles, 'images/layout/icons/pencil.gif')}" alt="Edit" title="Edit"></a>&nbsp;&nbsp;<a href="javascript:;" onclick="deleteCompetencyDialog('{!competency.Id}');"><img src="{!URLFOR($Resource.PeopleResourceFiles, 'images/layout/icons/cross.gif')}" alt="Delete" title="Delete"></a></apex:outputPanel></td>
+                        </tr>
+                        </apex:repeat>
+                        
+                    </table>
+                </div>  
+            </div>
+            <div class="bottom_borders"><div><div></div></div></div>
+        </div>          
+        
+        <!-- Teamspaces Box -->
+        <div class="box_round">
+            <!-- Header -->
+            <div class="header edition">
+                <div><div><h4>Teams</h4><a class="edit" href="/apex/TeamsOverview">See More&#187;</a></div></div>
+            </div>
+            <!-- Rounded Box Content -->
+            <div class="box_content">
+                <div class="contentHolder">
+                    <ul class="teamspaces">
+                    <apex:repeat value="{!teamspaces}" var="team">
+                        <li>
+                            <apex:outputLink value="TeamsRedirect">
+                                {!team.Name}
+                                <apex:param name="id" value="{!team.Id}" />
+                            </apex:outputLink><br />
+                            <strong>
+                                <script>trunkText('{!team.Description}', 25);</script>
+                            </strong>
+                            ({!team.CreatedDate} - present)
+                        </li>
+                    </apex:repeat>
+                    </ul>
+                </div>  
+            </div>
+            <div class="bottom_borders"><div><div></div></div></div>
+        </div>
     </div>  
     <script>
         setTimeout('redim()', 500);
-		readPortalCSSRules();
     </script>
 </apex:page>

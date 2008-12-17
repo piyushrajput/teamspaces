@@ -1,58 +1,42 @@
-/**
-*@author: Virginia Jamardo @ 5-29-2008
-*/
 public class AdminMainSetupController {
 	
 	List<TeamTypes> types;
 	List<TeamProfile> profiles;
 	String oldIdProfile = null;
-	String newIdProfile = null;
-	String newIdProfileNewMember = null;
-	String newIdProfilePublicProfile = null; 
+	String newIdProfile = null;	
 	
-	/**
-	* Constructor
-	*/
 	public AdminMainSetupController(){
 		TeamUtil.isAdminMemberUser();
 		getTeamTypes ();
 		getTeamProfiles();
 	}
 	
-	/**
-	* Return the Namespace Prefix
-	*@return String namespace
-	*/
-	public String getNamespace () {
-        return TeamUtil.getNamespace();
-    } 
-	
-	/**
-	* Get 5 last TeamTypes order by CreatedDate.
-	*/
+	//********************************************************
+	//***************** Popular Team Types *****************
+	//********************************************************
+		
 	public void getTeamTypes(){
 		types = new List<TeamTypes>();
 		List<TeamType__c> teamTypeList = new List<TeamType__c>(); 
+		
 		teamTypeList = [select t.Id, t.CreatedById, t.CreatedDate, 
 						t.Name, t.PageName__c, t.IsActive__c
 						from TeamType__c t order by t.CreatedDate desc LIMIT 5];
+		
 		for (TeamType__c teamType : teamTypeList){
 			types.add (new TeamTypes(teamType));
 		}	
 	}
 	
+	
 	/**
-	* Returns TeamTypes list.
 	*@return List<TeamTypes>
 	*/
 	public List<TeamTypes> getTypes () {
 		return types;
 	}
 	
-	/**
-	* Class for TeamType__c formating.
-	*@author Nicolas Gunther 
-	*/
+	
 	public class TeamTypes {
 		
 		TeamType__c teamType = null;
@@ -62,8 +46,7 @@ public class AdminMainSetupController {
 		Boolean hasTeams = true;
 		
 		/**
-		* Constructor
-		*@param TeamType__c The TeamType__c instance
+		*@param TeamType__c
 		*/
 		public TeamTypes(TeamType__c teamType){
 			this.teamType = teamType;
@@ -73,7 +56,6 @@ public class AdminMainSetupController {
 		}
 		
 		/**
-		* Get current TeamType__c
 		*@return TeamType__c t
 		*/
 		public TeamType__c getTeamType (){
@@ -81,7 +63,6 @@ public class AdminMainSetupController {
 		}
 		
 		/**
-		* Get creator User instance
 		*@return String
 		*/		
 		public User getCreator (){
@@ -89,7 +70,6 @@ public class AdminMainSetupController {
 		}
 		
 		/**
-		* Get created date
 		*@return String
 		*/
 		public String getCreatedDate (){
@@ -97,7 +77,6 @@ public class AdminMainSetupController {
 		}
 		
 		/**
-		* Return number of teams
 		*@return Integer
 		*/
 		public Integer getTeams(){
@@ -105,7 +84,6 @@ public class AdminMainSetupController {
 		}
 		
 		/**
-		* Return true if has teams
 		*@return Boolean 
 		*/	
 		public Boolean getHasTeams(){
@@ -113,7 +91,7 @@ public class AdminMainSetupController {
 		}
 
 		/**
-		* Get creator name
+		*@void
 		*/
 		public void getCreatorName (){
 			User user = null;
@@ -122,7 +100,7 @@ public class AdminMainSetupController {
 		}
 		
 		/**
-		* Get number of teams
+		*@void
 		*/
 		public void getNumberOfTeams(){
 			this.teams = [select count() from Team__c t where t.TeamType__c =: teamType.Id];
@@ -131,127 +109,78 @@ public class AdminMainSetupController {
 		}
 	}
 	
+	//********************************************************
+	//***************** Team Profiles *****************
+	//********************************************************
+
+	
 	/**
-	* Set old TeamProfile__c Id
+	*@param String id
 	*/
 	public void setOldIdProfile (String id){
 		oldIdProfile = id;
 	}
 	
 	/**
-	* Returns old TeamProfile__c Id
-	*@return String Id
+	*@return String id
 	*/
 	public String getOldIdProfile (){
 		return oldIdProfile;
 	}
 	
 	/**
-	* Set new TeamProfile__c Id
-	*@param String Id
+	*@param String id
 	*/
 	public void setNewIdProfile (String id){
 		newIdProfile = id;
 	}
 	
 	/**
-	*@param id new member profile id
-	*/
-	public void setNewIdProfileNewMember (String id){
-		newIdProfileNewMember = id;
-	}
-	
-	/**
-	*@param id public profile id
-	*/
-	public void setNewIdProfilePublicProfile  (String id){
-		newIdProfilePublicProfile  = id;
-	}
-	
-	/**
-	* Returns new TeamProfile__c Id
-	*@return String Id
+	*@return String id
 	*/
 	public String getNewIdProfile (){
 		return newIdProfile;
-	}
+	}			
 	
 	/**
-	*@return new member profile id
-	*/
-	public String getNewIdProfileNewMember (){
-		return newIdProfileNewMember;
-	}	
-	
-	/**
-	*@return public profile id
-	*/
-	public String getNewIdProfilePublicProfile (){
-		return newIdProfilePublicProfile;
-	}		
-	
-	/**
-	* Read 5 last TeamProfile__c order by CreatedDate
+	*@void
 	*/
 	public void getTeamProfiles(){
 		profiles = new List<TeamProfile>();
 		List<TeamProfile__c> teamProfileList = new List<TeamProfile__c>(); 
 		teamProfileList = [select t.Id, t.CreatedById, t.CreatedDate, 
 						t.Name from TeamProfile__c t order by t.CreatedDate desc LIMIT 5];
+		
 		for (TeamProfile__c teamProfile : teamProfileList){
 			profiles.add (new TeamProfile(teamProfile));
 		}	
 	}
 	
+	
 	/**
-	* Returns TeamProfile list
-	*@return List<TeamProfile>
+	*@return List<TeamTypes>
 	*/
 	public List<TeamProfile> getProfiles () {
 		return profiles;
 	}
 	
 	/**
-	* Reasing users to other team profile
+	*Reasing users to other team profile
+	*@void
 	*/
 	public void reAssignUsers (){
-		
-		//users
 		List<TeamMember__c> members = new List<TeamMember__c>();
 		members = [select m.Id, m.TeamProfile__c from TeamMember__c m where m.TeamProfile__c =: oldIdProfile];
 		for (TeamMember__c m : members){
 			m.TeamProfile__c = newIdProfile;
 		}
-		
-		//newMemberProfile
-		List<Team__c> teamsNewMemProfile = new List<Team__c>();
-		teamsNewMemProfile = [select tnm.Id, tnm.NewMemberProfile__c from Team__c tnm where tnm.NewMemberProfile__c =: oldIdProfile];
-		for (Team__c tnm : teamsNewMemProfile){
-			tnm.NewMemberProfile__c = newIdProfileNewMember;
-		}
-		
-		//publicProfile
-		List<Team__c> teamsPublicProfile = new List<Team__c>();
-		teamsPublicProfile = [select tnm.Id, tnm.PublicProfile__c from Team__c tnm where tnm.PublicProfile__c =: oldIdProfile];
-		for (Team__c tnm : teamsPublicProfile){
-			tnm.PublicProfile__c = newIdProfilePublicProfile;
-		}
-		
-		
-		try{
-			update members;
-			update teamsNewMemProfile;
-			update teamsPublicProfile;
-			List<TeamProfile__c> oldProfile = [select Id, Name from TeamProfile__c where id=:this.getOldIdProfile()];
-			delete oldProfile;
-		}catch(DmlException e){
-			throw e;
-		}
+		update members;
 	}
 	
+	
+	
 	/**
-	* Class for TeamProfile__c formating.
-	*@author Virginia Jamardo
+	*@class::TeamProfile
 	*/
 	public class TeamProfile {
 		
@@ -299,9 +228,7 @@ public class AdminMainSetupController {
 		}	
 	}
 	
-	/**
-	* Load TeamProfile list and TeamType list
-	*/
+	
 	public void getAll(){
 		getTeamProfiles();
 		getTeamTypes();
