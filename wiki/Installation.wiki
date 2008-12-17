@@ -1,15 +1,23 @@
 #labels Featured,Phase-Deploy
 Copy and paste the url of the package into a browser's url window.
+Enter the username and password of the org in which you'd like to install the package.
 
 http://teamspaces.googlecode.com/svn/wiki/image/installation/step1.png
-
-Enter the username and password of the org in which you'd like to install the package.
 
 
 Click Next on the Package Installer's Step 1 Screen
 
+http://teamspaces.googlecode.com/svn/wiki/image/installation/step9.png
+
 Select "Grant access to all users" and click next
 
+
+http://teamspaces.googlecode.com/svn/wiki/image/installation/step10.png
+
 Click install. -Make sure "Ignore Apex test failures that may cause the installed application not to function properly." is checked.
+
+
+http://teamspaces.googlecode.com/svn/wiki/image/installation/step11.png
+
 
 Once the application has installed, the application tabs need to be override.
