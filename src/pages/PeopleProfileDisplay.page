@@ -77,15 +77,10 @@
 		ul.teamspaces li span a {
 			color:#666666 !important;
 			font-size:11px !important;
-		}	
-		
-		div.name_and_role h1{
-			display:block;
-			z-index:1000;
 		}
 		
     </style>
-	
+
     <!-- Delete Competency Overlay -->
     <div id="deleteCompetencyDialog" style="display:none;">
         <div class="modalTitle">
@@ -280,8 +275,10 @@
                     <div class="photo">
                         <div class="photoWrapper_98px">
                         	<apex:outputPanel >
-                        		<img src="{!IF((Picture != ''), Picture, URLFOR($Resource.PeopleResourceFiles, 'images/layout/user.gif'))}"  alt="{!Profile.Name}" width="98" />
+                        		<img src="{!IF((Picture != ''), Picture, URLFOR($Resource.PeopleResourceFiles, 'images/layout/user.gif'))}" " alt="{!Profile.Name}" width="98" />
                         	</apex:outputPanel> 
+							
+								
                         </div>
                         <apex:outputPanel styleClass="editlink" layout="block" rendered="{!isCurrentUser}">
                             <a href="peoplephotogallery?pid={!Profile.Id}" class="clear">Edit Photo</a>
@@ -292,10 +289,9 @@
                         <div class="name_and_role" >
 							<h1>{!Profile.Name}</h1>                        
 							<apex:outputPanel rendered="{!IF((Profile.Title == null),'false','true')}">
-								<h2>{!Profile.Title}</h2>
+							<h2>{!Profile.Title}</h2>
 							</apex:outputPanel>	                                
-                        </div>
-                        <br/>
+                        </div><br/>
                         <!-- Profile Edition -->
                         <apex:outputPanel styleClass="mylinks" layout="block" rendered="{!isCurrentUser}">
                             <a href="PeopleEditProfile?id={!Profile.UserId}" class="f_left" alt="Edit Photo">Edit</a>

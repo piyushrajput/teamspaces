@@ -1,26 +1,26 @@
 <apex:page tabStyle="PeopleProfile__c" controller="PeopleEditEmploymentHistoryController" sidebar="false">
 	
 	<!-- Ajax Toolkit SDFC -->
-	<script src="/soap/ajax/11.1/connection.js"/>
+	<apex:includeScript value="/soap/ajax/11.1/connection.js"/>
 	
 	<script>
 		var API_SESSION_ID = '{!$Api.Session_ID}';
 	</script>
 	
 	<!-- Prototype / Scriptaculous Framework -->
-	<script src="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/prototype.js')}"/>
-	<script src="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/scriptaculous.js')}"/>
-	<script src="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/effects.js')}"/>
+	<apex:includeScript value="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/prototype.js')}"/>
+	<apex:includeScript value="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/scriptaculous.js')}"/>
+	<apex:includeScript value="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/effects.js')}"/>
 	
 	<!-- Portal Support -->
-	<script src="{!$Resource.portalSupport}"/>
+	<apex:includeScript value="{!$Resource.portalSupport}"/>
 	
 	<!-- Common Js to all people Sections -->
-	<script src="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/common.js')}"/>
+	<apex:includeScript value="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/common.js')}"/>
 	<apex:stylesheet value="{!URLFOR($Resource.commonResources, 'inc/css/fonts.css')}" />
 	
 	<!-- Autocompleter -->		
-	<script src="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/autocomplete.js')}"/>
+	<apex:includeScript value="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/autocomplete.js')}"/>
 	<apex:stylesheet value="{!URLFOR($Resource.PeopleResourceFiles, 'inc/css/autocomplete.css')}" />	
     
     <!-- CSS styles for Portal Integration -->
@@ -35,17 +35,17 @@
 	<apex:stylesheet value="{!URLFOR($Resource.PeopleResourceFiles, 'inc/css/peopleEditions.css')}" />
 	
 	<!-- Form Validator -->
-	<script src="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/Validator.js')}"/>
+	<apex:includeScript value="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/Validator.js')}"/>
 	
 	<!-- PeopleEditEmploymentHistory CSS -->
 	<apex:stylesheet value="{!URLFOR($Resource.PeopleResourceFiles, 'inc/css/peopleEditEmploymentHistory.css')}" />
 	
 	<!-- PeopleEditEmploymentHistory js -->
-	<script src="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/peopleEditEmploymentHistory.js')}"/>
+	<apex:includeScript value="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/peopleEditEmploymentHistory.js')}"/>
 	
 	<!-- Common Js for Edition Sections -->
-	<script src="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/editionScripts.js')}"/>
-
+	<apex:includeScript value="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/editionScripts.js')}"/>
+	
 	<!-- Page Begin  -->
 	
 	<!-- Header -->
@@ -128,8 +128,7 @@
 										function hideSuggest(){
 											Effect.Fade('ac_{!$Component.EmployerName}',{duration: 0.2});
 											var months = document.getElementsByName("j_id0:workExp:j_id141");
-											if(months.length > 0)
-												var month = months[0];
+											var month = months[0];
 											month.style.visibility = "visible";
 										}
 									</script>

@@ -8,7 +8,7 @@ public with sharing class TeamsDetailController {
     boolean noImage; 
     boolean emailTeamspace;
     String  error = '';
-    boolean showError = false;
+    boolean showError = false; 
 	
 	public static UserPermissions userPermission = new UserPermissions();
 	
@@ -152,6 +152,7 @@ public with sharing class TeamsDetailController {
 	public void joinTeam(){
 		 TeamMember__c newUserJoin = new TeamMember__c();
 		 if(teamIsOpen){
+		 	
 			 newUserJoin.User__c = USERID;
 			 newUserJoin.Name = UserInfo.getName();
 			 newUserJoin.Team__c = teamspace.Id;

@@ -1,13 +1,18 @@
 <apex:component controller="SearchResultController" >
 	<apex:attribute name="type" description="the type of action" type="String" required="true" assignTo="{!typeAction}" /> 
 	<link rel="stylesheet" media="screen" href="{!URLFOR($Resource.discussionResourceFiles, 'inc/css/DiscussionSearchResults.css')}" />
-
 	<!-- Subscribe Module JS  -->
 	<apex:includeScript value="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/subscribing.js')}"/>
-
-	<apex:stylesheet value="{!URLFOR($Resource.commonResources, 'inc/css/searchResult.css')}" />
-
-    
+	<style>
+		div.people_list_container div.people_card div.actions ul li.no_margin {
+			padding-left:0px;
+			margin-bottom: 20px;
+		}
+		
+		div.people_list_container div.people_card div.actions ul li a {
+			display:inline;
+		}
+	</style>
     <h4>{!title}</h4>
 	<!-- People List Container --> 
 	<div class="people_list_container"> 

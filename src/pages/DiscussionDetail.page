@@ -325,7 +325,7 @@
 	 	<apex:commandButton value="auxLink" id="auxLink" styleclass="auxLinkClass" style="visibility:hidden;" action="{!saveReply}" rerender="replysHolder" />
 	</apex:form>
 	<script>
-		document.observe('dom:loaded', loadFunctions);
+		window.onload = loadFunctions;
 		function loadFunctions(){
 			readPortalCSSRules();
 			trunkTitle();

@@ -253,19 +253,14 @@ public class AdminProfileController {
 		return newIdProfile;
 	}
 	
-	/**
-	*@return new member profile id
-	*/
 	public String getNewIdProfileNewMember (){
 		return newIdProfileNewMember;
 	}	
 	
-	/**
-	*@return public profile id
-	*/
 	public String getNewIdProfilePublicProfile (){
 		return newIdProfilePublicProfile;
 	}		
+	
 	
 	/**
 	* Set new TeamProfile__c Id
@@ -275,16 +270,10 @@ public class AdminProfileController {
 		this.newIdProfile = newIdProfile;	
 	}
 	
-	/**
-	*@param id new member profile id
-	*/
 	public void setNewIdProfileNewMember (String id){
 		newIdProfileNewMember = id;
 	}
 	
-	/**
-	*@param id public profile id
-	*/
 	public void setNewIdProfilePublicProfile  (String id){
 		newIdProfilePublicProfile  = id;
 	}

@@ -5,13 +5,6 @@
 	<link rel="stylesheet" media="screen" href="{!URLFOR($Resource.commonResources, 'inc/css/modal.css')}" />
 	<link rel="stylesheet"  href="{!URLFOR($Resource.TeamsResources, '/inc/css/teamOverlyManage.css')}" />
 	<apex:stylesheet value="{!URLFOR($Resource.TeamsResources, 'inc/css/teamsOverlaysTemplate.css')}" />
-	
-	<apex:stylesheet value="{!URLFOR($Resource.commonResources, 'inc/css/teamsMyTeamsWidget.css')}" />
-	
-	<!-- -->
-	<apex:includeScript value="{!URLFOR($Resource.commonResources, 'inc/js/teamsMyTeamsWidget.js')}" />
-	 
-	<!-- 
 	<style>
 		.divLinks{
 			float:left;
@@ -59,31 +52,6 @@
 			font-weight:bold;
 		}
 	</style>
-
-	-->
-	
-	<script>
-	
-		/**
-		* Namespace Prefix Getter
-		*/
-		var namespace = "{!namespace}";		
-		
-		/**
-		* Initialize toolkit connection
-		*@void
-		*/
-		function init(){
-			sforce.connection.sessionId = '{!$Api.Session_ID}';
-			sforce.connection.defaultNamespace = namespace;
-		}
-		var API_SESSION_ID = '{!$Api.Session_ID}';
-		var globalTeamLabel = "{!$ObjectType.Team__c.label}";
-	</script>
-		
-	<!-- 
-	
-	  
 	<script>
 		/**
         * Namespace Prefix Getter
@@ -233,7 +201,7 @@
 			$('deleteConfirm').style.display = '';	
 		}
 	</script>
-	 -->
+	
 	<!-- Initialize the overlay box for modal.js -->
 	<a href="#modal_container" id="initializeModal" style="display:none;"></a>
 	<div id="modal_container"></div>

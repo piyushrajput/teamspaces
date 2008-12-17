@@ -429,12 +429,6 @@ public with sharing class TeamMembersWidgetController {
 		return memberListToolkitCount;
 	}
 		
-	Boolean already = false;
-	
-	public Boolean getAlready(){
-		return already;
-	}	
-			
 	/**
 	* Save Member and New
 	*@void
@@ -443,7 +437,7 @@ public with sharing class TeamMembersWidgetController {
 		List<TeamMember__c> newMemberList = new List<TeamMember__c>();
 		List<String> newMembers = newMemberVars.colleagueNames.split(',');
 		List<User> userList = new List<User>();
-		already = false;
+		Boolean already = false;
 		
 		for(String item: newMembers) {
 			List<User> userItem = new List<User>();
@@ -459,10 +453,8 @@ public with sharing class TeamMembersWidgetController {
 					listPos++;
 				}
 				if (!already) {
-					userList.add(userItem[0]);
+					userList.add(userItem[0]);	
 				}
-				else
-					already = true;
 			}
 		}
 		
@@ -502,7 +494,8 @@ public with sharing class TeamMembersWidgetController {
 		List<TeamMember__c> newMemberList = new List<TeamMember__c>();
 		List<String> newMembers = newMemberVars.colleagueNames.split('[ ]*,[ ]*');
 		List<User> userList = new List<User>();
-		already = false;
+		Boolean already = false;
+		
 		Map<String, User> usersMap = new Map<String, User>();
 		for (User iterUser :[select id, Name, Email from User where Name in:newMembers]) {
 			usersMap.put(iterUser.Name, iterUser);
@@ -521,8 +514,6 @@ public with sharing class TeamMembersWidgetController {
 				if (!already) {
 					userList.add(usersMap.get(item));
 				}
-				else
-					already = true;
 			}
 		}
 		

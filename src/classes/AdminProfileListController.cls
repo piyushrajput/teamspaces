@@ -83,16 +83,10 @@ public class AdminProfileListController {
 		newIdProfile = id;
 	}
 	
-	/**
-	*@param id new member profile
-	*/
 	public void setNewIdProfileNewMember (String id){
 		newIdProfileNewMember = id;
 	}
 	
-	/**
-	*@param id public profile id
-	*/
 	public void setNewIdProfilePublicProfile  (String id){
 		newIdProfilePublicProfile  = id;
 	}
@@ -105,16 +99,10 @@ public class AdminProfileListController {
 		return newIdProfile;
 	}			
 	
-	/**
-	*@return new member profile id
-	*/
 	public String getNewIdProfileNewMember (){
 		return newIdProfileNewMember;
 	}	
 	
-	/**
-	*@return public profile id
-	*/
 	public String getNewIdProfilePublicProfile (){
 		return newIdProfilePublicProfile;
 	}	
@@ -289,9 +277,6 @@ public class AdminProfileListController {
 			return hasMember;
 		}
 		
-		/**
-		*@return return true if has members
-		*/
 		public Boolean getHasTeams (){
 			return hasTeams;
 		}

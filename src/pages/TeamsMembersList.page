@@ -136,12 +136,12 @@
 										</li>
 										<apex:repeat id="letterFilterRepeat" value="{!letterFilter}" var="item">
 											<li>
-												<apex:outputpanel rendered="{!NOT(item.containMembers)}">
+												<apex:outputpanel rendered="{!item.containMembers}">
 													<apex:commandLink styleclass="contains" action="{!genMembers}" value="{!item.letter}" rerender="membersList">
 														<apex:param name="ltr" value="{!item.letter}" />
 													</apex:commandLink>
 												</apex:outputpanel>
-												<apex:outputpanel rendered="{!(item.containMembers)}">
+												<apex:outputpanel rendered="{!NOT(item.containMembers)}">
 													{!item.letter}
 												</apex:outputpanel>
 											</li>

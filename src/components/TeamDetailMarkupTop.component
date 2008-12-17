@@ -68,13 +68,13 @@
 		}
 		
 		.okMessage {
-			/*border:#2868B3 2px solid;
+			border:#2868B3 2px solid;
 			background-color:#FFFEB9;
 			width:525px;
 			height:40px;
 			margin-left:225px;
 			margin-top:5px;
-			color:black;*/
+			color:black;
 		}
 	</style>
 	<!-- Common JS for FCK -->   
@@ -98,18 +98,6 @@
 			var messageDiv = $$('.okMessage')[0];
 			Effect.Fade(messageDiv);
 		}
-		
-		/*function showMessageToUser(message, type){
-			var messageDiv = $('infoToUser');
-			var imageInfo = globalInfoBig;
-			var imageSuccess = globalCheckNew;
-			var currentSource = (type == 'success') ? imageSuccess : imageInfo;
-			markup = '<img src="'+currentSource+'" />';
-			markup += '<div>' + message + '</div>';
-			messageDiv.innerHTML = markup;
-			Effect.Appear('infoToUser');
-		}*/
-		
 	</script> 
 	<c:TeamsOverlayNewTask />
 	<c:TeamsOverlayNewMilestone />
@@ -149,25 +137,25 @@
 		</apex:form>
 		<!-- Sidebar -->
 		<div class="sidebar">
-				<script>
-					var teamIsOpen = {!teamIsOpen};
-				</script>
-				<!-- Team Details Widget -->		 
-				<c:TeamDetailsWidget teamId="{!teamIdParam}" />
-				<!-- Team Suscribe -->	
-				<c:TeamSubscribe teamId="{!teamIdParam}" /> 
-				<!-- Team members -->
-				<c:TeamMembersWidget teamId="{!teamIdParam}" />	
-				<!-- Team members -->
-				<div class="clear"></div>
+			<script>
+				var teamIsOpen = {!teamIsOpen};
+			</script>
+			<!-- Team Details Widget -->		 
+			<c:TeamDetailsWidget teamId="{!teamIdParam}" />
+			<!-- Team Suscribe -->	
+			<c:TeamSubscribe teamId="{!teamIdParam}" /> 
+			<!-- Team members -->
+			<c:TeamMembersWidget teamId="{!teamIdParam}" />	
+			<!-- Team members -->
+			<div class="clear"></div>				
 		</div>
 		<!-- Join Team Message -->		
 		<apex:outputPanel id="okMessageContainer" layout="block" style="overflow:hidden;position:relative;">	
 		<!-- Task Created Information Panel -->
 		<div class="informationPanel clear" id="infoToUser" style="display:none;"></div>
 		<apex:form >
-			<apex:outputPanel layout="block" styleClass="okMessage informationPanel clear" style="display:none;" id="infoToUser">
-				<img src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/WidgetConfig/checkNew.gif')}" alt="ok" /><div>You are a member of this {!$ObjectType.Team__c.label}&nbsp;<apex:commandLink action="{!leaveTeam}" value="Undo" rerender="thisForm, okMessageContainer" oncomplete="refreshLeaveButton();refreshJoinButton();rerenderMemberList();hideMessageToUser();" onclick="disableAndShowProgress(this);" /></div>
+			<apex:outputPanel layout="block" styleClass="okMessage" style="display:none;">
+				<img src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/WidgetConfig/checkNew.gif')}" alt="ok" />	You are a member of this {!$ObjectType.Team__c.label}&nbsp;<apex:commandLink action="{!leaveTeam}" value="Undo" rerender="thisForm, okMessageContainer" oncomplete="refreshLeaveButton();refreshJoinButton();rerenderMemberList();hideMessageToUser();" onclick="disableAndShowProgress(this);" />
 			</apex:outputPanel>	
 		</apex:form>
 	</apex:outputPanel>

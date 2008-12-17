@@ -2,7 +2,7 @@
 	<apex:insert name="moduleId"/>
 	<div class="header_portal" id={!moduleId}>
         <!-- Page Section -->
-        <div class="page_section" >
+        <div class="page_section">
             <div>
                 <h1 class="arial_black"><apex:insert name="module"/></h1>
                 <h2 class="arial_black"><apex:insert name="title"/></h2>

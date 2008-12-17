@@ -6,17 +6,6 @@
 	</apex:outputpanel>
 	<!-- ### Discussion Overlay ### -->
 	<c:TeamsOverlayNewDiscussion />
-	
-	<apex:includeScript value="{!URLFOR($Resource.commonResources, 'inc/js/teamDetailMarkupBottom.js')}" />
-	
-	<script>
-	
-		readPortalCSSRules();
-		$(document).observe('dom:loaded', footerBug); 
-		$(document).observe('dom:loaded', Done);
-	
-	</script>
-	<!-- 
 	<script>
 		/* scripts to reset the hieght of the lower bar so that it show correctly at the bottom of it all */
 		
@@ -62,5 +51,5 @@
 		
 		$(document).observe('dom:loaded', Done);
 	</script>
- 	-->
+
 </apex:component>

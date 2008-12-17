@@ -52,7 +52,7 @@
 		var globalInfoBig = '{!URLFOR($Resource.TeamsResources, 'images/layout/icons/WidgetConfig/infoBig.gif')}';
 		var globalCheckNew = '{!URLFOR($Resource.TeamsResources, 'images/layout/icons/WidgetConfig/checkNew.gif')}';
 		
-		//document.observe("dom:loaded", fixAll);
+		document.observe("dom:loaded", fixAll);
 		document.observe("dom:loaded", showActionSuccess);
 
 	</script>

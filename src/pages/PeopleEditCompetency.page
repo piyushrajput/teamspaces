@@ -1,29 +1,29 @@
 <apex:page sidebar="false"  standardController="Competency__c" extensions="PeopleNewEditCompetencyController" action="{!getCompetency}">
 	<!-- Ajax Toolkit SDFC -->
-	<script src="/soap/ajax/11.1/connection.js"/>
+	<apex:includeScript value="/soap/ajax/11.1/connection.js"/>
 	
 	<script>
 		var API_SESSION_ID = '{!$Api.Session_ID}';
 	</script>		
 	
 	<!-- Prototype / Scriptaculous Framework -->
-	<script src="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/Validator.js')}"/>
-	<script src="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/prototype.js')}"/>
-	<script src="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/scriptaculous.js')}"/>
-	<script src="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/effects.js')}"/>
-	<script src="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/slider.js')}"/>
-	<script src="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/autocomplete.js')}"/>	
-	<script src="{!URLFOR($Resource.YahooUI, 'build/yahoo-dom-event/yahoo-dom-event.js')}"/>
-	<script src="{!URLFOR($Resource.YahooUI, 'build/animation/animation-min.js')}"/>
-	<script src="{!URLFOR($Resource.YahooUI, 'build/dragdrop/dragdrop-min.js')}"/>
-	<script src="{!URLFOR($Resource.YahooUI, 'build/slider/slider-min.js')}"/>	
+	<apex:includeScript value="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/Validator.js')}"/>
+	<apex:includeScript value="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/prototype.js')}"/>
+	<apex:includeScript value="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/scriptaculous.js')}"/>
+	<apex:includeScript value="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/effects.js')}"/>
+	<apex:includeScript value="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/slider.js')}"/>
+	<apex:includeScript value="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/autocomplete.js')}"/>	
+	<apex:includeScript value="{!URLFOR($Resource.YahooUI, 'build/yahoo-dom-event/yahoo-dom-event.js')}"/>
+	<apex:includeScript value="{!URLFOR($Resource.YahooUI, 'build/animation/animation-min.js')}"/>
+	<apex:includeScript value="{!URLFOR($Resource.YahooUI, 'build/dragdrop/dragdrop-min.js')}"/>
+	<apex:includeScript value="{!URLFOR($Resource.YahooUI, 'build/slider/slider-min.js')}"/>	
 	<apex:stylesheet value="{!URLFOR($Resource.commonResources, 'inc/css/fonts.css')}" />
 	
 	<!-- Portal Support -->
-	<script src="{!$Resource.portalSupport}"/>
+	<apex:includeScript value="{!$Resource.portalSupport}"/>
 	
 	<!-- Common Js to all people Sections -->
-	<script src="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/common.js')}"/>
+	<apex:includeScript value="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/common.js')}"/>
     
     <!-- CSS styles for Portal Integration -->
     <apex:stylesheet value="{!URLFOR($Resource.portalStyles, 'portal.css')}" />
@@ -33,7 +33,7 @@
 	<!-- Common CSS Styling  -->
 	<apex:stylesheet value="{!URLFOR($Resource.PeopleResourceFiles, 'inc/css/commonLayout.css')}" />	
 	<apex:stylesheet value="{!URLFOR($Resource.PeopleResourceFiles, 'inc/css/peopleEditions.css')}" />
-	<apex:stylesheet value="{!URLFOR($Resource.PeopleResourceFiles, 'inc/css/autocomplete.css')}" />
+	<link rel="stylesheet" href="{!URLFOR($Resource.PeopleResourceFiles, 'inc/css/autocomplete.css')}" type="text/css" media="screen" charset="utf-8" />
 
 	<style>
 	    #slider-bg {

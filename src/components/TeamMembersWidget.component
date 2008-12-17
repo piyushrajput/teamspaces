@@ -299,7 +299,7 @@
 					<div class="overlaySeparateLine"></div>
 					<!-- Saven and Cancel Buttons -->
 					<div class="overlayFromButtons" align="center">
-						<apex:commandButton onclick="statusSending(this);" action="{!saveMembers}" oncomplete="setTimeout('modal.close()', 5000); showSwirly('swirly_members');" styleclass="overlaySaveBtn" value="Send" rerender="membersListContainer"/>
+						<apex:commandButton onclick="statusSending(this);" action="{!saveMembers}" oncomplete="setTimeout('modal.close()', 5000); showSwirly('swirly_members'); " styleclass="overlaySaveBtn" value="Send" rerender="membersListContainer"/>
 						<apex:commandButton onclick="statusSending(this);" action="{!saveMembersNew}" oncomplete="$('{!$Component.newMemberForm}').reset(); statusNormal(this); showSwirly('swirly_members');" styleclass="overlaySaveBtn" value="Send & add more members" rerender="membersListContainer"/>
 						<input class="overlayCancelBtn" type="button" value="Cancel" onclick="modal.close();stopFunction();"/>
 					</div>
