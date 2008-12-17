@@ -1,27 +1,27 @@
 #labels Featured,Phase-Deploy
-*Copy and paste the url of the package into a browser's url window.
+*_Copy and paste the url of the package into a browser's url window.
 Enter the username and password of the org in which you'd like to install the package.
-*
+
 
 http://teamspaces.googlecode.com/svn/wiki/image/installation/step1.png
 
 
-*Click Next on the Package Installer's Step 1 Screen*
+Click Next on the Package Installer's Step 1 Screen
 
 http://teamspaces.googlecode.com/svn/wiki/image/installation/step9.png
 
-*Select "Grant access to all users" and click next*
+Select "Grant access to all users" and click next
 
 
 http://teamspaces.googlecode.com/svn/wiki/image/installation/step10.png
 
-*Click install. -Make sure "Ignore Apex test failures that may cause the installed application not to function properly." is checked.*
+Click install. -Make sure "Ignore Apex test failures that may cause the installed application not to function properly." is checked.
 
 
 http://teamspaces.googlecode.com/svn/wiki/image/installation/step11.png
 
 
-*Once the application has installed, the application's tabs need to be override with it overview page. 
+Once the application has installed, the application's tabs need to be override with it overview page. 
 
 To begin overriding each tab, list the custom objects that are available in your Org:
 Click the following path:
@@ -36,7 +36,7 @@ The process of overriding these tabs is the same for all objects, what differs f
 3-Discussion Object Tab needs to be override with the DiscussionOverview.page VisualForce page
 4-WikiPage Object Tab needs to be override with the WikiOverview.page VisualForce page
 
-The following figure illustrates how to override the teams tab:*
+The following figure illustrates how to override the teams tab:
 
 http://teamspaces.googlecode.com/svn/wiki/image/installation/step14.png
 
@@ -46,4 +46,4 @@ http://teamspaces.googlecode.com/svn/wiki/image/installation/step14.png
 http://teamspaces.googlecode.com/svn/wiki/image/installation/step15.png
 
 
-*Now teams is ready to be used! :-)*
+Now teams is ready to be used! :-)_*
