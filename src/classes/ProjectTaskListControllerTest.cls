@@ -1,21 +1,15 @@
-@IsTest private class ProjectTaskListControllerTest {    
+public class ProjectTaskListControllerTest {
     
     public static testMethod void testProjectTaskDetailController() {
         
-        GenerateEnvironmentTest.gen();
-    	Test.startTest();
-    	Team__c t = GenerateEnvironmentTest.newTeam;
-    	System.currentPageReference().getParameters().put('id', t.Id);
         ProjectTaskListController taskList = new ProjectTaskListController();       
-        taskList.setOption('oTask');
-        taskList.genPermissions();
-	    taskList.getUserPermissions();	
         
-         
-        taskList.setTeamId(t.Id);    
-        taskList.setUserId(UserInfo.getUserId());
-          
-              
+        taskList.setOption('oTask');
+        
+        taskList.setTeamId('a0B30000001vU4VEAU');
+        taskList.setUserId('005300000019Z9lAAE');
+        
+        // getTaskList()        
         List<ProjectTaskListController.TaskDetails> listTaskDetails = taskList.getTaskList();
     
         if(listTaskDetails == null) 
@@ -23,7 +17,7 @@
         
         
         taskList.setOption('Name');         
-        
+        // getOption()
         // @return String
         String listOptions = taskList.getOption();
         if(listOptions == null) 
@@ -36,13 +30,20 @@
             System.assert(true, 'getOption() method >> does not work correctly');
         }
         
-       
+        // getTeamId() 
         // @return String
         String teamidHere = taskList.getTeamId();
         if(teamidHere == null) 
             System.assert(true, 'getTeamId() method >> return null');
             
+        // getIsAdmin() 
+        // @return String
+        boolean isadmin = taskList.getIsAdmin();
+        if(isadmin == null) 
+            System.assert(true, 'getIsAdmin() method >> return null');
         
+       // 
+        // getIsTeamMember() 
         // @return String
         boolean teamMember = taskList.getIsTeamMember();
         if(teamMember == null) 
@@ -61,12 +62,31 @@
         if(teamName == null) 
             System.assert(true, 'getNameTeam() method >> return null');
             
-        taskList.genCntPagination();
-        taskList.nextPage();
-        taskList.prevPage();
-        taskList.getNextPageShow();
-        taskList.getNextPageLinkShow();
-
+        
+        // genCntPagination() 
+        // @void
+        try {
+            taskList.genCntPagination();
+        } catch (Exception e){      
+            System.assert(true, 'genCntPagination() method >>does not work correctly');
+        }
+        
+        // nextPage() 
+        // @void
+        try {
+            taskList.nextPage();
+        } catch (Exception e){      
+            System.assert(true, 'nextPage() method >> does not work correctly');
+        }
+        
+        // prevPage() 
+        // @void
+        try {
+            taskList.prevPage();
+        } catch (Exception e){      
+            System.assert(true, 'prevPage() method >> does not work correctly');
+        }
+        
         // getCurrentPagination() 
         // @return Integer
         Integer currentPGN = taskList.getCurrentPagination();
@@ -105,26 +125,46 @@
             System.assert(true, 'getPrevPageShow() method >> return null');
         
         taskList.setSORTBYPARAM('Milestone__c');
-        taskList.sortList();
+        
         
         // getSortBy() 
         // @return String
         String sortedBy = taskList.getSortBy();
-        taskList.sortList();
-
-        taskList.setSORTBYPARAM('User__c.Name');
-        taskList.setOption('oTask');
-     
-        ProjectTaskListController.TaskDetails details = new ProjectTaskListController.TaskDetails();
+        if(sortedBy == null) 
+            System.assert(true, 'getSortBy() method >> return null');
+        
         
         // sortList() 
         // @void
-        taskList.getsortListOption();
-
+        try {
+            taskList.sortList();
+        } catch (Exception e){      
+            System.assert(true, 'sortList() method >> does not work correctly');
+        }
+        
+        
+        taskList.setSORTBYPARAM('User__c.Name');
+         taskList.setOption('oTask');
+         // sortList() 
+        // @void
+        try {
+            taskList.sortList();
+        } catch (Exception e){      
+            System.assert(true, 'sortList() method >> does not work correctly');
+        }
+        
+        // sortList() 
+        // @void
+        try {
+            taskList.getsortListOption();
+        } catch (Exception e){      
+            System.assert(true, 'getsortListOption() method >> does not work correctly');
+        }
         taskList.setSORTBYPARAM('Name');
         taskList.sortList();
         
          // getTaskList()        
+        
         taskList.setSORTBYPARAM('Percent_Completed__c');
         List<ProjectTaskListController.TaskDetails> listTaskDetails3 = taskList.getTaskList();        
         taskList.sortList();        
@@ -141,48 +181,28 @@
         taskList.sortList();
         taskList.genCntPagination();       
         
+        taskList.setTeamId('f');
+        taskList.setUserId('s');
+        
         taskList.setSORTBYPARAM('Priority__c');
         taskList.sortList();
-
-        
         
         // getTaskList()        
         List<ProjectTaskListController.TaskDetails> listTaskDetails2 = taskList.getTaskList();
-        
-        taskList.setSORTBYPARAM('Percent_Completed__c');
+   		
+   		taskList.setSORTBYPARAM('Percent_Completed__c');
         List<ProjectTaskListController.TaskDetails> listTaskDetails7 = taskList.getTaskList(); 
         taskList.reConstruct();       
         taskList.sortList();
         taskList.genCntPagination();
-        
-        taskList.getEditDeletePer();
-        taskList.refresh();
-        taskList.refreshPages();
-        Boolean SortByDesc = taskList.getSortByDesc();
-        if(SortByDesc == null) 
-            System.assert(true, 'getSortByDesc() method >> does not work');
-        
-        String IdTaskToComplete = taskList.getIdTaskToComplete();
-        if(IdTaskToComplete == null) 
-            System.assert(true, 'getIdTaskToComplete() method >> does not work');
-        
-        String IdDeletes = taskList.getIdDeletes();
-        if(IdDeletes == null) 
-            System.assert(true, 'getIdDeletes() method >> does not work');
-        
-        taskList.setIdDeletes('test');
-        
-        taskList.deleteTask();
-        taskList.markComplete();
-        taskList.setIdTaskToComplete('test');
-        
+   		
+   		 
         if(listTaskDetails2 == null) 
             System.assert(true, 'getUserProfile() method >> does not work');
         
-        taskList.setSortByPrev('asc');
         taskList.reConstruct();
         
-        Test.stopTest();
+        
     }
     
 }

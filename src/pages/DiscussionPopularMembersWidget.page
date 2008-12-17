@@ -1,4 +1,9 @@
 <apex:page sidebar="false" controller="DiscussionOverviewController" tabStyle="DiscussionForum__c">
+	
+		<!-- /////////////////////////////////////////////////////
+		                THIS WEEK'S Most Active People
+		     //////////////////////////////////////////////////// -->
+		     
 	 <div class="box_round_blue">
 		<div class="header"  >
 			<div>

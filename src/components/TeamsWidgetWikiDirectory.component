@@ -1,180 +1,929 @@
 <apex:component controller="TeamsWidgetWikiDirectoryController" id="TeamsWidgetWikiDirectory" >
-	<!-- ### Attribute Definitions ### This attribute is required if the component is a widget -->
-	<apex:attribute name="team" description="The team ID" type="String" required="true" assignTo="{!teamId}" />
-	<apex:attribute name="sidebar" description="Holder" type="Boolean" required="false" assignTo="{!sidebar}" />	
-	<!-- ### Javascript ### -->
-	<apex:includeScript value="{!URLFOR($Resource.TeamsResources, 'inc/js/TeamsWidgetWikiDirectory.js')}"/>		
-	<!--### Rerender Method ###-->
-	<apex:form >
-		<apex:actionFunction name="reloadWikiList" 
-			action="{!refresh}" 
-			oncomplete="reinicializeScrollBar();"
-       		rerender="wikiRight, theFeeds, theFeeds2, wikiScrollSmall1" />
-    </apex:form>
-	<!-- ### Wide Widget ### -->
-	<apex:outputPanel layout="block" rendered="{!IF(!sidebar, true, false)}">
-		<div class="myBigWidget" style="width: 100%;">
-			<div class="swirly_wiki" style="display: none;"></div>
-			<!-- Widget Title -->
-			<div class="wideHeader">
-				<h4>Wiki Directory</h4>
-			</div>
-			<!-- Links -->
-			<div class="linkAction">
-				<apex:outputpanel rendered="{!userpermissions.canCreate}"><a class="topRightLinks" href="javascript:;" onclick="createOverlay('','AddChildForm','305','');">New</a> |</apex:outputpanel> 
-				<a class="topRightLinks" href="/apex/WikiTeamOverview?tid={!teamId}">Go To {!$ObjectType.Team__c.label} Wiki&#187;</a>
-			</div>
-			<!-- Widget Container -->
-			<div class="wideBody">	
-				<div class="threads">
-					<apex:outputPanel layout="block" id="theFeeds" >
-						<apex:outputPanel layout="block" id="wikiNoScroll" rendered="{!IF(WikiPagesCount > 9, 'false', 'true' )}" >
-							<table class="minifeeds padding" cellpadding="0" cellspacing="0" style="{!IF(WikiPagesCount > 0, '', 'display:none;' )}">
-								<apex:repeat value="{!wikis}" var="wiki">
-									<tr>							
-										<td>
-											<img alt="" src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/wiki_page_white.png')}" />
-										</td>
-										<td>
-											<a href="/apex/WikiPage?idWP={!wiki.wikiPage.Id}" class="weight_bold">
-												<apex:outputText escape="false" value="{!wiki.Name}" />
-											</a>
-										</td>
-										<td width="1%">
-										</td>
-										<td>
-											Last updated by 
-											<a href="/apex/PeopleProfileDisplay?id={!wiki.wikiPage.CreatedBy.Id}" class="weight_bold">
-												<apex:outputText escape="false" value=" {!wiki.CreatedByName} " />
-											</a> at <apex:outputText value="{!wiki.wikiPage.LastModifiedDate} "/>
-										</td>
-									</tr>					 
-								</apex:repeat>
-							</table>
-							<div class="center" style="{!IF(WikiPagesCount > 0, 'display:none;', '' )}" >
-								<img alt="" src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/wiki_page_white.png')}" />
-								No Wiki Pages.<br>
-								<apex:outputpanel rendered="{!userpermissions.canCreate}">
-									<a class="weight_bold" href="javascript:;" onclick="createOverlay('','AddChildForm','305','');">Create a new wiki page;</a>
-								</apex:outputpanel>
-							</div>		
-						</apex:outputPanel>
-						<apex:outputPanel layout="block" id="wikiScroll" rendered="{!IF(WikiPagesCount > 9, 'true', 'false' )}" >
-							<div class="Container2">
-								<div style="position: relative; float: right; width: 50px;">
-									<div style="visibility: visible;" id="Scrollbar-Container2">
-									    <img src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/up_arrow.png')}" class="Scrollbar-Up2">
-									    <img src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/down_arrow.png')}" class="Scrollbar-Down2">
-										<div class="Scrollbar-Track2">
-									    	<img style="top:0px; left:0px; visibility: visible;" src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/scrollbar_handle.gif')}" class="Scrollbar-Handle2">   
-										</div>
-									</div>
-								</div>  
-						  		<div style="clear: both;"></div>
-						  		<div id="Scroller-2">
-						  			<div style="left: 0px; top: 0px;" class="Scroller-Container2">
-										<table class="minifeeds padding" cellpadding="0" cellspacing="0" style="{!IF(WikiPagesCount > 0, '', 'display:none;' )}">
-											<apex:repeat value="{!Wikis}" var="wiki">
-												<tr>							
-													<td>
-														<img alt="" src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/wiki_page_white.png')}" />
-													</td>
-													<td>
-														<a href="/apex/WikiPage?idWP={!wiki.wikiPage.Id}" class="weight_bold">
-															<apex:outputText escape="false" value="{!wiki.Name}" />
-														</a>
-													</td>
-													<td width="1%"></td>
-													<td>
-														Last updated by 
-														<a href="/apex/PeopleProfileDisplay?id={!wiki.wikiPage.CreatedBy.Id}" class="weight_bold">
-															<apex:outputText escape="false" value=" {!wiki.CreatedByName} " />
-														</a> at <apex:outputText value="{!wiki.wikiPage.LastModifiedDate} "/>
-													</td>
-												</tr>					 
-											</apex:repeat>
-										</table>
-										<div class="center" style="{!IF(WikiPagesCount > 0, 'display:none;', '' )}" >
-											<img alt="" src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/wiki_page_white.png')}" />
-											No Wiki Pages.<br>
-											<apex:outputpanel rendered="{!userpermissions.canCreate}">
-												<a class="weight_bold" href="javascript:;" onclick="createOverlay('','AddChildForm','305','');">Create a new wiki page;</a>
-											</apex:outputpanel>
-										</div>		
-							    	</div>
-							  	</div>
-							</div>
-						</apex:outputPanel>
-					</apex:outputPanel>
-				</div>
-			</div>
-		</div>
-	</apex:outputPanel>
-	<!--  ### Small Widget ###  -->
-	<apex:outputPanel layout="block" rendered="{!IF(sidebar, true, false)}">
-		<div class="teamWidget mySmallWidget" >
-			<!-- Widget Title -->		
-			<div class="thinHeader">
-				<div><div><h4>Wiki Directory</h4></div></div>
-			</div>
-			<!-- Widget Container -->   		
-			<div class="box_content">
-				<!-- Widget Links Holder -->
-				<div class="thinWidgetLinkAction">
-					<apex:outputpanel rendered="{!userpermissions.canCreate}"><a href="javascript:;" onclick="createOverlay('','AddChildForm','305','');">New</a> |</apex:outputpanel>
-					<a href="/apex/WikiTeamOverview?tid={!teamId}">Go To {!$ObjectType.Team__c.label} Wiki&#187;</a>
-				</div>
-				<div class="thinBody">
-					<div class="swirly_wiki" style="display: none;"></div>
-						<apex:outputPanel layout="block" id="wikiRight" >  
-				   		<div class="center" style="{!IF(WikiPagesCount > 0, 'display:none', '' )}" >
-							No Wiki Pages Yet
-						</div> 
-						<apex:outputPanel layout="block" id="wikiScrollSmall1" styleClass="Container" rendered="{!IF(WikiPagesCount > 9, 'true', 'false' )}" >
-							<div style="position: relative; float: right; width: 50px;">
-								<div style="visibility: visible; left: 54px;" id="Scrollbar-Container">
-					    			<img src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/up_arrow.png')}" class="Scrollbar-Up">
-					    			<img src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/down_arrow.png')}" class="Scrollbar-Down">
-									<div class="Scrollbar-Track">
-						    			<img style="top: 0px; left: 0px; visibility: visible;" src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/scrollbar_handle.gif')}" class="Scrollbar-Handle">   
-									</div>
-								</div>
-							</div>  
-							<div style="clear: both;"></div>
-					  		<div id="Scroller-1">
-					  			<div style="left: 0px; top: 0px;" class="Scroller-Container">
-						  			<ul class="minifeed_wikis">
-										<apex:repeat value="{!Wikis}" var="wiki" >
-											<li>							
-											<a href="/apex/WikiPage?idWP={!wiki.wikiPage.Id}" class="weight_bold">
-												<apex:outputText escape="false" value="{!wiki.Name}" />
-											</a>
-											</li>						
-										</apex:repeat>
-									</ul>
-								</div>
-					    	</div>
-						</apex:outputPanel>
-						<apex:outputPanel id="theFeeds2" layout="block"  styleClass="" rendered="{!IF(WikiPagesCount > 9, 'false', 'true' )}" >
-							<ul class="minifeed_wikis">
-								<apex:repeat value="{!Wikis}" var="wiki" >
-									<li>
-									
+<!-- Attribute Definitions -->
+<apex:attribute name="team" description="The team ID" type="String" required="true" assignTo="{!teamId}" />
+
+<script language="javascript">
+		function trunkText(text, len){
+			if(text.length > len){
+				text = text.substring(0, len) + '..';
+			}
+			document.write(text);
+		} 
+
+    </script>
+
+<style>
+	.center {
+		text-align: center;
+	}
+	
+	.minifeed_wikis {
+		list-style-image:none;
+		list-style-position:outside; 
+		list-style-type:none;
+		margin:5px 0pt;
+		padding:0pt;
+		}
+
+	.number {
+			background: #297B9C;
+			color: #fff;
+			padding:5px;
+			width:21px;
+			margin: 0 auto;
+		}
+		.center {
+			text-align: center;
+		}
+		
+		.minifeeds.padding tr th{
+			padding: 4px;
+		}
+		
+		.minifeeds.padding {
+			margin-top: 5px;
+		}
+		
+		.minifeeds.padding tr.head td {
+			padding: 5px;
+			font-weight: bold;
+		}
+		
+		.minifeed_wikis li {
+			background:transparent url({!URLFOR($Resource.TeamsResources, 'images/layout/icons/wiki_page_white.png')}) no-repeat  left center;
+			margin-bottom:5px;
+			overflow:hidden;
+			padding:5px 0px 6px 22px;
+			position:relative;
+			}
+			
+</style>
+
+
+<style type="text/css">
+
+.Container {
+  width: 95%;
+  height: 230px;
+}
+#Scroller-1 { 
+  position: relative; 
+  width: 95%;
+  overflow: hidden;
+  height: 230px;
+}
+#Scroller-1 p {
+  margin: 0; padding: 10px 20px;
+  font-family: Verdana, Arial, Helvetica, sans-serif;
+  font-size: 11px;
+  text-indent: 20px;
+  color: #6F6048;
+}
+.Scroller-Container {
+  position: absolute;
+  top: 0px; left: 0px;
+  width: 95%;
+}
+#Scrollbar-Container {
+  position: absolute;
+  top: 0px; left:45px;
+}
+
+.Scrollbar-Handle {
+	position: absolute;
+	width: 9px;
+	height: 22px;
+} 
+
+/*le digo la posicion del scroll y las flechas */
+.Scrollbar-Up {
+  cursor: pointer;
+  position: absolute;
+  top: 0px;
+}
+
+.Scrollbar-Down {
+  cursor: pointer;
+  position: absolute;
+  top: 209px;
+}
+
+
+.Scrollbar-Track {
+background-color:none;
+border:1px solid #989999;
+height:197px;
+position:absolute;
+top:11px;
+width:9px;
+}
+
+.minifeed_wikis li {
+	margin-bottom: 6px;
+}
+
+
+</style>
+
+
+
+
+<script type="text/javascript">
+
+//FUNCION DE LA SCROLLBAR **********************************************************************************
+
+function jsScroller (o, w, h) {
+	var self = this;
+	var list = o.getElementsByTagName("div");
+	for (var i = 0; i < list.length; i++) {
+		if (list[i].className.indexOf("Scroller-Container") > -1) {
+			o = list[i];
+		}
+	}
+	
+	//Private methods
+	this._setPos = function (x, y) {
+		if (x < this.viewableWidth - this.totalWidth) 
+			x = this.viewableWidth - this.totalWidth;
+		if (x > 0) x = 0;
+		if (y < this.viewableHeight - this.totalHeight) 
+			y = this.viewableHeight - this.totalHeight;
+		if (y > 0) y = 0;
+		this._x = x;
+		this._y = y;
+		with (o.style) {
+			left = this._x +"px";
+			top  = this._y +"px";
+		}
+	};
+	
+	//Public Methods
+	this.reset = function () {
+		this.content = o;
+		this.totalHeight = o.offsetHeight;
+		this.totalWidth	 = o.offsetWidth;
+		this._x = 0;
+		this._y = 0;
+		with (o.style) {
+			left = "0px";
+			top  = "0px";
+		}
+	};
+	this.scrollBy = function (x, y) {
+		this._setPos(this._x + x, this._y + y);
+	};
+	this.scrollTo = function (x, y) {
+		this._setPos(-x, -y);
+	};
+	this.stopScroll = function () {
+		if (this.scrollTimer) window.clearInterval(this.scrollTimer);
+	};
+	this.startScroll = function (x, y) {
+		this.stopScroll();
+		this.scrollTimer = window.setInterval(
+			function(){ self.scrollBy(x, y); }, 40
+		);
+	};
+	this.swapContent = function (c, w, h) {
+		o = c;
+		var list = o.getElementsByTagName("div");
+		for (var i = 0; i < list.length; i++) {
+			if (list[i].className.indexOf("Scroller-Container") > -1) {
+				o = list[i];
+			}
+		}
+		if (w) this.viewableWidth  = w;
+		if (h) this.viewableHeight = h;
+		this.reset();
+	};
+	
+	//variables
+	this.content = o;
+	this.viewableWidth  = w;
+	this.viewableHeight = h;
+	this.totalWidth	 = o.offsetWidth;
+	this.totalHeight = o.offsetHeight;
+	this.scrollTimer = null;
+	this.reset();
+};
+
+
+//**********************************************************************************************************
+function jsScroller2 (o, w, h) {
+	var self = this;
+	var list = o.getElementsByTagName("div");
+	for (var i = 0; i < list.length; i++) {
+		if (list[i].className.indexOf("Scroller-Container2") > -1) {
+			o = list[i];
+		}
+	}
+	
+	//Private methods
+	this._setPos = function (x, y) {
+		if (x < this.viewableWidth - this.totalWidth) 
+			x = this.viewableWidth - this.totalWidth;
+		if (x > 0) x = 0;
+		if (y < this.viewableHeight - this.totalHeight) 
+			y = this.viewableHeight - this.totalHeight;
+		if (y > 0) y = 0;
+		this._x = x;
+		this._y = y;
+		with (o.style) {
+			left = this._x +"px";
+			top  = this._y +"px";
+		}
+	};
+	
+	//Public Methods
+	this.reset = function () {
+		this.content = o;
+		this.totalHeight = o.offsetHeight;
+		this.totalWidth	 = o.offsetWidth;
+		this._x = 0;
+		this._y = 0;
+		with (o.style) {
+			left = "0px";
+			top  = "0px";
+		}
+	};
+	this.scrollBy = function (x, y) {
+		this._setPos(this._x + x, this._y + y);
+	};
+	this.scrollTo = function (x, y) {
+		this._setPos(-x, -y);
+	};
+	this.stopScroll = function () {
+		if (this.scrollTimer) window.clearInterval(this.scrollTimer);
+	};
+	this.startScroll = function (x, y) {
+		this.stopScroll();
+		this.scrollTimer = window.setInterval(
+			function(){ self.scrollBy(x, y); }, 40
+		);
+	};
+	this.swapContent = function (c, w, h) {
+		o = c;
+		var list = o.getElementsByTagName("div");
+		for (var i = 0; i < list.length; i++) {
+			if (list[i].className.indexOf("Scroller-Container2") > -1) {
+				o = list[i];
+			}
+		}
+		if (w) this.viewableWidth  = w;
+		if (h) this.viewableHeight = h;
+		this.reset();
+	};
+	
+	//variables
+	this.content = o;
+	this.viewableWidth  = w;
+	this.viewableHeight = h;
+	this.totalWidth	 = o.offsetWidth;
+	this.totalHeight = o.offsetHeight;
+	this.scrollTimer = null;
+	this.reset();
+};
+//***************************************************************************************************
+function jsScrollbar (o, s, a, ev) {
+	var self = this;
+	
+	this.reset = function () {
+		//Arguments that were passed
+		this._parent = o;
+		this._src    = s;
+		this.auto    = a ? a : false;
+		this.eventHandler = ev ? ev : function () {};
+		//Component Objects
+		this._up   = this._findComponent("Scrollbar-Up", this._parent);
+		this._down = this._findComponent("Scrollbar-Down", this._parent);
+		this._yTrack  = this._findComponent("Scrollbar-Track", this._parent);
+		this._yHandle = this._findComponent("Scrollbar-Handle", this._yTrack);
+		//Height and position properties
+		this._trackTop = findOffsetTop(this._yTrack);
+		this._trackHeight  = this._yTrack.offsetHeight;
+		this._handleHeight = this._yHandle.offsetHeight;
+		this._x = 0;
+		this._y = 0;
+		//Misc. variables
+		this._scrollDist  = 5;
+		this._scrollTimer = null;
+		this._selectFunc  = null;
+		this._grabPoint   = null;
+		this._tempTarget  = null;
+		this._tempDistX   = 0;
+		this._tempDistY   = 0;
+		this._disabled    = false;
+		this._ratio = (this._src.totalHeight - this._src.viewableHeight)/(this._trackHeight - this._handleHeight);
+		
+		this._yHandle.ondragstart  = function () {return false;};
+		this._yHandle.onmousedown = function () {return false;};
+		this._addEvent(this._src.content, "mousewheel", this._scrollbarWheel);
+		this._removeEvent(this._parent, "mousedown", this._scrollbarClick);
+		this._addEvent(this._parent, "mousedown", this._scrollbarClick);
+		
+		this._src.reset();
+		with (this._yHandle.style) {
+			top  = "0px";
+			left = "0px";
+		}
+		this._moveContent();
+		
+		if (this._src.totalHeight < this._src.viewableHeight) {
+			this._disabled = true;
+			this._yHandle.style.visibility = "hidden";
+			if (this.auto) this._parent.style.visibility = "hidden";
+		} else {
+			this._disabled = false;
+			this._yHandle.style.visibility = "visible";
+			this._parent.style.visibility  = "visible";
+		}
+	};
+	this._addEvent = function (o, t, f) {
+		if (o.addEventListener) o.addEventListener(t, f, false);
+		else if (o.attachEvent) o.attachEvent('on'+ t, f);
+		else o['on'+ t] = f;
+	};
+	this._removeEvent = function (o, t, f) {
+		if (o.removeEventListener) o.removeEventListener(t, f, false);
+		else if (o.detachEvent) o.detachEvent('on'+ t, f);
+		else o['on'+ t] = null;
+	};
+	this._findComponent = function (c, o) {
+		var kids = o.childNodes;
+		for (var i = 0; i < kids.length; i++) {
+			if (kids[i].className && kids[i].className == c) {
+				return kids[i];
+			}
+		}
+	};
+	//Thank you, Quirksmode
+	function findOffsetTop (o) {
+		var t = 0;
+		if (o.offsetParent) {
+			while (o.offsetParent) {
+				t += o.offsetTop;
+				o  = o.offsetParent;
+			}
+		}
+		return t;
+	};
+	this._scrollbarClick = function (e) {
+		if (self._disabled) return false;
+		
+		e = e ? e : event;
+		if (!e.target) e.target = e.srcElement;
+		
+		if (e.target.className.indexOf("Scrollbar-Up") > -1) self._scrollUp(e);
+		else if (e.target.className.indexOf("Scrollbar-Down") > -1) self._scrollDown(e);
+		else if (e.target.className.indexOf("Scrollbar-Track") > -1) self._scrollTrack(e);
+		else if (e.target.className.indexOf("Scrollbar-Handle") > -1) self._scrollHandle(e);
+		
+		self._tempTarget = e.target;
+		self._selectFunc = document.onselectstart;
+		document.onselectstart = function () {return false;};
+		
+		self.eventHandler(e.target, "mousedown");
+		self._addEvent(document, "mouseup", self._stopScroll, false);
+		
+		return false;
+	};
+	this._scrollbarDrag = function (e) {
+		e = e ? e : event;
+		var t = parseInt(self._yHandle.style.top);
+		var v = e.clientY + document.body.scrollTop - self._trackTop;
+		with (self._yHandle.style) {
+			if (v >= self._trackHeight - self._handleHeight + self._grabPoint)
+				top = self._trackHeight - self._handleHeight +"px";
+			else if (v <= self._grabPoint) top = "0px";
+			else top = v - self._grabPoint +"px";
+			self._y = parseInt(top);
+		}
+		
+		self._moveContent();
+	};
+	this._scrollbarWheel = function (e) {
+		e = e ? e : event;
+		var dir = 0;
+		if (e.wheelDelta >= 120) dir = -1;
+		if (e.wheelDelta <= -120) dir = 1;
+		
+		self.scrollBy(0, dir * 20);
+		e.returnValue = false;
+	};
+	this._startScroll = function (x, y) {
+		this._tempDistX = x;
+		this._tempDistY = y;
+		this._scrollTimer = window.setInterval(function () {
+			self.scrollBy(self._tempDistX, self._tempDistY); 
+		}, 40);
+	};
+	this._stopScroll = function () {
+		self._removeEvent(document, "mousemove", self._scrollbarDrag, false);
+		self._removeEvent(document, "mouseup", self._stopScroll, false);
+		
+		if (self._selectFunc) document.onselectstart = self._selectFunc;
+		else document.onselectstart = function () { return true; };
+		
+		if (self._scrollTimer) window.clearInterval(self._scrollTimer);
+		self.eventHandler (self._tempTarget, "mouseup");
+	};
+	this._scrollUp = function (e) {this._startScroll(0, -this._scrollDist);};
+	this._scrollDown = function (e) {this._startScroll(0, this._scrollDist);};
+	this._scrollTrack = function (e) {
+		var curY = e.clientY + document.body.scrollTop;
+		this._scroll(0, curY - this._trackTop - this._handleHeight/2);
+	};
+	this._scrollHandle = function (e) {
+		var curY = e.clientY + document.body.scrollTop;
+		this._grabPoint = curY - findOffsetTop(this._yHandle);
+		this._addEvent(document, "mousemove", this._scrollbarDrag, false);
+	};
+	this._scroll = function (x, y) {
+		if (y > this._trackHeight - this._handleHeight) 
+			y = this._trackHeight - this._handleHeight;
+		if (y < 0) y = 0;
+		
+		this._yHandle.style.top = y +"px";
+		this._y = y;
+		
+		this._moveContent();
+	};
+	this._moveContent = function () {
+		this._src.scrollTo(0, Math.round(this._y * this._ratio));
+	};
+	
+	this.scrollBy = function (x, y) {
+		this._scroll(0, (-this._src._y + y)/this._ratio);
+	};
+	this.scrollTo = function (x, y) {
+		this._scroll(0, y/this._ratio);
+	};
+	this.swapContent = function (o, w, h) {
+		this._removeEvent(this._src.content, "mousewheel", this._scrollbarWheel, false);
+		this._src.swapContent(o, w, h);
+		this.reset();
+	};
+	
+	this.reset();
+};
+
+//***********************************************************************************************************
+function jsScrollbar2 (o, s, a, ev) {
+	var self = this;
+	
+	this.reset = function () {
+		//Arguments that were passed
+		this._parent = o;
+		this._src    = s;
+		this.auto    = a ? a : false;
+		this.eventHandler = ev ? ev : function () {};
+		//Component Objects
+		this._up   = this._findComponent("Scrollbar-Up2", this._parent);
+		this._down = this._findComponent("Scrollbar-Down2", this._parent);
+		this._yTrack  = this._findComponent("Scrollbar-Track2", this._parent);
+		this._yHandle = this._findComponent("Scrollbar-Handle2", this._yTrack);
+		//Height and position properties
+		this._trackTop = findOffsetTop(this._yTrack);
+		this._trackHeight  = this._yTrack.offsetHeight;
+		this._handleHeight = this._yHandle.offsetHeight;
+		this._x = 0;
+		this._y = 0;
+		//Misc. variables
+		this._scrollDist  = 5;
+		this._scrollTimer = null;
+		this._selectFunc  = null;
+		this._grabPoint   = null;
+		this._tempTarget  = null;
+		this._tempDistX   = 0;
+		this._tempDistY   = 0;
+		this._disabled    = false;
+		this._ratio = (this._src.totalHeight - this._src.viewableHeight)/(this._trackHeight - this._handleHeight);
+		
+		this._yHandle.ondragstart  = function () {return false;};
+		this._yHandle.onmousedown = function () {return false;};
+		this._addEvent(this._src.content, "mousewheel", this._scrollbarWheel);
+		this._removeEvent(this._parent, "mousedown", this._scrollbarClick);
+		this._addEvent(this._parent, "mousedown", this._scrollbarClick);
+		
+		this._src.reset();
+		with (this._yHandle.style) {
+			top  = "0px";
+			left = "0px";
+		}
+		this._moveContent();
+		
+		if (this._src.totalHeight < this._src.viewableHeight) {
+			this._disabled = true;
+			this._yHandle.style.visibility = "hidden";
+			if (this.auto) this._parent.style.visibility = "hidden";
+		} else {
+			this._disabled = false;
+			this._yHandle.style.visibility = "visible";
+			this._parent.style.visibility  = "visible";
+		}
+	};
+	this._addEvent = function (o, t, f) {
+		if (o.addEventListener) o.addEventListener(t, f, false);
+		else if (o.attachEvent) o.attachEvent('on'+ t, f);
+		else o['on'+ t] = f;
+	};
+	this._removeEvent = function (o, t, f) {
+		if (o.removeEventListener) o.removeEventListener(t, f, false);
+		else if (o.detachEvent) o.detachEvent('on'+ t, f);
+		else o['on'+ t] = null;
+	};
+	this._findComponent = function (c, o) {
+		var kids = o.childNodes;
+		for (var i = 0; i < kids.length; i++) {
+			if (kids[i].className && kids[i].className == c) {
+				return kids[i];
+			}
+		}
+	};
+	//Thank you, Quirksmode
+	function findOffsetTop (o) {
+		var t = 0;
+		if (o.offsetParent) {
+			while (o.offsetParent) {
+				t += o.offsetTop;
+				o  = o.offsetParent;
+			}
+		}
+		return t;
+	};
+	this._scrollbarClick = function (e) {
+		if (self._disabled) return false;
+		
+		e = e ? e : event;
+		if (!e.target) e.target = e.srcElement;
+		
+		if (e.target.className.indexOf("Scrollbar-Up2") > -1) self._scrollUp(e);
+		else if (e.target.className.indexOf("Scrollbar-Down2") > -1) self._scrollDown(e);
+		else if (e.target.className.indexOf("Scrollbar-Track2") > -1) self._scrollTrack(e);
+		else if (e.target.className.indexOf("Scrollbar-Handle2") > -1) self._scrollHandle(e);
+		
+		self._tempTarget = e.target;
+		self._selectFunc = document.onselectstart;
+		document.onselectstart = function () {return false;};
+		
+		self.eventHandler(e.target, "mousedown");
+		self._addEvent(document, "mouseup", self._stopScroll, false);
+		
+		return false;
+	};
+	this._scrollbarDrag = function (e) {
+		e = e ? e : event;
+		var t = parseInt(self._yHandle.style.top);
+		var v = e.clientY + document.body.scrollTop - self._trackTop;
+		with (self._yHandle.style) {
+			if (v >= self._trackHeight - self._handleHeight + self._grabPoint)
+				top = self._trackHeight - self._handleHeight +"px";
+			else if (v <= self._grabPoint) top = "0px";
+			else top = v - self._grabPoint +"px";
+			self._y = parseInt(top);
+		}
+		
+		self._moveContent();
+	};
+	this._scrollbarWheel = function (e) {
+		e = e ? e : event;
+		var dir = 0;
+		if (e.wheelDelta >= 120) dir = -1;
+		if (e.wheelDelta <= -120) dir = 1;
+		
+		self.scrollBy(0, dir * 20);
+		e.returnValue = false;
+	};
+	this._startScroll = function (x, y) {
+		this._tempDistX = x;
+		this._tempDistY = y;
+		this._scrollTimer = window.setInterval(function () {
+			self.scrollBy(self._tempDistX, self._tempDistY); 
+		}, 40);
+	};
+	this._stopScroll = function () {
+		self._removeEvent(document, "mousemove", self._scrollbarDrag, false);
+		self._removeEvent(document, "mouseup", self._stopScroll, false);
+		
+		if (self._selectFunc) document.onselectstart = self._selectFunc;
+		else document.onselectstart = function () { return true; };
+		
+		if (self._scrollTimer) window.clearInterval(self._scrollTimer);
+		self.eventHandler (self._tempTarget, "mouseup");
+	};
+	this._scrollUp = function (e) {this._startScroll(0, -this._scrollDist);};
+	this._scrollDown = function (e) {this._startScroll(0, this._scrollDist);};
+	this._scrollTrack = function (e) {
+		var curY = e.clientY + document.body.scrollTop;
+		this._scroll(0, curY - this._trackTop - this._handleHeight/2);
+	};
+	this._scrollHandle = function (e) {
+		var curY = e.clientY + document.body.scrollTop;
+		this._grabPoint = curY - findOffsetTop(this._yHandle);
+		this._addEvent(document, "mousemove", this._scrollbarDrag, false);
+	};
+	this._scroll = function (x, y) {
+		if (y > this._trackHeight - this._handleHeight) 
+			y = this._trackHeight - this._handleHeight;
+		if (y < 0) y = 0;
+		
+		this._yHandle.style.top = y +"px";
+		this._y = y;
+		
+		this._moveContent();
+	};
+	this._moveContent = function () {
+		this._src.scrollTo(0, Math.round(this._y * this._ratio));
+	};
+	
+	this.scrollBy = function (x, y) {
+		this._scroll(0, (-this._src._y + y)/this._ratio);
+	};
+	this.scrollTo = function (x, y) {
+		this._scroll(0, y/this._ratio);
+	};
+	this.swapContent = function (o, w, h) {
+		this._removeEvent(this._src.content, "mousewheel", this._scrollbarWheel, false);
+		this._src.swapContent(o, w, h);
+		this.reset();
+	};
+	
+	this.reset();
+};
+</script>
+
+
+<style type="text/css">
+
+.Container2 {
+  width: 100%;
+  height: 240px;
+}
+#Scroller-2 { 
+  position: relative; 
+  width: 100%;
+  overflow: hidden;
+  height: 250px;
+}
+#Scroller-2 p {
+  margin: 0; padding: 10px 20px;
+  font-family: Verdana, Arial, Helvetica, sans-serif;
+  font-size: 11px;
+  text-indent: 20px;
+  color: #6F6048;
+}
+.Scroller-Container2 {
+  position: absolute;
+  top: 0px; left: 0px;
+  width: 100%;
+}
+#Scrollbar-Container2 {
+  position: absolute;
+  top: 0px; left: 50px;
+}
+
+.Scrollbar-Handle2 {
+	position: absolute;
+	width: 9px;
+	height: 22px;
+}
+
+/*le digo la posicion del scroll y las flechas */
+.Scrollbar-Up2 {
+  cursor: pointer;
+  position: absolute;
+  top: 0px;
+}
+
+.Scrollbar-Down2 {
+  cursor: pointer;
+  position: absolute;
+  top: 239px;
+}
+
+
+.Scrollbar-Track2 {
+background-color:none;
+border:1px solid #989999;
+height:227px;
+position:absolute;
+top:11px;
+width:9px;
+}
+
+
+</style>
+
+
+<script type="text/javascript">
+var scroller  = null;
+var scrollbar = null;
+
+var scroller2  = null;
+var scrollbar2 = null;
+
+window.onload = function () 
+{
+	if($("Scroller-1")){
+	  scroller  = new jsScroller(document.getElementById("Scroller-1"), 400, 200);
+	  scrollbar = new jsScrollbar (document.getElementById("Scrollbar-Container"), scroller, false);
+  	}
+	  if($("Scroller-2")){
+		  scroller2  = new jsScroller2(document.getElementById("Scroller-2"), 500, 240);
+		  scrollbar2 = new jsScrollbar2 (document.getElementById("Scrollbar-Container2"), scroller2, false);
+	  }
+}
+</script>
+
+
+
+
+<div class="myBigWidget" style="width: 100%;">
+	<div class="teamBlockTitle">
+		<h4>Wiki Directory</h4>
+	</div>
+	<div class="linkAction">
+		<a class="topRightLinks" href="javascript:;" onclick="createOverlay('','AddChildForm','305','');">New</a> | 
+		<a class="topRightLinks" href="/apex/WikiTeamOverview?tid={!teamId}">Go To Team Wiki&#187;</a>
+	</div>
+	
+	<div class="threads">
+		<div>
+			<apex:outputPanel layout="block" id="theFeeds" >
+				<apex:outputPanel layout="block" id="wikiNoScroll" rendered="{!IF(WikiPagesCount > 9, 'false', 'true' )}" >
+					<table class="minifeeds padding" cellpadding="0" cellspacing="0" style="{!IF(WikiPagesCount > 0, '', 'display:none;' )}">
+						<apex:repeat value="{!wikis}" var="wiki">
+							<tr>							
+								<td>
+									<img alt="" src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/wiki_page_white.png')}" />
+								</td>
+								<td>
 									<a href="/apex/WikiPage?idWP={!wiki.wikiPage.Id}" class="weight_bold">
 										<apex:outputText escape="false" value="{!wiki.Name}" />
 									</a>
-									</li>						
-								</apex:repeat> 
-							</ul>
-						</apex:outputPanel>
-					</apex:outputPanel>
-				</div>				
-			</div>
-			<!-- Widget Holder Foot -->
-			<div class="bottom_borders">
-				<div><div></div></div>
-			</div>
+								</td>
+								<td width="1%">
+								</td>
+								<td>
+									Last updated by 
+									<a href="/apex/PeopleProfileDisplay?id={!wiki.wikiPage.CreatedBy.Id}" class="weight_bold">
+										<apex:outputText escape="false" value=" {!wiki.CreatedByName} " />
+									</a>
+									at
+									<apex:outputText value="{!wiki.wikiPage.LastModifiedDate} "/>
+								</td>
+							</tr>					 
+						</apex:repeat>
+					</table>
+					<div class="center" style="{!IF(WikiPagesCount > 0, 'display:none;', '' )}" >
+						<img alt="" src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/wiki_page_white.png')}" />
+						No Wiki Pages.
+						<br>
+						<a class="weight_bold" href="">Create a new wiki page;</a>
+					</div>		
+				</apex:outputPanel>
+				<apex:outputPanel layout="block" id="wikiScroll" rendered="{!IF(WikiPagesCount > 9, 'true', 'false' )}" >
+					  <div class="Container2">
+						<div style="position: relative; float: right; width: 50px;">
+							<div style="visibility: visible;" id="Scrollbar-Container2">
+							    <img src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/up_arrow.png')}" class="Scrollbar-Up2">
+							    <img src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/down_arrow.png')}" class="Scrollbar-Down2">
+								<div class="Scrollbar-Track2">
+							    	<img style="top: 0px; left: 0px; visibility: visible;" src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/scrollbar_handle.gif')}" class="Scrollbar-Handle2">   
+								</div>
+							</div>
+						</div>  
+				  		<div style="clear: both;"></div>
+				  		<div id="Scroller-2">
+				  			<div style="left: 0px; top: 0px;" class="Scroller-Container2">
+								<table class="minifeeds padding" cellpadding="0" cellspacing="0" style="{!IF(WikiPagesCount > 0, '', 'display:none;' )}">
+									<apex:repeat value="{!Wikis}" var="wiki">
+										<tr>							
+											<td>
+												<img alt="" src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/wiki_page_white.png')}" />
+											</td>
+											<td>
+												<a href="/apex/WikiPage?idWP={!wiki.wikiPage.Id}" class="weight_bold">
+													<apex:outputText escape="false" value="{!wiki.Name}" />
+												</a>
+											</td>
+											<td width="1%">
+											</td>
+											<td>
+												Last updated by 
+												<a href="/apex/PeopleProfileDisplay?id={!wiki.wikiPage.CreatedBy.Id}" class="weight_bold">
+													<apex:outputText escape="false" value=" {!wiki.CreatedByName} " />
+												</a>
+												at
+												<apex:outputText value="{!wiki.wikiPage.LastModifiedDate} "/>
+											</td>
+										</tr>					 
+									</apex:repeat>
+								</table>
+								<div class="center" style="{!IF(WikiPagesCount > 0, 'display:none;', '' )}" >
+									<img alt="" src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/wiki_page_white.png')}" />
+									No Wiki Pages.
+									<br>
+									<a class="weight_bold" href="">Create a new wiki page</a>
+								</div>		
+					    	</div>
+					  	</div>
+					</div>
+				</apex:outputPanel>
+			</apex:outputPanel>
 		</div>
-		<div class="clear"></div>
-	</apex:outputPanel>
+	</div>
+</div>
+		
+
+<!-- ********************************************************* small widget ******************************************************************************************************************** -->
+	
+<div class="box_round forwidget mySmallWidget" style="width: 216px;">
+	<div class="header_blue">
+    <div><div>
+    <h4>Wiki Directory</h4>
+	</div></div>
+   	</div>
+   	<div class="box_content">
+    	<div class="back_gray">
+     		<a href="javascript:;" onclick="createOverlay('','AddChildForm','305','');">New</a> |  
+			<a href="/apex/WikiTeamOverview?tid={!teamId}">Go To Team Wiki&#187;</a>
+    	</div>  
+   		 <div class="center" style="{!IF(WikiPagesCount > 0, 'display:none', '' )}" >
+			No Wiki Pages Yet
+		</div> 
+			
+		<apex:outputPanel layout="block" id="wikiScrollSmall1" styleClass="Container" rendered="{!IF(WikiPagesCount > 9, 'true', 'false' )}" >
+			<div style="position: relative; float: right; width: 50px;">
+				<div style="visibility: visible;" id="Scrollbar-Container">
+	    			<img src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/up_arrow.png')}" class="Scrollbar-Up">
+	    			<img src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/down_arrow.png')}" class="Scrollbar-Down">
+					<div class="Scrollbar-Track">
+		    			<img style="top: 0px; left: 0px; visibility: visible;" src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/scrollbar_handle.gif')}" class="Scrollbar-Handle">   
+					</div>
+				</div>
+			</div>  
+			<div style="clear: both;"></div>
+	  		<div id="Scroller-1">
+	  			<div style="left: 0px; top: 0px;" class="Scroller-Container">
+		  			<ul class="minifeed_wikis">
+						<apex:repeat value="{!Wikis}" var="wiki" >
+							<li>							
+							<a href="/apex/WikiPage?idWP={!wiki.wikiPage.Id}" class="weight_bold">
+								<apex:outputText escape="false" value="{!wiki.Name}" />
+							</a>
+							</li>						
+						</apex:repeat>
+					</ul>
+				</div>
+	    	</div>
+		</apex:outputPanel>
+		
+			<apex:outputPanel id="theFeeds2" layout="block" id="wikiScrollSmall" styleClass="" rendered="{!IF(WikiPagesCount > 9, 'false', 'true' )}" >
+				
+					<ul class="minifeed_wikis">
+						<apex:repeat value="{!Wikis}" var="wiki" >
+							<li>
+							
+							<a href="/apex/WikiPage?idWP={!wiki.wikiPage.Id}" class="weight_bold">
+								<apex:outputText escape="false" value="{!wiki.Name}" />
+							</a>
+							</li>						
+						</apex:repeat> 
+					</ul>
+				
+			</apex:outputPanel>
+		</div>
+	<div class="bottom_borders">
+		<div><div>
+		
+		</div></div>
+	</div>
+</div>
+
+	
+	<script type="text/javascript">
+	
+		widgetPosition();
+		function widgetPosition() 
+		{
+			var widSmall = $$('.mySmallWidget');
+			var widBig = $$('.myBigWidget');
+			
+			for(var i =0; i<widSmall.length; i++) 
+			{
+				if(widSmall[i].ancestors()[1].hasClassName('holder'))
+				{
+					widSmall[i].remove();
+				}
+			}
+			
+			for(var i =0; i<widBig.length; i++) {
+				if(widBig[i].ancestors()[1].hasClassName('rightCol')){
+					widBig[i].remove();
+				}
+			}
+		}
+	</script>
+	
 </apex:component>

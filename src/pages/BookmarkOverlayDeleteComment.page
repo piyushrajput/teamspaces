@@ -1,0 +1,25 @@
+<apex:page sidebar="false" showHeader="false">
+<div class="deleteCommentOverlay" id="DeleteCommentForm" style="display:none;">	
+	<div class="formsHeader">
+			<table border="0" style="width:100%">
+				<tr>
+					<td style="color:#FFFFFF">Detele Comment</td>
+					<td align="right"><img style="cursor:pointer;vertical-align:center;" src="{!URLFOR($Resource.BookmarkResources, 'images/layout/close_dialog.gif')}" onclick="modal.close();" /></td>
+				</tr>
+			</table>
+	</div>
+	<form action="" >
+		<div style="margin-left:25px;">
+			<br><br>
+			<b>Are you sure you want to delete this comment?</b><br>
+			<span class="infoText">Once a comment is deleted, it is not recoverable.</span><br>
+			<br><br>
+		</div>
+		<hr color="#999999" size="1px">
+		<div align="center">
+			<input type="button" class="deleteBtn" value="Continue and delete" onclick="modal.close()">
+			<input type="button" class="cancelBtn" value="Cancel" onclick="modal.close()">
+		</div>
+	</form>
+</div>
+</apex:page>

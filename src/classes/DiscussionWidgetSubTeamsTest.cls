@@ -1,22 +1,11 @@
-@IsTest private class DiscussionWidgetSubTeamsTest {
+public class DiscussionWidgetSubTeamsTest {
 
 public static String teamId = System.currentPageReference().getParameters().get('id');
-    public static testMethod void testDiscussion() {
-    	GenerateEnvironmentTest.gen();
-    	Test.startTest();
-    	
-        DiscussionWidgetSubTeamsController dis = new DiscussionWidgetSubTeamsController();
-        DiscussionWidgetSubTeamsController.subTeams sub = new DiscussionWidgetSubTeamsController.subTeams();
-        
-        dis.setTeamId(GenerateEnvironmentTest.newTeam.Id);
-        
-        dis.getCountSubTeams();
-        dis.getSubTeams();
+	public static testMethod void testDiscussion() {
 
-        sub.getName();
-        sub.getId();
-        sub.getCount();
-        
-        Test.stopTest();
-    }       
+	DiscussionWidgetSubTeamsController dis = new DiscussionWidgetSubTeamsController();
+	DiscussionWidgetSubTeamsController.subTeams sub = new DiscussionWidgetSubTeamsController.subTeams();
+    //List<DiscussionWidgetSubTeamsController.subTeams> list = new dis.getSubTeam(String teamId)
+ 	//System.assert(list.size()==0,'La lista no tiene elementos');	
+	}	 	
 }

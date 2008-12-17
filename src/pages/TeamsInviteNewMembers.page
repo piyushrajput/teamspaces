@@ -1,10 +1,10 @@
 <apex:page sidebar="false" id="TeamsNewMember" tabStyle="Team__c" controller="TeamsNewMemberController">
-	<apex:includeScript value="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/prototype.js')}"/>
-	<apex:includeScript value="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/scriptaculous.js')}"/>
-	<apex:includeScript value="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/effects.js')}"/>
-	<apex:includeScript value="{!URLFOR($Resource.TeamsResources, 'inc/js/autocomplete.js')}"/>
+	<script src="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/prototype.js')}" />
+	<script src="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/scriptaculous.js')}" />
+	<script src="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/effects.js')}" />
+	<script src="{!URLFOR($Resource.TeamsResources, 'inc/js/autocomplete.js')}" />
 	<!-- Ajax Toolkit SDFC -->
-	<apex:includeScript value="/soap/ajax/11.1/connection.js"/>
+	<script src="/soap/ajax/11.1/connection.js" type="text/javascript"></script>
 	<script>
 		var API_SESSION_ID = '{!$Api.Session_ID}';
 		var stopRecursivity = false;
@@ -12,20 +12,63 @@
 	<!-- Common CSS Styling  -->
 	<link rel="stylesheet" href="{!URLFOR($Resource.PeopleResourceFiles, 'inc/css/autocomplete.css')}" type="text/css" media="screen" charset="utf-8" />
 	<link rel="stylesheet" href="{!URLFOR($Resource.TeamsResources, 'inc/css/teamOverlyInviteNewMember.css')}" type="text/css" />
-	<
+	
 	<style>
-		.tooltip {
-			background-color:#F9F8CD;
-			border:1px solid #221E1F;
-			display:none;
-			font-family:"Lucida Grande",Verdana;
-			font-size:12px;
-			overflow:auto;
-			padding:5px;
+		.bubble_2 {
+			z-index:999999;
 			position:absolute;
-			text-align:left;
-			width:240px;
-			z-index:10000;
+			width:221px;
+			overflow:visible;
+			display:none;
+			top:10px;
+			left:10px;				
+		}
+		
+		.bubble_2 .content {
+			width:221px;
+			clear:both;
+			position:relative;
+			background:url({!URLFOR($Resource.TeamsResources, 'images/bubbleNewTeam/bubble_bg.png')}) repeat-y;
+			background-position: top right;
+		}
+
+		* html .bubble_2 .content {background:none;}
+		* html .bubble_2 .content {filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src="{!URLFOR($Resource.TeamsResources, 'images/bubbleNewTeam/bubble_bg.png')}", sizingMethod="scale")}
+		
+		.bubble_2 .bottom_border {
+			width:221px;
+			height: 24px;			
+			overflow:hidden;
+			position:relative;
+			background:url({!URLFOR($Resource.TeamsResources, 'images/bubbleNewTeam/bubble_bottom.png')}) no-repeat;
+			background-position:  bottom right;
+		}
+
+		* html .bubble_2 .bottom_border {background:none;}
+		* html .bubble_2 .bottom_border {filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src="{!URLFOR($Resource.TeamsResources, 'images/bubbleNewTeam/bubble_bottom.png')}", sizingMethod="scale")}			
+		
+		.bubble_2 .top_border {
+			width:221px;
+			height: 25px;
+			overflow:hidden;
+			position:relative;
+			background:url({!URLFOR($Resource.TeamsResources, 'images/bubbleNewTeam/bubble_top.png')}) no-repeat;
+			background-position:  bottom right;
+		}
+		
+		* html .bubble_2 .top_border {background:none;}
+		* html .bubble_2 .top_border {filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src="{!URLFOR($Resource.TeamsResources, 'images/bubbleNewTeam/bubble_top.png')}", sizingMethod="scale")}			
+
+		
+		.bubble_2 .content .innerContbubble_2 {
+			position:relative;
+			margin:0px 20px 0px 20px;
+		}
+		
+		.bubble_2 .arrowbubble_2 {
+			position:absolute;
+			top:20px;
+			left:6px;					
 		}
 		
 		div.autocomplete{
@@ -34,57 +77,18 @@
 			display: block;
 		}	    
 	</style>
-	 
-	<apex:includeScript value="{!URLFOR($Resource.TeamsResources, 'inc/js/TeamsInviteNewMember.js')}"/>
+	
+	<script src="{!URLFOR($Resource.TeamsResources, 'inc/js/TeamsInviteNewMember.js')}" />
+	
 	<script>
-		/**
-        * Namespace Prefix Getter
-        */
-        var namespace = "{!namespace}";
-
-		/**		
+/**
 		* Initialize toolkit connection
 		*@void
 		*/
 		function init(){
 			sforce.connection.sessionId = '{!$Api.Session_ID}';
-			sforce.connection.defaultNamespace = namespace;
 		}
 		
-		var showingBubble = false;		
-		var time = '';
-		
-		function tooltip(obj, text){
-		
-			// Div position
-			showingBubble = true;
-			var position = getXY(obj);
-			var leftPosition = 0;
-			
-			// Tooltip
-			var tooltip = $('divToolTip');
-			var tooltipMessage = $('messageTooltip');
-			// set position
-			var topPosition = position.y2 - 110;
-			leftPosition = (typeof document.body.style.maxHeight != "undefined") ? position.x2 + 5 : position.x2 - 215;
-			
-			tooltipMessage.innerHTML = text;
-			tooltip.style.top = topPosition + 'px'; 
-			tooltip.style.left = leftPosition + 'px';
-			
-			tooltip.style.display = 'block';
-			showingBubble = true;
-			clearTimeout(time);
-			time = setTimeout("Effect.Fade('divToolTip')",3000);
-		}
-	
-		function tooltipoff(){
-			// Tooltip
-			showingBubble = false;
-			clearTimeout(time);
-			var tooltip = $('divToolTip');
-			tooltip.style.display = 'none';
-		}
 		/* ### bubble_2 ###*/
 		
 		/**
@@ -100,11 +104,59 @@
 			var y2 = y + parseInt(obj.offsetHeight);
 			return {'x':x, 'y':y, 'x2':x2, 'y2':y2};
 		}
+		
+		/**
+		* Show bubble_2 overlay
+		*@param Object element
+		*@param String selectId
+		*/
+		var isShowbubble_2 = false;
+		function showbubble_2(currentElement, selectId){
+			isShowbubble_2 = true;
+			var container = $('bubble_2');
+			var position = getXY(currentElement);
+			var selectValue = $F(selectId);
+			container.style.display = 'block';	
+			init();
+			queryString ="Select Id, Description__c from TeamProfile__c where Id = '" + selectValue + "'";
+			result = sforce.connection.query(queryString);
+			records = result.getArray("records");			
+			container.style.top = position.y2 + 'px';
+			container.style.left = position.x2 + 'px';
+			$('innerContbubble_2').innerHTML = records[0].Description__c;
+			
+			if(Prototype.Browser.IE){
+				topPosition = position.y2 - 150;	
+				leftPosition = position.x2 - 70;
+				container.style.top = topPosition + 'px';												
+				container.style.left = leftPosition + 'px';
+			}else{
+				// For mozilla
+				topPosition = position.y2 - 155;	
+				container.style.top = topPosition + 'px';												
+			}
+		}
+		
+		/**
+		* Hide bubble_2
+		*@void
+		*/
+		function hidebubble_2(){
+			isShowbubble_2 = false;
+			setTimeout('if(!isShowbubble_2){Effect.Fade(\'bubble_2\');}', 1500);
+		}
 	</script>
-	<!-- info tooltip -->
-	<div id="divToolTip" class="tooltip">
-		<div id="messageTooltip"></div>
+	
+	<div id="bubble_2" class="bubble_2">
+		<div class="top_border">&nbsp;</div>		
+		<div class="content">
+			<img class="arrowbubble_2" src="{!URLFOR($Resource.TeamsResources, 'images/bubbleNewTeam/bubble_arrow.gif')}" />				
+			<!-- Content here -->
+			<div class="innerContbubble_2" id="innerContbubble_2"></div>	
+		</div>
+		<div class="bottom_border">&nbsp;</div>				
 	</div>
+				
 	<!-- Content  -->
 	<div class="modalContent">
 		<div id="inviteTeam" style="display:none;">
@@ -118,6 +170,7 @@
 					<img src="{!URLFOR($Resource.TeamsResources, 'images/layout/close.gif')}" alt="Close Window" title="Close Window" /></a>
 				</div>
 			</div>
+			  
 			<div>
 				<apex:form id="newMemberForm">
 					<div align="right">
@@ -165,12 +218,16 @@
 															hideSelect.style.visibility = 'hidden';
 														}
 													
-													}else {
+													}
+													else {
 														hideSelect.style.visibility = 'visible';
 													}
+													
 													setTimeout('selectFixIE6()',200);
+												
 												}
-											}else {
+											}
+											else {
 												stopRecursivity = true;
 											}
 										}
@@ -196,7 +253,8 @@
 								<td></td>
 								<td></td>
 								<td>
-									&nbsp;<span class="explain">(comma separated)</span><br/>
+									&nbsp;<span class="explain">(comma separated)</span>
+									<br/>
 								</td>
 							</tr>
 							<tr>
@@ -227,9 +285,10 @@
 										<apex:selectOptions value="{!profilesOptions}"/>
 									</apex:selectList>
 									&nbsp;
-									<a href="Javascript:;" onclick="tooltip(this, '{!$Component.newTeamProfile}');">
-										<img class="imgAlign" onmouseover="tooltip(this, '{!$Component.newTeamProfile}');" onmouseout="tooltipoff();" src="{!URLFOR($Resource.TeamsResources, '/images/layout/icons/infoWhite.gif')}" border="0" />
+									<a href="Javascript:;" onclick="showbubble_2(this, '{!$Component.newTeamProfile}');">
+										<img class="imgAlign" onmouseover="showbubble_2(this, '{!$Component.newTeamProfile}');" onmouseout="hidebubble_2();" src="{!URLFOR($Resource.TeamsResources, '/images/layout/icons/infoWhite.gif')}" border="0" />
 									</a>
+									<!-- <img alt="" class="imgAlign" src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/info.gif')}" /> -->
 								</td>
 							</tr>	
 							<tr>
@@ -241,7 +300,8 @@
 								</td>
 								<td></td>
 								<td>
-									&nbsp;<apex:inputText style="width:310px;" value="{!newMemberVars.teamRole}" />  
+									&nbsp;
+									<apex:inputText style="width:310px;" value="{!newMemberVars.teamRole}" />  
 								</td>                                
 							</tr>							
 							<tr> 
@@ -255,11 +315,13 @@
 								<td height="15px"></td>
 							</tr>	
 						</table>
+					
 						<div class="title_line_btn"></div> 
 						<div align="center">
 							<apex:commandButton action="{!saveMembers}" oncomplete="modal.close();stopFunction();" styleclass="InviteBtn" value="Send" rerender="membersList"/> 
 							<apex:commandButton action="{!saveMembersNew}" oncomplete="$('{!$Component.newMemberForm}').reset();" styleclass="InviteAndAddBtn" value="Send & add more members" rerender="membersList"/>
 							<input class="cancelBtn" type="button" value="Cancel" onclick="modal.close();stopFunction();"/>
+							<!-- <input class="InviteBtn" type="button" value="Send"/> <input class="InviteAndAddBtn" type="button" value="Send & add more members"/><input class="cancelBtn" type="button" value="Cancel" onclick="modal.close();"/> -->
 						</div>
 					</div>
 				</apex:form>

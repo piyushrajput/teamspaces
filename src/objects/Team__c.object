@@ -2,12 +2,6 @@
 <CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
     <deploymentStatus>Deployed</deploymentStatus>
     <fields>
-        <fullName>ContactEmail__c</fullName>
-        <label>ContactEmail</label>
-        <length>200</length>
-        <type>Text</type>
-    </fields>
-    <fields>
         <fullName>Description__c</fullName>
         <label>Description</label>
         <length>32000</length>
@@ -15,18 +9,10 @@
         <visibleLines>3</visibleLines>
     </fields>
     <fields>
-        <fullName>Id2__c</fullName>
-        <description>This field copies the Id of the instance and stores it as a string. We had to do this so that we can compare Id&apos;s in sosl statements w/o having to turn on the private apis.
-Aug 2008 -Marcos</description>
-        <formula>Id</formula>
-        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
-        <label>Id2</label>
-        <type>Text</type>
-    </fields>
-    <fields>
         <fullName>NewMemberProfile__c</fullName>
         <label>NewMemberProfile</label>
         <referenceTo>TeamProfile__c</referenceTo>
+        <relationshipLabel>Teams</relationshipLabel>
         <relationshipName>Teams</relationshipName>
         <type>Lookup</type>
     </fields>
@@ -34,19 +20,15 @@ Aug 2008 -Marcos</description>
         <fullName>ParentTeam__c</fullName>
         <label>Parent Team</label>
         <referenceTo>Team__c</referenceTo>
+        <relationshipLabel>ParentTeam</relationshipLabel>
         <relationshipName>ParentTeam</relationshipName>
         <type>Lookup</type>
-    </fields>
-    <fields>
-        <fullName>Picture__c</fullName>
-        <label>Picture</label>
-        <length>25</length>
-        <type>Text</type>
     </fields>
     <fields>
         <fullName>PublicProfile__c</fullName>
         <label>PublicProfile</label>
         <referenceTo>TeamProfile__c</referenceTo>
+        <relationshipLabel>Teams (PublicProfile)</relationshipLabel>
         <relationshipName>Teams1</relationshipName>
         <type>Lookup</type>
     </fields>
@@ -66,6 +48,7 @@ Aug 2008 -Marcos</description>
         <fullName>TeamType__c</fullName>
         <label>Team Type</label>
         <referenceTo>TeamType__c</referenceTo>
+        <relationshipLabel>Teams</relationshipLabel>
         <relationshipName>Teams</relationshipName>
         <type>Lookup</type>
     </fields>
@@ -75,5 +58,5 @@ Aug 2008 -Marcos</description>
         <type>Text</type>
     </nameField>
     <pluralLabel>Teams</pluralLabel>
-    <sharingModel>Private</sharingModel>
+    <sharingModel>ReadWrite</sharingModel>
 </CustomObject>

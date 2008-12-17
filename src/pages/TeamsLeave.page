@@ -1,45 +1,50 @@
 <apex:page sidebar="false">
+
 	<!-- Javascript -->
 	<!-- Prototype + Scriptaculous -->
-	<apex:includeScript value="{!URLFOR($Resource.Script_aculo_us, 'prototype.js')}"/>
-	<apex:includeScript value="{!URLFOR($Resource.Script_aculo_us, 'scriptaculous.js')}"/>
-	<apex:includeScript value="{!URLFOR($Resource.Script_aculo_us, 'effects.js')}"/>
+	<script type="text/javascript" src="{!URLFOR($Resource.Script_aculo_us, 'prototype.js')}"></script>
+	<script type="text/javascript" src="{!URLFOR($Resource.Script_aculo_us, 'scriptaculous.js')}"></script>
+	<script type="text/javascript" src="{!URLFOR($Resource.Script_aculo_us, 'effects.js')}"></script>
 	<!-- Common Js for All Sections -->
-	<apex:includeScript value="{!URLFOR($Resource.commonResources, 'inc/js/common.js')}"/>
-	<apex:includeScript value="{!URLFOR($Resource.commonResources, 'inc/js/modal.js')}"/>
+	<script type="text/javascript" src="{!URLFOR($Resource.commonResources, 'inc/js/common.js')}"></script>
+	<script type="text/javascript" src="{!URLFOR($Resource.commonResources, 'inc/js/modal.js')}"></script>
 	<!-- Common Js for modal -->
 	<link rel="stylesheet" media="screen" href="{!URLFOR($Resource.commonResources, 'inc/css/modal.css')}" />
-	<apex:stylesheet value="{!URLFOR($Resource.TeamsResources, 'inc/css/teamsOverlaysTemplate.css')}" />
+	
 	<!-- Initialize the overlay box for modal.js -->
 	<a href="#modal_container" id="initializeModal" style="display:none;"></a>
 	<div id="modal_container"></div>
 	<script>createOverlay('initializeModal')</script>
+		
 	<!-- Delete Team -->
-	<div id="leaveTeam" style="display:none;" class="overlayForm">	
-		<!-- Overlay Title -->
-		<div class="overlayTitleContent">
-			<div class="overlayTitle">Leave Team</div>
-			<div class="overlayCloseEvent">
-				<a href="Javascript:;" onclick="modal.close();">
-					<img src="{!URLFOR($Resource.TeamsResources, 'images/layout/genericClose.gif')}" alt="Close Window" title="Close Window" />
-				</a>
+	<div id="leaveTeam" style="display:none;">
+		<!-- Title of Dialog -->
+	  	<div class="modalTitle">
+			<div class="title">
+				Leave Team
+			</div>
+			<div class="closeEvent">
+				<a href="Javascript:;" onclick="modal.close();"><img src="{!URLFOR($Resource.TeamsResources, 'images/layout/close.gif')}" alt="Close Window" title="Close Window" /></a>
 			</div>
 		</div>
 		<!-- Content  -->
-		<div class="overlayMainContent">
+		<div class="modalContent">
 			<!-- Dialog Body  -->
-			<div class="overlayFormContent">
+			<div class="modalMessage padding_30px bottom_border_gray">
 				Are you sure you want to leave {Team name}?
 			</div>
-			<div class="overlaySeparateLine" />
-			<!-- Saven and Cancel Buttons -->
-			<div class="overlayFromButtons" align="center">
-			<input type="button" class="overlaySaveBtn" value="Yes" />
-			<input type="button" onclick="modal.close();" class="overlayCancelBtn" value="No" />
+		<!--Actions  -->
+		<div class="actionsYesNo">
+			<a href="javascript:;" class="button">
+				Yes
+			</a>
+			<a href="javascript:;" onclick="modal.close();" class="button gray">
+				No
+			</a>
 			</div>
+		</div><!-- END Modal Content -->
 		</div>
-		<!-- END Modal Content -->
-	</div>
 	<!-- END announcement delete -->    
+		
 	<a href="javascript:;" onclick="createOverlay('','leaveTeam','160');">Leave Team</a>
 </apex:page>

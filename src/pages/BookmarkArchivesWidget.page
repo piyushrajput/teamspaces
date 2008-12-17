@@ -1,0 +1,34 @@
+<apex:page sidebar="false" controller="BookmarkOverviewController" tabStyle="Bookmark__c">
+	<div class="box_round">
+		<!-- Header -->
+		<div class="header edition">
+			<div><div><h4>Archives</h4></div></div>
+		</div>
+		<!-- Rounded Box Content -->
+		<apex:form>
+			<div class="box_content">
+				<div class="table_conteiner">
+					<table class="tableInfo" cellspacing="0" cellpadding="0" width="100%">
+						<thead>
+							<tr>
+								<th width="100%"><a href="javascript:;" class="seeMore" style="color:#9D9D9D" >See More&#187;</a></th>
+							</tr>
+						</thead>
+						<apex:repeat value="{!Archives}" var="archive">	
+							<tr>
+								<td>
+									<ul class="archives teamsList">
+										<li><apex:commandLink value="{!archive}" action="{!genFilter}" reRender="myTeamsPanel">
+												<apex:param name="monthId" value="{!archive}" />
+											</apex:commandLink><!-- <a href="javascript:;" class="">{!archive}</a>--></li>
+									</ul>	
+								</td>
+							</tr>
+						</apex:repeat>
+					</table>
+				</div>
+			</div>
+		</apex:form>	
+		<div class="bottom_borders"><div><div></div></div></div>
+	</div>	
+</apex:page>

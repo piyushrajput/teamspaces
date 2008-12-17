@@ -42,5 +42,5 @@
         <type>Text</type>
     </nameField>
     <pluralLabel>Widgets</pluralLabel>
-    <sharingModel>Read</sharingModel>
+    <sharingModel>ReadWrite</sharingModel>
 </CustomObject>

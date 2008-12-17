@@ -1,177 +1,88 @@
-/**
-*@author: Juan M. Bessonart @ 06-02-2008
-*/
-public without sharing class DiscussionReplyController {
-	
-	/**
-	* Constructor
-	*/
-	public DiscussionReplyController(){
-		constructorMethods();	
-	}
-
-    public UserPermissions userPermissions = new UserPermissions();
-    /**
-    * Load permissions for current User
-    */
-    public void genPermissions () {
-        userPermissions.setId(UserInfo.getUserId());
-        userPermissions.setTeam(TEAMID);
-        userPermissions.setObjectType('Discussion');
-        userPermissions.setPermissions();       
-    }
-   
- 	/**
- 	* Returns UserPermission instance
- 	*@return UserPermissions
- 	*/
-    public UserPermissions getUserPermissions () {
-        return userPermissions;
-    }
+public class DiscussionReplyController {
 
    	public Integer currentPagination = 1;
    	public Integer firstRow = 1;
+   	
 	UserTopic topicUser = null;
 	public boolean noForums;
-	public String pageNumberParam = System.currentPageReference().getParameters().get('p');
-	public String paramId = System.currentPageReference().getParameters().get('id');
-	
-	/**
-	* Set current page number
-	*@param String page num
+	/*
+	*@construct
 	*/
-	public void setPageNumberParam (String pageNumberParam) {
-		this.pageNumberParam = pageNumberParam;
-	}
-	
-	/**
-	* Set DiscussionTopic__c Id
-	*@param String param Id
-	*/
-	public void setParamId (String paramId) {
-		this.paramId = paramId;
-	}
-	
-	/**
-	* Execute on construct for load data
-	*/
-	public void constructorMethods () {
-		if (paramId != null) {
-			getTopics();
-			if(topicUser != null){
-				totalItemsNumber = topicUser.replys.size();
-			} else {
-			    throw new CustomException('Insufficient Privileges');
-			}
-			if(totalItemsNumber == 0 ){
-				noForums = true;
-			} else {
-				noForums = false; 
-			}
-			
-			String pageNumber = pageNumberParam;
-			if (pageNumber == '' || pageNumber == null) {
-				currentPagination = 1;
-				firstRow = 1;
-			}else {
-				currentPagination = Integer.valueOf(pageNumber);
-				firstRow = (Integer.valueOf(pageNumber) - 1) * numberOfItemsToShow;
-			}
-			genCntPagination();
-			genPermissions();	
+	public DiscussionReplyController(){
+		getTopics();
+		totalItemsNumber = topicUser.replys.size();
+		if(totalItemsNumber == 0 ){
+			noForums = true;
+		} else {
+			noForums = false; 
 		}
-	}
+		
+		String pageNumber = System.currentPageReference().getParameters().get('p');
+		if (pageNumber == '' || pageNumber == null) {
+			currentPagination = 1;
+			firstRow = 1;
+		}    
+		else {
+			currentPagination = Integer.valueOf(pageNumber);
+			firstRow = (Integer.valueOf(pageNumber) - 1) * numberOfItemsToShow;
+		}
+    
+		genCntPagination();
 
-	/**
-	* Read topic for current paramId
+	}
+	
+	/*
+	*@void
 	*/
+	
 	public void getTopics(){
-		String param = paramId;
+		String param = System.currentPageReference().getParameters().get('id');
 		this.getTopic(param);	
 	}
 	
-	/**
-	* Get UserTopic instance
-	*@return UserTopic
+	/*
+	* Getters
 	*/
 	public UserTopic getTopicUser(){
 		return topicUser;
-	}
-	
-	public boolean isTopicAuthor = false;
-	/**
-	* Returns boolean User is a topic author
-	*@return Boolean
-	*/
-	public boolean getIsTopicAuthor(){	
-		return isTopicAuthor;
-	}
-	
-	public Id TOPICID;
+	}  
 	
 	/**
-	* Returns topic Id
-	*@return Id
-	*/
-	public Id getTopicId(){
-		return TOPICID;
-	}
-	
-	public DiscussionMessage__c firstMessage = new DiscussionMessage__c();
-	
-	public DiscussionMessage__c getFirstMessage(){
-		return firstMessage;
-	}
-	
-	/**
-	* Get topic by Id
-	*@param String param
+	*@void
 	*/
 	public void getTopic (String param){
+		
 		List<DiscussionTopic__c> topics = new List<DiscussionTopic__c>();
+		
 		List<DiscussionForum__c> forums = new List<DiscussionForum__c>();
-
 		// The first message 
-		topics = [Select d.Subject__c, d.OwnerId, d.Name, d.PostedBy__c, 
-				 d.Id, d.DiscussionForum__c  ,d.PostedDate__c, 
+		DiscussionMessage__c firstMessage = new DiscussionMessage__c();
+		
+		topics = [Select d.Subject__c, d.OwnerId, d.Name, 
+				 d.Id, d.DiscussionForum__c  ,d.PostedDate__c,
 				 (Select PostedBy__c, PostedDate__c, Message__c, Id From DiscussionTopic__r order by PostedDate__c desc limit 5) 
 				 From DiscussionTopic__c d
 				 where d.Id =: param];
+				 
+		forums = [Select  d.Team__c, d.Id, 
+			  (Select MessageCount__c From DiscussionForum__r) 
+			  From DiscussionForum__c d
+			  where d.Id =: topics[0].DiscussionForum__c];
+			  				 
+		// topicUser = new UserTopic(getUserInfo(topics[0].OwnerId), topics[0], forums[0]);
 		
-		if(topics.size() > 0){
-			forums = [Select  d.Team__c, d.Id, 
-				  (Select MessageCount__c From DiscussionForum__r) 
-				  From DiscussionForum__c d
-				  where d.Id =: topics[0].DiscussionForum__c];
-			TOPICID = topics[0].Id;
-		}
+		firstMessage = [Select Message__c, PostedDate__c, Team__c, DiscussionTopic__r.Subject__c From DiscussionMessage__c where DiscussionTopic__c =: param order by PostedDate__c asc Limit 1];
 		
-		if(forums.size() > 0){
-			TEAMID = forums[0].Team__c;			 
-			firstMessage = [Select Id, Message__c, PostedDate__c, PostedBy__c, Team__c, DiscussionTopic__r.Subject__c From DiscussionMessage__c where DiscussionTopic__c =: param order by PostedDate__c asc Limit 1];
-		}
-		
-		if(UserInfo.getUserId() == firstMessage.PostedBy__c){
-			isTopicAuthor = true;
-		}
-		
-		if(topics.size() > 0){
-			topicUser = new UserTopic(getUserInfo(topics[0].PostedBy__c), firstMessage, forums[0], param);
-		} 
+		topicUser = new UserTopic(getUserInfo(topics[0].OwnerId), firstMessage, forums[0]);
+			
 	}
 	
-	/**
-	* Returns boolean has forums
-	*@return Boolean
-	*/
 	public boolean getNoForums(){
 		return noForums;
 	}
 	
-	/**
-	* Get User instance by Id
+	/*
 	*@static
-	*@param Id The User Id
 	*@return User
 	*/
 	public static User getUserInfo (Id id){
@@ -179,17 +90,11 @@ public without sharing class DiscussionReplyController {
 		users = [Select u.Name, u.Title, u.Id, (Select Name, Picture__c From People__r) 
 				From User u
 				where u.Id =: id];
-		if(users.size() > 0){
-			return users[0];
-		} else {
-			return null;
-		}
+		return users[0];
 	}
 	
-	/**
-	* Get Team by Id
-	* @static
-	*@param Id The Team Id
+	/*
+	*@static
 	*@return Team__c
 	*/
 	public static Team__c getTeam(Id id){
@@ -198,67 +103,47 @@ public without sharing class DiscussionReplyController {
 		return (teams.size() > 0) ? teams[0] : null;
 	}
 	
-	public String topicIdParam;
-	/**
-	* Set Topic Id
-	*@param String 
-	*/
-	public void setTopicIdParam (String topicIdParam) {
-		this.topicIdParam = topicIdParam;
-	}
 	
-	/**
-	* Update number of views to one Topic
-	*/
+	
 	public void updateReadCount () {
-		String topicId;
-		if (System.currentPageReference().getParameters().get('id') != null) {
-			topicId = System.currentPageReference().getParameters().get('id');
-		}else{
-			topicId = topicIdParam;	
-		}
+		String topicId = System.currentPageReference().getParameters().get('id');
 		List<DiscussionTopic__c> topic = [select Id, ViewCount__c, LastViewedDate__c from DiscussionTopic__c where id =: topicId];
 		if (topic != null) {
 			topic[0].ViewCount__c = topic[0].ViewCount__c + 1;
 			topic[0].LastViewedDate__c = System.now();
-			update topic[0];
+			upsert topic;
 		}
 	}
 	
-	/**
-	* Class UserTopic
-	*@author Juan Bessonart
+	/*
+	*Topics Inner Class
 	*/
 	public class UserTopic {
 		
-		String param;
+		String param = System.currentPageReference().getParameters().get('id');
 		User user = null;
 		Team__c team = null;
 		DiscussionMessage__c topicMessage = null;
 		List<UserReplys> replys = new List<UserReplys>();
 		String picture;
 		String strdate = null;
-		
-		/**
-		* Constructor
-		*@param User
-		*@param DiscussionMessage__c
-		*@param DiscussionForum__c
-		*@param String DiscussionTopic Id
-		*/
-		public UserTopic(User u, DiscussionMessage__c d, DiscussionForum__c f, String paramId){
+
+		public UserTopic(User u, DiscussionMessage__c d, DiscussionForum__c f){
 			user = u;
 			topicMessage = d;
 			team = DiscussionReplyController.getTeam(f.Team__c);
-			param = paramId;
-			if(u != null){
-				if(u.People__r.size() > 0 && u.People__r[0].Picture__c != null){
-					picture = u.People__r[0].Picture__c;
-				}else{
-					picture = 'nopicture';
-				}
+			if(u.People__r.size() > 0 &&
+			   u.People__r[0].Picture__c != null && 
+			   u.People__r[0].Picture__c != ''){
+				picture = u.People__r[0].Picture__c;
 			}
+			else{
+				picture = 'nopicture';
+			}
+			//picture = (u.People__r[0].Picture__c != null && u.People__r[0].Picture__c != '') ? u.People__r[0].Picture__c : '01530000000VO5s';
+			
 			List<DiscussionMessage__c> messageList = new List<DiscussionMessage__c>();
+			
 			messageList = [ Select 
 							Team__c, 
 							Name, 
@@ -272,203 +157,137 @@ public without sharing class DiscussionReplyController {
 							// Header__c, 
 							DiscussionTopic__c, 
 							DiscussionTopic__r.DiscussionForum__c,
-							PostedDate__c From DiscussionMessage__c where DiscussionTopic__c =: param order by PostedDate__c];			
+							PostedDate__c From DiscussionMessage__c where DiscussionTopic__c =: param order by PostedDate__c];
 			
 			for (DiscussionMessage__c m : messageList){
 				replys.add(new UserReplys(m));
 			}
+		
 		}
 		
-		/**
-		* Get picture
-		*@return String
-		*/
 		public String getPicture(){
 			return picture;
 		}
 		
-		/**
-		* Get User instance
-		*@return User
-		*/
 		public User getUser(){
 			return user;
 		}
 		
-		/**
-		* Get Team Instance
-		*@return Team__c
-		*/
 		public Team__c getTeam(){
 			return team;
 		}
 		
-		/**
-		* Get Topic
-		*@return DiscussionMessage__c
-		*/
 		public DiscussionMessage__c getTopic (){
 			return topicMessage;
 		}
 		
-		/**
-		* Get topic message
-		*@return String
-		*/
 		public String getMessTopic(){
 			return getTopic().Message__c; 
 		}
 			
-		/**
-		* Get formated date
-		*@return String
-		*/
+		
 		public String getStrdate(){
 			return topicMessage.PostedDate__c.format('MMMM dd, yyyy HH:mm');
 		}
 		
-		/**
-		* Get topic replys
-		*@return List<UserReplys>
-		*/
 		public List<UserReplys> getReplys (){
 			return replys;
 		} 
 		
-		/**
-		* Get truncated user name if too long
-		*@return String
-		*/
 		public String getShowShortUserName(){
-	        String userName = user.Name;
-			if(userName.length() > 15){
-	           return userName.substring(0,15) + '...';            	
-	        }else{
-	        	return userName;
-	        }
-		}
+			String topicSubject = topicMessage.DiscussionTopic__r.Subject__c;
 		
-		/**
-		* Repalce topic subject
-		*@return String
-		*/
-		public String getTopicNameReplaced(){
-			String topicSubject = topicMessage.DiscussionTopic__r.Subject__c;
-			return topicSubject;
-		}
-
-		/**
-		* Get truncated topic name if too lomg
-		*@return String
-		*/
-		public String getShowShortTopicName(){
-			String topicSubject = topicMessage.DiscussionTopic__r.Subject__c;
 			if(topicSubject.length() > 22){
 	           return topicSubject.substring(0,22) + '...';            	
 	        }else{
 	        	return topicSubject;
 	        }
 		}
+		
+		
+		public String getTopicNameReplaced(){
+			String topicSubject = topicMessage.DiscussionTopic__r.Subject__c;
+			return topicSubject;
+		}
+
+		public String getShowShortTopicName(){
+		String topicSubject = topicMessage.DiscussionTopic__r.Subject__c;
+		
+			if(topicSubject.length() > 22){
+	           return topicSubject.substring(0,22) + '...';            	
+	        }else{
+	        	return topicSubject;
+	        }
+		}
+	
 	}
 	
-	/**
-	* Class for Replys
-	*@author Juan Bessonart
+	/*
+	*Replys Inner Class
 	*/
 	public class UserReplys {
 		
 		DiscussionMessage__c message = null;
+		
 		User user = null;
 		String picture;
 		String strdate = null;		
+		
 		//Quote
 		String quote = null;
 		String qtdate = null;
 		String qtAuthor = null;
 		boolean existqt = false;
-		boolean isMessageAuthor = false;
 		
-		/**
-		* Constructor
-		*@param DiscussionMessage__c 
-		*/
+		
 		public UserReplys (DiscussionMessage__c m){
+			
 			if ((m.ParentMessage__c != null)){
+				
 				quote = m.ParentMessage__r.Message__c;
 				qtdate = (m.ParentMessage__r.PostedDate__c).format('MMMM dd, yyyy HH:mm');
 				qtAuthor = m.ParentMessage__r.PostedBy__r.Name;
+				
 				existqt = true;
 			} else {
 				existqt = false;
 			}
+
 			message = m;	
 			user = DiscussionReplyController.getUserInfo(message.PostedBy__c);
-			if(message.PostedBy__c == Userinfo.getUserId()){
-				isMessageAuthor = true;
-			}
 			if(user.People__r.size() > 0 &&
 			   user.People__r[0].Picture__c != null && 
 			   user.People__r[0].Picture__c != ''){
 				picture = user.People__r[0].Picture__c;
-			}else{
+			}
+			else{
 				picture = 'nopicture';
 			}
+			//picture = (user.People__r[0].Picture__c != null && user.People__r[0].Picture__c != '') ? user.People__r[0].Picture__c : 'nopicture';			
 		}
 		
-		/**
-		* Return true if is meesage author
-		*@return Boolean
-		*/
-		public Boolean getIsMessageAuthor(){
-			return isMessageAuthor;
-		}
-		
-		/**
-		* Get quote author
-		*@return String
-		*/
 		public String getQtAuthor(){
 			return qtAuthor;
 		}
 		
-		/**
-		* Get quote
-		*@return String
-		*/
 		public String getQuote(){
 			return quote;
 		}
 		
-		/**
-		* Get quote date
-		*@return String
-		*/
 		public String getQtdate(){
 			return qtdate;
 		}
 		
-		/**
-		* Return true if exist quote
-		*@return Boolean
-		*/
 		public boolean getExistqt(){
 			return existqt;
 		}
 		
-		/**
-		* Get User instance
-		*@return User
-		*/
 		public User getUser(){
 			return user;
 		}
-		
-		/**
-		* Truncate User name
-		*@return String
-		*/
 		public String getUserShortName(){
 			String name = user.Name;
+		
 			if(name.length() > 16){
 	           return name.substring(0,14) + '...';            	
 	        }else{
@@ -476,33 +295,25 @@ public without sharing class DiscussionReplyController {
 	        }
 		}
 		
-		/**
-		* Get message
-		*@return DiscussionMessage__c
-		*/
 		public DiscussionMessage__c getMessage(){
 			return message;
 		}
 		
-		/**
-		* Get picture
-		*@return String
-		*/
 		public String getPicture(){
 			return picture;
-		}
+		}		
 		
-		/**
-		* Returns formated date
-		*@return String
-		*/
 		public String getStrdate(){
 			return message.PostedDate__c.format('MMMM dd, yyyy HH:mm');
 		}
+
 	}
 	
-    /* ### Pagination ###*/
-    
+	/**
+   	* Pagination
+   	* ************
+   	*/
+   	
     /**
    	* Set of Integers to control pagination
    	*/
@@ -510,6 +321,7 @@ public without sharing class DiscussionReplyController {
    	public Integer numberOfItemsToShow = 10;
    	public Integer cntPagination;
 
+   	
    	/**
    	* Set of Booleans to show or not prev / next links
    	*/
@@ -518,27 +330,20 @@ public without sharing class DiscussionReplyController {
    	public boolean nextPageLinkShow  = false;
    	public boolean nextPageShow  = false;
    	   	
-   	/**
-   	* Returns numbers of pages 
-   	*/
    	public void genCntPagination () {
+   		
    		cntPagination = ((totalItemsNumber - 1) - (Math.mod((totalItemsNumber - 1), numberOfItemsToShow)))/ numberOfItemsToShow;	
    		if (Math.mod((totalItemsNumber -1), numberOfItemsToShow) != 0 ) {
    			cntPagination++;
    		} 	
+   		
    	}
    	
-   	/**
-   	* Move to next page
-   	*/
    	public void nextPage () {
    		currentPagination++;
    		firstRow = firstRow + numberOfItemsToShow;   		
    	}
    	
-   	/**
-   	* Move to previus page
-   	*/
    	public void prevPage () {
    		currentPagination--;
    		firstRow = firstRow - numberOfItemsToShow;	
@@ -546,151 +351,130 @@ public without sharing class DiscussionReplyController {
    	
    	/**
    	* Pagination Integer Getters
-   	*@return Integer
    	*/
+   	
    	public Integer getCurrentPagination () {
    		return currentPagination;
    	}
    	
-   	/**
-   	* Get pages count
-   	*@return Integer
-   	*/
    	public Integer getCntPagination () {
    		return cntPagination;
    	}
    	
-   	/**
-   	* Get num of item to show
-   	*@return Integer
-   	*/
    	public Integer getNumberOfItemsToShow () {
    		return numberOfItemsToShow;
    	}
    	
-   	/**
-   	* Returns current first row
-   	*@return Integer
-   	*/
    	public Integer getFirstRow () {
    		return firstRow;
    	}
    	
-    /**
-   	* Returns boolean show previus page link
-   	*@return Boolean
+    	/**
+   	* Pagination Boolean Getters
    	*/
+   	
 	public boolean getPrevPageLinkShow () {
-		if(currentPagination == 1){
-			prevPageLinkShow = false;		
-		} else {
-			prevPageLinkShow = true;}
+		
+		if(currentPagination == 1){ prevPageLinkShow = false;		
+		} else {prevPageLinkShow = true;}
+		
    		return prevPageLinkShow;
    	}
    	
-   	/**
-   	* Returns boolean show previus page
-   	*@return Boolean
-   	*/
    	public boolean getPrevPageShow () {
-   		if(currentPagination == 1){	
-   			prevPageShow = true; 
-   		} else {
-   			prevPageShow = false;}
+   		
+   		if(currentPagination == 1){	prevPageShow = true; 
+   		} else {prevPageShow = false;}
+   		
    		return prevPageShow;
    	}
    	
-   	/**
-   	* Returns boolean show next page link
-   	*@return Boolean
-   	*/
    	public boolean getNextPageLinkShow () {
-   		if((currentPagination == cntPagination) || (cntPagination == 0)){	
-   			nextPageLinkShow = false; 
-		} else { 
-			nextPageLinkShow = true;
-		}   		
+   		
+   		if((currentPagination == cntPagination) || (cntPagination == 0)){	nextPageLinkShow = false; 
+		} else { nextPageLinkShow = true;}   		
+   		
    		return nextPageLinkShow;
    	}
    	
-	/**
-	* Returns boolean show next page
-	*@return Boolean
-	*/       
    	public boolean getNextPageShow () {
-   		if((currentPagination == cntPagination) || (cntPagination == 0)){ 
-   			nextPageShow = true; 
-		}else{ 
-			nextPageShow = false;
-		} 
+   		
+   		if((currentPagination == cntPagination) || (cntPagination == 0)){ nextPageShow = true; 
+		} else { nextPageShow = false;} 
+   		
    		return nextPageShow;
    	}
 	
-	public String TEAMID = System.currentPageReference().getParameters().get('id');
-	/**
-	* Set Team Id
-	*@param String 
-	*/
-	public void setTEAMID(String value){
-		TEAMID = value;
-	}
-	
-	/**
-	* Get Forum for current Team
-	*@return DiscussionForum__c
-	*/
-	public DiscussionForum__c getForumData(){
+   	public DiscussionForum__c getForumData(){
+   		
    		DiscussionForum__c team = new DiscussionForum__c();
+   		
+   		String TEAMID = System.currentPageReference().getParameters().get('id');
+   		
    		if(TEAMID != null){
-   			try {
+   			 try {
    			 	team = [SELECT
    						Team__r.Name, 
    						Team__c,
    						Id 
    						FROM DiscussionForum__c WHERE Team__c =: TEAMID LIMIT 1];
-   			} catch (Exception e) {
-				throw e;
-			}
+   						
+   			 } catch (Exception e) {
+   			 	
+   			 	System.Debug('\n ///////////////////////////// \n Error , no team assigned \n //////////////////////////// \n The Forum ID is :' + TEAMID + '\n //////////////////////////// \n');
+   			 	
+   			 }
+   			    			 
    		} else {
    			team = null;
    		}
    		return team;
    	}   
 
-	public String deleteReplyId = '';
 	/**
-   	* Set Reply Id to delete
-   	*/	
-	public void deleteReplyId(){
+   	* Delete Reply
+   	* ************
+   	*/
+	public String deleteReplyId = '';
+	
+	public void deleteReplyId () {
 		this.deleteReplyId = System.currentPageReference().getParameters().get('idR');
+		System.debug('\n \n ////////////// \n GUARDE ESTE deleteReplyId: ' + deleteReplyId + '\n /////////////// \n ');
 	}
 	
-	/**
-	* Delete Reply by Id
-	*/
 	public void deleteReply () {
-		 List<DiscussionMessage__c> listDelMessage = [select Id, Message__c from  DiscussionMessage__c where Id =:deleteReplyId limit 1];
-		 if (listDelMessage.size() > 0) {
-			 delete listDelMessage[0];
-		 }
+		 DiscussionMessage__c delMessage = [select Id, Message__c from  DiscussionMessage__c where Id =:deleteReplyId];
+		 System.debug('\n \n ////////////// \n GUARDE ESTE deleteReply: ' + delMessage + '\n /////////////// \n ');
+		 delete delMessage;
 		 getTopics();
 	}
+	
 
-	/**
-	* Returns boolean is Admin User
-	*@return Boolean
-	*/
+		public Id getQueueGroupId(){
+
+		Group teamAdmin = [SELECT Id FROM Group	WHERE Name = 'Team Admin'];
+	
+		return teamAdmin.Id;
+	}
+
 	public boolean getIsTeamAdminMember(){
-		List<User> teamAdmin = [Select id, Profile.PermissionsModifyAllData, ProfileId, Name From User where id =: UserInfo.getUserId() limit 1];                    
-        if(teamAdmin[0].Profile.PermissionsModifyAllData){
+		
+		List<GroupMember> groupMember= [SELECT Id
+                                        FROM GroupMember
+                                        WHERE GroupId =: getQueueGroupId()
+                                        AND UserOrGroupId =: UserInfo.getUserId()];
+                                        
+        if(groupMember.size() != 0){
         	return true;
-        }else{        	       
-       	 	return false;
+        }
+        else{        	       
+       	 return false;
         }
 	}
 	
+	/*
+	/** Save Reply
 	/**
-	* Save Reply
 	*/
 	public void saveReply (){
 		getTopics();
@@ -703,92 +487,4 @@ public without sharing class DiscussionReplyController {
 			genCntPagination(); 
 		}
 	}
-	
-	/**
-	* Set new Reply to Topic
-	*@author Juan Bessonart
-	*/		
-	public class replyMessage {
-		public string Message {get; set;} 
-		public string ParentMessage {get; set;} 
-		public string MessageId {get; set;}
-	}
-	
-	replyMessage topicReply = new replyMessage();
-	/**
-	* Get reply message
-	*@return replyMessage
-	*/
-	public replyMessage getTopicReply(){
-		return topicReply;
-	}
-	
-	/**
-	* Save Reply to current topic
-	*/
-	public void saveNewTopicReply(){
-		if((topicReply.MessageId != '')&&(topicReply.MessageId != null)){
-			DiscussionMessage__c editReply = [Select Message__c from  DiscussionMessage__c where id =: topicReply.MessageId];
-			editReply.Message__c = topicReply.Message;
-			update editReply;
-		}else{
-			DiscussionMessage__c newTopicReply = new DiscussionMessage__c();
-			newTopicReply.DiscussionTopic__c = TOPICID;
-			newTopicReply.Team__c =  TEAMID;
-			newTopicReply.Message__c = topicReply.Message;	
-			insert newTopicReply;
-		}
-	}
-	
-	replyMessage quoteReply = new replyMessage();
-	/**
-	* Get Quote for Reply
-	*@return replyMessage
-	*/
-	public replyMessage getQuoteReply(){
-		return quoteReply;
-	}
-	
-	/**
-	* Save Quote for Reply
-	*/
-	public void saveQuoteReply(){
-		if((quoteReply.MessageId != '')||(quoteReply.MessageId != null)){
-			List<DiscussionMessage__c> editReplies = [Select Id, Message__c from  DiscussionMessage__c where id =: quoteReply.MessageId];
-			if(editReplies.size() > 0){
-				DiscussionMessage__c editReply = editReplies[0];
-				editReply.Message__c = quoteReply.Message;
-				update editReply;
-			} else {
-				insertQuoteReply();
-			}
-		}else {
-			// This is a New Quote
-			insertQuoteReply();
-		}
-	}
-	
-	/**
-	* Insert new Quote to Reply
-	*/
-	public void insertQuoteReply(){
-		// Create a reply to quote!
-		DiscussionMessage__c newQuoteReply = new DiscussionMessage__c();
-		newQuoteReply.DiscussionTopic__c = TOPICID;		
-		newQuoteReply.Team__c =  TEAMID;
-		newQuoteReply.ParentMessage__c = quoteReply.ParentMessage;
-		newQuoteReply.Message__c = quoteReply.Message;
-		insert newQuoteReply;
-	}
-	
-	/**
-	* Delete Topic by Id
-	*/
-	public void deleteTopic(){
-		List<DiscussionTopic__c> topicToDelete = [Select Id FROM DiscussionTopic__c where Id =: TOPICID];
-		if (topicToDelete.size() > 0) {
-			delete topicToDelete[0];
-		}		
-	}
-	
 }

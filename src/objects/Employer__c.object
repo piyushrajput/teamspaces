@@ -29,5 +29,5 @@
         <type>Text</type>
     </nameField>
     <pluralLabel>Employers</pluralLabel>
-    <sharingModel>Read</sharingModel>
+    <sharingModel>ReadWrite</sharingModel>
 </CustomObject>

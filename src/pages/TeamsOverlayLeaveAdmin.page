@@ -1,21 +1,8 @@
 <apex:page sidebar="false" tabStyle="Team__c" controller="TeamMembersListController">
-	<!-- Modal JS -->
-	<apex:includeScript value="{!URLFOR($Resource.commonResources, 'inc/js/modal.js')}"/>
-	<!-- Overlay Styles -->
-	<apex:stylesheet value="{!URLFOR($Resource.TeamsResources, 'inc/css/teamsOverlaysTemplate.css')}" />
 	<script>
-		/**
-        * Namespace Prefix Getter
-        */
-        var namespace = "{!namespace}";
-        		
-        var globalSessionId = '{!$Api.Session_ID}';
-   </script>
- 
-   <script>     		
+		
 		function deleteTeam(teamSelectedId){
 			sforce.connection.sessionId = '{!$Api.Session_ID}';
-			sforce.connection.defaultNamespace = namespace;
 			var remove = sforce.connection.deleteIds([teamSelectedId],
         	{onSuccess:function(){ modal.close();location.href = '/apex/TeamsOverview'; }, onFailure:function(){ alert('This Team Could Not Be Delete, Please Contact Your System Administrator'); }}
      		);
@@ -23,7 +10,6 @@
  		
  		function getCountMembersForTeamProfile (idTeam, name){
 			sforce.connection.sessionId = '{!$Api.Session_ID}';
-			sforce.connection.defaultNamespace = namespace;
 			result = sforce.connection.query("select count() from TeamMember__c where Team__c ='" + idTeam + "'");    		
 
 			if(result.size > 0){
@@ -32,31 +18,28 @@
 			}
 		}
 	</script>
-	 
+
 	<!-- Delete Team -->
-	<div id="leaveTeamAdmin" style="display:none;" class="overlayForm">	
-		<!-- Overlay Title -->
-		<div class="overlayTitleContent">
-			<div class="overlayTitle">Leave Team</div>
-			<div class="overlayCloseEvent">
-				<a href="Javascript:;" onclick="modal.close();">
-					<img src="{!URLFOR($Resource.TeamsResources, 'images/layout/genericClose.gif')}" alt="Close Window" title="Close Window" />
-				</a>
-			</div>
-		</div>
-		<!-- Content  -->
-		<div id="modalContent" class="overlayMainContent">
-			<!-- Dialog Body  -->
-			<div class="overlayFormContent">
-				YYou cannot leave this team because you are the only Team Administrator.<br>
-				Please promote another member to Team Administrator profile from this page. Or, you can
-				<a href="javascript:;" onclick="getCountMembersForTeamProfile('{!teamId}','{!teamName}');" class="linkOverlay">delete this team</a>.
-			</div>
-			<div class="overlaySeparateLine" />
-			<!-- Saven and Cancel Buttons -->
-			<div class="overlayFromButtons" align="center">
-				<input type="button" onclick="modal.close();" class="overlayCancelBtn" value="Close" />
-			</div>
-		</div><!-- END Modal Content -->
+	<div id="leaveTeamAdmin" style="display:none;">
+	  <!-- Title of Dialog -->
+	  <div class="modalTitle">
+		  <div class="title">Leave Team</div>
+		  <div class="closeEvent">
+			  <a href="Javascript:;" onclick="modal.close();"><img src="{!URLFOR($Resource.TeamsResources, 'images/layout/close.gif')}" alt="Close Window" title="Close Window" /></a>
+		  </div>
+	  </div>
+	  <!-- Content  -->
+	  <div id="modalContent" class="modalContent">
+		  <!-- Dialog Body  -->
+		  <div class="modalMessage padding_30px bottom_border_gray">
+			  You cannot leave this team because you are the only Team Administrator.<br>
+			  Please promote another member to Team Administrator profile from this page. Or, you can
+			  <a href="javascript:;" onclick="getCountMembersForTeamProfile('{!teamId}','{!teamName}');" class="linkOverlay">delete this team</a>.
+		  </div>
+		  <!--Actions  -->
+		  <div class="actionsClose">
+			  <a href="javascript:;" onclick="modal.close();" class="button gray">Close</a>
+		  </div>
+	  </div><!-- END Modal Content -->
 	</div><!-- END announcement delete --> 
 </apex:page>

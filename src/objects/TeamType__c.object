@@ -26,5 +26,5 @@
         <type>Text</type>
     </nameField>
     <pluralLabel>Team Types</pluralLabel>
-    <sharingModel>Read</sharingModel>
+    <sharingModel>ReadWrite</sharingModel>
 </CustomObject>

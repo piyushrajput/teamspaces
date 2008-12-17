@@ -1,0 +1,225 @@
+<apex:page sidebar="false" standardController="Bookmark__c" extensions="BookmarkDetailController" tabStyle="Bookmark__c">
+	<!-- Javascript -->
+	<!-- Prototype + Scriptaculous -->
+	<script type="text/javascript" src="{!URLFOR($Resource.Script_aculo_us, 'prototype.js')}"></script>
+	<script type="text/javascript" src="{!URLFOR($Resource.Script_aculo_us, 'scriptaculous.js')}"></script>
+	<script type="text/javascript" src="{!URLFOR($Resource.Script_aculo_us, 'effects.js')}"></script>
+	
+	<!-- FCK Editor -->
+	<script type="text/javascript" src="{!URLFOR($Resource.FCKeditor, 'fckeditor/fckeditor.js')}"></script>
+	<script>
+		FCK_BASEPATH = '{!URLFOR($Resource.FCKeditor,'fckeditor/')}';
+
+		// Begin the search box with the text:
+		// "Enter keyword or name" at top search box
+		////////////////////////////////////////////
+		function resetSearchInput(){
+			
+			var inputs = $$('.search_box_input input');
+			inputSearch = inputs[0];		
+			inputSearch.style.color = '#999999';
+			inputSearch.value = 'Enter keyword or name';
+		}
+		
+		// Once a user begins to type at top search box, change the font color to   #333333. 
+		function ActionSearchInput(){
+			inputSearch.style.color = '#333333';
+			inputSearch.value = '';
+		}	
+	</script>
+	
+	<!-- Common Js for All Sections -->
+	<script type="text/javascript" src="{!URLFOR($Resource.commonResources, 'inc/js/common.js')}"></script>
+	
+	<!-- Common Js for Bookmarks -->
+	<script src="{!URLFOR($Resource.BookmarkResources, 'inc/js/common.js')}" />
+	
+	<!-- Css for Bookmarks -->
+	<apex:stylesheet value="{!URLFOR($Resource.BookmarkResources, 'inc/css/commonLayout.css')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.BookmarkResources, 'inc/css/bookmarkOverview.css')}" />
+	<apex:stylesheet value="{!URLFOR($Resource.BookmarkResources, 'inc/css/bookmarkComment.css')}" />
+
+	<!-- Includes and Initialize the overlay box for modal.js -->
+	<script type="text/javascript" src="{!URLFOR($Resource.commonResources, 'inc/js/modal.js')}"></script>	
+	<apex:stylesheet value="{!URLFOR($Resource.commonResources, 'inc/css/modal.css')}" />
+	<a href="#modal_container" id="initializeModal" style="display:none;"></a>
+	<div id="modal_container"></div>
+	<script>createOverlay('initializeModal')</script>
+	
+	<!-- ##################################################################################
+	 	Overlays Start
+	 ################################################################################## -->
+	
+	<!-- Edit Bookmark Comment Overlay -->	
+	<apex:include pageName="BookmarkOverlayEditComment" />	
+	<!-- Delete Comment Overlay -->	
+	<apex:include pageName="BookmarkOverlayDeleteComment" />	
+	<!-- Delete Bookmark Overlay -->
+	<apex:include pageName="BookmarkOverlayDelete" />
+		
+	<!-- ##################################################################################
+	 	Overlays end 
+	 ################################################################################## -->
+		<div>
+			<div class="BodyPage">
+				<!-- Header -->
+				<div class="header">
+					<div class="page_section">
+					    <div>
+					    	<h1 class="arial_black">Bookmarks</h1>
+					    	<h2 class="arial_black">Overview</h2>
+					    </div>  
+				  	</div>
+					<div class="searchBox">
+				   		<div>
+				    		<div>
+				    			<form action="">
+					      			<div class="search_box_input f_left">
+					       				<div class="legend">Find Bookmarks</div>
+						      			 <input onclick="ActionSearchInput();" value="Enter keyword or name" name="" type="text" />        
+									</div>
+					      			<input value="Search" class="search_btn f_left" type="button" />         
+				     			</form>
+								<div class="advanced_search_cont">       
+				      				<a href="javascript:;">Advanced Search</a>
+				     			</div>       
+				   			</div>
+				   		</div>
+					</div>
+					<div class="help">
+				   		<div>
+					   		<a href="javascript:;">Help for this page</a>&nbsp; <img src="{!URLFOR($Resource.BookmarkResourceFiles, 'images/layout/icons/help_icon.gif')}" alt="" />
+					   </div>
+					</div>
+				</div>
+				
+				<div class="breadCrumbringDiv">
+					<span class="breadCrumbring"><a href="/{!Bookmark__c.Team__c}"><apex:outputText value="{!Bookmark__c.Team__r.Name}"/></a> > Bookmark</span>
+					<div class="headerButtons"">
+						<form action="">
+							<input class="btnEdit" type="button" value="Edit" onclick="createOverlay('','EditCommentForm', '280');">&nbsp;&nbsp;
+							<input class="btnDelete" type="button"  onclick="createOverlay('','DeleteBookmarkForm', '190');" value="Delete">
+						</form>
+					</div>
+				</div>
+				
+				<div class="sidebar" id="sidebar">
+					<!-- THIS WEEK'S MOST COMMENTED -->
+					
+					<apex:include pageName="BookmarkMostCommentedWidget"></apex:include>
+						
+					<!-- THIS WEEK'S MOST ACTIVE PEOPLE -->
+						<apex:include pageName="BookmarkActiveUsersWidget"></apex:include>
+						
+					<!-- THIS WEEK'S MY RECENT BOOKMARKS -->
+						<apex:include pageName="BookmarkMyRecentWidget"></apex:include>
+							<div class="main_content" id="main_content">  
+								<div class="centerCol" style="margin-right:0px;">
+									<div class="holder">
+										<div class="bookmark_actualDate" style="position:relative;">
+											<apex:outputText value="{!postedDate}"/>
+										</div>
+										<div class="bookmark_content_top" style="overflow:hidden;">
+											<h2 class="bookmark_detail_title"><apex:outputField value="{!Bookmark__c.Title__c}"/></h2>
+											<div class="bookmark_detail" style="width:100%;">
+												<table border="0">
+													<tr>
+														<td valign="top">
+															<span class="bookmark_detail_description">
+																<apex:outputText value="{!Bookmark__c.Body__c}" escape="false"/>
+															</span>
+															<br>
+															<div class="tagsInfo">
+																tags: <a href="javascript:;">technology</a>&nbsp;<a href="javascript:;">software</a>&nbsp;<a href="javascript:;">enterprise</a><br>
+																<apex:outputLink value="{!Bookmark__c.BookmarkURL__c}" styleClass="bookmarkLink">{!Bookmark__c.BookmarkURL__c}</apex:outputLink>
+															
+															</div>
+														</td>
+														<td valign="top">
+															<a href="javascript:;" class="bookmarkLink"><apex:image value="{!Bookmark__c.imageUrl__c}" style="max-width: 75px; max-height: 75px"/></a>
+														</td>
+													</tr>
+												</table>
+											</div>
+											<div class="bookmark_detail_line"></div>
+											<div class="bookmark_detail_wraperoverflow">
+												<div class="bookmark_detail_postInfo">
+													<span>By </span>
+													<span class="bookmark_detail_postBy"><apex:outputField value="{!Bookmark__c.CreatedById}"/></span>
+													<span>on&nbsp;<apex:outputField value="{!Bookmark__c.CreatedDate}"/></span>
+												</div>
+												<div style="width:200px; overflow:hidden; position:relative; float:right;">
+													<a class= "emailLink" href="mailto:someone@salesforce.com">Email</a>
+												</div>
+											</div>
+										</div>
+										<br>
+										<div class="commentHeader" style="position:relative;">
+											<img src="{!URLFOR($Resource.BookmarkResources, 'images/bookmark_overview/comment.gif')}">&nbsp;<!-- <apex:outputField value=""/>-->&nbsp;Comment
+											
+											<div class="rssImg">
+												<img src="{!URLFOR($Resource.BookmarkResources, 'images/bookmark_overview/rss.gif')}" />
+											</div>
+										</div>
+										
+										 <apex:repeat value="{!Comments}" var="comment">
+											<apex:outputpanel rendered="">
+												<div class="comments" >
+													<div class="author">
+														<div class="picture">
+															<img src="" width="26" alt="" />
+														</div>
+														<div class="data">
+															<h4><apex:outputField value=""/></h4>
+															<span class="title"><apex:outputText value=""/>&nbsp;at&nbsp;<apex:outputText value=""/></span>
+														</div>
+													</div>
+													<div class="commentText">
+														<img src="{!URLFOR($Resource.BookmarkResources, 'images/layout/arrow_comment.gif')}" alt="" class="arrowTitle" />
+														<div class="content">
+															
+															<div class="message">
+																<p><apex:outputText value="" escape="false"/></p>								
+															</div>
+															<div class="reply">
+																<a href="javascript:;" onclick="createOverlay('','EditCommentForm', '280');">Edit</a> | <a href="javascript:;" onclick="createOverlay('','DeleteCommentForm', '190');">Delete</a>
+															</div>
+														</div>
+													</div>
+												</div>
+											</apex:outputpanel>
+										</apex:repeat> 
+										
+										<div class="postComment" >
+											<h2> Post a Comment </h2>
+										</div>
+										<div class="commentPostForm" >
+											<apex:form>
+												<div class="require_reference" >
+													<span class="reference">&nbsp;</span>
+													<span> = Required Information</span>
+												</div>
+												<div class="colLabel" >
+													<span>Comments</span>
+												</div>
+												<div class="colInput" style="width:75%">
+													<div class="requiredInput" >
+														<apex:inputTextarea  styleClass="bookmark_detail_commentText" style="width:79%; height:96%;" value="{!newComment.Message__c}"/><br />
+													</div>
+													<span> 1000 character limit </span>
+												</div>
+												<div class="separator" ></div>
+												<div class="buttons" style="text-align:center;">
+													<apex:commandButton action="{!savePost}" value="Post" styleClass="Post"/>
+												</div>
+											</apex:form>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+		<script>
+			resetSearchInput();
+		</script>
+</apex:page>

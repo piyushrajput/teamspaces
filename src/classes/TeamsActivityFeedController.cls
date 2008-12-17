@@ -1,160 +1,88 @@
-/**
-*@author Nicolas Gunther @ 6-13-2008
-*/
-public with sharing class TeamsActivityFeedController {
-	
-	/**
-	* Constructor
-	*/
+public class TeamsActivityFeedController {
+
     public TeamsActivityFeedController(){
     	getMiniFeeds();
     }
-    
+     
     public Integer miniFeedCount = 0;
 	public String[] listFilter = new String[]{};
-    
+     
     //Filters 
 	Boolean filterStatus = false;
-	
-	/**
-	*@param Boolean
-	*/
     public void setFilterStatus (Boolean b){
     	filterStatus = b;
     }
-    
-	/**
-	*@return Boolean
-	*/
     public Boolean getFilterStatus (){
     	return filterStatus;
     }
     
    	Boolean filterFollow = false; 
-   	
-	/**
-	*@param Boolean
-	*/
     public void setFilterFollow (Boolean b){
     	filterFollow = b;
     }
-    
-	/**
-	*@return Boolean
-	*/
     public Boolean getFilterFollow (){
     	return filterFollow;
     }
     
     Boolean filterEducation = false; 
-    
-	/**
-	*@param Boolean
-	*/
     public void setFilterEducation (Boolean b){
     	filterEducation = b;
     }
-    
-	/**
-	*@return Boolean
-	*/
     public Boolean getFilterEducation (){
     	return filterEducation;
     }  
-	
+
 	Boolean filterCompetencies = false; 
-	
-	/**
-	*@param Boolean
-	*/
     public void setFilterCompetencies (Boolean b){
     	filterCompetencies = b;
     }
-    
-	/**
-	*@return Boolean
-	*/
     public Boolean getFilterCompetencies (){
     	return filterCompetencies;
     }
     
     Boolean filterMember = false; 
-    
-	/**
-	*@param Boolean
-	*/
     public void setFilterMember (Boolean b){
     	filterMember = b;
     }
-    
-	/**
-	*@return Boolean
-	*/
     public Boolean getFilterMember (){
     	return filterMember;
     }
 
     Boolean filterDiscussion = false; 
-    
-	/**
-	*@param Boolean
-	*/
     public void setFilterDiscussion (Boolean b){
     	filterDiscussion = b;
     }
-    
-	/**
-	*@return Boolean
-	*/
     public Boolean getFilterDiscussion (){
     	return filterDiscussion;
     }
     
+    //4
     Boolean filterAnnoncements = false; 
-    
-	/**
-	*@param Boolean
-	*/
     public void setFilterAnnoncements (Boolean b){
     	filterAnnoncements = b;
     }
-    
-	/**
-	*@return Boolean
-	*/
     public Boolean getFilterAnnoncements (){
     	return filterAnnoncements;
     }
     
+    //5
     Boolean filterProject = false; 
-    
-	/**
-	*@param Boolean
-	*/
     public void setFilterProject (Boolean b){
     	filterProject = b;
     }
-    
-	/**
-	*@return Boolean
-	*/
     public Boolean getFilterProject (){
     	return filterProject;
     }    
+     
+    //End Filters
     
+   
     List<miniFeed> feedsList = new List<miniFeed>();
-    
-	/**
-	*@return List<miniFeed>
-	*/
     public List<miniFeed> getFeedsList (){
     	return feedsList;
     }
     
-    /**
-    * Get minifeeds list
-    *@void
-    */
+    //Get minifeeds list
     public void getMiniFeeds() {
        	// Feed Dates 
 		boolean TodayShow = false;
@@ -170,10 +98,12 @@ public with sharing class TeamsActivityFeedController {
 	    
      	feedsList.clear();
      	if (feedsList.size() < 1) {
+
 			List<MiniFeed__c> feeds;
 			List<String> filters = new List<String>();
 			
 			Boolean hasWhere = false;
+			
 			//Status filter
 			if(filterStatus){
 				filters.add('PeopleChangeStatus');
@@ -197,7 +127,6 @@ public with sharing class TeamsActivityFeedController {
 				filters.add('TeamMemberAdd');
 				filters.add('TeamMemberLeave'); 
 				filters.add('TeamMemberJoin');
-				filters.add('TeamMemberAttachmentAdd');
 				hasWhere = true;				
 			}
 			
@@ -216,6 +145,7 @@ public with sharing class TeamsActivityFeedController {
 			}
 			
 			//FilterProject filter
+			System.debug('filterProject' + filterProject);
 			if(filterProject){
 				filters.add('TaskNew');
 				filters.add('TaskAssigned'); 
@@ -224,7 +154,7 @@ public with sharing class TeamsActivityFeedController {
 				hasWhere = true;
 				
 			}										
-			
+				
 		    if(hasWhere)
 				feeds = [Select m.User__c, 
 								m.User__r.Name, 
@@ -256,22 +186,28 @@ public with sharing class TeamsActivityFeedController {
 				FeedParsedDate = 'Date' + FeedDateIterator.day() + FeedDateIterator.month() + FeedDateIterator.year();	        		
                	
         		// Check if today is the day
-        		if((FeedDateIterator.day() == now.day()) && (!TodayShow)){
+        		if( ( FeedDateIterator.day() == now.day() ) && ( !TodayShow )){
+        			
         			TodayShow = true;
         			miniFeed.setFeedDateClass('miniFeedDate');
         			miniFeed.setFeedDateString('Today');						        			       
-        		}else {
+        						
+        		} else {
         			// Yesterday 
         			if ((FeedDateIterator.day() == ( now.day() - 1 )) && (!YesterdayShow )) {
+        				
         				YesterdayShow = true;
         				miniFeed.setFeedDateClass('miniFeedDate');
         				miniFeed.setFeedDateString('Yesterday');	        				
-        			}else {
+        				
+        			} else {
         				if ( FeedDateIterator.day() == now.day()){
         					miniFeed.setFeedDateClass('miniFeedDate_empty');
         					miniFeed.setFeedDateString(' ');
-        				}else {					        			
+        				} else {					        			
+        				
 	        				if ( dateAlreadyShown != FeedParsedDate ){      					
+	        					
 	        					String Month;
 	        					if( FeedDateIterator.month() == 1)  { Month = 'January '; }
 	        					if( FeedDateIterator.month() == 2)  { Month = 'February '; }
@@ -287,9 +223,11 @@ public with sharing class TeamsActivityFeedController {
 	        					if( FeedDateIterator.month() == 12)  { Month = 'December '; }
 	        					
 	        					dateAlreadyShown = 'Date' + FeedDateIterator.day() + FeedDateIterator.month() + FeedDateIterator.year();
+	        					System.debug('dateAlreadyShown' + dateAlreadyShown);
 	        					String tempDate = Month + FeedDateIterator.day() + ', ' + FeedDateIterator.year();
 	        					miniFeed.setFeedDateClass('miniFeedDate');
 	        					miniFeed.setFeedDateString(tempDate);
+	        					
 	        				} else {
 	        					miniFeed.setFeedDateClass('miniFeedDate_empty');
 	        					miniFeed.setFeedDateString('');
@@ -302,24 +240,15 @@ public with sharing class TeamsActivityFeedController {
  		}
     }
     
-    /**
-    *@return Integer
-    */
     public Integer getMiniFeedCount(){
 		return miniFeedCount;
 	}
-	
-    /**
-    *@param Integer
-    */
+	        
     public void setMiniFeedCount(Integer count){
     	miniFeedCount = count;
     }
-    
-    /**
-    * Inner class for miniFeed type
-    *@class
-    */
+	       
+    					
 	public class miniFeed {
 		
 		public String User;
@@ -330,113 +259,68 @@ public with sharing class TeamsActivityFeedController {
         public String FeedDateClass;
         public Datetime FeedDate;  
               
-        /**
-        *@constructor
-        */
+        
       	public miniFeed(){	
       		
       	}
       	
-      	/**
-      	* Icon of the current type
-      	*@return String
-      	*/
+      	// Icon of the current type 
         public String getTypeOfFeed() {
-        	return TypeOfFeed;
+        		return TypeOfFeed;
 		}
-		
-      	/**
-      	* Icon of the current type
-      	*@param String Type
-      	*/
+			
 		public void setTypeOfFeed(String sTypeOfFeed){
-            TypeOfFeed = sTypeOfFeed;
+                TypeOfFeed = sTypeOfFeed;
         }
-		
-		/**
-		*@return String
-		*/
+  
       	public String getName() {
-            return Name;
+                return Name;
         }
-        
-		/**
-		*@param String Name
-		*/
         public void setName(String sName){
-            Name = sName;
+                Name = sName;
         }
         
-		/**
-		*@return String ID
-		*/
         public String getUser() {
-            return User;
+                return User;
         }
-        
-		/**
-		*@param String ID
-		*/
         public void setUser(String sUser){
-            User = sUser;
+                User = sUser;
         }
         
-		/**
-		*@return String
-		*/
         public String getMessage() {
-            return Message;
+        		
+                return Message;
         }
-        
-		/**
-		*@param String Message
-		*/
         public void setMessage(String sMessage){
-            Message = sMessage;
+                Message = sMessage;
         }
        	
-		/**
-		*@return Datetime
-		*/
         public Datetime getFeedDate() {
         	return FeedDate;
+	        		       
         }
         
-		/**
-		*@param Datetime
-		*/
         public void setFeedDate(Datetime sFeedDate){
-            FeedDate = sFeedDate;
+                FeedDate = sFeedDate;
         }  
         
-		/**
-		*@return Datetime
-		*/
        	public String getFeedDateString() {
         	return FeedDateString;
 	        		       
         }
         
-		/**
-		*@param String
-		*/
         public void setFeedDateString(String sFeedDateString){
-            FeedDateString = sFeedDateString;
+                FeedDateString = sFeedDateString;
         }  
         
-		/**
-		*@return String
-		*/
         public String getFeedDateClass() {
         	return FeedDateClass;		        		       
         }
         
-		/**
-		*@param String
-		*/
         public void setFeedDateClass(String sFeedDateClass){
-            FeedDateClass = sFeedDateClass;
+                FeedDateClass = sFeedDateClass;
         }  
+
 	}     
 
 }

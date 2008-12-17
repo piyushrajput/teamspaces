@@ -1,119 +1,63 @@
-/**
-*@author Bruno Fagundez @ 6-9-2008
-*/
-public with sharing class TeamMembersWidgetController {
+public class TeamMembersWidgetController {
 	// Get Team Id Attribute
 	String team;
 	
-	/**
-	* Constructor
-	*/
-	public TeamMembersWidgetController(){
-		
-	}
-		
-	/**
-	* Return the Namespace Prefix
-	*@return String
-	*/
-	public String getNamespace () {
-        return TeamUtil.getNamespace();
-    } 
-	
-	/**
-	* Setter method for Team Id variable
-	*@param String idTeam
-	*/
+	// Setter method for Team Id variable
 	public void setTeam(String tID) {
-		if (team == null || team != tID) {
-			team = tID;
-			genPermissions();
-			Boolean canView = userPermissions.getCanView();
-			if(!canView){
-				throw new CustomException('Insufficient Privileges');
-			} 
-			assignNewMemberVarsNewProfile();
-		}
+		team = tID;
+	}
+
+	public TeamMembersWidgetController(){
 	}
 	
-	/**
-	*@return String idUser
-	*/
-	public String getCurrentUser () {
-		return UserInfo.getUserId();	
-	}
-	
-	/**
-	*@return String idTeam
-	*/
 	public String getTeam(){
 		return team;
 	}
 
 	String typeList;
-	
-	/**
-	* Setter method for Team Id variable
-	*@param String typeList
-	*/
+
+	//Setter method for Team Id variable
 	public void setTypeList(String typeL) {
 		typeList = typeL;		
 	}
 	
-	public void getIsTeamAdmin(){
-	
-	}	
-	
-	/**
-	*@return String typeList
-	*/
 	public String getTypeList(){
 		return typeList;
 	}
 	
-	/**
-	* Return component title
-	*@return String
-	*/
 	public String getComponentHeader () {
 		if (typeList == 'adminList') {
 			return 'Team Admins';	
-		}else {
+		}	
+		else {
 			return 'Team Members';	
 		}
 	}
 	
-	/**
-	* Return conditional for LinkAction
-	*@return Boolean
-	*/
 	public Boolean getRenderLinkAction () {
 		return (typeList != 'adminList');
 	}
 	
-	/**
-	* Get Team Members
-	*@return List<TeamMember>
-	*/
 	public List<TeamMember> getTeamspaceMembers() {
 		List<TeamMember__c> temp = new List<TeamMember__c>();
-      	
+      
         if(typeList == 'adminList') {
         		temp = [select User__r.Id, User__r.Name from TeamMember__c where Team__c =: team and TeamProfile__r.ManageTeams__c = true order by User__r.Name];
         }else{
         		temp = [select User__r.Id, User__r.Name from TeamMember__c where Team__c =: team order by User__r.Name];
         }
+        
         Set<Id> users = new Set<Id>();
         for(TeamMember__c t: temp) {
         	users.add(t.User__c);
 		}
+		
 		Map<Id, PeopleProfile__c> userMap = new Map<Id, PeopleProfile__c>();
         for(PeopleProfile__c p: [SELECT Id, 
 						         		YahooIM__c,
 						         		Skype__c,
 						         		Status__c,
 						         		Picture__c,
-						         		isPrivate__c,
 						         		User__c
 						         FROM  PeopleProfile__c
 						         WHERE User__c IN: users]) {
@@ -122,6 +66,7 @@ public with sharing class TeamMembersWidgetController {
                     	
         List<TeamMember> members = new List<TeamMember>();
 		if(temp.size() > 0){ 
+			
 	        for(TeamMember__c t: temp) {
 	            TeamMember m = new TeamMember(t, userMap.get(t.User__c));
 	            m.Id = t.User__r.Id;
@@ -131,17 +76,11 @@ public with sharing class TeamMembersWidgetController {
 	            m.username = nameAux;
 	            members.add(m);
 	        }
-		}
-		temp = null; 
+		} 
 		return members;
     }
     
-    /**
-    * Inner class for TeamMeber type
-    *@class
-    */
     public class TeamMember{
-        
         TeamMember__c member;
         PeopleProfile__c profile = new PeopleProfile__c();
         String username = null;
@@ -149,87 +88,57 @@ public with sharing class TeamMembersWidgetController {
         String skype = '';
         String Id = '';
         String picture = '';
-        Boolean isPrivate = false;
-        
-		/**
-		* Costructor
-		*@param TeamMember__c
-		*@param PeopleProfile__c
-		*/
+         
+        public String getId(){
+        	return Id;
+        }
+
         public TeamMember(TeamMember__c m, PeopleProfile__c p) {
+        	
             member = m; 
             profile = p;                     
 			
 			if(profile != null){ 
+	        
 	            if(profile.YahooIM__c != null){
 	            	yahoo = profile.YahooIM__c;
-	            }else { 
-	            	yahoo = ''; 
-	            }
+	            } else { yahoo = ''; }
 	            
-	            isPrivate = profile.isPrivate__c;
 	            if(profile.Skype__c != null){
 	            	skype = profile.Skype__c;
-	            }else { 
-	            	skype = ''; 
-	            }
+	            } else { skype = ''; }
 	            
 	            if(profile.Picture__c != null){
 	            	picture = profile.Picture__c;
-	            }else {
-	            	picture = ''; 
-	            }
+	            } else { picture = ''; }
 	            
-	        }else {
+	        } else {
 	        	yahoo = '';
 	        	skype = '';
 	        	picture = '';
 	        }
-        }       
-        
-        /**
-        *@return String idTeamMember
-        */
-        public String getId(){
-        	return Id;
+	         
         }
-		
-		/**
-		*@return TeamMember__c
-		*/
+
         public TeamMember__c getMember() {
             return member;
         }
         
-        /**
-        *@return String
-        */
         public String getUsername() { 
        		return username; 
         }
-        
-        /**
-        *@return Boolean
-        */
-        public Boolean getIsPrivate() { 
-       		return isPrivate; 
-        }
-        
-        /**
-        *@return String
-        */
+            
         public String getYahoo(){
+        	
         	if(profile != null){
         		return yahoo;
-        	}else {
+        	} else {
         	 	return '';
         	}
         }
         
-        /**
-        *@return String
-        */
         public String getSkype(){
+        	
         	if(profile != null){	
         		return skype;
         	} else {
@@ -237,9 +146,6 @@ public with sharing class TeamMembersWidgetController {
         	}
         }
         
-        /**
-        *@return String
-        */
         public String getStatus() {	
         	if(profile != null){		 
 				return profile.Status__c;
@@ -248,21 +154,17 @@ public with sharing class TeamMembersWidgetController {
         	}
         }
         
-        /**
-        *@return PeopleProfile__c
-        */
         public PeopleProfile__c getProfile(){         
+         	 
          	 if(profile != null){
          	 	return profile;
          	 } else {
          	 	return new PeopleProfile__c();
          	 }
        	}
-		
-        /**
-        *@return String
-        */
+ 
         public String getImage() {
+        	
         	if(profile != null){
         		return picture;
         	} else {
@@ -272,42 +174,21 @@ public with sharing class TeamMembersWidgetController {
     }
 	
 	
-	// Add new Member
+	/* ************************ */
+	/*		 ADD NEW MEMBER		*/
+	/* ************************ */
 	public String idTeam = System.currentPageReference().getParameters().get('id');
-	
-	/**
-	*@param String ID
-	*/
-	public void setIdTeam(String s){
-		idTeam = s;
-	}
-	
-	public List<TeamMember__c> membersToInsert = new List<TeamMember__c>();
-	public List<User> mailList = new List<User>();
-	public Integer groupCount = 1;
 	
 	public String teamName = null;
 	
-	/**
-	* Get Team Name
-	*@return String team name
-	*/
 	public String getTeamName () {
-		if(teamName == null)
-			teamName = [select Name from Team__c where id =: idTeam].Name;
-		return teamName;	
+		return [select Name from Team__c where id =: idTeam].Name;	
 	}
 	
-	/**
-	*@return String
-	*/
 	public String getTeamId () { 
 		return idTeam;	
 	}
 	
-	/**
-	*@return List<SelectOption>
-	*/
 	public List<SelectOption> getProfilesOptions () {
 		List<SelectOption> options = new List<SelectOption>();
 		for (TeamProfile__c item: [select id, Name from TeamProfile__c order by Name]) {
@@ -316,95 +197,50 @@ public with sharing class TeamMembersWidgetController {
 		return options;
 	}
 	
-
 	public Member newMemberVars = new Member();
 	
-	/**
-	* Assign new Member vars to new Profile
-	*@void
-	*/
-	public void assignNewMemberVarsNewProfile () {
-		List<Team__c> currentTeam = [select NewMemberProfile__c from Team__c where id=:idTeam];
-		if (currentTeam.size() > 0 && currentTeam[0].NewMemberProfile__c != null) {	
-			newMemberVars.profileId = currentTeam[0].NewMemberProfile__c;
-		}
-	}
-	
-	/**
-	*@return Member
-	*/	
 	public Member getNewMemberVars () {
 		return newMemberVars;	
 	}
 	
-	/**
-	*@param Member vars
-	*/
 	public void setNewMemberVars (Member vars) {
 		this.newMemberVars = vars;
 	}
 	
-	/**
-	*@class
-	*/
 	public class Member {
 		String profileId;
 		String message;
 		String teamRole;
 		String colleagueNames;
-		
-		/**
-        *@return String
-        */
+	
 		public String getColleagueNames () {
 			return colleagueNames;
 		}
 		
-		/**
-        *@param String names
-        */
 		public void setColleagueNames (String names) {
 			this.colleagueNames = names;
 		}
 		
-		/**
-        *@return String ID
-        */
 		public String getProfileId () {
 			return profileId;
 		}
 		
-		/**
-        *@param String ID
-        */
 		public void setProfileId (String profile) {
 			this.profileId = profile;
 		}	
 		
-		/**
-        *@return String Message
-        */
 		public String getMessage () {
 			return message;
 		}
 		
-		/**
-        *@param String Message
-        */
 		public void setMessage (String msj) {
 			this.message = msj;
 		}
 		
-		/**
-        *@return String Role
-        */
 		public String getTeamRole () {
 			return teamRole;
 		}
 		
-		/**
-        *@param String Role
-        */
 		public void setTeamRole (String tRole) {
 			this.teamRole = tRole;
 		}	
@@ -413,37 +249,21 @@ public with sharing class TeamMembersWidgetController {
 	
 	public List<TeamMember__c> memberListToolkit = new List<TeamMember__c>();
 	
-	/**
-	*@return List<TeamMember__c>
-	*/
 	public List<TeamMember__c> getMemberListToolkit () {
 		return memberListToolkit;
 	}
 	
 	public Integer memberListToolkitCount = 0;
 	
-	/**
-	*@return Integer
-	*/
 	public Integer getMemberListToolkitCount () {
 		return memberListToolkitCount;
 	}
 		
-	Boolean already = false;
-	
-	public Boolean getAlready(){
-		return already;
-	}	
-			
-	/**
-	* Save Member and New
-	*@void
-	*/
 	public void saveMembersNew () {
 		List<TeamMember__c> newMemberList = new List<TeamMember__c>();
 		List<String> newMembers = newMemberVars.colleagueNames.split(',');
 		List<User> userList = new List<User>();
-		already = false;
+		Boolean already = false;
 		
 		for(String item: newMembers) {
 			List<User> userItem = new List<User>();
@@ -459,13 +279,12 @@ public with sharing class TeamMembersWidgetController {
 					listPos++;
 				}
 				if (!already) {
-					userList.add(userItem[0]);
+					userList.add(userItem[0]);	
 				}
-				else
-					already = true;
 			}
 		}
 		
+		//System.debug('\n //////////////// \n NEW MEMBERS LIST: \n Names: ' + newMemberVars.colleagueNames + '\n profileId: ' + newMemberVars.profileId + '\n teamRole: ' + newMemberVars.teamRole + '\n message: ' + newMemberVars.message + '\n userList: ' + userList + '\n ////////////////// \n');
 		for (User user : userList) {
 			Integer isMember = [select count() from TeamMember__c where team__c =:idTeam and user__c =: user.id];
 			if (isMember == 0) {
@@ -476,188 +295,121 @@ public with sharing class TeamMembersWidgetController {
 				newMember.TeamProfile__c = newMemberVars.profileId;
 				newMember.TeamRole__c = newMemberVars.teamRole;
 				newMemberList.add(newMember); 
-				mailList.add(user);
-				 
+				SendMail(user,newMemberVars.message); 
+				//System.debug('\n //////////////// \n NEW MEMBERS LIST: \n ' + newMemberList + '\n ////////////////// \n');
 			}
 		}
-		
-		userList.clear();
-		
+		//System.debug('\n //////////////// \n NEW MEMBERS LIST: \n ' + newMemberList + '\n ////////////////// \n');
 		memberListToolkit = newMemberList;
 		memberListToolkitCount = newMemberList.size();
-		
-		membersToInsert = newMemberList;	
-		
+		//insert newMemberList;
 		newMemberVars.colleagueNames = '';
 		newMemberVars.teamRole = '';
 		newMemberVars.profileId = '';
 		newMemberVars.message = '';
 	}
 
-	/**
-	* Save Members
-	*@void
-	*/
 	public void saveMembers () {
 		List<TeamMember__c> newMemberList = new List<TeamMember__c>();
-		List<String> newMembers = newMemberVars.colleagueNames.split('[ ]*,[ ]*');
+		List<String> newMembers = newMemberVars.colleagueNames.split(',');
 		List<User> userList = new List<User>();
-		already = false;
-		Map<String, User> usersMap = new Map<String, User>();
-		for (User iterUser :[select id, Name, Email from User where Name in:newMembers]) {
-			usersMap.put(iterUser.Name, iterUser);
-		}
-
+		Boolean already = false;
+		
 		for(String item: newMembers) {
-			if (usersMap.get(item) != null) {
+			List<User> userItem = new List<User>();
+			String itemTrim = item.trim();
+			userItem = [select id, Name, Email from User where Name =:itemTrim limit 1];
+			if (userItem.size() > 0) {
 				already = false;
 				Integer listPos = 0;
 				while (!already && listPos < userList.size()) {
-					if(userList[listPos].Name == usersMap.get(item).Name) {
+					if(userList[listPos].Name == userItem[0].Name) {
 						already = true;
 					}
 					listPos++;
 				}
 				if (!already) {
-					userList.add(usersMap.get(item));
+					userList.add(userItem[0]);	
 				}
-				else
-					already = true;
 			}
 		}
 		
-		Map<Id, TeamMember__c> teamMemberMap = new Map<Id, TeamMember__c>();
-		for (TeamMember__c iterMember : [select id, User__c  from TeamMember__c where team__c =:idTeam]) {
-			teamMemberMap.put(iterMember.User__c,iterMember);
-		}
-
+		System.debug('\n //////////////// \n NEW MEMBERS LIST: \n Names: ' + newMemberVars.colleagueNames + '\n profileId: ' + newMemberVars.profileId + '\n teamRole: ' + newMemberVars.teamRole + '\n message: ' + newMemberVars.message + '\n userList: ' + userList + '\n ////////////////// \n');
 		for (User user : userList) {
-			if (teamMemberMap.get(user.Id) == null) {
+			Integer isMember = [select count() from TeamMember__c where team__c =:idTeam and user__c =: user.id];
+			if (isMember == 0) {
 				TeamMember__c newMember = new TeamMember__c();
 				newMember.User__c = user.id;
 				newMember.Name = user.Name;
 				newMember.Team__c = idTeam;
 				newMember.TeamProfile__c = newMemberVars.profileId;
 				newMember.TeamRole__c = newMemberVars.teamRole;
-				newMemberList.add(newMember);
-				mailList.add(user);
-				
+				newMemberList.add(newMember); 
+				SendMail(user,newMemberVars.message); 
+				//System.debug('\n //////////////// \n NEW MEMBERS LIST: \n ' + newMemberList + '\n ////////////////// \n');
 			}
 		}
-		
-		userList.clear();
-		teamMemberMap.clear();
-		usersMap.clear();
-		
+		System.debug('\n //////////////// \n NEW MEMBERS LIST: \n ' + newMemberList + '\n ////////////////// \n');
 		memberListToolkit = newMemberList;
 		memberListToolkitCount = newMemberList.size();
-		    
-		//Insert newMemberList;
-		membersToInsert = newMemberList;
+		//insert newMemberList;
+		
 		newMemberVars.colleagueNames = '';
 		newMemberVars.teamRole = '';
 		newMemberVars.profileId = '';
 		newMemberVars.message = '';
+		
+		//PageReference pageRef = new PageReference('/apex/TeamsMembersList?id=' + idTeam);
+		//pageRef.setRedirect(true);
+		//return pageRef;	
 	}
 	
-	//New save
-	public Integer countSaved = 0;
-	public Boolean reset = false;
-	
-	/**
-	* Sync Save Members
-	*@return PageReference
-	*/
-	public PageReference syncSaveMembers(){
-		Integer endIt =  countSaved + 2;
-		for(Integer it = countSaved; it <= endIt; it++){
-			if(it < membersToInsert.size()){
-				TeamMember__c tm = membersToInsert[it];
-				for(User user: mailList){
-					if(tm.User__c == user.id){
-						SendMail(user,newMemberVars.message);
-					}
-				}
-				insert tm;
-				memberListToolkitCount--;
-			}else{
-				membersToInsert.clear();
-				mailList.clear();
-				groupCount = 0;
-				reset = true;
-			}
-		}
-		if(reset){
-			countSaved = 0;
-			reset = false;
-		}else{
-			countSaved += 3;
-		}
-		return null;
-	}
-	
-	/**
-	* Init save members
-	*@return Boolean
-	*/
-	public Boolean getInitAddMembers (){
-		return membersToInsert.size() > 0;
-	} 
-	
-	/**
-	* Send mail to new mambers
-	*@void
-	*/
 	public void SendMail(User user, String message) {
         Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();
        
         String[] toAddresses = new String[] {user.Email};
+               
  		// Assign the addresses for the To and CC lists to the mail object.
 		mail.setToAddresses(toAddresses);
+           
+           
 		// Specify the address used when the recipients reply to the email.
 		mail.setReplyTo('forwardtosfdc@gmail.com');
+           
 		// Specify the name used as the display name.
 		mail.setSenderDisplayName(user.Name);
+           
 		// Specify the subject line for your email address.
-		mail.setSubject('You Have Been Added to ' + this.getTeamName());
+		mail.setSubject('You Have Been Added to ' + teamName);
+           
 		// Set to True if you want to BCC yourself on the email.
 		mail.setBccSender(false);
+           
 		// Optionally append the salesforce.com email signature to the email.
 		// The email address of the user executing the Apex Code will be used.
 		mail.setUseSignature(true);
+   
+		//mail.useSignature(false);
 		// Specify the html version of the content as well.
-		message = (message == null) ? '' : message;
 		mail.setHtmlBody(message);
+           
 		// Send the email you have created.
-        Messaging.sendEmail(new Messaging.SingleEmailMessage[] { mail });
+            
+		Messaging.sendEmail(new Messaging.SingleEmailMessage[] { mail });
     }	
     
-    // Sharing rules
-	public UserPermissions userPermissions = TeamsDetailController.userPermission.clone();
+    /* ---------------------------- */
+   	/*        ADMIN MEMBER		    */
+   	/* ---------------------------- */
 	
-	/**
-	* Generate user permissions
-	*/
-	public void genPermissions() {
-		userPermissions.setId(UserInfo.getUserId());
-		userPermissions.setTeam(team);
-		userPermissions.setObjectType('Team');
-		userPermissions.setPermissions();		
-	}
-	
-	/**
-	* Return user permissions
-	*@return UserPermissions
-	*/
-	public UserPermissions getUserPermissions () {
-		return userPermissions;
-	}	
-	
-	/**
-	* Rerender use only
-	*/
-	public void refreshMethod(){
-		
+	public Boolean getIsTeamAdmin () {
+		List<TeamMember__c> currentUser = new List<TeamMember__c>();
+		currentUser = [select TeamProfile__r.ManageTeams__c from TeamMember__c where team__c =:idTeam and User__c =:UserInfo.getUserId()];
+		Boolean isTeamAdmin = false;
+		if (currentUser.size() > 0) {
+			isTeamAdmin = (currentUser[0].TeamProfile__r.ManageTeams__c);
+		} 
+		return isTeamAdmin;		
 	}
 
 }

@@ -7,6 +7,90 @@
     </applicationVisibilities>
     <fieldLevelSecurities>
         <editable>true</editable>
+        <field>BlogEntry__c.CommentCount__c</field>
+    </fieldLevelSecurities>
+    <fieldLevelSecurities>
+        <editable>true</editable>
+        <field>BlogEntry__c.Message__c</field>
+    </fieldLevelSecurities>
+    <fieldLevelSecurities>
+        <editable>true</editable>
+        <field>BlogEntry__c.Notify__c</field>
+    </fieldLevelSecurities>
+    <fieldLevelSecurities>
+        <editable>true</editable>
+        <field>BlogEntry__c.PostedBy__c</field>
+    </fieldLevelSecurities>
+    <fieldLevelSecurities>
+        <editable>true</editable>
+        <field>BlogEntry__c.PostedDate__c</field>
+    </fieldLevelSecurities>
+    <fieldLevelSecurities>
+        <editable>true</editable>
+        <field>BlogEntry__c.PublishedDate__c</field>
+    </fieldLevelSecurities>
+    <fieldLevelSecurities>
+        <editable>true</editable>
+        <field>BlogEntry__c.Team__c</field>
+    </fieldLevelSecurities>
+    <fieldLevelSecurities>
+        <editable>true</editable>
+        <field>BlogEntry__c.Title__c</field>
+    </fieldLevelSecurities>
+    <fieldLevelSecurities>
+        <editable>true</editable>
+        <field>Bookmark__c.Body__c</field>
+    </fieldLevelSecurities>
+    <fieldLevelSecurities>
+        <editable>true</editable>
+        <field>Bookmark__c.BookmarkURL__c</field>
+    </fieldLevelSecurities>
+    <fieldLevelSecurities>
+        <editable>true</editable>
+        <field>Bookmark__c.Comments__c</field>
+    </fieldLevelSecurities>
+    <fieldLevelSecurities>
+        <editable>true</editable>
+        <field>Bookmark__c.PostedBy__c</field>
+    </fieldLevelSecurities>
+    <fieldLevelSecurities>
+        <editable>true</editable>
+        <field>Bookmark__c.PostedDate__c</field>
+    </fieldLevelSecurities>
+    <fieldLevelSecurities>
+        <editable>true</editable>
+        <field>Bookmark__c.SiteDescription__c</field>
+    </fieldLevelSecurities>
+    <fieldLevelSecurities>
+        <editable>true</editable>
+        <field>Bookmark__c.Team__c</field>
+    </fieldLevelSecurities>
+    <fieldLevelSecurities>
+        <editable>true</editable>
+        <field>Bookmark__c.Title__c</field>
+    </fieldLevelSecurities>
+    <fieldLevelSecurities>
+        <editable>true</editable>
+        <field>Bookmark__c.Type__c</field>
+    </fieldLevelSecurities>
+    <fieldLevelSecurities>
+        <editable>true</editable>
+        <field>Bookmark__c.VideoURL__c</field>
+    </fieldLevelSecurities>
+    <fieldLevelSecurities>
+        <editable>true</editable>
+        <field>Bookmark__c.imageUrl__c</field>
+    </fieldLevelSecurities>
+    <fieldLevelSecurities>
+        <editable>true</editable>
+        <field>Comment__c.BlogEntry__c</field>
+    </fieldLevelSecurities>
+    <fieldLevelSecurities>
+        <editable>true</editable>
+        <field>Comment__c.Bookmark__c</field>
+    </fieldLevelSecurities>
+    <fieldLevelSecurities>
+        <editable>true</editable>
         <field>Comment__c.Message__c</field>
     </fieldLevelSecurities>
     <fieldLevelSecurities>
@@ -24,10 +108,6 @@
     <fieldLevelSecurities>
         <editable>true</editable>
         <field>Comment__c.PostedDate__c</field>
-    </fieldLevelSecurities>
-    <fieldLevelSecurities>
-        <editable>true</editable>
-        <field>Comment__c.Team__c</field>
     </fieldLevelSecurities>
     <fieldLevelSecurities>
         <editable>true</editable>
@@ -239,10 +319,6 @@
     </fieldLevelSecurities>
     <fieldLevelSecurities>
         <editable>true</editable>
-        <field>FavoriteWikis__c.Team__c</field>
-    </fieldLevelSecurities>
-    <fieldLevelSecurities>
-        <editable>true</editable>
         <field>FavoriteWikis__c.User__c</field>
     </fieldLevelSecurities>
     <fieldLevelSecurities>
@@ -335,10 +411,6 @@
     </fieldLevelSecurities>
     <fieldLevelSecurities>
         <editable>true</editable>
-        <field>PeopleProfile__c.isPrivate__c</field>
-    </fieldLevelSecurities>
-    <fieldLevelSecurities>
-        <editable>true</editable>
         <field>PeopleSubscription__c.Person__c</field>
     </fieldLevelSecurities>
     <fieldLevelSecurities>
@@ -371,11 +443,15 @@
     </fieldLevelSecurities>
     <fieldLevelSecurities>
         <editable>true</editable>
-        <field>ProjectAssignee__c.ProjectTask__c</field>
+        <field>ProjectAssignee__c.ProjectIssue__c</field>
     </fieldLevelSecurities>
     <fieldLevelSecurities>
         <editable>true</editable>
-        <field>ProjectAssignee__c.Team__c</field>
+        <field>ProjectAssignee__c.ProjectRisk__c</field>
+    </fieldLevelSecurities>
+    <fieldLevelSecurities>
+        <editable>true</editable>
+        <field>ProjectAssignee__c.ProjectTask__c</field>
     </fieldLevelSecurities>
     <fieldLevelSecurities>
         <editable>true</editable>
@@ -383,27 +459,91 @@
     </fieldLevelSecurities>
     <fieldLevelSecurities>
         <editable>true</editable>
-        <field>ProjectTaskPred__c.Lag_Time__c</field>
+        <field>ProjectIssue__c.Deadline__c</field>
     </fieldLevelSecurities>
     <fieldLevelSecurities>
         <editable>true</editable>
-        <field>ProjectTaskPred__c.Lag_Type__c</field>
+        <field>ProjectIssue__c.Description__c</field>
     </fieldLevelSecurities>
     <fieldLevelSecurities>
         <editable>true</editable>
-        <field>ProjectTaskPred__c.Lag_Unit__c</field>
+        <field>ProjectIssue__c.Percent_Complete__c</field>
     </fieldLevelSecurities>
     <fieldLevelSecurities>
         <editable>true</editable>
-        <field>ProjectTaskPred__c.Parent__c</field>
+        <field>ProjectIssue__c.Priority__c</field>
     </fieldLevelSecurities>
     <fieldLevelSecurities>
         <editable>true</editable>
-        <field>ProjectTaskPred__c.Predecessor__c</field>
+        <field>ProjectIssue__c.ProjectTask__c</field>
     </fieldLevelSecurities>
     <fieldLevelSecurities>
         <editable>true</editable>
-        <field>ProjectTaskPred__c.Team__c</field>
+        <field>ProjectIssue__c.Project__c</field>
+    </fieldLevelSecurities>
+    <fieldLevelSecurities>
+        <editable>true</editable>
+        <field>ProjectIssue__c.StartDate__c</field>
+    </fieldLevelSecurities>
+    <fieldLevelSecurities>
+        <editable>true</editable>
+        <field>ProjectIssue__c.Team__c</field>
+    </fieldLevelSecurities>
+    <fieldLevelSecurities>
+        <editable>true</editable>
+        <field>ProjectRisk__c.Category__c</field>
+    </fieldLevelSecurities>
+    <fieldLevelSecurities>
+        <editable>true</editable>
+        <field>ProjectRisk__c.DateClosed__c</field>
+    </fieldLevelSecurities>
+    <fieldLevelSecurities>
+        <editable>true</editable>
+        <field>ProjectRisk__c.DateDue__c</field>
+    </fieldLevelSecurities>
+    <fieldLevelSecurities>
+        <editable>true</editable>
+        <field>ProjectRisk__c.DateOpened__c</field>
+    </fieldLevelSecurities>
+    <fieldLevelSecurities>
+        <editable>true</editable>
+        <field>ProjectRisk__c.DaysImpact__c</field>
+    </fieldLevelSecurities>
+    <fieldLevelSecurities>
+        <editable>true</editable>
+        <field>ProjectRisk__c.Description__c</field>
+    </fieldLevelSecurities>
+    <fieldLevelSecurities>
+        <editable>true</editable>
+        <field>ProjectRisk__c.ImpactDescription__c</field>
+    </fieldLevelSecurities>
+    <fieldLevelSecurities>
+        <editable>true</editable>
+        <field>ProjectRisk__c.MitigationPlan__c</field>
+    </fieldLevelSecurities>
+    <fieldLevelSecurities>
+        <editable>true</editable>
+        <field>ProjectRisk__c.Priority__c</field>
+    </fieldLevelSecurities>
+    <fieldLevelSecurities>
+        <editable>true</editable>
+        <field>ProjectRisk__c.Probability__c</field>
+    </fieldLevelSecurities>
+    <fieldLevelSecurities>
+        <editable>true</editable>
+        <field>ProjectRisk__c.ProjectTask__c</field>
+    </fieldLevelSecurities>
+    <fieldLevelSecurities>
+        <editable>true</editable>
+        <field>ProjectRisk__c.Project__c</field>
+    </fieldLevelSecurities>
+    <fieldLevelSecurities>
+        <editable>true</editable>
+        <field>ProjectRisk__c.Status__c</field>
+    </fieldLevelSecurities>
+    <fieldLevelSecurities>
+        <editable>true</editable>
+        <field>ProjectRisk__c.Team__c</field>
     </fieldLevelSecurities>
     <fieldLevelSecurities>
         <editable>true</editable>
@@ -515,10 +655,6 @@
     </fieldLevelSecurities>
     <fieldLevelSecurities>
         <editable>true</editable>
-        <field>TeamProfile__c.ManageAttachments__c</field>
-    </fieldLevelSecurities>
-    <fieldLevelSecurities>
-        <editable>true</editable>
         <field>TeamProfile__c.ManageBlogs__c</field>
     </fieldLevelSecurities>
     <fieldLevelSecurities>
@@ -559,62 +695,6 @@
     </fieldLevelSecurities>
     <fieldLevelSecurities>
         <editable>true</editable>
-        <field>TeamSubscription__c.DiscussionNewReply__c</field>
-    </fieldLevelSecurities>
-    <fieldLevelSecurities>
-        <editable>true</editable>
-        <field>TeamSubscription__c.DiscussionNewTopic__c</field>
-    </fieldLevelSecurities>
-    <fieldLevelSecurities>
-        <editable>true</editable>
-        <field>TeamSubscription__c.DiscussionReplyToMe__c</field>
-    </fieldLevelSecurities>
-    <fieldLevelSecurities>
-        <editable>true</editable>
-        <field>TeamSubscription__c.ProjectTaskAssignToMeChanged__c</field>
-    </fieldLevelSecurities>
-    <fieldLevelSecurities>
-        <editable>true</editable>
-        <field>TeamSubscription__c.ProjectTaskAssignedToMe__c</field>
-    </fieldLevelSecurities>
-    <fieldLevelSecurities>
-        <editable>true</editable>
-        <field>TeamSubscription__c.ProjectTaskChanged__c</field>
-    </fieldLevelSecurities>
-    <fieldLevelSecurities>
-        <editable>true</editable>
-        <field>TeamSubscription__c.ProjectTaskDeleted__c</field>
-    </fieldLevelSecurities>
-    <fieldLevelSecurities>
-        <editable>true</editable>
-        <field>TeamSubscription__c.TeamMemberJoinLeave__c</field>
-    </fieldLevelSecurities>
-    <fieldLevelSecurities>
-        <editable>true</editable>
-        <field>TeamSubscription__c.TeamMemberStatusUpdated__c</field>
-    </fieldLevelSecurities>
-    <fieldLevelSecurities>
-        <editable>true</editable>
-        <field>TeamSubscription__c.Team__c</field>
-    </fieldLevelSecurities>
-    <fieldLevelSecurities>
-        <editable>true</editable>
-        <field>TeamSubscription__c.User__c</field>
-    </fieldLevelSecurities>
-    <fieldLevelSecurities>
-        <editable>true</editable>
-        <field>TeamSubscription__c.WikiCreatedByMeUpdated__c</field>
-    </fieldLevelSecurities>
-    <fieldLevelSecurities>
-        <editable>true</editable>
-        <field>TeamSubscription__c.WikiNewPage__c</field>
-    </fieldLevelSecurities>
-    <fieldLevelSecurities>
-        <editable>true</editable>
-        <field>TeamSubscription__c.WikiPageUpdated__c</field>
-    </fieldLevelSecurities>
-    <fieldLevelSecurities>
-        <editable>true</editable>
         <field>TeamType__c.Description__c</field>
     </fieldLevelSecurities>
     <fieldLevelSecurities>
@@ -627,15 +707,7 @@
     </fieldLevelSecurities>
     <fieldLevelSecurities>
         <editable>true</editable>
-        <field>Team__c.ContactEmail__c</field>
-    </fieldLevelSecurities>
-    <fieldLevelSecurities>
-        <editable>true</editable>
         <field>Team__c.Description__c</field>
-    </fieldLevelSecurities>
-    <fieldLevelSecurities>
-        <editable>false</editable>
-        <field>Team__c.Id2__c</field>
     </fieldLevelSecurities>
     <fieldLevelSecurities>
         <editable>true</editable>
@@ -644,10 +716,6 @@
     <fieldLevelSecurities>
         <editable>true</editable>
         <field>Team__c.ParentTeam__c</field>
-    </fieldLevelSecurities>
-    <fieldLevelSecurities>
-        <editable>true</editable>
-        <field>Team__c.Picture__c</field>
     </fieldLevelSecurities>
     <fieldLevelSecurities>
         <editable>true</editable>
@@ -723,10 +791,6 @@
     </fieldLevelSecurities>
     <fieldLevelSecurities>
         <editable>true</editable>
-        <field>WikiLink__c.Team__c</field>
-    </fieldLevelSecurities>
-    <fieldLevelSecurities>
-        <editable>true</editable>
         <field>WikiLink__c.ToLink__c</field>
     </fieldLevelSecurities>
     <fieldLevelSecurities>
@@ -763,10 +827,6 @@
     </fieldLevelSecurities>
     <fieldLevelSecurities>
         <editable>true</editable>
-        <field>WikiRecentlyViewed__c.Team__c</field>
-    </fieldLevelSecurities>
-    <fieldLevelSecurities>
-        <editable>true</editable>
         <field>WikiRecentlyViewed__c.User__c</field>
     </fieldLevelSecurities>
     <fieldLevelSecurities>
@@ -784,6 +844,22 @@
     <fieldLevelSecurities>
         <editable>true</editable>
         <field>WikiVersions__c.revisionCount__c</field>
+    </fieldLevelSecurities>
+    <fieldLevelSecurities>
+        <editable>false</editable>
+        <field>timeline_state__c.CreatedById</field>
+    </fieldLevelSecurities>
+    <fieldLevelSecurities>
+        <editable>false</editable>
+        <field>timeline_state__c.LastModifiedById</field>
+    </fieldLevelSecurities>
+    <fieldLevelSecurities>
+        <editable>true</editable>
+        <field>timeline_state__c.Name</field>
+    </fieldLevelSecurities>
+    <fieldLevelSecurities>
+        <editable>true</editable>
+        <field>timeline_state__c.OwnerId</field>
     </fieldLevelSecurities>
     <fieldLevelSecurities>
         <editable>true</editable>
@@ -805,145 +881,48 @@
         <editable>true</editable>
         <field>timeline_state__c.y__c</field>
     </fieldLevelSecurities>
-    <layoutAssingments>
-        <layout>Account-Account Layout</layout>
-    </layoutAssingments>
-    <layoutAssingments>
-        <layout>Asset-Asset Layout</layout>
-    </layoutAssingments>
-    <layoutAssingments>
-        <layout>Campaign-Campaign Layout</layout>
-    </layoutAssingments>
-    <layoutAssingments>
-        <layout>Case-Case Layout</layout>
-    </layoutAssingments>
-    <layoutAssingments>
-        <layout>Comment__c-Comment Layout</layout>
-    </layoutAssingments>
-    <layoutAssingments>
-        <layout>Competency__c-Competency Layout</layout>
-    </layoutAssingments>
-    <layoutAssingments>
-        <layout>Contact-Contact Layout</layout>
-    </layoutAssingments>
-    <layoutAssingments>
-        <layout>Contract-Contract Layout</layout>
-    </layoutAssingments>
-    <layoutAssingments>
-        <layout>DiscussionForum__c-Discussion Layout</layout>
-    </layoutAssingments>
-    <layoutAssingments>
-        <layout>DiscussionMessage__c-Discussion Message Layout</layout>
-    </layoutAssingments>
-    <layoutAssingments>
-        <layout>DiscussionTopic__c-Discussion Thread Layout</layout>
-    </layoutAssingments>
-    <layoutAssingments>
-        <layout>EducationHistory__c-Education History Layout</layout>
-    </layoutAssingments>
-    <layoutAssingments>
-        <layout>Employer__c-Employer Layout</layout>
-    </layoutAssingments>
-    <layoutAssingments>
-        <layout>EmploymentHistory__c-Employment  History Layout</layout>
-    </layoutAssingments>
-    <layoutAssingments>
-        <layout>Event-Event Layout</layout>
-    </layoutAssingments>
-    <layoutAssingments>
-        <layout>FavoriteWikis__c-FavoriteWikis Layout</layout>
-    </layoutAssingments>
-    <layoutAssingments>
-        <layout>Idea-Idea Layout</layout>
-    </layoutAssingments>
-    <layoutAssingments>
-        <layout>Lead-Lead Layout</layout>
-    </layoutAssingments>
-    <layoutAssingments>
-        <layout>MiniFeed__c-Mini Feed Layout</layout>
-    </layoutAssingments>
-    <layoutAssingments>
-        <layout>Opportunity-Opportunity Layout</layout>
-    </layoutAssingments>
-    <layoutAssingments>
-        <layout>OpportunityLineItem-Opportunity Product Layout</layout>
-    </layoutAssingments>
-    <layoutAssingments>
-        <layout>PeopleProfile__c-People Layout</layout>
-    </layoutAssingments>
-    <layoutAssingments>
-        <layout>PeopleSubscription__c-People Subscription Layout</layout>
-    </layoutAssingments>
-    <layoutAssingments>
-        <layout>Product2-Product Layout</layout>
-    </layoutAssingments>
-    <layoutAssingments>
-        <layout>Project2__c-Project Layout</layout>
-    </layoutAssingments>
-    <layoutAssingments>
-        <layout>ProjectAssignee__c-Project Issue Assignee Layout</layout>
-    </layoutAssingments>
-    <layoutAssingments>
-        <layout>ProjectTaskPred__c-ProjectTaskPred Layout</layout>
-    </layoutAssingments>
-    <layoutAssingments>
-        <layout>ProjectTask__c-Project Task Layout</layout>
-        <recordType>ProjectTask__c.name</recordType>
-    </layoutAssingments>
-    <layoutAssingments>
-        <layout>ProjectTask__c-Project Task Layout</layout>
-    </layoutAssingments>
-    <layoutAssingments>
-        <layout>School__c-School Layout</layout>
-    </layoutAssingments>
-    <layoutAssingments>
-        <layout>Solution-Solution Layout</layout>
-    </layoutAssingments>
-    <layoutAssingments>
-        <layout>Task-Task Layout</layout>
-    </layoutAssingments>
-    <layoutAssingments>
-        <layout>TeamMember__c-Team Member Layout</layout>
-    </layoutAssingments>
-    <layoutAssingments>
-        <layout>TeamProfile__c-Team Profile Layout</layout>
-    </layoutAssingments>
-    <layoutAssingments>
-        <layout>TeamSubscription__c-TeamSuscription Layout</layout>
-    </layoutAssingments>
-    <layoutAssingments>
-        <layout>TeamType__c-TeamspacesType Layout</layout>
-    </layoutAssingments>
-    <layoutAssingments>
-        <layout>Team__c-Team Layout</layout>
-    </layoutAssingments>
-    <layoutAssingments>
-        <layout>User-User Layout</layout>
-    </layoutAssingments>
-    <layoutAssingments>
-        <layout>UserCompetencies__c-UserCompetencies Layout</layout>
-    </layoutAssingments>
-    <layoutAssingments>
-        <layout>WidgetLayout__c-WidgetLayout Layout</layout>
-    </layoutAssingments>
-    <layoutAssingments>
-        <layout>Widget__c-Widget Layout</layout>
-    </layoutAssingments>
-    <layoutAssingments>
-        <layout>WikiLink__c-WikiLink Layout</layout>
-    </layoutAssingments>
-    <layoutAssingments>
-        <layout>WikiPage__c-WikiPage Layout</layout>
-    </layoutAssingments>
-    <layoutAssingments>
-        <layout>WikiRecentlyViewed__c-Wiki Recently Viewed Layout</layout>
-    </layoutAssingments>
-    <layoutAssingments>
-        <layout>WikiVersions__c-WikiVersion Layout</layout>
-    </layoutAssingments>
-    <layoutAssingments>
-        <layout>timeline_state__c-timeline state Layout</layout>
-    </layoutAssingments>
+    <fieldLevelSecurities>
+        <editable>false</editable>
+        <field>ProjectTaskPred__c.CreatedById</field>
+    </fieldLevelSecurities>
+    <fieldLevelSecurities>
+        <editable>true</editable>
+        <field>ProjectTaskPred__c.Lag_Time__c</field>
+    </fieldLevelSecurities>
+    <fieldLevelSecurities>
+        <editable>true</editable>
+        <field>ProjectTaskPred__c.Lag_Type__c</field>
+    </fieldLevelSecurities>
+    <fieldLevelSecurities>
+        <editable>true</editable>
+        <field>ProjectTaskPred__c.Lag_Unit__c</field>
+    </fieldLevelSecurities>
+    <fieldLevelSecurities>
+        <editable>false</editable>
+        <field>ProjectTaskPred__c.LastModifiedById</field>
+    </fieldLevelSecurities>
+    <fieldLevelSecurities>
+        <editable>false</editable>
+        <field>ProjectTaskPred__c.Name</field>
+    </fieldLevelSecurities>
+    <fieldLevelSecurities>
+        <editable>true</editable>
+        <field>ProjectTaskPred__c.OwnerId</field>
+    </fieldLevelSecurities>
+    <fieldLevelSecurities>
+        <editable>true</editable>
+        <field>ProjectTaskPred__c.Parent__c</field>
+    </fieldLevelSecurities>
+    <fieldLevelSecurities>
+        <editable>true</editable>
+        <field>ProjectTaskPred__c.Predecessor__c</field>
+    </fieldLevelSecurities>
+    <objectPermissions>
+        <object>BlogEntry__c</object>
+    </objectPermissions>
+    <objectPermissions>
+        <object>Bookmark__c</object>
+    </objectPermissions>
     <objectPermissions>
         <object>Comment__c</object>
     </objectPermissions>
@@ -987,6 +966,12 @@
         <object>ProjectAssignee__c</object>
     </objectPermissions>
     <objectPermissions>
+        <object>ProjectIssue__c</object>
+    </objectPermissions>
+    <objectPermissions>
+        <object>ProjectRisk__c</object>
+    </objectPermissions>
+    <objectPermissions>
         <object>ProjectTaskPred__c</object>
     </objectPermissions>
     <objectPermissions>
@@ -1000,9 +985,6 @@
     </objectPermissions>
     <objectPermissions>
         <object>TeamProfile__c</object>
-    </objectPermissions>
-    <objectPermissions>
-        <object>TeamSubscription__c</object>
     </objectPermissions>
     <objectPermissions>
         <object>TeamType__c</object>
@@ -1034,11 +1016,6 @@
     <objectPermissions>
         <object>timeline_state__c</object>
     </objectPermissions>
-    <recordTypeVisibilities>
-        <default>false</default>
-        <recordType>ProjectTask__c.name</recordType>
-        <visible>false</visible>
-    </recordTypeVisibilities>
     <tabVisibilities>
         <tab>DiscussionForum__c</tab>
         <visibility>DefaultOn</visibility>

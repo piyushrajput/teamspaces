@@ -1,0 +1,73 @@
+<apex:page sidebar="false" controller="BookmarkOverviewController" tabStyle="Bookmark__c">
+	<div class="box_round_blue">
+			<div class="header"  >
+				<div>
+					<div>
+						<h3 style="padding-top:4px;">
+							My Recent
+						</h3>
+						<h3 style="margin-top:-4px;">
+							Bookmarks
+						</h3>					
+					</div>
+				</div>
+			</div>
+			<!-- Rounded Box Content -->
+			<div class="box_content">
+				<div class="contentHolder">
+					<span style="{!IF(MyRecentBookmarksSize == 0, 'display:block', 'display:none')};">You don't have bookmarks created</span>
+					<apex:repeat value="{!MyRecentBookmarks}" var="myBookmark">
+						<div class="sideBarItemLeft" >
+							<img class="f_left" src="{!myBookmark.imageUrl}" alt="" />
+							<div class="sideBoxLinks" >
+								<a href="/apex/BookmarkDetails?id={!myBookmark.Id}">{!myBookmark.Title}</a> ({!myBookmark.CommentsCount})
+							</div>
+							<div class="sideBoxUnderLink" >
+								{!myBookmark.TeamName}
+							</div>
+						</div>
+					</apex:repeat>	
+					<!-- 
+					<div class="sideBarItemLeft" >
+						<img class="f_left" src="{!URLFOR($Resource.BookmarkResources, 'images/bookmark_overview/pic_2.jpg')}" alt="" />
+						<div class="sideBoxLinks" >
+							<a href="javascript:;">Review the standards with the entire company</a> (43)
+						</div>
+						<div class="sideBoxUnderLink" >
+							Patternforce 1.0
+						</div>
+					</div>
+					<div class="sideBarItemLeft" >
+						<img class="f_left" src="{!URLFOR($Resource.BookmarkResources, 'images/bookmark_overview/pic_3.jpg')}" alt="" />
+						<div class="sideBoxLinks" >
+							<a href="javascript:;">Welcome Harry Thompson to the usability gro...</a> (42)
+						</div>
+						<div class="sideBoxUnderLink" >
+							Usability Testinge
+						</div>
+					</div>
+					<div class="sideBarItemLeft" >
+						<img class="f_left" src="{!URLFOR($Resource.BookmarkResources, 'images/bookmark_overview/pic_4.jpg')}" alt="" />
+						<div class="sideBoxLinks" >
+							<a href="javascript:;">New marketing collateral available</a> (39)
+						</div>
+						<div class="sideBoxUnderLink" >
+							GreenHog project
+						</div>
+					</div>
+					<div class="sideBarItemLeft" >
+						<img class="f_left" src="{!URLFOR($Resource.BookmarkResources, 'images/bookmark_overview/pic_5.jpg')}" alt="" />
+						<div class="sideBoxLinks" >
+							<a href="javascript:;" >Looking for BETA testers for the new shoppi...</a> (37)
+						</div>
+						<div class="sideBoxUnderLink" >
+							E-commerce initiative
+						</div>
+					</div>
+				-->	
+				</div>
+			</div>
+			<div class="bottom_borders"><div><div></div></div></div>
+		</div>
+	</div>
+</apex:page>

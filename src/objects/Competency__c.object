@@ -22,5 +22,5 @@
         <type>Text</type>
     </nameField>
     <pluralLabel>Competency</pluralLabel>
-    <sharingModel>Read</sharingModel>
+    <sharingModel>ReadWrite</sharingModel>
 </CustomObject>

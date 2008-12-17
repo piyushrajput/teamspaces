@@ -1,0 +1,66 @@
+<apex:page sidebar="false" showHeader="false">
+	<!-- New Blog -->
+	<div id="NewBlogOverlay" style="display:none;">
+		<!-- Title of Dialog -->
+		<div class="modalTitle">
+			<div class="title">New Blog</div>
+			<div class="closeEvent">
+				<a href="Javascript:;" onclick="modal.close();"><img src="{!URLFOR($Resource.BlogsResources, 'images/common/icons/close_dialog.gif')}" alt="Close Window" title="Close Window" /></a>
+			</div>
+		</div>
+		<!-- Content  -->
+		<div class="modalContent">
+			<div class="requireLegend">= Required Information</div>
+			<!-- Dialog Body  -->
+			<div class="modalMessage">
+				<form>
+					<div class="field">
+						<label>Title</label>
+						<div class="required">
+							<input type="text" />
+						</div>
+					</div>
+					<div class="field">
+						<label>Description</label>
+						<div class="required">
+							<div class="inputContainer">
+								<textarea  name="NewBlog" id="NewBlog" width="20"></textarea> 
+							</div>
+						</div>
+					</div>
+					<div class="field">
+						<div class="label">&nbsp;</div>
+						<input type="checkbox" class="checkbox"><label class="max">Send Email to all Members</label>
+					</div>
+					<div class="optionalFormActions">
+						<div class="titleHandler titleCollapsed" onclick="showAdvancedOptions(this);">Advanced Options</div>
+						<div class="content" >
+							<div class="field">
+								<label>Add Image</label>
+								<div class="inputContainer margin-left" >
+									<ul>
+										<li><a href="javascript:;">Filename Filename (FileType Filetype) - Size Date Modification</a><a href="javascript:;" class="deleteFile"><img src="{!URLFOR($Resource.BlogsResources, 'images/common/icons/delete_attachment.gif')}" alt="Delete Attachment" title="Delete Attachment"/></a></li>
+									</ul>
+									<input type="file" /><br />
+									<a href="javascript:;" >Attach another Image</a>
+								</div>
+							</div>
+						</div>
+					</div>
+				</form>
+			</div>
+			<!--
+				Actions
+				Width set with Style attrib.
+			  -->
+			<div class="actions" style="width:310px;">
+				<a href="javascript:;" class="button">Publish Post</a>
+				<a href="javascript:;" onclick="modal.close();" class="button dark_gray">Save Draft</a>
+				<a href="javascript:;" onclick="closeDialog();" class="button gray">Cancel</a>
+			</div>
+			<div class="status">
+				<p>Draft AutoSaved at 5:30 PM</p>
+			</div>
+		</div><!-- END Modal Content -->
+	</div><!-- END New Blog  -->
+</apex:page>

@@ -13,6 +13,10 @@ public class WikiPageHistoryController {
    	/*   	  BREADCRUMBING			*/
    	/* ---------------------------- */ 
 
+	public String getWikiHome () {
+		return [select Id from WikiPage__c where Name = 'Home' and Team__c =:idWikiSite].Id;
+	} 
+	
 	public String getWikiSiteName () {
 		return [select Name from Team__c where id=:idWikiSite].Name;
 	}
@@ -24,6 +28,9 @@ public class WikiPageHistoryController {
 		Integer crumbingLength = 1;
 		Integer crumbingMaxLength = 2;
 		
+		if (idWikiPage == null) {
+			idWikiPage = getWikiHome();
+		}
    		wikiBC = [SELECT Id, Name, ShortDescription__c, Body__c, Parent__c, LastModifiedDate FROM WikiPage__c WHERE id = : idWikiPage ];
    		//breadCrumbing += wikiBC.Name;
    		parentBC = wikiBC.Parent__c;

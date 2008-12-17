@@ -103,8 +103,6 @@
         <fullName>Team__c</fullName>
         <label>Team</label>
         <referenceTo>Team__c</referenceTo>
-        <relationshipLabel>Project Tasks</relationshipLabel>
-        <relationshipName>ProjectTasks</relationshipName>
         <type>Lookup</type>
     </fields>
     <fields>
@@ -138,5 +136,5 @@
             </values>
         </picklistValues>
     </recordTypes>
-    <sharingModel>Private</sharingModel>
+    <sharingModel>ReadWrite</sharingModel>
 </CustomObject>

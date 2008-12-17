@@ -27,5 +27,5 @@
         <type>Text</type>
     </nameField>
     <pluralLabel>School</pluralLabel>
-    <sharingModel>Read</sharingModel>
+    <sharingModel>ReadWrite</sharingModel>
 </CustomObject>

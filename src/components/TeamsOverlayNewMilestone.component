@@ -1,425 +1,422 @@
-<apex:component controller="TeamsOverlayNewMilestoneController" allowDML="true" id="milestoneOverlay">
-	<!-- ### Initialize fixed Overlay ### -->
-	<div id="fixedModalMilestoneOverlay" class="fixedModalOverlay" style="display:none;"></div>
-	<style type="text/css">
-			
-		#newMilestone img {
-			border: none;
-		}
+<apex:component controller="TeamsOverlayNewMilestoneController">
+<!-- ### Initialize fixed Overlay ### -->
+<div id="fixedModalMilestoneOverlay" class="fixedModalOverlay" style="display:none;"></div>
+<style tylpe="text/css">
 		
-		#newMilestone div.modalTitle {
-			height: 20px;
-			background: #004F6D;
-			color: white;
-			font-size: 14px;
-			padding: 7px;
-			font-weight: bold;
-		}
-		
-		#newMilestone div.modalTitle div.title {
-			float:left;
-		}
-		
-		#newMilestone div.modalTitle div.closeEvent {
-			float:right;
-			width: 14px;
-			height: 13px;
-			color: #FFFFFF;
-		}
-		
-		/* -[ ContentBox]-----------------------------------------------------*/
-		
-		#newMilestone div.modalContent div.modalMessage {
-			font-size:13px;
-			font-weight:bold;
-			margin-bottom:5px;
-			clear:both;
-			padding:3px;
-			overflow:hidden;
-			clear:both;
-			position:relative;
-		}
-		
-		#newMilestone div.modalContent div.requireLegend {
-			border-left:3px solid #C0272C;
-			float:right;
-			font-size:10px;
-			margin-top:7px;
-			padding-right:7px;
-			padding-left:5px;
-			clear:both;
-			height:15px;
-		}
-		
-		#newMilestone div.modalContent a.button {
-			background:#21637D none repeat scroll 0%;
-			border:0px solid;
-			color:#FFFFFF;
-			cursor:pointer;
-			font-size:12px;
-			xheight:22px;
-			margin-top:0px;
-			margin-left:10px;
-			text-align:center;
-			xwidth:190px;
-			font-weight:bold;
-			padding:6px 17px;
-			text-decoration:none;
-			float:left;
-		}
-		
-		#newMilestone div.modalContent a.gray {
-			background:#999999 !important;
-		}
-		
-		#newMilestone div.modalContent a.dark_gray {
-			background:#626367 !important;
-		}
-		
-		#newMilestone div.actions {
-			width:280px;
-			margin:0 auto;
-			margin-top:13px;
-		}
-		
-		#newMilestone div.actionsYesNo {
-			width:144px;
-			margin:0 auto;
-			margin-top:13px;
-		}
-		
-		#newMilestone div.actionsClose {
-			width:80px;
-			margin:0 auto;
-			margin-top:13px;
-		}
-		
-		#newMilestone div.actionsSaveCancel {
-			width:155px;
-			margin:0 auto;
-			margin-top:13px;
-		}
-		
-		#newMilestone div.modalContent div.status {
-			position:relative;
-			clear:both;
-			overflow:hidden;
-			text-align:center;
-		}
-		
-		#newMilestone div.modalContent div.status p {
-			color:#999999;
-			font-size:11px;
-			padding:16px 0pt;
-			font-style:italic;
-		}
-		
-		/* -[ Optional Form Items at Modal]-----------------------------------------------------*/
-		
-		#newMilestone div.modalContent div.optionalFormActions {
-			border-top:solid 1px #CCCCCC;
-			border-bottom:solid 1px #CCCCCC;
-			clear:both;
-			padding:5px 0;
-			overflow:hidden;
-			position:relative;
-		}
-		
-		#newMilestone div.modalContent div.optionalFormActions div.titleHandler {
-			clear:both;
-			overflow:hidden;
-			position:relative;
-			color:#9D4D04;
-			height:20px;
-			padding-left:25px;
-		}
-		
-		#newMilestone div.modalContent div.optionalFormActions div.titleExpanded {
-			background:url(../../images/common/icons/collapse_icon.gif) no-repeat 8px 4px;
-		}
-		
-		#newMilestone div.modalContent div.optionalFormActions div.titleCollapsed {
-			background:url(../../images/common/icons/expand_icon.gif) no-repeat 8px 4px;
-		}
-		
-		.overlay_form label {
-			color:#676667;
-			font-weight:bold;
-			width: 100px;
-			margin-rigth: 5px;
-			float: left;
-			text-align:right;
-		}
-		
-		.overlay_form span.desc {
-			color:#676667;
-			font-weight:bold;
-			width: auto;
-			margin-left: 5px;
-			float: left;
-		}
-		
-		
-		.overlay_form select {
-			float: left;
-			margin-bottom: 5px;
-		}
+	#newMilestone img {
+		border: none;
+	}
 	
-		
-		.overlay_form input.auto {
-			width: auto;
-		}
-		
-		.overlay_form input.medium {
-			width: 180px;;
-		}
-		
-		.overlay_form input.small {
-			width: 4em;
-		}
-		
-		.overlay_form span.no_required {
-			display:block;
-			width:4px; 
-			height:21px; 
-			float:left;
-			margin: 0pt 5px;
-		}
-		
-		.overlay_form span.required {
-			display:block;
-			width:4px; 
-			height:21px; 
-			background-color: #C0272D;
-			float:left;
-			margin: 0pt 5px;
-		}
-		
-		.overlay_form br {
-			clear: left;
-		}
-		
-		.overlay_form 
-		{
-			padding: 5px;
-			position: relative;
-		}
-		
-		.overlay_form  a.advanced {
-			color: #004F6D;
-			font-weight: bold;
-		}
-		
-		.overlay_form .buttons {
-			margin:  0pt;
-			overflow:hidden;
-			position:relative;
-		}
-		
-		.overlay_form .buttons input.SaveBtn {
-			background:#004F6D none repeat scroll 0% 50%;
-			border:0px solid;
-			color:#FFFFFF;
-			cursor:pointer;
-			font-size:112% !important;
-			font-weight:bold;
-			height:28px;
-			margin:3px 2px;
-			text-align:center;
-			width:63px;
-			margin-left: 170px;
-		}
-		
-		.overlay_form .buttons input.cancelBtn {
-			background:#999999 none repeat scroll 0% 50%;
-			border:0px solid;
-			color:#FFFFFF;
-			cursor:pointer;
-			font-size:112% !important;
-			font-weight:bold;
-			height:28px;
-			margin:3px 2px;
-			text-align:center;
-			width:63px;
-		}
-		
-		.overlay_form .calendar {
-			margin-left: 5px;
-		}
+	#newMilestone div.modalTitle {
+		height: 20px;
+		background: #004F6D;
+		color: white;
+		font-size: 14px;
+		padding: 7px;
+		font-weight: bold;
+	}
 	
-		div.datepicker {
-			 position: absolute;
-			 text-align: center;
-			 border: 1px #C4D5E3 solid;
-			 font-family: arial;
-			 background: #FFFFFF;
-			 font-size: 10px;
-			 padding: 0px;
-		}
-		div.datepicker table {
-			 font-size: 10px;
-			 margin: 0px;
-			 padding: 0px;
-			 text-align: center;
-			 width: 180px;
-		}
-		div.datepicker table thead tr th {
-			 font-size: 12px;
-			 font-weight: bold;
-			 background: #e9eff4;
-			 border-bottom:1px solid #c4d5e3;
-			 padding: 0px;
-			 margin: 0px;
-		}
-		div.datepicker table tbody tr {
-			 border: 1px white solid;
-			 margin: 0px;
-			 padding: 0px;
-		}
-		div.datepicker table tbody tr td {
-			 border: 1px #eaeaea solid;
-			 margin: 0px;
-			 padding: 0px;
-			 text-align: center;
-		}
+	#newMilestone div.modalTitle div.title {
+		float:left;
+	}
+	
+	#newMilestone div.modalTitle div.closeEvent {
+		float:right;
+		width: 14px;
+		height: 13px;
+		color: #FFFFFF;
+	}
+	
+	/* -[ ContentBox]-----------------------------------------------------*/
+	
+	#newMilestone div.modalContent div.modalMessage {
+		font-size:13px;
+		font-weight:bold;
+		margin-bottom:5px;
+		clear:both;
+		padding:3px;
+		overflow:hidden;
+		clear:both;
+		position:relative;
+	}
+	
+	#newMilestone div.modalContent div.requireLegend {
+		border-left:3px solid #C0272C;
+		float:right;
+		font-size:10px;
+		margin-top:7px;
+		padding-right:7px;
+		padding-left:5px;
+		clear:both;
+		height:15px;
+	}
+	
+	#newMilestone div.modalContent a.button {
+		background:#21637D none repeat scroll 0%;
+		border:0px solid;
+		color:#FFFFFF;
+		cursor:pointer;
+		font-size:12px;
+		xheight:22px;
+		margin-top:0px;
+		margin-left:10px;
+		text-align:center;
+		xwidth:190px;
+		font-weight:bold;
+		padding:6px 17px;
+		text-decoration:none;
+		float:left;
+	}
+	
+	#newMilestone div.modalContent a.gray {
+		background:#999999 !important;
+	}
+	
+	#newMilestone div.modalContent a.dark_gray {
+		background:#626367 !important;
+	}
+	
+	#newMilestone div.actions {
+		width:280px;
+		margin:0 auto;
+		margin-top:13px;
+	}
+	
+	#newMilestone div.actionsYesNo {
+		width:144px;
+		margin:0 auto;
+		margin-top:13px;
+	}
+	
+	#newMilestone div.actionsClose {
+		width:80px;
+		margin:0 auto;
+		margin-top:13px;
+	}
+	
+	#newMilestone div.actionsSaveCancel {
+		width:155px;
+		margin:0 auto;
+		margin-top:13px;
+	}
+	
+	#newMilestone div.modalContent div.status {
+		position:relative;
+		clear:both;
+		overflow:hidden;
+		text-align:center;
+	}
+	
+	#newMilestone div.modalContent div.status p {
+		color:#999999;
+		font-size:11px;
+		padding:16px 0pt;
+		font-style:italic;
+	}
+	
+	/* -[ Optional Form Items at Modal]-----------------------------------------------------*/
+	
+	#newMilestone div.modalContent div.optionalFormActions {
+		border-top:solid 1px #CCCCCC;
+		border-bottom:solid 1px #CCCCCC;
+		clear:both;
+		padding:5px 0;
+		overflow:hidden;
+		position:relative;
+	}
+	
+	#newMilestone div.modalContent div.optionalFormActions div.titleHandler {
+		clear:both;
+		overflow:hidden;
+		position:relative;
+		color:#9D4D04;
+		height:20px;
+		padding-left:25px;
+	}
+	
+	#newMilestone div.modalContent div.optionalFormActions div.titleExpanded {
+		background:url(../../images/common/icons/collapse_icon.gif) no-repeat 8px 4px;
+	}
+	
+	#newMilestone div.modalContent div.optionalFormActions div.titleCollapsed {
+		background:url(../../images/common/icons/expand_icon.gif) no-repeat 8px 4px;
+	}
+	
+	.overlay_form label {
+		color:#676667;
+		font-weight:bold;
+		width: 85px;
+		margin-rigth: 5px;
+		float: left;
+		text-align:right;
+	}
+	
+	.overlay_form span.desc {
+		color:#676667;
+		font-weight:bold;
+		width: auto;
+		margin-left: 5px;
+		float: left;
+	}
+	
+	
+	.overlay_form select {
+		float: left;
+		margin-bottom: 5px;
+	}
+	.overlay_form input, .overlay_form textarea {
+		width: 370px;
+		float: left;
+		margin-bottom: 5px;
 		
-		div.datepicker table tbody tr td:hover,
-		div.datepicker table tbody tr td.outbound:hover,
-		div.datepicker table tbody tr td.today:hover {
-			 border: 1px #c4d5e3 solid;
-			 background: #e9eff4;
-			 cursor: pointer;
-		}
-		div.datepicker table tbody tr td.wday {
-			 border: 1px #ffffff solid;
-			 background: #ffffff;
-			 cursor: text;
-		}
-		div.datepicker table tbody tr td.outbound {
-			 background: #e8e4e4;
-		}
-		div.datepicker table tbody tr td.today {
-			 border: 1px #16518e solid;
-			 background: #c4d5e3;
-		}
-		div.datepicker table tbody tr td.nclick,
-		div.datepicker table tbody tr td.nclick_outbound {
-			 cursor:default; color:#aaa;
-		}
-		div.datepicker table tbody tr td.nclick_outbound {
-			 background:#E8E4E4;
-		}
-		div.datepicker table tbody tr td.nclick:hover,
-		div.datepicker table tbody tr td.nclick_outbound:hover {
-			 border: 1px #eaeaea solid;
-			 background: #FFF;
-		}
-		
-		div.datepicker table tbody tr td.nclick_outbound:hover {
-			 background:#E8E4E4;
-		}
-		
-		div.datepicker table tfoot {
-			 font-size: 10px;
-			 background: #e9eff4;
-			 border-top:1px solid #c4d5e3;
-			 cursor: pointer;
-			 text-align: center;
-			 padding: 0px;
-		}
-		
-		div#datePicker {
-			z-index:9999999 !important;
-		}
+	}
+	
+	.overlay_form input.auto {
+		width: auto;
+	}
+	
+	.overlay_form input.medium {
+		width: 180px;;
+	}
+	
+	.overlay_form input.small {
+		width: 4em;
+	}
+	
+	.overlay_form span.no_required {
+		display:block;
+		width:4px; 
+		height:21px; 
+		float:left;
+		margin: 0pt 5px;
+	}
+	
+	.overlay_form span.required {
+		display:block;
+		width:4px; 
+		height:21px; 
+		background-color: #C0272D;
+		float:left;
+		margin: 0pt 5px;
+	}
+	
+	.overlay_form br {
+		clear: left;
+	}
+	
+	.overlay_form 
+	{
+		padding: 5px;
+		position: relative;
+	}
+	
+	.overlay_form  a.advanced {
+		color: #004F6D;
+		font-weight: bold;
+	}
+	
+	.overlay_form .buttons {
+		margin:  0pt;
+		overflow:hidden;
+		position:relative;
+	}
+	
+	
+	.overlay_form .buttons input.SaveBtn {
+		background:#004F6D none repeat scroll 0% 50%;
+		border:0px solid;
+		color:#FFFFFF;
+		cursor:pointer;
+		font-size:112% !important;
+		font-weight:bold;
+		height:28px;
+		margin:3px 2px;
+		text-align:center;
+		width:63px;
+		margin-left: 170px;
+	}
+	
+	.overlay_form .buttons input.cancelBtn {
+		background:#999999 none repeat scroll 0% 50%;
+		border:0px solid;
+		color:#FFFFFF;
+		cursor:pointer;
+		font-size:112% !important;
+		font-weight:bold;
+		height:28px;
+		margin:3px 2px;
+		text-align:center;
+		width:63px;
+	}
+	
+	.overlay_form .calendar {
+		margin-left: 5px;
+	}
 
-		.fixedModalOverlay {
-			background:#000000;
-			overflow:hidden;
-			position:absolute;
-			top:0;
-			left:0;
-			z-index:1000;
-			margin-top:-110px;
-			opacity: 0.6;
-			-moz-opacity: 0.6;
-			filter: alpha(opacity=60);
-			width:101%;		
-		}
-		 
-		#newMilestone {
-			position:absolute;
-			z-index:5000;	
-			width:630px;
-			height:195px; 
-			margin-top:-110px;
-			margin-left:-250px;
-			left:50%;  
-			padding:2px;
-			top:150px;
-			background:#FFFFFF;
-		}
-	</style>
-	<!-- Overlay Styles -->
-	<apex:stylesheet value="{!URLFOR($Resource.TeamsResources, 'inc/css/teamsOverlaysTemplate.css')}" />
-	<div id="newMilestone" style="display:none;" class="overlayForm">	
-		<!-- Overlay Title -->
-		<div class="overlayTitleContent">
-			<div class="overlayTitle">Create New Milestone</div>
-			<div class="overlayCloseEvent">
-				<a href="Javascript:;" onclick="fixedModalNewMilestone.close();">
-					<img src="{!URLFOR($Resource.TeamsResources, 'images/layout/genericClose.gif')}" alt="Close Window" title="Close Window" />
-				</a>
-			</div>
+	div.datepicker {
+		 position: absolute;
+		 text-align: center;
+		 border: 1px #C4D5E3 solid;
+		 font-family: arial;
+		 background: #FFFFFF;
+		 font-size: 10px;
+		 padding: 0px;
+	}
+	div.datepicker table {
+		 font-size: 10px;
+		 margin: 0px;
+		 padding: 0px;
+		 text-align: center;
+		 width: 180px;
+	}
+	div.datepicker table thead tr th {
+		 font-size: 12px;
+		 font-weight: bold;
+		 background: #e9eff4;
+		 border-bottom:1px solid #c4d5e3;
+		 padding: 0px;
+		 margin: 0px;
+	}
+	div.datepicker table tbody tr {
+		 border: 1px white solid;
+		 margin: 0px;
+		 padding: 0px;
+	}
+	div.datepicker table tbody tr td {
+		 border: 1px #eaeaea solid;
+		 margin: 0px;
+		 padding: 0px;
+		 text-align: center;
+	}
+	
+	div.datepicker table tbody tr td:hover,
+	div.datepicker table tbody tr td.outbound:hover,
+	div.datepicker table tbody tr td.today:hover {
+		 border: 1px #c4d5e3 solid;
+		 background: #e9eff4;
+		 cursor: pointer;
+	}
+	div.datepicker table tbody tr td.wday {
+		 border: 1px #ffffff solid;
+		 background: #ffffff;
+		 cursor: text;
+	}
+	div.datepicker table tbody tr td.outbound {
+		 background: #e8e4e4;
+	}
+	div.datepicker table tbody tr td.today {
+		 border: 1px #16518e solid;
+		 background: #c4d5e3;
+	}
+	div.datepicker table tbody tr td.nclick,
+	div.datepicker table tbody tr td.nclick_outbound {
+		 cursor:default; color:#aaa;
+	}
+	div.datepicker table tbody tr td.nclick_outbound {
+		 background:#E8E4E4;
+	}
+	div.datepicker table tbody tr td.nclick:hover,
+	div.datepicker table tbody tr td.nclick_outbound:hover {
+		 border: 1px #eaeaea solid;
+		 background: #FFF;
+	}
+	div.datepicker table tbody tr td.nclick_outbound:hover {
+		 background:#E8E4E4;
+	}
+	div.datepicker table tfoot {
+		 font-size: 10px;
+		 background: #e9eff4;
+		 border-top:1px solid #c4d5e3;
+		 cursor: pointer;
+		 text-align: center;
+		 padding: 0px;
+	}
+	
+	div#datePicker {
+		z-index:9999999 !important;
+		
+	}
+	
+	div.requiredInput {
+		overflow:hidden;
+		height:27px;
+		float:left;
+		position:relative;
+	}
+	
+	.fixedModalOverlay {
+		background:#000000;
+		overflow:hidden;
+		position:absolute;
+		top:0;
+		left:0;
+		z-index:1000;
+		margin-top:-110px;
+		opacity: 0.6;
+		-moz-opacity: 0.6;
+		filter: alpha(opacity=60);
+		width:101%;		
+	}
+	 
+	#newMilestone {
+		position:absolute;
+		z-index:5000;	
+		width:500px;
+		height:195px; 
+		margin-top:-110px;
+		margin-left:-250px;
+		left:50%;  
+		padding:2px;
+		top:150px;
+		background:#FFFFFF;
+	}
+	 
+</style>
+
+<div id="newMilestone" style="display:none;" >	
+	<div class="modalTitle">
+		<div class="title" id="overlayTeam">Create New Milestone</div>
+		<div class="closeEvent">
+			<a href="Javascript:;" onclick="fixedModalNewMilestone.close()">
+				<img src="{!URLFOR($Resource.TeamsResources, 'images/layout/close.gif')}" alt="Close Window" title="Close Window" />
+			</a> 
 		</div>
-		<div class="overlayMainContent">
-			<!-- Required Information -->
-			<span class="overlayRequiredInfo">= Required Information</span>
-			<div class="overlay_form">
-				<apex:form id="quickMilestoneForm" onSubmit="if(checkFormNewMilestoneOverlay('{!$Component.nameMilestone}','{!$Component.dueDateMilestone}','{!$Component.memberMilestone}')){return true;}else {return false;};" >
-					<apex:actionFunction name="refreshAssignToMilestone" action="{!dummyRefresh}" oncomplete="javascript: actionFunctionSubmit= false;" rerender="assignToMilestone" />
-					<div id="formID" style="display:none;">{!$Component.quickMilestoneForm}</div>
-					<apex:outputPanel id="milestoneRefresh" style="display:none;"></apex:outputPanel>
-					<apex:actionStatus id="MilestoneStatus">
-						<apex:facet name="start"><apex:outputText value="Saving Milestone..." /></apex:facet>
-		                <apex:facet name="stop">	
-			                <apex:outputPanel id="MilestonePanel" layout="block">
-				                <div class="overlayFormContent">
-									<label>Milestone Name</label><span class="required"></span>
-									<apex:inputField id="nameMilestone" value="{!Task.name}" required="true" style="*margin-left: -10px;" styleClass="medium"/>
-									<div id="milestoneNameError" class="red" style="display: none;"><strong>Error:</strong> You must enter a value</div>
-									<br/> 
-									<label>Due Date</label><span class="required"></span>
-									<apex:inputField id="dueDateMilestone" styleClass="medium" required="true" value="{!Task.EndDate__c}" />
-									<div id="milestoneDueDate-comp-milestone" style="display:none;">{!$Component.milestoneDueDate}</div><div id="milestoneDateError" class="red" style="display: none;"><strong>Error:</strong> You must enter a value</div>
-									<br/>
-									<label>Assign to</label><span class="required"></span>
-									<apex:outputpanel id="assignToMilestone">
-										<apex:selectList value="{!teamMember.User__c}" id="memberMilestone" multiselect="false" size="1">
-				        					<apex:selectOptions value="{!teamMembers}" />
-				               			</apex:selectList><div id="memberErrorMilestone" class="red" style="display: none;"><strong>Error:</strong> You must select a value</div> 
-				               		</apex:outputpanel>
-				               	</div>
-								<div class="overlaySeparateLine"></div>
-								<!-- Saven and Cancel Buttons -->
-								<div class="overlayFromButtons" align="center">
-									<apex:commandButton action="{!insertMilestone}" 										 										
-										rerender="quickMilestoneForm"
-										status="MilestoneStatus" style="float: none;"
-										value="Save" styleclass="overlaySaveBtn"
-										oncomplete="formValidateMilestone('{!$Component.nameMilestone}', '{!$Component.dueDateMilestone}', '{!$Component.memberMilestone}')">
-									</apex:commandButton>
-									<apex:commandButton styleClass="overlayCancelBtn" style="float: none;" value="Cancel" onclick="fixedModalNewMilestone.close(); return false;"  />
-									<a href="javascript:;" onclick="sendTempMilestoneDetails('{!$Component.nameMilestone}','{!$Component.memberMilestone}','{!$Component.dueDateMilestone}');return false;">Edit task details</a>
-									<div id="quickMilestoneFormId" style="display:none;">{!$Component.quickMilestoneForm}</div>			
-								</div>
-							</apex:outputPanel>
-						</apex:facet>
-					</apex:actionStatus>
-				</apex:form>
-			</div>
+	</div>
+	<div style="position:relative;">
+		<div align="right">
+			<table border="0">
+				<tr>
+					<td style="width:4px;"><span style="display:block;width:4px; height:12px; background-color: #C0272D;"></span></td>
+					<td><span class="infoText" style="font-size:10px;"> = &nbsp;&nbsp; Required Information </span></td>
+				</tr>
+			</table> 
+		</div>			
+		<div class="overlay_form">
+			<apex:form id="quickMilestoneForm">				
+				<label>Milestone Name</label><span class="required"></span>
+				<input id="milestoneName" type="text" /><br/> 
+				<label>Due Date</label><span class="required"></span>
+				<apex:inputField id="milestoneDueDate" styleClass="medium" value="{!Task.EndDate__c}" /><a class="calendar" id="end_calendar" href="javascript:$('{!$Component.taskDueDate}').onfocus();" ><img alt="" src="{!URLFOR($Resource.ProjectResources, '/images/layout/icons/calendar.png')}"></a>
+				<div id="milestoneDueDate-comp-milestone" style="display:none;">{!$Component.milestoneDueDate}</div>
+				<br/>
+				<label>Assign to</label><span class="required"></span>
+				<select id="milestoneAssign">
+					<option value="-1">Choose a team Member</option>
+					<apex:repeat value="{!teamMembers}" var="tm">
+					<option value="{!tm.User__c}">{!tm.User__r.Name}</option>
+					</apex:repeat>
+				</select><br/>
+				<hr />
+				<div class="buttons">
+					<input class="SaveBtn auto" type="button" value="Save" onclick="if(validateFormMilestone()){createQuickMilestone('{!CurrentTeamId}','fixedModalNewMilestone')}else{alert('please fill the fields correctly');};" /> 
+					<input class="cancelBtn auto" type="button" value="Cancel" onclick="fixedModalNewMilestone.close();" />
+					<div style="float:left;margin-left:9px;margin-top:9px;"><a href="javascript:;" onclick="sendTempMilestoneDetails();">Edit task details</a></div>
+				</div>	
+				<div id="quickMilestoneFormId" style="display:none;">{!$Component.quickMilestoneForm}</div>			
+			</apex:form>
 			<!-- The hidden form to send partial data to edit -->
 			<div style="display:none;">
-				<form id="hiddenFormQuickMilestone" action="/apex/TeamsCreateNewTask" method="get">
+				<form id="hiddenFormQuickMilestone" action="TeamsCreateNewTask" method="get">
 					<input type="text" value="{!CurrentTeamId}" name="id" />
 					<input type="text" value="true" name="t" />
 					<input id="tempQuickMilestoneName" type="text" name="qmname" />	
@@ -431,351 +428,359 @@
 			</div>
 		</div>
 	</div>
-	<script>
-		function formValidateMilestone(name, end, member){
-			if($$('#newMilestone .overlay_form .errorMsg').length == 0){
-				fixedModalNewMilestone.close(); 
-				showSwirly('swirly_milestone');
-				$(name).value = '';
-				$(member).value = '-1';
-				$(end).value = '' ;		
-				reloadMilestoneList(); 
-			}
-		}
-		
-		function checkFormNewMilestoneOverlay(name, dueDate, asignTo)
-		{
-			var hasError = false;
-			// check if milestone name is not empty
-			if($F(name) == '')
-			{
-				$('milestoneNameError').show();
-				hasError= true;
-			}
-			else 
-			{
-				$('milestoneNameError').hide();
-			}
+</div>
+
+
+<script>
+	function sendTempMilestoneDetails(){
+	
+		var tmpMilestoneDueDate = $F($('milestoneDueDate-comp-milestone').innerHTML);
+		var tmpMilestoneName = $F('milestoneName');
+		var tmpMilestoneAssign = $F('milestoneAssign');
+
+		( tmpMilestoneDueDate != ' ' ) ? $('tempQuickMilestoneDueDate').value = tmpMilestoneDueDate : $('tempQuickMilestoneDueDate').remove() ;
+		( tmpMilestoneName != ' ' ) ? $('tempQuickMilestoneName').value = tmpMilestoneName : $('tempQuickMilestoneName').remove() ;
+		( tmpMilestoneAssign != ' ' ) ? $('tempQuickMilestoneAsigneeId').value = tmpMilestoneAssign : $('tempQuickMilestoneAsigneeId').remove() ;
+	
+	
+		$('hiddenFormQuickMilestone').submit();
+	}
+	
+	
+	/**
+	* Fixed Modal Class
+	* @param String modalContent The div to show over
+	* @param String modalOverlay The div that need to be used as overlay
+	* @param Boolean effects Should we use effects to show and hide ?
+	*/
+	var fixedModalClass = Class.create();
+	
+	fixedModalClass.prototype = {
+	  		  
+	  initialize: function(modalContent, modalOverlay, effects) {
+	  	
+	  	effects == null ? this.effectsEnabled = false : this.effectsEnabled = effects;
+	  	this.effectsEnabled = effects;
+	    
+	    this.modalContent  = $(modalContent);		    
+	    this.overlay = $(modalOverlay);
+	    
+	    Event.observe(modalOverlay, 'click', 
+	    	function(){
+	    		 var e;		    		
+	    		effects == null ? e = false : e = effects;		    		
+	    		if(e){	
+	    			var aux = this.modalContent;	    		
+	    			Effect.Appear(this.modalContent,{duration: 0.1 , from: 0.0, to: 0.6,
+						afterFinish:function(){
+							Effect.Appear(aux,{duration: 0.2});
+						}
+					});	
+	    		} else {
+	    			this.hide();
+					$(modalContent).hide();
+				 }
+			}			
+		); //observer to close the modal when the overlay is clicked
+					
+	  },
+	  open: function() {
+	  		 // get page dimensions to set the overlay div size
+			var pageDims = getPageSize();
+			var pageWidth = pageDims[0];
+			var pageHeight = pageDims[1];
 			
-			// check if hours is an Integer value.
-			if ( $F(dueDate) == '')
-			{
-				$('milestoneDateError').show();
-				hasError= true;	
-			}
-			else 
-			{
-				$('milestoneDateError').hide();
-			}
+			pageHeight = pageHeight + 50;
+						
+			this.overlay.style.height = pageHeight + 'px';
+			this.overlay.style.width = pageWidth + 'px';
 			
-			
-			// check if some member is selected
-			if ( $F(asignTo) == '-1')
-			{
-				$('memberErrorMilestone').show();
-				hasError= true;	
-			}
-			else 
-			{
-				$('memberErrorMilestone').hide();
-			}
-			
-			return !hasError;
-		}
-		
-		
-		/*function checkAssigneMilestone(member){
-			if (!actionFunctionSubmit) {
-				if($F(member) == '-1'){
-					$('memberErrorMilestone').show();
-					return false;
-				}else {
-					$('memberErrorMilestone').hide();
-					return true;
+			// If the Browser is IE6 
+			// Hide all Selects
+			if(detectIE6()){
+				
+				var pageSels = document.getElementsByTagName('select');
+				
+				for(var i = 0;i < pageSels.length; i++){
+					pageSels[i].style.display = 'none';
 				}
-			}else {
-				$('memberErrorMilestone').hide();
+				
+				var overlaySels = this.modalContent.getElementsByTagName('select');
+				
+				for(var i = 0;i < overlaySels.length; i++){
+					
+					overlaySels[i].style.display = '';
+				}
+				
+			}
+			
+			// show
+			if(this.effectsEnabled){
+			    var aux = this.modalContent;
+				Effect.Appear(this.overlay,{duration: 0.2 , from: 0.0, to: 0.6,
+					afterFinish:function(){
+						Effect.Appear(aux,{duration: 0.1});
+					}
+				});					
+			} else {
+				this.overlay.show();
+				this.modalContent.show();
+			}
+			
+			Effect.ScrollTo('sbtabset');
+			
+			
+	  },
+	  close: function(){
+	  		// hide
+	  		if(this.effectsEnabled){
+	  			var aux = this.overlay;
+	  			Effect.Fade(this.modalContent,{duration: 0.1 , from: 0.6, to: 0.0,
+	  				afterFinish:function(){
+	  					Effect.Fade(aux,{duration: 0.2});	
+	  				}
+	  			});
+							
+			} else {
+				this.overlay.hide();
+				this.modalContent.hide();	
+			}	
+			
+			if(detectIE6()){
+				
+				var pageSels = document.getElementsByTagName('select');
+				
+				for(var i = 0;i < pageSels.length; i++){
+					pageSels[i].style.display = '';
+				}
+			}
+	  }	  
+	};
+		
+	/**
+	* Detect If the user browser is IE6
+	* @return Boolean True if the current browser is IE6
+	*/	
+	function detectIE6(){			
+		if(Prototype.Browser.IE){
+			var b_version=navigator.appVersion;
+			var version = b_version.split(';');
+			if(removeSpaces(version[1]) == 'MSIE6.0'){
 				return true;
 			}
-		}*/
+		}
+	}
+	
+	/**
+	* Remove *ALL* Spaces of one string.
+	* @param String Sentence to remove spaces
+	* @return String Without spaces
+	*/		
+	function removeSpaces(string) {
+		var tstring = "";
+		string = '' + string;
+		splitstring = string.split(" ");
+		for(i = 0; i < splitstring.length; i++)
+		tstring += splitstring[i];
+		return tstring;
+	}
+	
+	/**
+	 * DHTML date validation script. Courtesy of SmartWebby.com (http://www.smartwebby.com/dhtml/)
+	 */
+	// Declaring valid date character, minimum year and maximum year
+	var dtCh= "/";
+	var minYear=1900;
+	var maxYear=2100;
+	
+	function isInteger(s){
+		var i;
+	    for (i = 0; i < s.length; i++){   
+	        // Check that current character is number.
+	        var c = s.charAt(i);
+	        if (((c < "0") || (c > "9"))) return false;
+	    }
+	    // All characters are numbers.
+	    return true;
+	}
+
+	function stripCharsInBag(s, bag){
+		var i;
+	    var returnString = "";
+	    for (i = 0; i < s.length; i++){   
+	        var c = s.charAt(i);
+	        if (bag.indexOf(c) == -1) returnString += c;
+	    }
+	    return returnString;
+	}
+
+	function daysInFebruary (year){
+	    return (((year % 4 == 0) && ( (!(year % 100 == 0)) || (year % 400 == 0))) ? 29 : 28 );
+	}
+
+	function DaysArray(n) {
+		for (var i = 1; i <= n; i++) {
+			this[i] = 31
+			if (i==4 || i==6 || i==9 || i==11) {this[i] = 30}
+			if (i==2) {this[i] = 29}
+	   } 
+	   return this
+	}
+
+	/**
+	* isDate 
+	* @param String date
+	* @return Boolean If is a valid date, returns true.
+	*/	
+	function isDate(dtStr){
+		var daysInMonth = DaysArray(12)
+		var pos1=dtStr.indexOf(dtCh)
+		var pos2=dtStr.indexOf(dtCh,pos1+1)
+		var strMonth=dtStr.substring(0,pos1)
+		var strDay=dtStr.substring(pos1+1,pos2)
+		var strYear=dtStr.substring(pos2+1)
+		strYr=strYear
+		if (strDay.charAt(0)=="0" && strDay.length>1) strDay=strDay.substring(1)
+		if (strMonth.charAt(0)=="0" && strMonth.length>1) strMonth=strMonth.substring(1)
+		for (var i = 1; i <= 3; i++) {
+			if (strYr.charAt(0)=="0" && strYr.length>1) strYr=strYr.substring(1)
+		}
+		month=parseInt(strMonth)
+		day=parseInt(strDay)
+		year=parseInt(strYr)
+		if (pos1==-1 || pos2==-1){
+			alert("The date format should be : mm/dd/yyyy")
+			return false
+		}
+		if (strMonth.length<1 || month<1 || month>12){
+			alert("Please enter a valid month")
+			return false
+		}
+		if (strDay.length<1 || day<1 || day>31 || (month==2 && day>daysInFebruary(year)) || day > daysInMonth[month]){
+			alert("Please enter a valid day")
+			return false
+		}
+		if (strYear.length != 4 || year==0 || year<minYear || year>maxYear){
+			alert("Please enter a valid 4 digit year between "+minYear+" and "+maxYear)
+			return false
+		}
+		if (dtStr.indexOf(dtCh,pos2+1)!=-1 || isInteger(stripCharsInBag(dtStr, dtCh))==false){
+			alert("Please enter a valid date")
+			return false
+		}
+		return true
+	}
+
+	/**
+	* Change Datapicker date format to SFDC date format
+	* @param String date
+	* @return String formated date
+	*/
+	function getSfdcDate(strDate){
+		var aux = strDate.split(' ');
+		var date = aux[0].split('/');
+		var time = aux[1].split(':');
+		var sfdcDate = '';
+		sfdcDate = date[2] + '-';
+		sfdcDate += (date[0].length > 1) ? date[0] + '-' : '0' + date[0] + '-';
+		sfdcDate += (date[1].length > 1) ? date[1] + 'T' : '0' + date[1] + 'T';  
+		sfdcDate += (time[0].length > 1) ? time[0] + ':' : '0' + time[0] + ':';
+		sfdcDate += (time[1].length > 1) ? time[1] + ':' : '0' + time[1] + ':';
+		sfdcDate += '00.000Z';
+		return sfdcDate;
+	}
+	
+	/**
+	* Change Datapicker date format to isdate() checker format (without hour)
+	* @param String date 
+	* @return String formated date
+	*/
+	function formateDateToCheck(Date){
+		var dt = Date.split('/');
+		var dateFinal = '';
 		
-		/**
-		* Fixed Modal Class
-		* @param String modalContent The div to show over
-		* @param String modalOverlay The div that need to be used as overlay
-		* @param Boolean effects Should we use effects to show and hide ?
-		*/
-		var fixedModalClass = Class.create();
-		fixedModalClass.prototype = {
-		  initialize: function(modalContent, modalOverlay, effects) {
-		  	effects == null ? this.effectsEnabled = false : this.effectsEnabled = effects;
-		  	this.effectsEnabled = effects;
-		    this.modalContent  = $(modalContent);		    
-		    this.overlay = $(modalOverlay);
-		    Event.observe(modalOverlay, 'click', 
-		    	function(){
-		    		 var e;		    		
-		    		effects == null ? e = false : e = effects;		    		
-		    		if(e){	
-		    			var aux = this.modalContent;	    		
-		    			Effect.Appear(this.modalContent,{duration: 0.1 , from: 0.0, to: 0.6,
-							afterFinish:function(){
-								Effect.Appear(aux,{duration: 0.2});
-							}
-						});	
-		    		}else {
-		    			this.hide();
-						$(modalContent).hide();
-					}
-				}
-			); //observer to close the modal when the overlay is clicked
-		  },
-		  open: function() {
-		  		// get page dimensions to set the overlay div size
-				var pageDims = getPageSize();
-				var pageWidth = pageDims[0];
-				var pageHeight = pageDims[1];
-				
-				pageHeight = pageHeight + 50;
-							
-				this.overlay.style.height = pageHeight + 'px';
-				this.overlay.style.width = pageWidth + 'px';
-				
-				// If the Browser is IE6 
-				// Hide all Selects
-				if(detectIE6()){
-					
-					var pageSels = document.getElementsByTagName('select');
-					
-					for(var i = 0;i < pageSels.length; i++){
-						pageSels[i].style.display = 'none';
-					}
-					
-					var overlaySels = this.modalContent.getElementsByTagName('select');
-					
-					for(var i = 0;i < overlaySels.length; i++){
+		if(dt.length == 3){
+			var year = dt[2].substr(0,4);
+			dateFinal = dt[0]+'/'+dt[1]+'/'+year;			
+		} 
+		return dateFinal;
+	}
+
+	/**
+	* Validate The form 
+	* @return boolean True if the fields are filled ok.
+	*/
+	function validateFormMilestone(){
+		
+		var taskNameFieldVal = $F('milestoneName');
+		var taskDueDateFieldVal = $F($('milestoneDueDate-comp-milestone').innerHTML);
+		var taskAssignFieldVal = $F('milestoneAssign');
+		
+		var dueDateCheck = formateDateToCheck(taskDueDateFieldVal);
+		
+		if( isDate(dueDateCheck) && (taskNameFieldVal != '') && (taskAssignFieldVal != '-1')){
+			return true;		
+		} else {
+			return false;
+		}
+	
+	}
+ 
+ 	/**
+	* Create quick task
+	* @param String Current Team Id
+	*/
+	function createQuickMilestone(currentTeamId,fixedModalInstance){
+		sforce.connection.sessionId = '{!$Api.Session_ID}'; 
+		
+		// Get values from the form
+	 	var taskNameFieldVal = $F('milestoneName');
+	
+		var taskDueDateFieldVal = $F($('milestoneDueDate-comp-milestone').innerHTML);
+		
+		var taskAssignFieldVal = $F('milestoneAssign');
+		
+		// Date Formatting
+		var dueDateCheck = formateDateToCheck(taskDueDateFieldVal);
+		var sfdc_DueDate = getSfdcDate(taskDueDateFieldVal);
+		
+	 	
+	 	var Task = new sforce.SObject("ProjectTask__c");
+		var Assign = new sforce.SObject("ProjectAssignee__c");
+		
+		var res0 = sforce.connection.query("Select Id from Project2__c where Team__c = '" + currentTeamId + "'");
+		records = res0.getArray("records"); 
+   		currentProject = records[0].Id;		
+			
+		Task.Milestone__c = true;
+		Task.Team__c = currentTeamId;
+		Task.Name = taskNameFieldVal;
+		Task.StartDate__c = sfdc_DueDate;
+		Task.EndDate__c = sfdc_DueDate;
+		Task.Percent_Completed__c = 0;
+		Task.Project__c = currentProject;
+		Assign.User__c = taskAssignFieldVal; 			
+		
+		sforce.connection.create([Task],{
+			onSuccess:function(result){	
+				Assign.ProjectTask__c = result[0].id;
+				sforce.connection.create([Assign],{
+					onSuccess:function(result){
+						fixedModalNewMilestone.close();
+						var formID = $('quickMilestoneFormId').innerHTML;
+						$(formID).reset();
+						try {
+							reloadProjectList();
+							showMessageToUser('Created new Milestone', 'success');
+						} catch(e){}
 						
-						overlaySels[i].style.display = '';
-					}
-				}
-				
-				// show
-				if(this.effectsEnabled){
-				    var aux = this.modalContent;
-					Effect.Appear(this.overlay,{duration: 0.2 , from: 0.0, to: 0.6,
-						afterFinish:function(){
-							Effect.Appear(aux,{duration: 0.1});
-						}
-					});					
-				} else {
-					this.overlay.show();
-					this.modalContent.show();
-				}
-				
-				Effect.ScrollTo('sbtabset');
-				
-				
-		  },
-		  close: function(){
-		  		// hide
-		  		if(this.effectsEnabled){
-		  			var aux = this.overlay;
-		  			Effect.Fade(this.modalContent,{duration: 0.1 , from: 0.6, to: 0.0,
-		  				afterFinish:function(){
-		  					Effect.Fade(aux,{duration: 0.2});	
-		  				}
-		  			});
-								
-				} else {
-					this.overlay.hide();
-					this.modalContent.hide();	
-				}	
-				
-				if(detectIE6()){
-					
-					var pageSels = document.getElementsByTagName('select');
-					
-					for(var i = 0;i < pageSels.length; i++){
-						pageSels[i].style.display = '';
-					}
-				}
-		  }	  
-		};
-			
-		/**
-		* Detect If the user browser is IE6
-		* @return Boolean True if the current browser is IE6
-		*/	
-		function detectIE6(){			
-			if(Prototype.Browser.IE){
-				var b_version=navigator.appVersion;
-				var version = b_version.split(';');
-				if(removeSpaces(version[1]) == 'MSIE6.0'){
-					return true;
-				}
-			}
-		}
-		
-		/**
-		* Remove *ALL* Spaces of one string.
-		* @param String Sentence to remove spaces
-		* @return String Without spaces
-		*/		
-		function removeSpaces(string) {
-			var tstring = "";
-			string = '' + string;
-			splitstring = string.split(" ");
-			for(i = 0; i < splitstring.length; i++)
-			tstring += splitstring[i];
-			return tstring;
-		}
-		
-		/**
-		 * DHTML date validation script. Courtesy of SmartWebby.com (http://www.smartwebby.com/dhtml/)
-		 */
-		// Declaring valid date character, minimum year and maximum year
-		var dtCh= "/";
-		var minYear=1900;
-		var maxYear=2100;
-		
-		function isInteger(s){
-			var i;
-		    for (i = 0; i < s.length; i++){   
-		        // Check that current character is number.
-		        var c = s.charAt(i);
-		        if (((c < "0") || (c > "9"))) return false;
-		    }
-		    // All characters are numbers.
-		    return true;
-		}
+					},
+					onFailure:function(error){}});
+			},
+			onFailure:function(error){}});
+	}
 	
-		function stripCharsInBag(s, bag){
-			var i;
-		    var returnString = "";
-		    for (i = 0; i < s.length; i++){   
-		        var c = s.charAt(i);
-		        if (bag.indexOf(c) == -1) returnString += c;
-		    }
-		    return returnString;
-		}
-	
-		function daysInFebruary (year){
-		    return (((year % 4 == 0) && ( (!(year % 100 == 0)) || (year % 400 == 0))) ? 29 : 28 );
-		}
-	
-		function DaysArray(n) {
-			for (var i = 1; i <= n; i++) {
-				this[i] = 31
-				if (i==4 || i==6 || i==9 || i==11) {this[i] = 30}
-				if (i==2) {this[i] = 29}
-			} 
-			return this
-		}
-	
-		/**
-		* isDate 
-		* @param String date
-		* @return Boolean If is a valid date, returns true.
-		*/	
-		function isDate(dtStr){
-			var daysInMonth = DaysArray(12)
-			var pos1=dtStr.indexOf(dtCh)
-			var pos2=dtStr.indexOf(dtCh,pos1+1)
-			var strMonth=dtStr.substring(0,pos1)
-			var strDay=dtStr.substring(pos1+1,pos2)
-			var strYear=dtStr.substring(pos2+1)
-			strYr=strYear
-			if (strDay.charAt(0)=="0" && strDay.length>1) strDay=strDay.substring(1)
-			if (strMonth.charAt(0)=="0" && strMonth.length>1) strMonth=strMonth.substring(1)
-			for (var i = 1; i <= 3; i++) {
-				if (strYr.charAt(0)=="0" && strYr.length>1) strYr=strYr.substring(1)
-			}
-			month=parseInt(strMonth)
-			day=parseInt(strDay)
-			year=parseInt(strYr)
-			if (pos1==-1 || pos2==-1){
-				return false
-			}
-			if (strMonth.length<1 || month<1 || month>12){
-				return false
-			}
-			if (strDay.length<1 || day<1 || day>31 || (month==2 && day>daysInFebruary(year)) || day > daysInMonth[month]){
-				return false
-			}
-			if (strYear.length != 4 || year==0 || year<minYear || year>maxYear){
-				return false
-			}
-			if (dtStr.indexOf(dtCh,pos2+1)!=-1 || isInteger(stripCharsInBag(dtStr, dtCh))==false){
-				return false
-			}
-			return true
-		}
-	
-		/**
-		* Change Datapicker date format to SFDC date format
-		* @param String date
-		* @return String formated date
-		*/
-		function getSfdcDate(strDate){
-			var aux = strDate.split(' ');
-			var date = aux[0].split('/');
-			var time = aux[1].split(':');
-			var sfdcDate = '';
-			sfdcDate = date[2] + '-';
-			sfdcDate += (date[0].length > 1) ? date[0] + '-' : '0' + date[0] + '-';
-			sfdcDate += (date[1].length > 1) ? date[1] + 'T' : '0' + date[1] + 'T';  
-			sfdcDate += (time[0].length > 1) ? time[0] + ':' : '0' + time[0] + ':';
-			sfdcDate += (time[1].length > 1) ? time[1] + ':' : '0' + time[1] + ':';
-			sfdcDate += '00.000Z';
-			return sfdcDate;
-		}
-		
-		/**
-		* Change Datapicker date format to isdate() checker format (without hour)
-		* @param String date 
-		* @return String formated date
-		*/
-		function formateDateToCheck(Date){
-			
-			var dt = Date.split('/');
-			var dateFinal = '';
-			
-			if(dt.length == 3){
-				var user_locale = '{!UserLocale}';
-				
-				var country = '{!$Organization.Country}';
-				
-				var year = dt[2].substr(0,4);
-				
-				if(country != 'US'){
-					dateFinal = dt[1]+'/'+dt[0]+'/'+year;			
-				} else {
-					dateFinal = dt[0]+'/'+dt[1]+'/'+year;				
-				}
-			} 
-			return dateFinal;
-		}
-	
-		/**
-		* Validate The form 
-		* @return boolean True if the fields are filled ok.
-		*/
-		function validateFormMilestone(name, duedate, assign){
-			
-			var taskNameFieldVal = $F(name);
-			var taskDueDateFieldVal = $F(duedate);
-			var taskAssignFieldVal = $F(assign);
-			
-			var dueDateCheck = formateDateToCheck(taskDueDateFieldVal);
-			
-			if( isDate(dueDateCheck) && (taskNameFieldVal != '') && (taskAssignFieldVal != '-1')){
-				return true;		
-			} else {
-				return false;
-			}
-			
-			return true;
-		}
-		fixedModalNewMilestone = new fixedModalClass('newMilestone', 'fixedModalMilestoneOverlay', true);
+	fixedModalNewMilestone = new fixedModalClass('newMilestone', 'fixedModalMilestoneOverlay', true);
 	</script>
+
 </apex:component>

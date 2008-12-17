@@ -1,0 +1,127 @@
+<apex:page sidebar="false" controller="BookmarkOverviewController" tabStyle="Bookmark__c">
+	
+	<!-- <div class="rightSideBar">
+		<div class="box_round">
+			<div class="top_borders"><div><div></div></div></div>
+			<div class="box_content">
+				<div class="contentHolder">
+					<div class="contentHolderHeader">Tags</div>
+					<div class="tags">
+						<table border="0" cellpadding="0">
+							<tr>
+								<td align="right"><span>12</span></td><td><a href="javascript:;" class="link">technology</a></td>
+							</tr>
+							<tr>
+								<td align="right"><span>11</span></td><td><a href="javascript:;" class="link">design</a></td>
+							</tr>
+							<tr>
+								<td align="right"><span>3</span></td><td><a href="javascript:;" class="link">software</a></td>
+							</tr>
+							<tr>
+								<td align="right"><span>5</span></td><td><a href="javascript:;" class="link">enterprise</a></td>
+							</tr>
+							<tr>
+								<td align="right"><span>6</span></td><td><a href="javascript:;" class="link">collaboration</a></td>
+							</tr>
+							<tr>
+								<td align="right"><span>7</span></td><td><a href="javascript:;" class="link">wiki</a></td>
+							</tr>
+							<tr>
+								<td align="right"><span>12</span></td><td><a href="javascript:;" class="link">web2.0</a></td>
+							</tr>
+							<tr>
+								<td align="right"><span>1</span></td><td><a href="javascript:;" class="link">discussion</a></td>
+							</tr>
+							<tr>
+								<td align="right"><span>3</span></td><td><a href="javascript:;" class="link">links</a></td>
+							</tr>
+							<tr>
+								<td align="right"><span>4</span></td><td><a href="javascript:;" class="link">usability</a></td>
+							</tr>
+							<tr>
+								<td align="right"><span>56</span></td><td><a href="javascript:;" class="link">security</a></td>
+							</tr>
+							<tr>
+								<td align="right"><span>9</span></td><td><a href="javascript:;" class="link">crm</a></td>
+							</tr>
+						</table>
+						<br>
+						<a href="javascript:;" class="seeMore" >See More&#187;</a>
+						<br>
+					</div>
+				</div>
+				<div class="bottom_borders"><div><div></div></div></div>
+			</div> 
+		</div>						
+	</div>
+	-->
+	
+	<div class="box_round">
+		<!-- Header -->
+		<div class="header edition">
+			<div><div><h4>Tags</h4></div></div>
+		</div>
+		<!-- Rounded Box Content -->
+		<div class="box_content">
+			<div class="table_conteiner">
+				<table class="tableInfo" cellspacing="0" cellpadding="0" width="100%">
+					<thead>
+						<tr>
+							<th width="100%" colspan="2"><a href="javascript:;" class="seeMore" style="color:#9D9D9D" >See More&#187;</a></th>
+						</tr>
+					</thead>
+					<tr>
+						<td align="right"><span>12</span></td>
+						<td><a href="javascript:;" class="link">technology</a></td>
+					</tr>
+					<tr>
+						<td align="right"><span>11</span></td>
+						<td><a href="javascript:;" class="link">design</a></td>
+					</tr>
+					<tr>
+						<td align="right"><span>3</span></td>
+						<td><a href="javascript:;" class="link">software</a></td>
+					</tr>
+					<tr>
+						<td align="right"><span>5</span></td>
+						<td><a href="javascript:;" class="link">enterprise</a></td>
+					</tr>
+					<tr>
+						<td align="right"><span>6</span></td>
+						<td><a href="javascript:;" class="link">collaboration</a></td>
+					</tr>
+					<tr>
+						<td align="right"><span>7</span></td>
+						<td><a href="javascript:;" class="link">wiki</a></td>
+					</tr>
+					<tr>
+						<td align="right"><span>12</span></td>
+						<td><a href="javascript:;" class="link">web2.0</a></td>
+					</tr>
+					<tr>
+						<td align="right"><span>1</span></td>
+						<td><a href="javascript:;" class="link">discussion</a></td>
+					</tr>
+					<tr>
+						<td align="right"><span>3</span></td>
+						<td><a href="javascript:;" class="link">links</a></td>
+					</tr>
+					<tr>
+						<td align="right"><span>4</span></td>
+						<td><a href="javascript:;" class="link">usability</a></td>
+					</tr>
+					<tr>
+						<td align="right"><span>56</span></td>
+						<td><a href="javascript:;" class="link">security</a></td>
+					</tr>
+					<tr>
+						<td align="right"><span>9</span></td>
+						<td><a href="javascript:;" class="link">crm</a></td>
+					</tr>
+				</table>
+			</div>	
+		</div>
+		<div class="bottom_borders"><div><div></div></div></div>
+	</div>
+
+</apex:page>

@@ -1,6 +1,7 @@
 <apex:page sidebar="false" showHeader="false">
 	<!-- CSS de TS -->
 	<link rel="stylesheet"  href="{!URLFOR($Resource.TeamsResources, '/inc/css/newTeamProfile.css')}" />	
+	
 	<div id="newTeamProfile" style="display:none;">
 		<div class="modalTitle">
 			<div class="title">New Team Profile</div>
@@ -14,9 +15,7 @@
 			<div class="modalMessage padding_Tables bottom_border_gray">
 				<table border="0" class="editInfoTables">
 					<tr>
-						<td align="right" class="labelTitle">
-							{!$ObjectType.Team__c.label} Profile Name
-						</td>
+						<td align="right" class="labelTitle">Team Profile Name</td>
 						<td><div class="requireInput"></div></td>
 						<td>
 							<input id="teamProfileName" class="teamRoleInput" value="" type="text" />

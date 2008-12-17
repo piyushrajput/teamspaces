@@ -1,0 +1,38 @@
+<apex:page sidebar="false" controller="BlogsOverviewController" tabStyle="BlogEntry__c">
+		<apex:stylesheet value="{!URLFOR($Resource.BookmarkResources, 'inc/css/commonLayout.css')}" />
+		<apex:stylesheet value="{!URLFOR($Resource.BookmarkResources, 'inc/css/bookmarkOverview.css')}" />
+		
+		<div class="box_round_orange">
+				<div class="header"  >
+					<div>
+					  <div  style="padding-top:10px; ">
+							<h3 >Archives</h3>			
+					  </div>
+					</div>
+				</div>			
+			<!-- Rounded Box Content -->
+			<apex:form>
+			<div class="box_content">
+				<table class="tableInfo" cellspacing="0" cellpadding="0" width="97%" style="margin:0px 3px 3px 3px; ">
+					<thead>
+						<tr>
+							<th width="98%"><a href="javascript:;" class="seeMore" style="color:#9D9D9D" >See More&#187;</a></th>
+						</tr>
+					</thead>
+					<apex:repeat value="{!Archives}" var="archive">	
+						<tr>
+							<td>
+								<ul class="archives teamsList">
+									<li><apex:commandLink value="{!archive}" action="{!genFilter}" reRender="blogss">
+												<apex:param name="monthId" value="{!archive}" /></apex:commandLink>
+								</ul>	
+							</td>
+						</tr>
+					</apex:repeat>
+				</table>
+				</div>
+				</apex:form>
+				<div class="bottom_borders"><div><div></div></div></div>
+			</div> 
+			
+</apex:page>

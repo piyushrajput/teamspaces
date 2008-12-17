@@ -1,92 +1,83 @@
-@IsTest private class ProjectTaskDetailTest {
-    public static testMethod void testProject() {
-		try{
-			GenerateEnvironmentTest.gen();
-        	Test.startTest();	
-       	
-       		ProjectTaskDetailController project = new ProjectTaskDetailController();
-	        ProjectTask__c projectTask = [select 	p.Id,
-				                                    p.Team__c,
-				                                    p.Team__r.Name,
-				                                    p.Startdate__c,
-				                                    p.Priority__c,
-				                                    p.ParentTask__c,
-				                                    p.Percent_Completed__c,
-				                                    p.Name,
-				                                    p.Milestone__c,
-				                                    p.LastModifiedById,
-				                                    p.EndDate__c,
-				                                    p.Duration__c,
-				                                    p.Description__c,
-				                                    p.CreatedById,
-				                                    (Select Id, User__c From ProjectAssignee__r)
-				         						from ProjectTask__c p limit 1];			         						
-			project.param = projectTask.Id;
-			project.getTask(projectTask.Id);
-	        project.genPermissions();
-	        project.getUserPermissions();			
-			
-	        ProjectTaskDetailController.TaskDetails TaskDetail   = new ProjectTaskDetailController.TaskDetails();
-	        TaskDetail.id = projectTask.Id;
-	        String id = TaskDetail.id;
-			
-	        ProjectTaskDetailController.ProjectAssignee assigns = new ProjectTaskDetailController.ProjectAssignee();
-	        assigns.getId();
-	        assigns.setId('Id');
-	        assigns.setName('Name');
-	        assigns.getPercent();
-	        assigns.setPercent(1);
-			
-	        ProjectTaskDetailController.AttachmentInfo attach = new ProjectTaskDetailController.AttachmentInfo();
-	        attach.getId();
-	        attach.setId('');
-	        attach.getName();
-	        attach.setName('Name');
-	        attach.getAttachImage();
-	        attach.setAttachImage('');
-			
-	        TaskDetail.Name = projectTask.Name;
-	        String name = TaskDetail.Name;
-	
-	        TaskDetail.TeamName = projectTask.Team__r.Name;
-	        String teamName = TaskDetail.TeamName;
-	
-	        TaskDetail.Priority = projectTask.Priority__c;
-	        String priority = TaskDetail.Priority;
-	
-	        TaskDetail.Startdate = ((projectTask.Startdate__c).format('MM/dd/yyyy'));
-	        String startdate = TaskDetail.Startdate;
-	
-	        TaskDetail.DueDate = ((projectTask.EndDate__c).format('MM/dd/yyyy'));
-	        String dueDate = TaskDetail.DueDate;
-	
-	        TaskDetail.Estimate = (projectTask.Duration__c).intValue();
-	        Integer estimate = TaskDetail.Estimate;
-	
-	        TaskDetail.Description = projectTask.Description__c;
-	        String description = TaskDetail.Description;			
-			
-			boolean detailsOK = project.getDetailsOk();
-			
-			ProjectTaskDetailController.TaskDetails td = project.getTask();
+public class ProjectTaskDetailTest {
 
-			Test.stopTest();
-		}catch(Exception e){
-			throw e;
-		}
-    } 
+    public static testMethod void testProject() { 
+    
+        ProjectTaskDetailController project = new ProjectTaskDetailController();
+        
+        ProjectTaskDetailController.TaskDetails TaskDetail   = new ProjectTaskDetailController.TaskDetails();
+        
+        List<Team__c> t = [Select Id From Team__c where Name LIKE 'Sunshine'];
+        
+        System.assert(t.size() == 0,'no teams');
+//
+        if(t.size() > 0) 
+        {
+            Id tId = t[0].Id;
+            
+            List<Project2__c> p = [Select Id From Project2__c where Team__c =:  tId ];
+            
+            System.assert(p.size() == 0,'no porjects'); 
+            
+            if(p.size() > 0) 
+            {
+                
+                Id pId = p[0].Id;
+                
+                List<ProjectTask__c> pt = [Select Id From ProjectTask__c where Team__c =: pId ];        
+                System.assert(pt.size() == 0,'no tasks'); 
+                
+                List<ProjectTask__c> TD = [Select p.Id,
+                                                            p.Team__c,
+                                                            p.Team__r.Name, 
+                                                            p.StartDate__c, 
+                                                            p.Priority__c, 
+                                                            p.ParentTask__c, 
+                                                            p.Percent_Completed__c,
+                                                            p.Name, 
+                                                            p.Milestone__c, 
+                                                            p.LastModifiedById, 
+                                                            p.EndDate__c, 
+                                                            p.Duration__c, 
+                                                            p.Description__c, 
+                                                            p.CreatedById, 
+                                                            (Select Id, User__c From ProjectAssignee__r) 
+                                                            From ProjectTask__c p where p.Id =:  pt[0].Id ];
+                                                            
+                                                            
+                System.assert(TD.size() == 0,'El valor  no tiene nada');
+                    
+                TaskDetail.id = TD[0].Id;
+                    
+                    String id=TaskDetail.id;
+                    
+                    //TaskDetail.AsigneeName = TD.ProjectAssignee__r[0].User__c;
+                    TaskDetail.Name = TD[0].Name;
+                    String name=TaskDetail.Name;
+                    
+                    TaskDetail.TeamName = TD[0].Team__r.Name;
+                    String teamName=TaskDetail.TeamName;
+                    
+                    TaskDetail.Priority = TD[0].Priority__c;
+                    String priority=TaskDetail.Priority;
+                    
+                    TaskDetail.StartDate = ((TD[0].StartDate__c).format('MM/dd/yyyy'));
+                    String startDate=TaskDetail.StartDate;
+                    
+                    TaskDetail.DueDate = ((TD[0].EndDate__c).format('MM/dd/yyyy'));
+                    String dueDate=TaskDetail.DueDate;
+                    
+                    TaskDetail.Estimate = (TD[0].Duration__c).intValue();
+                    Integer estimate=TaskDetail.Estimate;
+                    
+                    TaskDetail.Description = TD[0].Description__c;
+                    String description=TaskDetail.Description;
+                                    
+                 
+            }       
+                
+        }
+            
 
-    public static testMethod void testProject2(){
-        GenerateEnvironmentTest.gen();
-    	Test.startTest();	
-
-		// GENERATED FOR CODE COVERAGE
-		ProjectTaskPred__c projTaskPredCodCov = new ProjectTaskPred__c();
-		projTaskPredCodCov.Team__c = GenerateEnvironmentTest.newTeam.Id;
-		projTaskPredCodCov.parent__c = GenerateEnvironmentTest.newTask.Id;
-		insert projTaskPredCodCov;
-		delete projTaskPredCodCov;
-		
-		Test.stopTest();
+            
     }
 }

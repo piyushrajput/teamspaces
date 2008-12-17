@@ -1,0 +1,17 @@
+Deployment Instructions for Teams application
+
+1. Create addition copies of the Admin.profile files in the profiles directory with the name of the profiles you would like to have access to the teams application
+
+2. Change the user/pass in build.properties. Deploy application via build script.  The default target is deploy.
+
+3. Map Standard Button Overrides Team->TeamsOverview, PeopleProfile->PeopleOverview, WikiPage->WikiOverview, Discussion->DiscussionOverview
+
+4. Create Queue called “Team Admin” with Team object in the queue and add any user who should have setup rights to the application
+
+5. Using the application loader load the contents of widget.csv to the widget__c object using the mapping widget.sdl6
+
+6. Add www.google.com to the Remote Site list Security Controls->Remote Site Settings.  Make sure "Disable Protocol Security" is checked.
+
+7. Go to “Teams” tab and select “Setup” from admin quick links.   Create a Team Profile called “Team Administrator” and select all perms.
+
+8. Go to “Teams” tab and select “Setup” from admin quick links.  Create a team type called “Project” and select a few salesforce widgets

@@ -45,5 +45,5 @@
         <type>AutoNumber</type>
     </nameField>
     <pluralLabel>Discussions</pluralLabel>
-    <sharingModel>Private</sharingModel>
+    <sharingModel>ReadWrite</sharingModel>
 </CustomObject>

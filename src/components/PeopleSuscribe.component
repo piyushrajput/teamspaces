@@ -12,6 +12,7 @@
 			background:url('{!URLFOR($Resource.PeopleResourceFiles, 'images/layout/icons/delete.png')}') no-repeat top center;
 			width:14px;			
 		}
+		
 	</style>	
 	<div style="display:none;">{!SubscriptionStatus}</div>
 	<apex:outputpanel layout="block" rendered="{!IF((currentId == personId),'false','true')}">
@@ -19,11 +20,7 @@
 			<table>
 				<tr>
 					<td class="{!IF(SubscribedBoolean,'un','')}suscribe" >&nbsp;</td>
-					<td>
-						<a href="javascript:;"  onclick="suscribe('{!personId}', '{!currentId}')" >
-							<apex:outputText value="{!SubscriptionStatus}" escape="false" />
-						</a>
-					</td>
+					<td><a href="javascript:;"  onclick="suscribe('{!personId}', '{!currentId}')" ><apex:outputText value="{!SubscriptionStatus}" escape="false" /></a></td>
 				</tr>
 			</table>
 			<div id="suscribeBoolean-{!personId}" style="display:none;">{!SubscribedBoolean}</div>

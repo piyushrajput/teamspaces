@@ -44,5 +44,5 @@
         <type>Text</type>
     </nameField>
     <pluralLabel>Projects</pluralLabel>
-    <sharingModel>Private</sharingModel>
+    <sharingModel>ReadWrite</sharingModel>
 </CustomObject>

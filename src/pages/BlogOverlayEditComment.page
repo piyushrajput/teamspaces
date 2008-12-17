@@ -1,0 +1,40 @@
+<apex:page sidebar="false" showHeader="false">
+<div id="editCommentOverlay" style="display:none;">	
+		<!-- Title of Dialog -->
+	<div class="modalTitle">
+		<div class="title">Edit Comment</div>
+		<div class="closeEvent">
+			<a href="Javascript:;" onclick="modal.close();"><img src="{!URLFOR($Resource.BlogsResources, 'images/common/icons/close_dialog.gif')}" alt="Close Window" title="Close Window" /></a>
+		</div>
+	</div>
+	<!-- Content  -->
+	<div class="modalContent">
+		<!-- Dialog Body  -->
+		<div style="margin-left:25px;" class="modalMessage bottom_border_gray">
+			<div class="require_reference" >
+				<span class="reference">&nbsp;</span>
+				<span> = Required Information</span>
+			</div>
+			<div class="colLabel" >
+				<span>Comments</span>
+			</div>
+			<div class="colInput" >
+				<div class="requiredInput" >
+					<textarea style="width:389px;height:119px;font-family:'Helvetica';font-size:12px;">Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Proin commodo placerat odio. Sed pretium elit et felis. Mauris lacinia. Sed malesuada euismod purus. Praesent a purus sed nibh commodo auctor. Nunc neque lectus, semper nec, bibendum vitae, adipiscing id, justo.</textarea><br />
+				</div>
+			</div>
+		</div>
+		<!--Actions  -->
+		<div class="actions" style="width:145px !important;">
+			<center>
+				<a href="javascript:;" class="button">Save</a>
+				<a href="javascript:;" onclick="modal.close();" class="button gray">Cancel</a>
+				<div style="clear:both;margin:0px; padding:1px 0px;"></div>
+				<div class="delCommentLink">
+					<a href="javascript:;" style="">Delete Comment</a>
+				</div>
+			</center>
+		</div>
+	</div>
+</div>
+</apex:page>

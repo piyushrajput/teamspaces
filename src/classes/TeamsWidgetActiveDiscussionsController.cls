@@ -1,98 +1,50 @@
-/**
-*@author Yuri Alvarez @ 05/02/2008
-*/
 public with sharing class TeamsWidgetActiveDiscussionsController {
 	
-		public Boolean sidebar = false;
+		String teamId = null;
 		
-		/**
-		* Constructor
-		*/
-		public TeamsWidgetActiveDiscussionsController(){}
-				
-		/**
-		*@param Boolean
-		*/
-		public void setSidebar(Boolean b){
-	 		sidebar = b;
-		}
-
-		/**
-		*@return Boolean
-		*/
-		public Boolean getSidebar(){
-			return sidebar;
-		}
-		
-		String teamId;
-		
-		/**
-		*@param String 
-		*/
+		// Setter method for Team Id variable
 		public void setTeamId(String id) {
-			teamId = id;
-			genPermissions();			
+			teamId = id;			
 		}
 		
-		/**
-		*@return String
-		*/
+		// Get Team Id Attribute
 		public String getTeamId(){
 			return teamId;
 		}
 
 		Integer actdisSize;
+		
 		String userId = UserInfo.getUserId();
 
-		//UserPermission static instance clone from teamDetail 
-		public UserPermissions userPermissions = TeamsDetailController.userPermission.clone();
-		
-		/**
-		* Read user permissions
-		*/
-		public void genPermissions () {
-			userPermissions.setId(UserInfo.getUserId());
-			userPermissions.setTeam(teamId);
-			userPermissions.setObjectType('Discussion');
-			userPermissions.setPermissions();					
-		}
-		
-		/**
-		*@return UserPermission instance
-		*/
-		public UserPermissions getUserPermissions () {
-			return userPermissions;
-		}
-		
-		List<DiscussionTopic__c> discussions = new List<DiscussionTopic__c>();
-		
-		/**
-		* Refresh list
-		*/
-		public void refresh(){
-			discussions = [ SELECT ViewCount__c, 
-								   Subject__c, 
-								   OwnerId, 
-								   Name, 
-								   MessageCount__c, 
-								   PostedDate__c, 
-								   PostedBy__r.Name,
-								   LastPostedMessage__r.PostedDate__c,
-								   LastPostedMessage__r.PostedBy__r.Name
-							FROM DiscussionTopic__c d
-							WHERE Team__c =: teamId
-							ORDER BY d.CreatedDate desc LIMIT 4
-							];
+		public Boolean getnewPrivileges() {
 			
-			actdisSize = discussions.size();
-		}
+			Boolean result = true;
+			
+	    	List<TeamMember__c> tm = new List<TeamMember__c>();	
+	    	
+		    tm  = [Select 
+					t.User__c, 
+					t.Team__c, 
+					t.TeamProfile__r.CreateDiscussionTopics__c, 
+					t.TeamProfile__c From TeamMember__c t 
+					where t.Team__c =: teamId and t.User__c =: userId ];
+			
+			if(tm.size() > 0){
+				if(tm[0].TeamProfile__c != null){
+					result = tm[0].TeamProfile__r.CreateDiscussionTopics__c;
+				}							
+			}
+			else {
+				result = false;					
+			}
+			return result;
+	    }
 		
-	
-		/**
-		* Read discussions for current team
-		*@return List<Discussion>
-		*/
+		
 		public List<Discussion> getDiscussions(){
+			
+		    List<DiscussionTopic__c> discussions = new List<DiscussionTopic__c>();
+
 			discussions = [ SELECT ViewCount__c, 
 								   Subject__c, 
 								   OwnerId, 
@@ -110,25 +62,22 @@ public with sharing class TeamsWidgetActiveDiscussionsController {
 			actdisSize = discussions.size();
 											
 			List<Discussion> retDisc = new List<Discussion>();
+			
 			if(discussions.size() > 0) {
+				
 				for(DiscussionTopic__c d: discussions) {
 					Discussion di = new Discussion(d);
 					retDisc.add(di);					
 				}
+				
 			}
 			return retDisc;
 		}
 		
-		/**
-		*@return Integer
-		*/
 		public Integer getActiveDiscussionsSize(){
-			return discussions.size();
+			return actdisSize; 
 		}
 		
-		/**
-		* Class Discussion
-		*/
 		public class Discussion{
 			DiscussionTopic__c discussion;
 			String author;
@@ -141,12 +90,10 @@ public with sharing class TeamsWidgetActiveDiscussionsController {
 			String replierName;
 			String lastPostDate;
 			
-			/**
-			* Costructor
-			*@param DiscussionTopic__c
-			*/
 			public Discussion(DiscussionTopic__c dis){
+				
 				discussion = dis;
+				
 				Datetime aux;
 				views = dis.ViewCount__c.intValue();
 				replies = dis.MessageCount__c.intValue();
@@ -156,89 +103,59 @@ public with sharing class TeamsWidgetActiveDiscussionsController {
 				if(discussion.LastPostedMessage__r.PostedBy__c == null){
 						lastReply += '';
 						authorPicture = '';
-				}else {
+				}
+				else {
 					aux = discussion.LastPostedMessage__r.PostedDate__c;
+												
 					lastPostDate = formatDateToText(aux) + ' at ' + aux.format('hh:mm a');
+						
 					replierId = discussion.LastPostedMessage__r.PostedBy__c;
+
 					replierName = discussion.LastPostedMessage__r.PostedBy__r.Name;
 				}					
+
 			}
 			
-			/**
-			*@return DiscussionTopic__c
-			*/
 			public DiscussionTopic__c getDiscussion(){
 				return discussion;
 			}
 			
-			/**
-			* Get author name
-			*@return String
-			*/
 			public String getAuthor(){
 				return author;
 			}
 			
-			/**
-			* Get author Id
-			*@return Id
-			*/
 			public Id getAuthorId(){
 				return authorId;	
 			}
 			
-			/**
-			*@return String
-			*/
 			public String getLastPostDate(){
 				return lastPostDate;
 			}
 						
-			/**
-			*@return String
-			*/
 			public String getLastReply(){
 				return lastReply;
 			}
 			
-			/**
-			*@return Id
-			*/
 			public Id getLastReplyAuthorId(){
 				return replierId;
 			}
 			
-			/**
-			*@return String
-			*/
 			public String getLastReplyAuthor(){
 				return replierName;
 			}
 			
-			/**
-			*@return String
-			*/
 			public String getAuthorPicture(){
 				return authorPicture;
 			}
 			
-			/**
-			*@return Integer
-			*/
 			public Integer getViews(){
 				return views;
 			}
 			
-			/**
-			*@return Integer
-			*/
 			public Integer getReplies(){
 				return replies;
 			}
 			
-			/**
-			*@return String
-			*/
 			public String formatDateToText(Datetime d){
 				DateTime now = System.now();
 				String res = '';
@@ -254,4 +171,5 @@ public with sharing class TeamsWidgetActiveDiscussionsController {
 			}
 			
 		}
+
 }

@@ -15,18 +15,23 @@
         <type>Percent</type>
     </fields>
     <fields>
-        <fullName>ProjectTask__c</fullName>
-        <label>Project Task</label>
-        <referenceTo>ProjectTask__c</referenceTo>
+        <fullName>ProjectIssue__c</fullName>
+        <label>Project Issue</label>
+        <referenceTo>ProjectIssue__c</referenceTo>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>ProjectRisk__c</fullName>
+        <label>Project Risk</label>
+        <referenceTo>ProjectRisk__c</referenceTo>
         <relationshipName>ProjectAssignee</relationshipName>
         <type>Lookup</type>
     </fields>
     <fields>
-        <fullName>Team__c</fullName>
-        <label>Team</label>
-        <referenceTo>Team__c</referenceTo>
-        <relationshipLabel>Assignees</relationshipLabel>
-        <relationshipName>Assignees</relationshipName>
+        <fullName>ProjectTask__c</fullName>
+        <label>Project Task</label>
+        <referenceTo>ProjectTask__c</referenceTo>
+        <relationshipName>ProjectAssignee</relationshipName>
         <type>Lookup</type>
     </fields>
     <fields>
@@ -42,5 +47,5 @@
         <type>Text</type>
     </nameField>
     <pluralLabel>ProjectAssignee</pluralLabel>
-    <sharingModel>Private</sharingModel>
+    <sharingModel>ReadWrite</sharingModel>
 </CustomObject>

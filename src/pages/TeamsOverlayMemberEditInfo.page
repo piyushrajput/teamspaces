@@ -1,144 +1,338 @@
 <apex:page sidebar="false" tabStyle="Team__c" controller="TeamMembersListController">
-	
-	<apex:includeScript value="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/prototype.js')}"/>
-	<apex:includeScript value="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/scriptaculous.js')}"/>
-	<apex:includeScript value="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/effects.js')}"/>	
-	
+	<script src="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/prototype.js')}" />
+	<script src="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/scriptaculous.js')}" />
+	<script src="{!URLFOR($Resource.PeopleResourceFiles, 'inc/js/effects.js')}" />	
 	<!-- CSS de TS -->
 	<link rel="stylesheet"  href="{!URLFOR($Resource.TeamsResources, '/inc/css/MemberEditInfo.css')}" />
 	
-	<apex:stylesheet value="{!URLFOR($Resource.TeamsResources, 'inc/css/teamsOverlayMemberEditInfo.css')}" />
-	
-	<apex:includeScript value="{!URLFOR($Resource.TeamsResources, 'inc/js/teamsOverlayMemberEditInfo.js')}" />
-	
-	<!--[if IE 6]>
 	<style>
-		.tooltip3 {
-			bottom: 180px;
+		.editInfoTables td img.memberImg {
+			float: right;
+			margin-right: 10px;
 		}
 	</style>
-	
-	<![endif]-->
-	 
-	<script>
-		/**
-        * Namespace Prefix Getter
-        */
-        var namespace = "{!namespace}";
 
+	<style>
+		.bubble_3 {
+			z-index:999999;
+			position:absolute;
+			width:221px;
+			overflow:visible;
+			display:none;
+			top:10px;
+			left:10px;				
+		}
+		
+		.bubble_3 .content {
+			width:221px;
+			clear:both;
+			position:relative;
+			background:url({!URLFOR($Resource.TeamsResources, 'images/bubbleNewTeam/bubble_bg.png')}) repeat-y;
+			background-position: top right;
+		}
+
+		* html .bubble_3 .content {background:none;}
+		* html .bubble_3 .content {filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src="{!URLFOR($Resource.TeamsResources, 'images/bubbleNewTeam/bubble_bg.png')}", sizingMethod="scale")}
+		
+		.bubble_3 .bottom_border {
+			width:221px;
+			height: 24px;			
+			overflow:hidden;
+			position:relative;
+			background:url({!URLFOR($Resource.TeamsResources, 'images/bubbleNewTeam/bubble_bottom.png')}) no-repeat;
+			background-position:  bottom right;
+		}
+
+		* html .bubble_3 .bottom_border {background:none;}
+		* html .bubble_3 .bottom_border {filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src="{!URLFOR($Resource.TeamsResources, 'images/bubbleNewTeam/bubble_bottom.png')}", sizingMethod="scale")}			
+		
+		.bubble_3 .top_border {
+			width:221px;
+			height: 25px;
+			overflow:hidden;
+			position:relative;
+			background:url({!URLFOR($Resource.TeamsResources, 'images/bubbleNewTeam/bubble_top.png')}) no-repeat;
+			background-position:  bottom right;
+		}
+		
+		* html .bubble_3 .top_border {background:none;}
+		* html .bubble_3 .top_border {filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src="{!URLFOR($Resource.TeamsResources, 'images/bubbleNewTeam/bubble_top.png')}", sizingMethod="scale")}			
+
+		
+		.bubble_3 .content .innerContbubble_3 {
+			position:relative;
+			margin:0px 20px 0px 20px;
+		}
+		
+		.bubble_3 .arrowbubble_3 {
+			position:absolute;
+			top:20px;
+			left:6px;					
+		}	
+		
+		
+		.tooltip {
+			background-color:#F9F8CD;
+			border:1px solid #221E1F;
+			display:none;
+			font-family:"Lucida Grande",Verdana;
+			font-size:12px;
+			overflow:auto;
+			padding:5px;
+			position:absolute;
+			text-align:left;
+			width:240px;
+			z-index:9999 !important;
+			top:178;
+			margin-left:10px;
+		}	
+		
+		.tooltip .messageTooltip{
+			position:relative;
+			margin:0px 20px 0px 20px;
+		}	
+	</style>
+	<script>
 		/**
 		* Initialize toolkit connection
 		*@void
 		*/
 		function init(){
 			sforce.connection.sessionId = '{!$Api.Session_ID}';
-			sforce.connection.defaultNamespace = namespace;
 		}
 		
-		var globalTeamEditProfileSelect = '{!$Component.teamEditProfileSelect}';
-		var globalTeamEditProfileSelect2 = '{!$Component.teamEditProfileSelect2}';
+		/* ### bubble_3 ###*/
+		
+		/**
+		* Get XY position for current element
+		*@param Object element
+		*@return Object position
+		*/
+		
+		/*
+		function getXY(obj){				
+			var pos = Position.cumulativeOffset(obj)
+			var y = pos[1];
+			var x = pos[0];
+			var x2 = x + parseInt(obj.offsetWidth);
+			var y2 = y + parseInt(obj.offsetHeight);
+			return {'x':x, 'y':y, 'x2':x2, 'y2':y2};
+		}
+		
+		/**
+		* Show bubble_3 overlay
+		*@param Object element
+		*@param String selectId
+		*/
+		var isShowbubble_3 = false;
+		/*
+		function showbubble_3(currentElement, selectId){
+			isShowbubble_3 = true;
+			var container = $('bubble_3');
+			var position = getXY(currentElement);
+			var selectValue = $F(selectId);
+			container.style.display = 'block';	
+			init();
+			queryString ="Select Id, Description__c from TeamProfile__c where Id = '" + selectValue + "'";
+			result = sforce.connection.query(queryString);
+			records = result.getArray("records");			
+			container.style.top = position.y2 + 'px';
+			container.style.left = position.x2 + 'px';
+			$('innerContbubble_3').innerHTML = records[0].Description__c;
+			
+			if(Prototype.Browser.IE){
+				topPosition = position.y2 - 150;	
+				leftPosition = position.x2 - 70;
+				container.style.top = topPosition + 'px';												
+				container.style.left = leftPosition + 'px';
+			}else{
+				// For mozilla
+				topPosition = position.y2 - 155;	
+				container.style.top = topPosition + 'px';												
+			}
+		}
+		
+		/**
+		* Hide bubble_3
+		*@void
+		*/
+		/*
+		function hidebubble_3(){
+			isShowbubble_3 = false;
+			setTimeout('if(!isShowbubble_3){Effect.Fade(\'bubble_3\');}', 1500);
+		}	
+	*/
+	
+	
+		function tooltip(obj, selectId){
+			
+			
+			isShowbubble_3 = true;
+			var container = $('divToolTip');
+			
+			
+			var position = getXY(obj);
+			var selectValue = $F(selectId);
+			container.style.display = 'block';	
+			init();
+			queryString ="Select Id, Description__c from TeamProfile__c where Id = '" + selectValue + "'";
+			result = sforce.connection.query(queryString);
+			records = result.getArray("records");			
+			container.style.top = position.y2 + 'px';
+			container.style.left = position.x2 + 'px';
+			$('messageTooltip').innerHTML = records[0].Description__c;
+			
+			
+			if(Prototype.Browser.IE){
+				topPosition = position.y2 - 150;	
+				leftPosition = position.x2 - 70;
+				container.style.top = topPosition + 'px';												
+				container.style.left = leftPosition + 'px';
+			}else{
+				// For mozilla
+				topPosition = position.y2 - 155;	
+				container.style.top = topPosition + 'px';												
+			}
+		}
+	
+		function tooltipoff(){
+			// Tooltip
+			var tooltip = $('divToolTip');
+			tooltip.style.display = 'none';
+		}
+	
+		function getXY(obj){    
+			var pos = Position.cumulativeOffset(obj)
+			var y = pos[1];
+			var x = pos[0];
+			var x2 = x + parseInt(obj.offsetWidth);
+			var y2 = y + parseInt(obj.offsetHeight);
+			
+		    return {'x':x, 'y':y, 'x2':x2, 'y2':y2};
+		}
 	</script>
 	
-	<div id="editMemberInfoLoading" style="display:none;" class="overlayForm">	
-		<!-- Overlay Title -->
-		<div class="overlayTitleContent">
-			<div class="overlayTitle">Edit member's team information</div>
-			<div class="overlayCloseEvent">
-				<a href="Javascript:;" onclick="modal.close();">
-					<img src="{!URLFOR($Resource.TeamsResources, 'images/layout/genericClose.gif')}" alt="Close Window" title="Close Window" />
-				</a>
-			</div>
+	<!-- info tooltip -->
+	<div id="divToolTip" class="tooltip">
+		<div style="text-align:right;">
+			<img style="cursor:pointer;" src="{!URLFOR($Resource.commonResources, 'images/icons/close.gif')}" onclick="tooltipoff();"/>
 		</div>
-		<div class="overlayMainContent loadingMemberInfo" id="loadingMemberInfo">
-			Loading Member Info...
-		</div>
+		<div id="messageTooltip" class="messageTooltip"></div>
 	</div>
-	<!-- Edit Member Info -->
-	<div id="editMemberInfo" style="display:none;" class="overlayForm">	
-		<!-- Overlay Title -->
-		<div class="overlayTitleContent">
-			<div class="overlayTitle">Edit member's team information</div>
-			<div class="overlayCloseEvent">
-				<a href="Javascript:;" onclick="modal.close();">
-					<img src="{!URLFOR($Resource.TeamsResources, 'images/layout/genericClose.gif')}" alt="Close Window" title="Close Window" />
-				</a>
-			</div>
+	<!-- 
+	<div id="bubble_3" class="bubble_3">
+		<div class="top_border">&nbsp;</div>		
+		<div class="content">
+			<img class="arrowbubble_3" src="{!URLFOR($Resource.TeamsResources, 'images/bubbleNewTeam/bubble_arrow.gif')}" />				
+			<!-- Content here 
+			<div class="innerContbubble_3" id="innerContbubble_3"></div>	
 		</div>
-		<!-- Overlay Content -->
-		<div class="overlayMainContent">
-			<!-- Required Information -->
-			<span class="overlayRequiredInfo">= Required Information</span>
-			<div class="overlayFormStatus" id="savingMemberInfo" style="display: none;">
-				Saving...
+		<div class="bottom_border">&nbsp;</div>				
+	</div>
+	-->
+	
+	<!-- Edit Member Info -->
+	<div id="editMemberInfo" style="display:none;">
+	
+		<!-- Title of Dialog -->
+		<div class="modalTitle">
+			<div class="title">Edit member's team information</div>
+			<div class="closeEvent">
+				<a href="Javascript:;" onclick="modal.close();"><img src="{!URLFOR($Resource.TeamsResources, 'images/layout/close.gif')}" alt="Close Window" title="Close Window" /></a>
 			</div>
-			<apex:form styleclass="editMemberInfoForm">	
-				<div class="overlayFormContent">
-					<!-- Dialog Body  -->
-					<div class="modalMessage padding_Tables">
-						<table border="0" class="editInfoTables">
-							<tr>
-								<td width="73px">
-									<apex:outputpanel rendered="{!IF(imgEditMember == '',true,false)}">
-										<img class="memberImg" src="{!URLFOR($Resource.commonResources, 'images/placeholders/unknownperson32x32.jpg')}" width="50" />
-									</apex:outputpanel>									 
-									<apex:outputpanel rendered="{!IF(imgEditMember == '',false,true)}">
-										<img class="memberImg" src="/servlet/servlet.FileDownload?file={!imgEditMember}" width="50"/>
-									</apex:outputpanel>
-								</td>
-								<td>
-									<apex:outputtext value="{!editMember.User__r.name}" /><br>
-									<span>Company:</span> <apex:outputtext value="{!editMember.User__r.companyName}" /><br>
-									<span>Title:</span> <apex:outputtext value="{!editMember.User__r.Title}" />
-								</td>
-							</tr>
-						</table>
-						<table border="0" class="editInfoTables">
-							<tr>
-								<td align="right" class="label">Team Profile</td>
-								<td><div class="requireInput"></div></td>
-								<td>
-									<apex:outputpanel rendered="{!NOT(itsLastAdmin)}">
-										<apex:selectList style="width: 200px;" id="teamEditProfileSelect" value="{!editMemberProfile}" multiselect="false" size="1">
-											<apex:selectOptions value="{!profilesOptions}"/>
-										</apex:selectList>
-										<a style="position: relative;" href="Javascript:;" onclick="tooltip3(this, '{!$Component.teamEditProfileSelect}');">
-											<img class="imgAlign" onmouseover="tooltip3(this, '{!$Component.teamEditProfileSelect}');" onmouseout="tooltipoff3();" src="{!URLFOR($Resource.TeamsResources, '/images/layout/icons/infoWhite.gif')}" border="0" />
-											<!-- info tooltip -->
-											<div id="divToolTip3" style="display: none;" class="tooltip3">
-												<div id="messageTooltip3" class="messageTooltip"></div>
-											</div>
-										</a>
-									</apex:outputpanel>
-									<apex:outputpanel rendered="{!itsLastAdmin}">
-										<apex:selectList style="width: 200px;" id="teamEditProfileSelect2" value="{!editMemberProfile}" multiselect="false" size="1">
-											<apex:selectOptions value="{!profilesOptionsFilter}"/>
-										</apex:selectList>
-										<a style="position: relative;" href="Javascript:;" onclick="tooltip3(this, '{!$Component.teamEditProfileSelect2}');">
-											<img class="imgAlign" onmouseover="tooltip3(this, '{!$Component.teamEditProfileSelect2}');" onmouseout="tooltipoff3();" src="{!URLFOR($Resource.TeamsResources, '/images/layout/icons/info.gif')}" border="0" />
-											<div id="divToolTip3" style="display: none;" class="tooltip3">
-												<div id="messageTooltip3" class="messageTooltip"></div>
-											</div>
-										</a>
-									</apex:outputpanel>
-								</td>
-							</tr>
-							<tr>
-								<td align="right" class="label">Team Role</td>
-								<td></td>
-								<td>
-									<apex:inputText value="{!editMemberRole}" styleclass="teamRoleInput" />
-								</td>
-							</tr>
-						</table>	
-					</div>
+		</div>	
+		<!-- Content  -->
+		<apex:form >	
+			<div class="modalContent">
+				<div class="requireLegend">= Required Information</div>
+				<!-- Dialog Body  -->
+				<div class="modalMessage padding_Tables bottom_border_gray">
+					<table border="0" class="editInfoTables">
+						<tr>
+							<td width="73px">
+								<apex:outputpanel rendered="{!IF(imgEditMember == '',true,false)}">
+									<img class="memberImg" src="{!URLFOR($Resource.commonResources, 'images/placeholders/unknownperson32x32.jpg')}" width="50" />
+								</apex:outputpanel>									 
+								<apex:outputpanel rendered="{!IF(imgEditMember == '',false,true)}">
+									<img class="memberImg" src="/servlet/servlet.FileDownload?file={!imgEditMember}" width="50"/>
+								</apex:outputpanel>
+								<!-- <img src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/user_not_picture.gif')}" /> -->
+							</td>
+							<td>
+								<apex:outputtext value="{!editMember.User__r.name}" /><br>
+								<span>Company:</span> <apex:outputtext value="{!editMember.User__r.companyName}" /><br>
+								<span>Title:</span> <apex:outputtext value="{!editMember.User__r.Title}" />
+							</td>
+						</tr>
+					</table>
+					<table border="0" class="editInfoTables">
+						<tr>
+							<td align="right" class="label">Team Profile</td>
+							<td><div class="requireInput"></div></td>
+							<td>
+								<apex:outputpanel rendered="{!NOT(itsLastAdmin)}">
+									<apex:selectList style="width: 200px;" id="teamEditProfileSelect" value="{!editMemberProfile}" multiselect="false" size="1">
+										<apex:selectOptions value="{!profilesOptions}"/>
+									</apex:selectList>
+									
+									<script>
+										function showSelectEdit () {		
+											var inputSelect = $('{!$Component.teamEditProfileSelect}');
+											if (inputSelect != null) {
+												inputSelect.style.visibility = 'visible';
+											}
+										}
+									</script>
+									<a href="Javascript:;" onclick="tooltip(this, '{!$Component.teamEditProfileSelect}');">
+										<img class="imgAlign" onmouseover="tooltip(this, '{!$Component.teamEditProfileSelect}');" onmouseout="tooltipoff();" src="{!URLFOR($Resource.TeamsResources, '/images/layout/icons/infoWhite.gif')}" border="0" />
+									</a>
+								</apex:outputpanel>
+								<apex:outputpanel rendered="{!itsLastAdmin}">
+									<apex:selectList style="width: 200px;" id="teamEditProfileSelect2" value="{!editMemberProfile}" multiselect="false" size="1">
+										<apex:selectOptions value="{!profilesOptionsFilter}"/>
+									</apex:selectList>
+									
+									<script>
+										function showSelectEdit () {		
+											var inputSelect = $('{!$Component.teamEditProfileSelect2}');
+											if (inputSelect != null) {
+												inputSelect.style.visibility = 'visible';
+											}
+										}
+									</script>
+									<a href="Javascript:;" onclick="tooltip(this, '{!$Component.teamEditProfileSelect2}');">
+										<img class="imgAlign" onmouseover="tooltip(this, '{!$Component.teamEditProfileSelect2}');" onmouseout="tooltipoff();" src="{!URLFOR($Resource.TeamsResources, '/images/layout/icons/info.gif')}" border="0" />
+									</a>
+								</apex:outputpanel>
+										
+								<!-- 
+								<select id="teamProfileSelect">
+									<option>Member</option>
+									<option>Contributor</option>
+									<option>Team Administrator</option>
+								</select> 
+								-->
+								
+							</td>
+						</tr>
+						<tr>
+							<td align="right" class="label">Team Role</td>
+							<td></td>
+							<td>
+								<apex:inputText value="{!editMemberRole}" styleclass="teamRoleInput" />
+							</td>
+						</tr>
+					</table>	
 				</div>
-				<div class="overlaySeparateLine"></div>
-				<!-- Saven and Cancel Buttons -->
-				<div class="overlayFromButtons" align="center">
-					<apex:commandButton action="{!editMemberAction}" onclick="showSaving();" oncomplete="modal.close();" value="Save" styleclass="overlaySaveBtn" rerender="auxPanel" />
-					<input type="button" onclick="modal.close();" class="overlayCancelBtn" value="Cancel" />
+				<!--Actions  -->
+				<div class="actionsSaveCancel">
+					<apex:commandLink action="{!editMemberAction}" oncomplete="modal.close();" value="Save" styleclass="button" rerender="auxPanel" />
+					<!-- <a href="javascript:;" class="button">Save</a> -->
+					<a href="javascript:;" onclick="modal.close();" class="button gray">Cancel</a>
 				</div>
-			</apex:form>
-		</div><!-- END Modal Content -->
-	</div><!-- END announcement delete -->   
+			</div><!-- END Modal Content -->
+		</apex:form>
+	</div><!-- END announcement delete -->     
+	
+
 </apex:page>

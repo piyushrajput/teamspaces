@@ -241,11 +241,4 @@ public class WikiPageTableParserController {
 		tableHtmlResult = html;
 	}
 	
-	public void insertGroupMember () {
-		GroupMember newMember = new GroupMember();
-		newMember.GroupId = '00G30000001BWQYEA4';
-		newMember.UserOrGroupId = '00530000001IOnRAAW';	
-		insert newMember;
-	}
-	
 }

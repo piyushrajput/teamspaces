@@ -5,8 +5,6 @@
         <fullName>TeamProfile__c</fullName>
         <label>Team Profile</label>
         <referenceTo>TeamProfile__c</referenceTo>
-        <relationshipLabel>Team Members</relationshipLabel>
-        <relationshipName>TeamMember</relationshipName>
         <type>Lookup</type>
     </fields>
     <fields>
@@ -20,7 +18,7 @@
         <label>Team</label>
         <referenceTo>Team__c</referenceTo>
         <relationshipLabel>Team Members</relationshipLabel>
-        <relationshipName>TeamMembers</relationshipName>
+        <relationshipName>TeamRelationship</relationshipName>
         <type>Lookup</type>
     </fields>
     <fields>
@@ -35,5 +33,5 @@
         <type>Text</type>
     </nameField>
     <pluralLabel>Team Members</pluralLabel>
-    <sharingModel>Private</sharingModel>
+    <sharingModel>ReadWrite</sharingModel>
 </CustomObject>

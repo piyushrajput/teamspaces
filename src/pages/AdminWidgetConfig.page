@@ -1,212 +1,47 @@
-<apex:page sidebar="false" id="AdminWidgetConfig" tabStyle="Team__c" controller="AdminWidgetConfigController" action="{!verifyAdminPerm}">
- 	
+<apex:page sidebar="false" id="AdminWidgetConfig" tabStyle="Team__c">
+
+	<script>
+        //Hack for Google gadgets works
+        /*var l = window.location;
+        if ( l.protocol == 'https:' ) {
+            l.href = l.href.replace(/https/,'http');
+        }*/
+    </script>    
+    
     <!-- ### Prototype + Scriptaculous ### -->
-	<apex:includeScript value="{!URLFOR($Resource.Script_aculo_us, 'prototype.js')}"/>
-	<apex:includeScript value="{!URLFOR($Resource.Script_aculo_us, 'scriptaculous.js')}"/>
-	<apex:includeScript value="{!URLFOR($Resource.Script_aculo_us, 'effects.js')}"/>
-
-		<!-- Portal Support -->
-	<apex:includeScript value="{!$Resource.portalSupport}"/>
-
+	<script type="text/javascript" src="{!URLFOR($Resource.Script_aculo_us, 'prototype.js')}"></script>
+	<script type="text/javascript" src="{!URLFOR($Resource.Script_aculo_us, 'scriptaculous.js')}"></script>
+	<script type="text/javascript" src="{!URLFOR($Resource.Script_aculo_us, 'effects.js')}"></script>
+	
 	<!-- ### Common Js ### -->
-    <apex:includeScript value="{!URLFOR($Resource.TeamsResources, 'inc/js/common.js')}"/>
-	<!--<apex:includeScript value="{!URLFOR($Resource.TeamsResources, 'inc/js/AdminWidgetConfig.js')}"/>-->
-	<apex:includeScript value="{!URLFOR($Resource.commonResources, 'inc/js/modal.js')}"/>
-	<apex:includeScript value="{!URLFOR($Resource.TeamsResources, 'inc/js/AddWidget.js')}"/>	   
-
+    <script src="{!URLFOR($Resource.TeamsResources, 'inc/js/common.js')}" />
+	<!--<script src="{!URLFOR($Resource.TeamsResources, 'inc/js/AdminWidgetConfig.js')}"></script>-->
+	<script src="{!URLFOR($Resource.commonResources, 'inc/js/modal.js')}"></script>
+	<script src="{!URLFOR($Resource.TeamsResources, 'inc/js/AddWidget.js')}"></script>	   
+    
     <!-- ### Common Layout ### -->
     <apex:stylesheet value="{!URLFOR($Resource.TeamsResources, 'inc/css/commonLayout.css')}" />
     <apex:stylesheet value="{!URLFOR($Resource.TeamsResources, 'inc/css/AdminWidgetConfig.css')}" />
     <apex:stylesheet value="{!URLFOR($Resource.TeamsResources, 'inc/css/profileEdition.css')}" />
 	<apex:stylesheet value="{!URLFOR($Resource.TeamsResources, 'inc/css/modal.css')}" />
 	<apex:stylesheet value="{!URLFOR($Resource.TeamsResources, 'inc/css/AddWidget.css')}" />    
-	<apex:stylesheet value="{!URLFOR($Resource.commonResources, 'inc/css/fonts.css')}" />
    
-    <!-- CSS styles for Portal Integration -->
-    <apex:stylesheet value="{!URLFOR($Resource.portalStyles, 'portal.css')}" />
-    <apex:stylesheet value="{!URLFOR($Resource.TeamsResources, 'inc/css/headerTeams.css')}" />
-	<apex:stylesheet value="{!URLFOR($Resource.TeamsResources, 'inc/css/widgetTeam.css')}" />
-
-	<!-- Common CSS  -->
-	<apex:stylesheet value="{!URLFOR($Resource.TeamsResources, 'inc/css/AdminWidgetConfig.css')}" />
-
-	<!-- Common JS  -->
-	<apex:includeScript value="{!URLFOR($Resource.TeamsResources, 'inc/js/AdminWidgetConfig.js')}" />
+	<!-- ### Ajax Toolkit Include ### -->
+	<script src="/soap/ajax/12.0/connection.js" type="text/javascript" />
 	
-	
-	
-	
-	 <!-- ### Ajax Toolkit Include ### -->
-	<apex:includeScript value="/soap/ajax/13.0/connection.js"/>
-
 	<script>
         var l = window.location;
-        
-		/**
-        * Namespace Prefix Getter
-        */
-        var namespace = "{!namespace}";
-        
-		/**
-		* Initialize toolkit connection
-		* @void
-		*/
-		function init(){
-			sforce.connection.sessionId = '{!$Api.Session_ID}';
-			sforce.connection.defaultNamespace = namespace;
-		}
-		
-		var globalWidgetImage = '{!URLFOR($Resource.TeamsResources, 'images/AddWidget/widgetImage.jpg')}';
-		var globalEditWhite = '{!URLFOR($Resource.TeamsResources, 'images/layout/icons/WidgetConfig/editWhite.gif')}';
-		var globalRemoveWhite = '{!URLFOR($Resource.TeamsResources, 'images/layout/icons/WidgetConfig/removeWhite.gif')}';
-		var globalEditGray = '{!URLFOR($Resource.TeamsResources, 'images/layout/icons/WidgetConfig/editGrey.gif')}';
-		var globalRemoveGray = '{!URLFOR($Resource.TeamsResources, 'images/layout/icons/WidgetConfig/removeGrey.gif')}';
-		var globalInfoBig = '{!URLFOR($Resource.TeamsResources, 'images/layout/icons/WidgetConfig/infoBig.gif')}';
-		var globalCheckNew = '{!URLFOR($Resource.TeamsResources, 'images/layout/icons/WidgetConfig/checkNew.gif')}';
-		var globalTeamLabel = '{!$ObjectType.Team__c.label}';
-
-		document.observe("dom:loaded", InitializeWidgetConfig);
-	</script> 
-	
-	<!-- ### AjaxProxy response container ### -->	
-	<div id="response" style="display:none;"></div>	
-	
-	<!-- ### Initialize the overlay box for modal.js ### -->
-	<a href="#modal_container" id="initializeModal" style="display:none;"></a>
-	<div id="modal_container"></div>
-	<script>createOverlay('initializeModal')</script>	
-	
-	<!-- ### Overlay's Includes ### -->
-	<apex:include pageName="AdminOverlayAddWidget" />
-	<apex:include pageName="AdminOverlayRemoveWidget" />
-	
-	<div id="loadMessage" style="display:none;">
-		<span id="loadMessageText"></span>
-	</div>
-	<!-- 
-	<style>
-			div#modal_container div#loadMessage span{
-			text-align: center !important;
-			font-weight: bold;
-		}
-		
-		.buttonColor{
-			background:#21637D none repeat scroll 0%;
-			border:0px solid;
-			color:#FFFFFF;
-			cursor:pointer;
-			font-size:12px;
-			xheight:22px;
-			margin-top:0px;
-			margin-left:10px;
-			text-align:center;
-			xwidth:190px;
-			font-weight:bold;
-			padding:6px 17px;
-			text-decoration:none;
-			float:left;
-		}
-		
-		div.widgetContainer {
-			background:#FFFFFF none repeat scroll 0%;
-			border:0px none;
-			float:left;
-			height:92px;
-			margin:0px;
-			padding:5px;
-			width:84px;
-		}
-		
-		div.widgetContainer div {
-			background:#FFFFFF none repeat scroll 0%;
-			border:1px solid #FFFFFF;
-			height:80px;
-			margin:0px;
-			padding:5px;
-			text-align:center;
-			width:70px;
-		}
-		
-		
-		div.widgetContainerSelected {
-			background:#DDF0F7 none repeat scroll 0%;
-			border:0px none;
-			float:left;
-			height:92px;
-			margin:0px;
-			padding:5px;
-			width:84px;
-		}
-		
-		div.widgetContainerSelected div {
-			background:#EFEFEF none repeat scroll 0%;
-			border:1px solid #99CCE7;
-			height:80px;
-			margin:0px;
-			padding:5px;
-			text-align:center;
-			width:70px;
-		}
-		
-		/* Overlay */
-		
-		div#overlayLoader {
-			background:#FFFFFF;
-			height:79%;
-			position:absolute;
-			bottom:0;
-			left:0;
-			z-index:9999;
-			width:100%;
-			opacity: 0.6;
-			-moz-opacity: 0.6;
-			filter: alpha(opacity=60);
-		}
-		
-		div#overlayLoader div.loader {
-			width:60px;
-			margin:0 auto;
-			height:60px;
-			margin-top:145px;
-		}
-		
-		.main_content .widgetConfigForm {
-			position:relative;
-			overflow:hidden;
-			clear:both;		
-		}
-		
-		* html .main_content .widgetConfigForm .teamTypeForm {
-			padding:0px !important;
-			clear:both;
-			width:100%;
-			overflow:hidden;
-		}
-		
-		div.rightGroup {
-			height: 165px;
-		}
-	
-		div.leftGroup {
-			height: 165px;
-		}
-	
-	</style>
-		<script>
-        var l = window.location;
-        
-		/**
-        * Namespace Prefix Getter
-        */
-        var namespace = "{!namespace}";
-        
+        /*if ( l.protocol == 'https:' ) {
+            // This code replaces the iframe protocol to match google
+            l.href = l.href.replace(/https/,'http');
+            return;		           
+        };*/
 		/**
 		* Initialize toolkit connection
 		* @void
 		*/
 		function init(){
 			sforce.connection.sessionId = '{!$Api.Session_ID}';
-			sforce.connection.defaultNamespace = namespace;
 		}
 		
 		/* ### Temporal Soruce - Should be in JS include ### */
@@ -252,8 +87,6 @@
 		var currentTeamType = getURLParam('id');
 		var currentTeam = (getURLParam('team')) ? getURLParam('team') : 'a0B30000001u1fEEAQ';
 		var backupMarkup = null;
-		var backupClass = null;
-		var isEditWidget = false;
 		
 		var WidgetConfig = {
 			
@@ -262,7 +95,6 @@
 			*@void
 			*/
 			createNewRightHolder: function(){
-				$('rightGroup').style.height = 'auto';
 				var rightColum = $('rightGroup');
 				var markup = '';
 				var currentId = 'widgetRightHolder_' + (rightHoldersCount + 1);
@@ -273,7 +105,7 @@
 				markup +=	'				<a class="removeLink" href="Javascript:;" onclick="WidgetConfig.removeHolder(\''+ currentId +'\')" title="Delete this holder">Remove This Placeholder</a>';
 				markup +=	'			</div>';
 				markup +=	'			<div class="event">';		
-				markup +=	'				<a style="background-position-y:-25%" onmouseover="underLineLink(this)" onmouseout="underLineLink(this)" href="javascript:;" onclick="createOverlay(\'\',\'addWidget\', 490, \'WidgetConfig.getSalesforceWidgetList(\\\''+ currentId +'\\\',false)\');">';
+				markup +=	'				<a onmouseover="underLineLink(this)" onmouseout="underLineLink(this)" href="javascript:;" onclick="createOverlay(\'\',\'addWidget\', 490, \'WidgetConfig.getSalesforceWidgetList(\\\''+ currentId +'\\\')\');">';
 				markup +=	'					Click to add side module widget';
 				markup +=	'				</a>';
 				markup +=	'			</div>';		
@@ -283,8 +115,6 @@
 				rightHoldersCount++;
 				rightColum.innerHTML += markup;
 				normalizeHeight();
-				Effect.Appear(rightColum);
-				
 			
 			},
 			
@@ -293,7 +123,6 @@
 			*@void
 			*/
 			createNewLeftHolder: function(){
-				$('leftGroup').style.height = 'auto';
 				var leftColum = $('leftGroup');
 				var markup = '';
 				var currentId = 'widgetLeftHolder_' + (leftHoldersCount + 1);
@@ -304,7 +133,7 @@
 				markup +=	'				<a class="removeLink" href="Javascript:;" onclick="WidgetConfig.removeHolder(\''+ currentId + '\')" title="Delete this holder">Remove This Placeholder</a>';
 				markup +=	'			</div>';
 				markup +=	'			<div class="event">';
-				markup +=	'				<a onmouseover="underLineLink(this)" onmouseout="underLineLink(this)" href="Javascript:;" onclick="createOverlay(\'\',\'addWidget\', 490, \'WidgetConfig.getSalesforceWidgetList(\\\''+ currentId +'\\\', false)\');">';
+				markup +=	'				<a onmouseover="underLineLink(this)" onmouseout="underLineLink(this)" href="Javascript:;" onclick="createOverlay(\'\',\'addWidget\', 490, \'WidgetConfig.getSalesforceWidgetList(\\\''+ currentId +'\\\')\');">';
 				markup +=	'					Click to add widget';
 				markup +=	'				</a>';
 				markup +=	'			</div>';		
@@ -314,7 +143,6 @@
 				leftHoldersCount++;
 				leftColum.innerHTML += markup;
 				normalizeHeight();	
-				Effect.Appear(leftColum);				
 			},
 
 			/**
@@ -348,28 +176,24 @@
 				}
 			},
 			
-			
-			
 			/**
 			* Get salesforce widget list
 			*@void
 			*@param string holder
 			*/
-			getSalesforceWidgetList: function (holder, isEdit){
-				isEditWidget = isEdit;
+			getSalesforceWidgetList: function (holder){
 				
 				//Set current holder
 				currentHolder = holder;
 				
 				var widgetsCont = $('salesforceWidgets'); 
 				var itemCount = $('itemCount');
-				var widgetsCount = 0;
 				
 				//Load widgets
 				this.getWidgets();
 
 				//Set widget count
-				//itemCount.innerHTML = currentWidgets.length + ' items';
+				itemCount.innerHTML = currentWidgets.length + ' items';
 				
 				var markup = '<div class="widgetsLine">';
 				var j = 5;
@@ -377,7 +201,6 @@
 				for (var i = 0; i < currentWidgets.length; i++){
 					//View only widgets
 					if(currentWidgets[i].Type__c == 'Widget'){
-						widgetsCount++;
 						//Divisor Line
 						if((count != 0) && ((count % j) == 0)) {
 							markup += '</div><div class="separateLine"></div>';
@@ -397,7 +220,6 @@
 							markup += '</div>';
 					}
 				}
-				itemCount.innerHTML = widgetsCount + ' items';
 				//Inject markup
 				widgetsCont.innerHTML = markup;
 			},
@@ -413,18 +235,6 @@
 				var holderType = currentHolder.substring(6, 10);
 				var holder = $(currentHolder);
 				var markup = '';
-				backupClass = holder.className;
-				
-				if(isNew){
-					var widgetIds = $$('.widgetIdHidden');
-					for (var it = 0; it < widgetIds.length; it++){
-						if(widgetIds[it].value == widgetId){
-							alert('The selected widget has already been added');
-							return;
-						}
-						
-					}
-				}
 				
 				//If Gadget
 				if(type == 'gadget'){
@@ -453,15 +263,15 @@
 					
 					//Set holder type class
 					holder.className = 'widgetLeft';					
-					markup+= '	<input type="hidden" class="widgetIdHidden" value="'+widgetId+'" />';
+					markup+= '	<input type="hidden" value="'+widgetId+'" />';
 					markup+= '	<div class="header">';
 					markup+= '		<span>'+ currentWidgets[widgetId].Name +'</span>';
 					markup+= '	</div>';
 					markup+= '	<div class="headerButtons">';
-					markup+= '		<img src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/WidgetConfig/editWhite.gif')}" width="17" height="16" />';
-					markup+= '		<span><a href="javascript:;" title="Edit Widget" onclick="createOverlay(\'\',\'addWidget\', 490, \'WidgetConfig.getSalesforceWidgetList(\\\''+ currentHolder +'\\\',true)\');">Edit</a></span>';
+					markup+= '		<img src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/WidgetConfig/editWhite.gif')}" />';
+					markup+= '		<span><a href="javascript:;" title="Edit Widget" onclick="createOverlay(\'\',\'addWidget\', 490, \'WidgetConfig.getSalesforceWidgetList(\\\''+ currentHolder +'\\\')\');">Edit</a></span>';
 					markup+= '		&nbsp;&nbsp;';
-					markup+= '		<img style="float" src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/WidgetConfig/removeWhite.gif')}" alt="test"/>';
+					markup+= '		<img src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/WidgetConfig/removeWhite.gif')}" />';
 					markup+= '		<span>';
 					markup+= '			<a href="Javascript:;" onclick="deleteWidgetOverlay(\'' + currentHolder + '\')" title="Delete Widget">Delete</a>';
 					markup+= '		</span>';
@@ -469,13 +279,11 @@
 					markup+= '	<div class="description">';
 					markup+= '		' + description;
 					markup+= '	</div>';
-					$('leftGroup').style.height = 'auto';
-					normalizeHeight();
 				}else{
 					
 					//Set holder type class
 					holder.className = 'widgetRight';
-					markup+= '	<input type="hidden" class="widgetIdHidden" value="'+widgetId+'" />';					
+					markup+= '	<input type="hidden" value="'+widgetId+'" />';					
 					markup+= '	<div class="header">';
 					markup+= '		<div>';
 					markup+= '			<div><h3>'+ currentWidgets[widgetId].Name +'</h3></div>';
@@ -484,10 +292,10 @@
 					markup+= '	<div class="box_content">';
 					markup+= '		<div class="headerBtn">';
 					markup+= '			<div class="headerButtons">';
-					markup+= '				<img style="float" src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/WidgetConfig/editGrey.gif')}" alt="test"/>';
-					markup+= '				<span><a href="javascript:;" onclick="createOverlay(\'\',\'addWidget\', 490, \'WidgetConfig.getSalesforceWidgetList(\\\''+ currentHolder +'\\\',true)\');">Edit</a></span>';
+					markup+= '				<img src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/WidgetConfig/editGrey.gif')}" />';
+					markup+= '				<span><a href="javascript:;" onclick="createOverlay(\'\',\'addWidget\', 490, \'WidgetConfig.getSalesforceWidgetList(\\\''+ currentHolder +'\\\')\');">Edit</a></span>';
 					markup+= '				&nbsp;&nbsp;';
-					markup+= '				<img style="float" src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/WidgetConfig/removeGrey.gif')}" alt="test"/>';
+					markup+= '				<img src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/WidgetConfig/removeGrey.gif')}" />';
 					markup+= '				<span><a href="Javascript:;" title="Edit Widget" onclick="deleteWidgetOverlay(\'' + currentHolder + '\')" title="Delete Widget">Delete</a></span>';
 					markup+= '			</div>';
 					markup+= '		</div>';
@@ -498,8 +306,6 @@
 					markup+= '	<div class="bottom_borders">';
 					markup+= '		<div><div></div></div>';
 					markup+= '	</div>';
-					$('rightGroup').style.height = 'auto';
-					normalizeHeight();
 				}
 				//Inject markup
 				backupMarkup = holder.innerHTML;
@@ -507,18 +313,8 @@
 				//Reinitialize sortable for drag holders
 				initializeSortable();
 				if(isNew){
-					//Message when editing a widget
-					if(isEditWidget){
-						showMessageToUser('Widget Modified <a href="Javascript:;" onclick="WidgetConfig.unsetWidget(\''+ currentHolder +'\')">Undo</a>', 'success');				
-					}
-					else{
-						showMessageToUser('New widget added <a href="Javascript:;" onclick="WidgetConfig.unsetWidget(\''+ currentHolder +'\')">Undo</a>', 'success');				
-					}
+					showMessageToUser('New widget added <a href="Javascript:;" onclick="WidgetConfig.unsetWidget(\''+ currentHolder +'\')">Undo</a>', 'success');				
 					effectBorder(currentHolder);
-				}
-				
-				else{
-					showMessageToUser('To rearrange your widgets, drag and drop the title bars.', 'info');
 				}					
 			},
 			
@@ -540,9 +336,6 @@
 			unsetWidget: function (holder){
 				var holder = $(holder);
 				holder.innerHTML = backupMarkup;
-				holder.className = backupClass;
-				Effect.Appear(holder);
-				initializeSortable();
 				showMessageToUser('To rearrange your widgets, drag and drop the title bars.', 'info');
 			},
 			
@@ -595,8 +388,7 @@
 				
 				if(teamType.Name == ''){
 					modal.close();
-					alert('{!$ObjectType.Team__c.label} Type name is required.');
-					hideLoader();
+					alert('Team Type name is required.');
 					return;
 				}
 				
@@ -634,7 +426,7 @@
 						return;					
 					}
 				}
-				
+				// console.info(currentTeamType);
 				
 				//Get left widgets
 				for(var it=0; it < leftDivs.length; it++){
@@ -672,10 +464,10 @@
 				//Create markup for current detail page
 				var markup = '<';
 				markup += 'apex';
-				markup += ':page sidebar="false" cache="true" tabstyle="Team__c">';
+				markup += ':page sidebar="false" tabstyle="Team__c">';
 				markup += '<';
-				markup += 'c';
-				markup += ':TeamDetailMarkupTop';
+				markup += 'apex';
+				markup += ':include pageName="TeamDetailMarkupTop" ';
 				markup += '/>';				
 				markup += '<div class="main_content">';
 				markup += '	<div class="centerCol">';
@@ -686,13 +478,10 @@
 					if(widget.Type__c == 'Widget'){
 						markup += '<';
 						markup += 'c';
-						markup += ':'+widget.WidgetUrl__c + ' team="{\!$CurrentPage.parameters.id}" sidebar="false" ';
+						markup += ':'+widget.WidgetUrl__c + ' team="{\!$CurrentPage.parameters.id}"';
 						markup += ' />';
 					}else{
-						markup += '<';
-						markup += 'c';
-						markup += ':TeamsWidgetGadgetHolder sidebar="false" source="' + widget.WidgetUrl__c + '" name="' + widget.Name + '"';
-						markup += ' />';					
+						markup += '<iframe src="' + widget.WidgetUrl__c + '"></iframe>';					
 					}											
 				}
 				
@@ -706,20 +495,17 @@
 					if(widget.Type__c == 'Widget'){
 						markup += '<';
 						markup += 'c';
-						markup += ':'+widget.WidgetUrl__c + ' team="{\!$CurrentPage.parameters.id}" sidebar="true" ';
+						markup += ':'+widget.WidgetUrl__c + ' team="{\!$CurrentPage.parameters.id}"';
 						markup += ' />';					
 					}else{
-						markup += '<';
-						markup += 'c';
-						markup += ':TeamsWidgetGadgetHolder sidebar="true" source="' + widget.WidgetUrl__c + '" name="' + widget.Name + '"';
-						markup += ' />';	
+						markup += '<iframe src="' + widget.WidgetUrl__c + '"></iframe>';
 					}
 				}				
 				
-				markup += '</div>';																							
+				markup += '</div>';																								
 				markup += '<';
-				markup += 'c';
-				markup += ':TeamDetailMarkupBottom';
+				markup += 'apex';
+				markup += ':include pageName="TeamDetailMarkupBottom" ';
 				markup += '/>';								
 				markup += '</';
 				markup += 'apex:page>';				
@@ -727,7 +513,7 @@
 				result = sforce.connection.update([apexPage]);
 				
 				//Change loader message
-				$('loadMessageText').innerHTML = 'Redirecting to {!$ObjectType.Team__c.label} Type List...';
+				$('loadMessageText').innerHTML = 'Redirecting to Team Type List...';
 				if(result[0].getBoolean("success")){
 					location.href = '/apex/AdminTeamTypeList' + '?success='+wc_actionType;
 				}				
@@ -826,10 +612,7 @@
 				var teamType = WidgetConfig.getTeamType(currentTeamType);
 				WidgetConfig.assemblingLayout();
 				$('teamTypeName').value = (wc_actionType != 'Clone') ? teamType.Name : 'clon_' + teamType.Name;
-				if(teamType.Description__c != null){
-					$('teamTypeDescription').value = teamType.Description__c;
-				}
-							
+				$('teamTypeDescription').value = teamType.Description__c;			
 			}else{
 				WidgetConfig.createNewRightHolder();
 				WidgetConfig.createNewLeftHolder();			
@@ -847,22 +630,6 @@
 				$('TeamTypeDetailContainerReadOnly').style.display = 'block';
 				$('teamTypeNameReadOnly').innerHTML = $('teamTypeName').value;
 				$('teamTypeDescriptionReadOnly').innerHTML = $('teamTypeDescription').value;
-				var la = $$('.informationPanel');
-				for (it=0; it < la.length; it++){
-    				la[it].style.display = 'none';
-				}
-				var la = $$('.buttons');
-				for (it=0; it < la.length; it++){
-    				la[it].style.display = 'none';
-				}
-				var la = $$('.addAnother');
-				for (it=0; it < la.length; it++){
-    				la[it].style.display = 'none';
-				}
-				var la = $$('.headerButtons');
-				for (it=0; it < la.length; it++){
-    				la[it].style.display = 'none';
-				}
 			}
 			$('currentProcess').innerHTML = wc_actionType;		
 			$('breadcrumbCurrentAction').innerHTML = wc_actionType;
@@ -943,11 +710,7 @@
 			var maxCol;
 			
 			if(rightCount > leftCount){ maxCol = rightCount; } else { maxCol = leftCount; }
-			if(rightCount == 0){ $('rightGroup').style.height = '165px'; }
-			if(leftCount == 0){ $('leftGroup').style.height = '165px'; }
-			if(maxCol == 0){
-				$('main_holder').style.height = '200px';
-			}else if(maxCol > 4 ){
+			if(maxCol > 4 ){
 				mainHolder.style.height = (maxCol * 190) + 'px'; 
 			}else {			
 				mainHolder.style.height = (maxCol * 200) + 'px'; 
@@ -1074,15 +837,13 @@
 			var editCont = $('TeamTypeDetailContainer');
 			if(Prototype.Browser.IE){	
 				if(editCont.style.display == 'none'){
-					//$('rightCol').style.top = '302px';
-					$('rightCol').style.top = '218px';
+					$('rightCol').style.top = '302px';
 				}else{
 					$('rightCol').style.top = '387px';
 				}
 			}else{
 				if(editCont.style.display == 'none'){
-					//$('rightCol').style.top = '273px';
-					$('rightCol').style.top = '218px';
+					$('rightCol').style.top = '273px';
 				}else{
 					$('rightCol').style.top = '383px';
 				}			
@@ -1102,35 +863,29 @@
 			activeCategory = cat;	
 			$('googleWidgets').innerHTML = '';
 			getGoogleGadgetList(url);
-			setTimeout('showSelect()', 500);
+			
 		}
 		
-		function gadgetListNextPage(searchWord){
+		function gadgetListNextPage(){
 			// Paginate the gadgets
 			var tempSpacers = $$('#response table b');
-			var currentItemCount = tempSpacers[2].innerHTML; //items ppag
+			var currentItemCount = tempSpacers[2].innerHTML;
+			var itemTotalNumber = tempSpacers[3].innerHTML;
 			url = 'http://www.google.com/ig/directory?hl=en&synd=open&start=' + currentItemCount + '&sa=N';
-			if (searchWord) {
-				url += '&q='+searchWord+'&btnG=Buscar+en+Google+Gadgets';
-				gadgetSearch(url);
-			} else {
-				url += '&cat=' + activeCategory;						
-				getGoogleGadgetList(url);
-			}			
+			url = url + '&cat=' + activeCategory;						
+			$('googleWidgets').innerHTML = '';
+			getGoogleGadgetList(url);
 		}
 	
-		function gadgetListPrevPage(searchWord){
+		function gadgetListPrevPage(){
 			// Paginate the gadgets
 			var tempSpacers = $$('#response table b');
 			var prevItemCount = tempSpacers[1].innerHTML - 25;
+			var itemTotalNumber = tempSpacers[3].innerHTML;
 			url = 'http://www.google.com/ig/directory?hl=en&synd=open&start=' + prevItemCount + '&sa=N';	
-			if (searchWord) {
-				url += '&q='+searchWord+'&btnG=Buscar+en+Google+Gadgets';
-				gadgetSearch(url);
-			} else {
-				url += '&cat=' + activeCategory;						
-				getGoogleGadgetList(url);
-			}
+			url = url + '&cat=' + activeCategory;
+			$('googleWidgets').innerHTML = '';
+			getGoogleGadgetList(url);
 		}
 		
 		function getGoogleGadgetList(url) { 
@@ -1149,7 +904,10 @@
 		            		var imageArray = [];
 		            		var linkArray = [];		            		
 		            		// Put the response into a hidden div
-		            		$('response').innerHTML = response;	            				            		
+		            		$('response').innerHTML = response;		            	
+		            		// Erase broken styles            		           	            		
+		            		styles = $$('#response style');
+		            		styles[0].innerHTML = '';		            		
 		            	
 		            		// Get all images into the container
 		            		gadgetsImages = $$('#response #container img');
@@ -1181,12 +939,12 @@
 							// take only the Title Divs
 							for(var i = 0; i < gadgetsContainers.size(); i++){
 							    var checkTitle = (gadgetsContainers[i].id).indexOf('title');
-							    if(checkTitle != -1){
+							    if(checkTitle != '-1'){
 							            titleArray[titleArray.length] = gadgetsContainers[i].innerHTML;
 							   }					
 							}
 							gadgetCount = 0;							
-							var parsedOutput = '';							
+							var parsedOutput;							
 							// mix it all into parsetOutput 
 							for(var i = 0; i < imageArray.size(); i++){
 								if(imageArray[i].title){
@@ -1232,7 +990,7 @@
 							var bolds = $$('#response b');
 							var multiplier = bolds[3].innerHTML;
 							var numberofGadgets = multiplier * 24;
-							$('gadgetItemCount').innerHTML = itemTotalNumber + ' items'; 
+							$('gadgetItemCount').innerHTML = numberofGadgets + ' items'; 
 		            	},
 		            onFailure : function(error) {}
 		            });     
@@ -1248,12 +1006,10 @@
 				gadgetItem.className = 'widgetContainer';
 			}
 		}	
-		
-		var searchTerm = '';
-		
+	
 		function doSearch(){
 			
-			searchTerm = $F('searchCriteria');
+			var searchTerm = $F('searchCriteria');
 			$('searchCriteriaWords2').innerHTML = searchTerm;
 			$('searchCriteriaWords1').innerHTML = searchTerm;
 			
@@ -1273,86 +1029,127 @@
 			            url : url, 
 			            onSuccess : function(response) {
 			            	          	
-			            	$('response').innerHTML = response;		            		
+			            	$('response').innerHTML = response;
+			            	
+			            	// Erase broken styles            		           	            		
+		            		styles = $$('#response style');
+		            		styles[0].innerHTML = '';	
 		            		
 			            	// Initialize Arrays to store valid data
 		            		var titleArray = [];
 							var imageArray = [];
 							var linkArray = [];
-							var linkID = '';
-							var idNum = '';
-							var title = '';
-							var links = $$('#response td.j a');
-							var inputs = $$('#response td.j input');
+							
+							tables = $$('#response table');
 							
 							// console.info(tables.size());
-							if(links.size() > 0) {
-							
-								for (var i = 0; i < links.size(); i++) {
-									linkID = links[i].readAttribute('id');
-									idNum = linkID.substr(5);
-									title = links[i].innerHTML;
-									title = title.replace("<b>", '');
-									title = title.replace("</b>", '');
-									titleArray[titleArray.length] = title;
-									imageArray[imageArray.length] = $('ss'+idNum);	
-								}
+							if(tables.size() > 6 ){
+								var cells = $A(tables[8].getElementsByTagName('td'));						
 								
-								for(var i = 0; i < inputs.size(); i++){								
-									var inputOnClick = new String((inputs[i]).readAttribute('onclick'));
-									var urlpos = inputOnClick.indexOf('&url=');								        
-							        var urlpos = urlpos + 1;
-									var trimmed = inputOnClick.substr(urlpos, inputOnClick.length);
-									var urlpos = trimmed.split('&pt=');
-									var finalUrl = 'http://gmodules.com/ig/ifr?' + urlpos[0];
-									linkArray[linkArray.length] = finalUrl;	
-								}
+								for(var i = 0; i < cells.size(); i++ ){
+								    if(cells[i].className == 'j'){
 								
-								var gadgetCount = 0;							
-								var parsedOutput = '';		
-								var gadgetTitle = '';
-													
-								// mix it all into parsetOutput 
-								for(var i = 0; i < imageArray.size(); i++){
-									gadgetCount++;
-									gadgetTitle = titleArray[i];
-									if(gadgetTitle.length > 23){ 
-										gadgetTitle = gadgetTitle.substr(0,23) + '...';
-									}
-									var widgetDiv = '<div class="widgetContainer">\n <div onmouseover="selectedGadgetItem(this)" onmouseout="selectedGadgetItem(this)" > \n <img alt="" width="70" src="' + imageArray[i].src + '\"/> \n <br>\n<a href="javascript:;" onclick="WidgetConfig.setWidget(\'' + linkArray[i] + '|'+ titleArray[i] + '\', true, \'gadget\'); modal.close();" style="display:block;">' + gadgetTitle + '</a>\n</div>\n </div> \n ';
-									parsedOutput += widgetDiv;
-									if( gadgetCount % 5 == 0 ){
-										parsedOutput += '<div style="clear:both;"></div>';
-										parsedOutput += '<div class="separateLine"></div>';
+								        var inputDir;
+								        var title;
+								
+								        tempTitle = $A(cells[i].getElementsByTagName('a'));
+								        tempInputDir = $A(cells[i].getElementsByTagName('input'));
+								
+								        inputOnClick = new String((tempInputDir[0]).getAttribute('onclick'));
+								        // var urlpos = inputDir.split('&url=');
+								        var urlpos = inputOnClick.indexOf('&url=');
+								        
+								        var urlpos = urlpos + 1;
+										var trimmed = inputOnClick.substr(urlpos, inputOnClick.length);
+										var urlpos = trimmed.split('&pt=');
+										var finalUrl = 'http://gmodules.com/ig/ifr?' + urlpos[0];
+										linkArray[linkArray.length] = finalUrl;								        
+								        
+								        // linkArray[linkArray.length] = urlpos[1];
+								        titleArray[titleArray.length] = tempTitle[0].innerHTML;        
+								    }
+								};
+								
+								var imgs = $A(tables[8].getElementsByTagName('img'));
+								for(var i = 0;i < imgs.size(); i++ ){
+								    if(imgs[i].title == 'Preview before adding'){
+								        imageArray[imageArray.length] = imgs[i];
+								    }
+								}
+								$('gadgetList').innerHTML = '';
+								
+								var output = ' '; 
+								var gadgetCount = 0;
+								
+								for(var i = 0 ; i < imageArray.size(); i++){
+								    var widgetDiv = '<div class="widgetContainer">\n <div onmouseover="selectedGadgetItem(this)" onmouseout="selectedGadgetItem(this)" > \n <img alt="" width="70" src="' + imageArray[i].src + '\"/> \n <br>\n<a href="javascript:;" onclick="WidgetConfig.setWidget(\'' + linkArray[i] + '\', true, \'gadget\');">' + titleArray[i] + '</a>\n</div>\n </div> \n ';
+								    output += widgetDiv;
+								    gadgetCount++;
+								    if( gadgetCount % 5 == 0 ){
+										output += '<div style="clear:both;"></div>';
+										output += '<div class="separateLine"></div>';
 							    	}
-								}							
+								    
+								}
+		
+								// Build Pagination 						
+								var bolds = $$('#response b');
+								
+								var currentIndex = Math.round(bolds[1].innerHTML);
+								var index = Math.round(bolds[2].innerHTML);
+								var total = Math.round(bolds[3].innerHTML);
+								
+								// console.info(currentIndex,index,total);
+								var next_prev = $$('#response a.npi');
+								
+								// console.info(next_prev);
+								
+								if((next_prev.size() != 0) && (next_prev != null)){
+									
+									if((currentIndex == 1)) {
+		
+										// alert('no prev page')
+										
+										var next_prev = $A($$('#response a.npi'));
+										// alert(next_prev.size());
+										var nextLink = next_prev[next_prev.size() - 1].href;
+										// alert(nextLink);								
+										var t = nextLink.split('salesforce.com');
+										nextLink = 'http://www.google.com' + t[1];
+										
+										output += '\n <a onclick="gadgetSearch(\'' + nextLink + '\');" href="javascript:;">Next Page</a>';					
+										
+									} else {
+										// alert((currentIndex + 24) + ' and total ' + total);
+										if((currentIndex + 24) >= total){
+											// alert('no next page')
+											var next_prev = $$('#response a.npi');
+											var prevLink = next_prev[0].href;
+											t = prevLink.split('salesforce.com');								
+											prevLink = 'http://www.google.com' + t[1];
+											output += '\n <a onclick="gadgetSearch(\'' + prevLink + '\')" href="javascript:;">Prev Page</a>';											
+											
+										} else {
+											
+												// alert('prev and next page');									
+												var next_prev = $$('#response a.npi');
+												var nextLink = next_prev[next_prev.size() - 1].href;
+												var prevLink = next_prev[0].href;								
+												var t = nextLink.split('salesforce.com');								
+												nextLink = 'http://www.google.com' + t[1];								
+												t = prevLink.split('salesforce.com');								
+												prevLink = 'http://www.google.com' + t[1];
+												output += '\n<br />\n <a onclick="gadgetSearch(\'' + prevLink + '\')" href="javascript:;">Prev Page</a> <a onclick="gadgetSearch(\'' + nextLink + '\')" href="javascript:;">Next Page</a>';	
+																					
+										}
+									}
+								}
 								
 								// Build List (for testing only now)
 								$('noResultContainer').hide();										
-								$('googleWidgets').update(parsedOutput);
-								$('googleWidgets').show();								
-								
-								// Paginate the gadgets
-								var tempSpacers = $$('#response table b');
-								var prevItem = tempSpacers[1].innerHTML;
-								var currentItemCount = tempSpacers[2].innerHTML;
-								var itemTotalNumber = tempSpacers[3].innerHTML;
-								var paginationElements = document.createElement('div');
-								paginationElements.style.clear = "both";
-								if(prevItem == 1){
-								    $(paginationElements).update('<a href="javascript:;" onclick="gadgetListNextPage(\''+searchTerm+'\');">more >> </a>');
-									//paginationElements.update('<a href="javascript:;" onclick="gadgetListNextPage(\''+searchTerm+'\');">more >> </a>');
-								} else {
-									if(currentItemCount == itemTotalNumber){
-										$(paginationElements).update('<a href="javascript:;" onclick="gadgetListPrevPage(\''+searchTerm+'\');"><< less</a>');
-										//paginationElements.update('<a href="javascript:;" onclick="gadgetListPrevPage(\''+searchTerm+'\');"><< less</a>');
-									} else{
-										$(paginationElements).update('<a href="javascript:;" onclick="gadgetListPrevPage(\''+searchTerm+'\');"><< less</a> <a href="javascript:;" onclick="gadgetListNextPage(\''+searchTerm+'\');">more >> </a>');
-										//paginationElements.update('<a href="javascript:;" onclick="gadgetListPrevPage(\''+searchTerm+'\');"><< less</a> <a href="javascript:;" onclick="gadgetListNextPage(\''+searchTerm+'\');">more >> </a>');
-									}
-								}								
-								$('googleWidgets').appendChild(paginationElements);
-								$('gadgetItemCount').update(itemTotalNumber + ' items');
+								$('googleWidgets').innerHTML = ' ';
+								$('googleWidgets').show();
+								$('googleWidgets').innerHTML = output;
 								
 							} else { 
 								$('googleWidgets').hide();
@@ -1368,26 +1165,172 @@
 				}
 			}				
 	</script>
- -->
- 
- 	<!-- Header -->
-	<apex:composition template="HeaderTemplate">
-		<apex:define name="moduleId"><apex:variable var="moduleId" value="headerTeams"/></apex:define>
-	    <apex:define name="module">{!$ObjectType.Team__c.label}</apex:define>
-	    <apex:define name="title">Administrator</apex:define>
-	    <apex:define name="search">
-	    	<c:Search module="team" />
-	    </apex:define>
-    </apex:composition>
+	
+	<style>
+		div#modal_container div#loadMessage span{
+			text-align: center !important;
+			font-weight: bold;
+		}
+		
+		.buttonColor{
+			background:#21637D none repeat scroll 0%;
+			border:0px solid;
+			color:#FFFFFF;
+			cursor:pointer;
+			font-size:12px;
+			xheight:22px;
+			margin-top:0px;
+			margin-left:10px;
+			text-align:center;
+			xwidth:190px;
+			font-weight:bold;
+			padding:6px 17px;
+			text-decoration:none;
+			float:left;
+		}
+		
+		div.widgetContainer {
+			background:#FFFFFF none repeat scroll 0%;
+			border:0px none;
+			float:left;
+			height:92px;
+			margin:0px;
+			padding:5px;
+			width:84px;
+		}
+		
+		div.widgetContainer div {
+			background:#FFFFFF none repeat scroll 0%;
+			border:1px solid #FFFFFF;
+			height:80px;
+			margin:0px;
+			padding:5px;
+			text-align:center;
+			width:70px;
+		}
+		
+		
+		div.widgetContainerSelected {
+			background:#DDF0F7 none repeat scroll 0%;
+			border:0px none;
+			float:left;
+			height:92px;
+			margin:0px;
+			padding:5px;
+			width:84px;
+		}
+		
+		div.widgetContainerSelected div {
+			background:#EFEFEF none repeat scroll 0%;
+			border:1px solid #99CCE7;
+			height:80px;
+			margin:0px;
+			padding:5px;
+			text-align:center;
+			width:70px;
+		}
+		
+		/* Overlay */
+		
+		div#overlayLoader {
+			background:#FFFFFF;
+			height:79%;
+			position:absolute;
+			bottom:0;
+			left:0;
+			z-index:9999;
+			width:100%;
+			opacity: 0.6;
+			-moz-opacity: 0.6;
+			filter: alpha(opacity=60);
+		}
+		
+		div#overlayLoader div.loader {
+			width:60px;
+			margin:0 auto;
+			height:60px;
+			margin-top:145px;
+		}
+		
+		.main_content .widgetConfigForm {
+			position:relative;
+			overflow:hidden;
+			clear:both;		
+		}
+		
+		* html .main_content .widgetConfigForm .teamTypeForm {
+			padding:0px !important;
+			clear:both;
+			width:100%;
+			overflow:hidden;
+		}
+		
+	
+	</style>   	
+	
+	<!-- ### AjaxProxy response container ### -->	
+	<div id="response" style="display:none;"></div>	
+	
+	<!-- ### Initialize the overlay box for modal.js ### -->
+	<a href="#modal_container" id="initializeModal" style="display:none;"></a>
+	<div id="modal_container"></div>
+	<script>createOverlay('initializeModal')</script>	
+	
+	<!-- ### Overlay's Includes ### -->
+	<apex:include pageName="AdminOverlayAddWidget" />
+	<apex:include pageName="AdminOverlayRemoveWidget" />
+	
+	<div id="loadMessage" style="display:none;">
+		<span id="loadMessageText"></span>
+	</div>
+	
+	<div class="header">
+		<!-- Page Section -->
+		<div class="page_section">
+			<div>
+				<h1 class="arial_black">Team</h1>
+				<h2 class="arial_black">Administrator</h2>
+			</div>
+		</div>
+		
+		
+		<!-- Search Box Container (always Centered) -->
+	    <div class="searchBox">
+	        <div>
+	            <div>
+	                <!-- Search Form -->
+	                <form action="/apex/TeamSearchResult" method="get">
+	                    <div class="search_box_input f_left">
+	                        <div class="legend">
+	                            Find Teams 
+	                        </div>
+	                        <input type="text" value="Enter keyword or name" name="key"   onfocus="setValue('');"  onblur="if(getValue(this)==''){ setValue('Enter keyword or name'); }"/>
+	                    </div><input type="submit" value="Search" class="search_btn f_left"/>
+	                </form><!-- Advanced Search Link -->
+	                <div class="advanced_search_cont">
+	                    <a href="javascript:;">Advanced Search</a>
+	                </div>
+	            </div>
+	       </div>
+	    </div>	
+		
+		
+		<!-- Help for this page -->
+		<div class="help">
+			<div>
+				<a href="javascript:;">Help for this page</a>&nbsp; <img src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/help_icon.gif')}" alt=""/>
+			</div>
+		</div>
+	</div>
 
 	<div class="breadcrumbs">
 		<div class="map">
 			<a class="smallLinkColor" href="/apex/AdminMainSetup">Administrator Setup</a>
 			<span class="linkSeparator"> > </span>
-			<a class="smallLinkColor" href="/apex/AdminTeamTypeList">{!$ObjectType.Team__c.label} Type List</a>
+			<a class="smallLinkColor" href="/apex/AdminTeamTypeList">Team Type List</a>
 			<span class="linkSeparator"> > </span>
 			<span class="smallLink">
-				{!$ObjectType.Team__c.label} Type <span id="breadcrumbCurrentAction"></span>
+				Team Type <span id="breadcrumbCurrentAction"></span>
 			</span>
 		</div>
 		<div class="buttons">
@@ -1404,61 +1347,71 @@
 			<img src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/WidgetConfig/infoSmall.gif')}"/>
 			Left side bar is NOT a configurable area.
 		</div>
-
-		<div class="teamWidget mySmallWidget" >
-			<!-- Widget Title -->		
-			<div class="thinHeader">
-				<div><div><h4>{{!$ObjectType.Team__c.label}type name}</h4></div></div>
-			</div>
-			<!-- Widget Container -->   		
-			<div class="box_content">
-				<div class="thinBody">
-					<div class="teamDescription">
-						<img src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/WidgetConfig/teamImg.gif')}" />
-						{!$ObjectType.Team__c.label} Description will appear here (<a href="javascript:;">more</a>)
-					</div>
-				</div>				
-			</div>
-			<!-- Widget Holder Foot -->
-			<div class="bottom_borders">
-				<div><div></div></div>
-			</div>
-		</div>
-		<div class="clear"></div>
-
+		
 		<!-- Rounded Box -->
-		<div class="teamWidget mySmallWidget" style="display:none">
-			<!-- Widget Title -->		
-			<div class="thinHeader">
-				<div><div><h4>{!$ObjectType.Team__c.label} Members</h4></div></div>
+		<div class="box_round_blue">
+			<!-- Header -->
+			<div class="header">
+				<div>
+					<div>
+						<h3>{Team type name}</h3>
+					</div>
+				</div>
 			</div>
-			<!-- Widget Container -->   		
+			<!-- Rounded Box Content -->
 			<div class="box_content">
-				<div class="thinBody">
-					<div class="teamMembersList">
-						<img src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/no_image_small.gif')}" />
-						<a href="javascript:;">Member's Fullname</a>
-						<span>current status</span>
-					</div>
-					<div class="teamMembersList">
-						<img src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/no_image_small.gif')}" />
-						<a href="javascript:;">Member's Fullname</a>
-						<span>current status</span>
-					</div>
-					<div class="teamMembersList">
-						<img src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/no_image_small.gif')}" />
-						<a href="javascript:;">Member's Fullname</a>
-						<span>current status</span>
-					</div>
-				</div>				
+				<div class="teamDescription">
+					<img src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/WidgetConfig/teamImg.gif')}" />
+					Team Description will appear here (<a href="javascript:;">more</a>)
+				</div>
 			</div>
-			<!-- Widget Holder Foot -->
 			<div class="bottom_borders">
-				<div><div></div></div>
+				<div>
+					<div>
+					</div>
+				</div>
 			</div>
 		</div>
-		<div class="clear"></div>
+		<!-- End Rounded Box -->
+		
+		<!-- Rounded Box -->
+		<div class="box_round_blue" style="display:none">
+			<!-- Header -->
+			<div class="header">
+				<div>
+					<div>
+						<h3>Team Members</h3>
+					</div>
+				</div>
+			</div>			
+			<!-- Rounded Box Content -->
+			<div class="box_content">
+				<div class="teamMembersList">
+					<img src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/no_image_small.gif')}" />
+					<a href="javascript:;">Member's Fullname</a>
+					<span>current status</span>
+				</div>
+				<div class="teamMembersList">
+					<img src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/no_image_small.gif')}" />
+					<a href="javascript:;">Member's Fullname</a>
+					<span>current status</span>
+				</div>
+				<div class="teamMembersList">
+					<img src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/no_image_small.gif')}" />
+					<a href="javascript:;">Member's Fullname</a>
+					<span>current status</span>
+				</div>
+			</div>
+			<div class="bottom_borders">
+				<div>
+					<div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- End Rounded Box -->
 	</div>
+	
 
 	<div class="main_content">
 		<!-- Information Panel -->
@@ -1469,7 +1422,7 @@
 		<div class="widgetConfigForm">
 			<!-- Section Title -->
 			<div class="teamsTitleBlue">
-				{!$ObjectType.Team__c.label} Type <span id="currentProcess"></span>
+				Team Type <span id="currentProcess"></span>
 			</div>
 			
 			<!-- Form Begin -->
@@ -1544,7 +1497,7 @@
 		<div class="widgetsArea">
 			<div class="rightCol rightColTop" id="rightCol">
 				<!-- Rounded Box -->
-				<div id="rightGroup" class="rightGroup"></div>
+				<div id="rightGroup"></div>
 				
 				<div class="addAnother"  align="center">
 					<a href="Javascript:;" onclick="WidgetConfig.createNewRightHolder();" class="blackBtn">
@@ -1560,12 +1513,9 @@
 		<div class="map"></div>
 		<div class="buttons">							
 			<span id="saveLayoutEventBottom"></span>
-			<a href="javascript:history.back()" class="blackbutton">
+			<a href="" class="blackbutton">
 				<span>Cancel</span>
 			</a>				
 		</div>
 	</div>
-	<script>
-		readPortalCSSRules();
-	</script>
 </apex:page>

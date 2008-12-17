@@ -60,5 +60,5 @@
         <type>Text</type>
     </nameField>
     <pluralLabel>Wiki</pluralLabel>
-    <sharingModel>Private</sharingModel>
+    <sharingModel>ReadWrite</sharingModel>
 </CustomObject>

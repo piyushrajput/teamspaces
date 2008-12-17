@@ -41,5 +41,5 @@
         <type>Text</type>
     </nameField>
     <pluralLabel>User Competencies</pluralLabel>
-    <sharingModel>Read</sharingModel>
+    <sharingModel>ReadWrite</sharingModel>
 </CustomObject>

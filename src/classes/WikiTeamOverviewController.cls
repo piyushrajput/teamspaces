@@ -1,120 +1,45 @@
-/**
-*@author Bruno Fagundez @ 07/14/2008
-*/
-public with sharing class WikiTeamOverviewController {
+public class WikiTeamOverviewController {
 	
 	// Team__c given in the url
 	public String TEAMID = System.currentPageReference().getParameters().get('tid');
-
-	/**
-	* Costructor
-	*/
-	public WikiTeamOverviewController () {
-		genContructor();
-	}	
 	
-	/**
-	* Return the Namespace Prefix
-	*@return String
-	*/
-	public String getNamespace () {
-        return TeamUtil.getNamespace();
-    } 
-	
-	/**
-	*@param String
-	*/
 	public void setTEAMID(String sTeam){
 		TEAMID = sTeam;		
 	}
+	
 	
 	// List of wiki pages
 	List<wikiPageInfo> wikiPagesList = new List<wikiPageInfo>();
 	// List of Wiki childs 
 	List<wikiPageInfo> wikiPagesChildList = new List<wikiPageInfo>();
 	
-	/**
-	*@return String
-	*/
 	public String getTEAMID (){
 		return TEAMID;
 	}
-
-	/**
-	* Executes on constructor
-	*/
-	public void genContructor () {
-		if (TEAMID != null && TEAMID != '') {
-			genWikiTree();
-			genTeamData();
-			genWikiSites();
-			genPermissions();
-			genPermissionsTeam();
-			if(!userPermissionsTeam.getCanView()) 
-				throw new CustomException('Insufficient Privileges');	
-		}
-	}
-
-	public UserPermissions userPermissions = new UserPermissions();
-		
-	/**
-	* Read user permissions for wiki obj
-	*/
-	public void genPermissions () {
-		userPermissions.setId(UserInfo.getUserId());
-		userPermissions.setTeam(TEAMID);
-		userPermissions.setObjectType('Wiki');
-		userPermissions.setPermissions();		
-	}
 	
-	/**
-	*@return UserPermissions
-	*/
-	public UserPermissions getUserPermissions () {
-		return userPermissions;
+	// Constructor 
+	public WikiTeamOverviewController () {
+		genWikiTree();
+		genTeamData();
+		genWikiSites();
+		genCntPagination();	
 	}
-	
-	public UserPermissions userPermissionsTeam = new UserPermissions();
-		
-	/**
-	* Read user permission for Team obj
-	*/
-	public void genPermissionsTeam () {
-		userPermissionsTeam.setId(UserInfo.getUserId());
-		userPermissionsTeam.setTeam(TEAMID);
-		userPermissionsTeam.setObjectType('Team');
-		userPermissionsTeam.setPermissions();		
-	}
-	
-	/**
-	*@return UserPermissions
-	*/	
-	public UserPermissions getUserPermissionsTeam () {
-		return userPermissionsTeam;
-	}
-	/* ---------------------------- */	
-
 	
 	Team__c currentTeam = new Team__c();
 	
-	/**
-	*@return Team__c
-	*/
 	public Team__c getCurrentTeam(){
 		return currentTeam;
 	}
 	
-	/**
-	* Load team for current teamid
-	*/
 	public void genTeamData(){
 		if(TEAMID != null)
 			currentTeam = [select Id, Name from Team__c where id =: TEAMID];
 	}
 	
-	/**
-	* Create wiki tree
-	*/	
+   	/* ------------------------------------ */
+   	/*   		WIKI Pages TREE				*/
+   	/* ------------------------------------ */	
+	
 	public void genWikiTree(){
 		wikiPagesList.clear();
 		List<WikiPage__c> wpl = new List<WikiPage__c>();
@@ -130,48 +55,55 @@ public with sharing class WikiTeamOverviewController {
 			wpage.Name = trunkText(wp.Name);
 			if(wp.WikiPages__r.size() != 0 ){
 				wpage.HasChilds = true;
+				
 				List<wikiPageChild> wikiChilds = new List<wikiPageChild>();
+				
 				for(WikiPage__c wpchild: wpchildListSecondLevel){
+					
 					if(wpchild.Parent__c == wp.Id){
+											
 						wikiPageChild wikiChildItem = new wikiPageChild();
 						
 						wikiChildItem.Id = wpchild.Id;
 						wikiChildItem.Parent = wpchild.Parent__c;
 						wikiChildItem.Name = trunkText(wpchild.Name);
+												
 						
 						if(wpchild.WikiPages__r.size() != 0){
 							wikiChildItem.HasChilds = true;
 						} else {
 							wikiChildItem.HasChilds = false;
 						}					
+						
 						wikiChilds.add(wikiChildItem);
 					}
 				}			
+				
 				wpage.childs = wikiChilds;
+				
 			} else {
 				wpage.HasChilds = false;
 			}	
+					
 			wikiPagesList.add(wpage);
 		}		
+		
 	}
 	
-	/*
-	* Tunk text, util method
-	*/
 	public String trunkText(String t){
+		
 		String text = '';
+		
 		if(t.length() > 30){
 			text = t.substring(0, 30 );
 			text = text + '...';
 		} else {
 			text = t;
 		}
+		
 		return text;		
 	}
 	
-	/**
-	* Class wikiPageInfo
-	*/
 	public class wikiPageInfo {
 		public String Id {set; get;}
 		public String Parent { set; get; }
@@ -180,9 +112,6 @@ public with sharing class WikiTeamOverviewController {
 		public List<wikiPageChild> childs { set; get; }
 	}
 	
-	/**
-	* Class wikiPageChild
-	*/
 	public class wikiPageChild {
 		public String Id {set; get;}
 		public String Parent { set; get; }
@@ -190,26 +119,20 @@ public with sharing class WikiTeamOverviewController {
 		public Boolean HasChilds { set; get; }
 	}
 	
-	/**
-	* Returns wiki page list
-	*@return List<wikiPageInfo>
-	*/
 	public List<wikiPageInfo> getWpl(){
 		return wikiPagesList;
 	}
    	
+   	/* ---------------------------- */
+   	/*   		WIKI SITES			*/
+   	/* ---------------------------- */	
+   	
 	public List<TeamWikis> wikiSites;
 	
-	/**
-	*@return List<TeamWikis>
-	*/
 	public List<TeamWikis> getWikiSites () {
 		return wikiSites;
 	}
 	
-	/**
-	* Read wikis for 10 teams
-	*/
 	public void genWikiSites () {
 		List<Team__c> sites;
 		sites = [select Id, Name, Description__c from Team__c order by Name limit 10];
@@ -223,85 +146,213 @@ public with sharing class WikiTeamOverviewController {
 			teamWikiItem.setPicture(item.Id);
 			teamWikiList.add(teamWikiItem);
 		}
+		
 		wikiSites = teamWikiList;
 	}
-	
+
+   	/* ---------------------------- */
+   	/*          PAGINATION		    */
+   	/* ---------------------------- */
+   	public Integer cntLetterSites = [select count() from Team__c];
+   	public Integer numSitesRows = 7;
+   	public Integer cntPagination;
+   	public Integer currentPagination = 1;
+   	public Integer firstRow = 0;
    	
-   	/**
-   	* Class TeamWikis 
-   	*/
+   	public void genCntPagination () {
+   		cntPagination = (cntLetterSites - (Math.mod(cntLetterSites, numSitesRows)))/ numSitesRows;	
+   		if (Math.mod(cntLetterSites, numSitesRows) != 0 ) {
+   			cntPagination++;
+   		}
+   	}
+   	
+   	public Integer getNumSitesRows () {
+   		return numSitesRows;
+   	}
+   	
+   	public Integer getFirstRow () {
+   		return firstRow;
+   	}
+   	
+   	public void nextPage () {
+   		currentPagination++;
+   		firstRow = firstRow + numSitesRows;	
+   	}
+   	
+   	public void prevPage () {
+   		currentPagination--;
+   		firstRow = firstRow - numSitesRows;	
+   	}
+   	
+   	public Integer getCurrentPagination () {
+   		return currentPagination;
+   	}
+   	
+   	public Integer getCntPagination () {
+   		return cntPagination;
+   	}
+   	
+
+   	/* ---------------------------- */
+   	/*        LETTER FILTER		    */
+   	/* ---------------------------- */
+	public List<String> lettersList = new List<String>{'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'};	
+
+	public class Letters {
+		String letter;
+		Boolean containSites;
+		Integer cntSites;
+		
+		public void setLetter (String letter) {
+			this.letter = letter;
+		}
+		public String getLetter () {
+			return letter;
+		}
+		public void setContainSites (Integer cntSites) {
+			if (cntSites == 0) {
+				this.containSites = false;
+			}
+			else {
+				this.containSites = true;
+			}
+		}
+		public Boolean getContainSites () {
+			return containSites;
+		}
+		
+		public Integer getCntSites () {
+			return cntSites;
+		}
+		
+		public void setCntSites (Integer cntSites) {
+			this.cntSites = cntSites;
+		}	
+	}
+	
+	public List<Letters> getLetterFilter () {
+		List<Letters> letterFilter = new List<Letters>();
+   		List<Team__c> teamList = new List<Team__c>();
+   		teamList = [select Name from Team__c];
+   		
+   		for (String item : lettersList) {
+   			Letters currentLetter = new Letters();
+   			Integer cntSites = 0;
+   			
+   			for (Team__c teamItem: teamList) {
+   				if (teamItem.Name.startsWith(item) || teamItem.Name.startsWith(item.toLowerCase())) {
+   					cntSites++;
+   				}
+   			}
+   			//System.debug('\n ///////////////////////// \n LETTER FILTER: \n Letter: ' + item + '\n Count Teams: ' + cntSites + '\n /////////////////// \n');
+   			currentLetter.setCntSites(cntSites);
+   			currentLetter.setLetter(item);
+   			currentLetter.setContainSites(cntSites);
+   			letterFilter.add(currentLetter);
+   		}
+   		return letterFilter;		
+	}
+   	
+    /* ---------------------------- */
+   	/*        TEAM WIKIS CLASS	    */
+   	/* ---------------------------- */  	
+   	
    	public class TeamWikis  {
    		String id;
    		String name;
    		String description;
    		String picture;
    		
-   		/**
-   		*@return String
-   		*/
    		public String getId () {
    			return id;
    		}
    		
-   		/**
-   		*@return String
-   		*/
    		public String getName () {
    			return name;
    		}
    		
-   		/**
-   		*@return String
-   		*/
    		public String getDescription () {
    			return description;
    		}
    		
-   		/**
-   		*@return String
-   		*/
    		public String getPicture () {
    			return picture;
    		}
    		
-   		/**
-   		*@param String
-   		*/
    		public void setId (String id) {
    			this.id = id;
    		}
    		
-   		/**
-   		*@param String
-   		*/
    		public void setName (String name) {
    			this.name = name;
    		}
    		
-   		/**
-   		*@param String
-   		*/
    		public void setDescription (String description) {
    			this.description = description;
    		}
    		
-   		/**
-   		*@param String
-   		*/
    		public void setPicture (String picture) {
+   			
    			List<Attachment> attach = new List<Attachment>();
 	    	attach = [select Id from Attachment where ParentId =:picture limit 1];
 	        if(attach.size() > 0) {	
 	        	this.picture = attach[0].Id;
-	        }else {
+	        }
+	        else {
 	        	this.picture = '';
 	        }
    		}  
    	}
    	
-	/**
-	* Class Wiki
-	*/
+   	public String letter = '';
+   	
+   	public void setLetter (String letter) {
+   		this.letter = letter;
+   	}
+   	
+	public void filterSites () {
+		List<Team__c> sites;
+		
+		if (System.currentPageReference().getParameters().get('ltr') != null && System.currentPageReference().getParameters().get('ltr') != '') {
+			letter = System.currentPageReference().getParameters().get('ltr');
+		}
+		
+		if (letter == 'ALL' || letter == null || letter == '') {
+			Integer allTeamCount = [select count() from Team__c];
+			cntPagination = (allTeamCount - (Math.mod(allTeamCount, numSitesRows)))/ numSitesRows;
+			if (Math.mod(allTeamCount, numSitesRows) != 0 ) {
+   				cntPagination++;
+   			}
+			sites = [select Id, Name, Description__c from Team__c order by Name limit 10];
+		}
+		else {
+			Integer lrtTeamCount = [select count() from Team__c where Name like :(letter + '%')];
+			cntPagination = (lrtTeamCount - (Math.mod(lrtTeamCount, numSitesRows)))/ numSitesRows;
+			if (Math.mod(lrtTeamCount, numSitesRows) != 0 ) {
+   				cntPagination++;
+   			}
+			sites = [select Id, Name, Description__c from Team__c where Name like :(letter + '%') order by Name];
+		}
+		
+		
+		List<TeamWikis> teamWikiList = new List<TeamWikis>();
+		for (Team__c item : sites) {
+			TeamWikis teamWikiItem = new TeamWikis();
+			teamWikiItem.setId(item.Id);
+			teamWikiItem.setName(item.Name);
+			teamWikiItem.setDescription(item.Description__c);
+			teamWikiItem.setPicture(item.Id);
+			teamWikiList.add(teamWikiItem);
+		}
+		
+		currentPagination = 1;
+		firstRow = 0;
+		wikiSites = teamWikiList;
+	}   	
+	
+   	/* ---------------------------- */
+   	/*   	RECENTLY UPDATED		*/
+   	/* ---------------------------- */
    	public class Wiki {
    		String name; 
    		String id;
@@ -313,9 +364,6 @@ public with sharing class WikiTeamOverviewController {
    		String shortDescription;
    		String modifiedByPicture;
    		
-		/**
-		*@param String
-		*/
 		public void setModifiedByPicture (String modById) {
 			String PictureId = '';
 			
@@ -327,137 +375,72 @@ public with sharing class WikiTeamOverviewController {
 					picture = itemProfile.get(0);
 			        if(picture.Picture__c == '' || picture.Picture__c == null) {                	                                          	 
 				     	PictureId = '';
-					}else {
+					} 
+					else {
 						PictureId = picture.Picture__c;
 					} 
-				}else {
+				}
+				else {
 					PictureId = '';
 				}
 			}
    			this.modifiedByPicture = PictureId ;
    		}
-   		
-   		/**
-   		*@return String
-   		*/
    		public String getModifiedByPicture () {
    			return modifiedByPicture;
    		}
    		
-   		/**
-   		*@param String
-   		*/
    		public void setParentName (String parentName) {
    			this.parentName = parentName;
    		}
-   		
-   		/**
-   		*@return String
-   		*/
    		public String getParentName () {
    			return parentName;
    		}
-   		
-   		/**
-   		*@param String
-   		*/
    		public void setParentId (String parentId) {
    			this.parentId = parentId;
    		}
-   		
-		/**
-		*@return String
-		*/   		
-		public String getParentId () {
+   		public String getParentId () {
    			return parentId;
    		}
-   		
-   		/**
-   		*@param String
-   		*/
    		public void setName (String Name) {
    			this.name = Name;
    		}
-   		
-   		/**
-   		*@return String
-   		*/
    		public String getName () {
    			return name;
    		}
-   		
    		public void setId (String Id) {
    			this.id = Id;
    		}
-   		
-   		/**
-   		*@return String
-   		*/
    		public String getId () {
    			return id;
    		}
-   		
-   		/**
-   		*@param String
-   		*/
    		public void setLastModifiedBy (String modById) {
    			User modBy = [select Name from User where id=:modById];
    			this.lastModifiedBy = modBy.Name;
    		}
-   		
-   		/**
-   		*@return String
-   		*/
    		public String getLastModifiedBy () {
    			return lastModifiedBy;
    		}
-   		
-   		/**
-   		*@param String
-   		*/
    		public void setLastModifiedById (String modById) {
    			this.lastModifiedById = modById;
    		}
-   		
-   		/**
-   		*@return String
-   		*/
    		public String getLastModifiedById () {
    			return lastModifiedById;
-   		}
-   		   		
-   		/**
-   		*@param Datetime
-   		*/
+   		}   		
    		public void setLastModifiedDate (DateTime dateMod) {
    			this.lastModifiedDate = dateMod.format();
    		}
-   		
-   		/**
-   		*@return String
-   		*/
    		public String getLastModifiedDate () {
    			return LastModifiedDate;
    		}
-   		
-   		/**
-   		*@param String
-   		*/
    		public void setShortDescription (String shortDescription) {
    			this.shortDescription = shortDescription;
    		}
-   		
-   		/**
-   		*@return String
-   		*/
    		public String getShortDescription () {
    			return shortDescription;
    		}   		
    	}	
    	
-   	/**
-   	*@return List<Wiki>
-   	*/
    	public List<Wiki> getRecentlyUpdated () {
    		List<Wiki> wikis = new List<Wiki>();
    		for (WikiPage__c item: [ SELECT Team__r.Name, Id, Name, ShortDescription__c, LastModifiedById, LastModifiedDate FROM WikiPage__c WHERE Team__c =: TEAMID ORDER BY LastModifiedDate desc limit 10]) {
@@ -476,23 +459,22 @@ public with sharing class WikiTeamOverviewController {
    		return wikis;
    	}
 
-   	/**
-   	*@return List<FavoriteWikis__c>
-   	*/
+   	/* ---------------------------- */
+   	/*   	   MY FAVOURITES		*/
+   	/* ---------------------------- */
+   	
    	public List<FavoriteWikis__c> getFavorite () {
    		return	[ SELECT WikiPage__r.Team__r.Id, WikiPage__r.Team__r.Name, WikiPage__r.Name, WikiPage__r.Id FROM FavoriteWikis__c WHERE User__c = :UserInfo.getUserId() order by WikiPage__r.Name LIMIT 5];
    	}    	
    	
-   	/**
-   	*@return Integer
-   	*/
    	public Integer getCntFav () {
    		return [select count() from FavoriteWikis__c where User__c = :UserInfo.getUserId()];
    	} 
-
-	/**
-	*@return List<Wiki>
-	*/
+  	
+    /* ---------------------------- */
+   	/*   	  MY RECENT CHANGES		*/
+   	/* ---------------------------- */
+   	 	
    	public List<Wiki> getMyRecentChanges () {
    		List<Wiki> wikis = new List<Wiki>();
    		for (WikiPage__c item: [ SELECT Team__r.Id , Team__r.Name, Id, Name, ShortDescription__c, LastModifiedById, LastModifiedDate FROM WikiPage__c WHERE LastModifiedById =:UserInfo.getUserId() ORDER BY LastModifiedDate desc limit 5]) {
@@ -509,9 +491,6 @@ public with sharing class WikiTeamOverviewController {
    		return wikis;
    	}
    	
-   	/**
-   	*@return Integer
-   	*/
    	public Integer getCntMyRecentChanges () {
    		return [ SELECT count() FROM WikiPage__c WHERE LastModifiedById =:UserInfo.getUserId()];
    	}

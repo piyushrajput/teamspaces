@@ -1,13 +1,11 @@
 <apex:page sidebar="false" tabStyle="Team__c">    
     <!-- Javascript -->
 	<!-- Prototype + Scriptaculous -->
-	<apex:includeScript value="{!URLFOR($Resource.Script_aculo_us, 'prototype.js')}"/>
-	<apex:includeScript value="{!URLFOR($Resource.Script_aculo_us, 'scriptaculous.js')}"/>
-	<apex:includeScript value="{!URLFOR($Resource.Script_aculo_us, 'effects.js')}"/>
-	<!-- Portal Support -->
-	<apex:includeScript value="{!$Resource.portalSupport}"/>
+	<script type="text/javascript" src="{!URLFOR($Resource.Script_aculo_us, 'prototype.js')}"></script>
+	<script type="text/javascript" src="{!URLFOR($Resource.Script_aculo_us, 'scriptaculous.js')}"></script>
+	<script type="text/javascript" src="{!URLFOR($Resource.Script_aculo_us, 'effects.js')}"></script>
 	<!-- Common Js for All Sections -->
-	<apex:includeScript value="{!URLFOR($Resource.commonResources, 'inc/js/common.js')}"/>
+	<script type="text/javascript" src="{!URLFOR($Resource.commonResources, 'inc/js/common.js')}"></script>
 	<!-- Common css for modal -->
 	<link rel="stylesheet" media="screen" href="{!URLFOR($Resource.commonResources, 'inc/css/modal.css')}" />	
 	<!-- CSS de TS -->
@@ -16,126 +14,158 @@
 	<link rel="stylesheet"  href="{!URLFOR($Resource.TeamsResources, '/inc/css/teamOverlyManage.css')}" />	
 	<link rel="stylesheet"  href="{!URLFOR($Resource.TeamsResources, '/inc/css/teamMemberList.css')}" />	
 	<link rel="stylesheet"  href="{!URLFOR($Resource.TeamsResources, '/inc/css/teamListContributorMemberView.css')}" />	
-    <!-- CSS styles for Portal Integration -->
-    <apex:stylesheet value="{!URLFOR($Resource.portalStyles, 'portal.css')}" />
-    <apex:stylesheet value="{!URLFOR($Resource.TeamsResources, 'inc/css/headerTeams.css')}" />
-	<apex:stylesheet value="{!URLFOR($Resource.TeamsResources, 'inc/css/widgetTeam.css')}" />
-	
-	<!-- Header -->
-	<apex:composition template="HeaderTemplate">
-		<apex:define name="moduleId"><apex:variable var="moduleId" value="headerTeams"/></apex:define>
-	    <apex:define name="module">Team</apex:define>
-	    <apex:define name="title">Tasks</apex:define>
-	    <apex:define name="search">
-	    	<c:Search module="team" />
-	    </apex:define>
-    </apex:composition>
-    
-    <!-- Sidebar -->
+ 
+    <!-- Header -->
+    <div class="header">
+        <!-- Page Section -->
+        <div class="page_section">
+            <div>
+                <h1 class="arial_black">Team</h1>
+                <h2 class="arial_black">Tasks</h2>
+            </div>
+        </div>
+		<!-- Search Box Container (always Centered) -->
+	    <div class="searchBox">
+	        <div>
+	            <div>
+	                <!-- Search Form -->
+	                <form action="/apex/TeamSearchResult" method="get"> 
+	                    <div class="search_box_input f_left">
+	                        <div class="legend">
+	                            Find Teams 
+	                        </div>
+	                        <input type="text" value="Enter keyword or name" name="key"   onfocus="setValue('');"  onblur="if(getValue(this)==''){ setValue('Enter keyword or name'); }"/>
+	                    </div><input type="submit" value="Search" class="search_btn f_left"/>
+	                </form><!-- Advanced Search Link -->
+	                <div class="advanced_search_cont">
+	                    <a href="javascript:;">Advanced Search</a>
+	                </div>
+	            </div>
+	       </div>
+	    </div>	
+        <!-- Help for this page -->
+        <div class="help">
+            <div>
+                <a href="javascript:;">Help for this page</a>&nbsp; <img src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/help_icon.gif')}" alt=""/>
+            </div>
+        </div>
+    </div><!-- Sidebar -->
     <div class="sidebar">
-		<div class="teamWidget mySmallWidget" >
-			<!-- Widget Title -->		
-			<div class="thinHeader">
-				<div><div><h4>Team Name 1</h4></div></div>
-			</div>
-			<!-- Widget Container -->   		
-			<div class="box_content">
-				<div class="thinBody">
-	                <div class="f_left">
-	                    <img src="{!URLFOR($Resource.TeamsResources, 'images/layout/pic.gif')}" class="imgLeft"/>
-	                </div class="f_right">
-	                <div class="text_box_description">
-	                    Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nunc adipiscing posuere elit ... (<a><span class="text_link_underlineColor">more</span></a>)
-	                </div>
-				</div>				
-			</div>
-			<!-- Widget Holder Foot -->
-			<div class="bottom_borders">
-				<div><div></div></div>
-			</div>
-		</div>
-		<div class="clear"></div>
-		<div class="teamWidget mySmallWidget" >
-			<!-- Widget Title -->		
-			<div class="thinHeader">
-				<div><div><h4>Team Admins</h4></div></div>
-			</div>
-			<!-- Widget Container -->   		
-			<div class="box_content">
-				<div class="thinBody">
-	            	<div class="team_detail_marginTop"></div>
-	                <!-- Repeat Members -->
-	                <div class="team_detail_commentedItemLeft">
-	                    <img class="imgSmallLeft" src="{!URLFOR($Resource.TeamsResources, 'images/layout/user.jpg')}"/>
-	                    <div class="team_detail_commentedItemText">
-	                        <a ><span class="text_link_underlineColor">Charly Brown</span></a>
-	                        <img class="imgState" src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/offline.gif')}"/>
-	                    </div>
-	                    <div class='team_detail_commentedItemDesc'>
-	                        is working...
-	                    </div>
-	                </div>
-	                <!-- Repeat Members  -->
-	                <div class="team_detail_commentedItemLeft">
-	                    <img class="imgSmallLeft" src="{!URLFOR($Resource.TeamsResources, 'images/layout/user.jpg')}"/>
-	                    <div class="team_detail_commentedItemText">
-	                        <a href="#"><span class="text_link_underlineColor">Charly Brown</span></a>
-	                        <img class="imgState" src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/online.gif')}"/>
-	                    </div>
-	                    <div class='team_detail_commentedItemDesc'>
-	                        is working...
-	                    </div>
-	                </div>
-	                <!-- Repeat Members  -->
-	                <div class="team_detail_commentedItemLeft">
-	                    <img class="imgSmallLeft" src="{!URLFOR($Resource.TeamsResources, 'images/layout/user.jpg')}"/>
-	                    <div class="team_detail_commentedItemText">
-	                        <a href="#"><span class="text_link_underlineColor">Charly Brown</span></a>
-	                        <img class="imgState" src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/offline.gif')}"/>
-	                    </div>
-	                    <div class='team_detail_commentedItemDesc'>
-	                        is working...
-	                    </div>
-	                </div>
-				</div>				
-			</div>
-			<!-- Widget Holder Foot -->
-			<div class="bottom_borders">
-				<div><div></div></div>
-			</div>
-		</div>
-		<div class="clear"></div>
+        <div class="box_round_blue">
+            <!-- Header -->
+            <div class="header">
+                <div>
+                    <div>
+                        <h3>Team Name 1</h3>
+                    </div>
+                </div>
+            </div>
+            <!-- Rounded Box Content -->
+            <div class="box_content">
+                <div class="f_left">
+                    <img src="{!URLFOR($Resource.TeamsResources, 'images/layout/pic.gif')}" class="imgLeft"/>
+                </div class="f_right">
+                <div class="text_box_description">
+                    Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nunc adipiscing posuere elit ... (<a><span class="text_link_underlineColor">more</span></a>)
+                </div>
+            </div>
+            <div class="bottom_borders">
+                <div>
+                    <div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="box_round_blue">
+            <!-- Header -->
+            <div class="header">
+                <div>
+                    <div>
+                        <h3>Team Admins</h3>
+                    </div>
+                </div>
+            </div>
+            <!-- Rounded Box Content -->
+            <div class="box_content">
+            	<div class="team_detail_marginTop"></div>
+                <!-- Repeat Members -->
+                <div class="team_detail_commentedItemLeft">
+                    <img class="imgSmallLeft" src="{!URLFOR($Resource.TeamsResources, 'images/layout/user.jpg')}"/>
+                    <div class="team_detail_commentedItemText">
+                        <a ><span class="text_link_underlineColor">Charly Brown</span></a>
+                        <img class="imgState" src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/offline.gif')}"/>
+                    </div>
+                    <div class='team_detail_commentedItemDesc'>
+                        is working...
+                    </div>
+                </div>
+                <!-- Repeat Members  -->
+                <div class="team_detail_commentedItemLeft">
+                    <img class="imgSmallLeft" src="{!URLFOR($Resource.TeamsResources, 'images/layout/user.jpg')}"/>
+                    <div class="team_detail_commentedItemText">
+                        <a href="#"><span class="text_link_underlineColor">Charly Brown</span></a>
+                        <img class="imgState" src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/online.gif')}"/>
+                    </div>
+                    <div class='team_detail_commentedItemDesc'>
+                        is working...
+                    </div>
+                </div>
+                <!-- Repeat Members  -->
+                <div class="team_detail_commentedItemLeft">
+                    <img class="imgSmallLeft" src="{!URLFOR($Resource.TeamsResources, 'images/layout/user.jpg')}"/>
+                    <div class="team_detail_commentedItemText">
+                        <a href="#"><span class="text_link_underlineColor">Charly Brown</span></a>
+                        <img class="imgState" src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/offline.gif')}"/>
+                    </div>
+                    <div class='team_detail_commentedItemDesc'>
+                        is working...
+                    </div>
+                </div>
+                <div style="margin-bottom:15px">
+                </div>
+            </div>
+            <div class="bottom_borders">
+                <div>
+                    <div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
     <!-- Main Content Div -->
     <div class="main_cont">
         <div>
             <div class="main_cont">
                 <div>
-					<div class="holder">
-                        <table>
-                        	<tr>
-                        		<td class="teamTitleButton" >Members</td>
-								<td style="padding-left: 100px; width: 300px;" >
-									<a class="blackbtn"><span>Web meeting</span></a>
-									<a class="blackbtn"><span>Conference call</span></a>
-								</td>	
-							</tr>
+                     <div class="holder">
+                        <table><tr><td class="teamTitleButton" >                        	
+							 Members 							
+                        </td>
+						<td style="padding-left: 100px; width: 300px;" ><a class="blackbtn"><span>Web meeting</span></a><a class="blackbtn"><span>Conference call</span></a>
+						</td>	
+						</tr>
 						</table> 
-					</div>
-                        <div class="border_body_top">&nbsp;</div> 
-						<table>
-							<tr>
+                           								
+								
+                        </div>
+						
+                        <div class="border_body_top">
+                            &nbsp;
+                        </div> 
+						<table><tr>
 								<td  width="10px">
                                     <span class="imgArrowMargin">&nbsp;</span>
                                 </td>
 								<td class="member_title_filter" width="90px">
                                     Filter
                                 </td>  
-							</tr>
+								 </tr>
 						</table>
 						<table>
 							<tr>
+								
 								<td >
+									
 									<ul class="letterFilter" style="clear:both;position:relative;overflow:hidden;">
 										<li>
 											<a value="ALL" class="AllBtn">ALL</a>
@@ -176,291 +206,293 @@
 						<div class="pagination" style="border-top:1px solid #D1D1D1;padding-top:4px;margin:0px 30px 0px 7px;width:782px">
 							<div class="pages">
 								<ul>
-									<li class="prev"><a href="javascript:;">Previous Page</a></li>
-									<li>(1</li>
-									<li>-</li>
-									<li>5)</li>
-									<li class="next">Next Page</li>
-								</ul>								
-							</div>
-						</div>                
-                      	<table cellspacing="0" cellpadding="0" class="pageList">
-                        	<thead>
-	                            <tr>
-	                            	<td  width="40px"><input type="checkbox" /> </td>
-	                            	<td  colspan="2" class="member_title_description" width="210px">
-	                                    Name
-	                                </td>                               
-									 <td  class="member_title_description" width="110px">
-	                                    Company
-	                                </td>
-	                                <td class="member_title_description" width="170px">
-	                                    Title
-	                                </td>
-	                                <td class="member_title_description" width="100px">
-	                                    Team Profile
-	                                </td>
-								    <td class="member_title_description" width="160px">
-	                                    Team Role
-	                                </td>
-	                            </tr>
-                        	</thead>
-	                        <!-- Description  -->
-	                        <tbody>
-	                            <tr>
-	                            	<td  width="40px"><input type="checkbox" /> </td>
-	                            	<td  width="33px">
-	                                    <img src="{!URLFOR($Resource.TeamsResources, 'images/temp/team.gif')}" alt="" />
-	                                </td>
-	                                <td  class="member_detail_description">
-	                                    <span class="text_link_underlineColor">Bob White </span>
-	                                   <img class="imgState" src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/online.gif')}"/>
-									      <img class="imgState" src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/skype.gif')}"/>
-									</td>                             
-	                                <td class="member_detail_description">
-	                                  ABC .inc
-	                                </td>
-	                                <td  class="member_detail_description">
-	                                    Director, Hosted Contact Management Solutions
-	                                </td>
-									<td class="member_detail_description">
-	                                   Member
-	                                </td>
-									<td class="member_detail_description">
-	                                    tmayne@abc.comOwner of SBDF Implementation
-	                                </td>
-	                            </tr>  
-								<!-- Repeat  --> 
-								<tr>
-	                            	<td  width="40px"><input type="checkbox" /> </td>
-	                            	<td  width="33px">
-	                                    <img src="{!URLFOR($Resource.TeamsResources, 'images/temp/team.gif')}" alt="" />
-	                                </td>
-	                                <td  class="member_detail_description">
-	                                    <span class="text_link_underlineColor">Bob White </span>
-	                                   	<img class="imgState" src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/online.gif')}"/>
-									    <img class="imgState" src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/skype.gif')}"/>
-									</td>                             
-	                                <td class="member_detail_description">
-	                                  	ABC .inc
-	                                </td>
-	                                <td  class="member_detail_description">
-	                                    Director, Hosted Contact Management Solutions
-	                                </td>
-									<td class="member_detail_description">
-	                                	Member
-	                                </td>
-									<td class="member_detail_description">
-	                                    tmayne@abc.comOwner of SBDF Implementation
-	                            	</td>
-	                            </tr>  
-								<!-- Repeat  --> 
-								<tr>
-	                            	<td width="40px"><input type="checkbox" /> </td>
-	                            	<td width="33px">
-	                                    <img src="{!URLFOR($Resource.TeamsResources, 'images/temp/team.gif')}" alt="" />
-	                                </td>
-	                                <td  class="member_detail_description">
-	                                    <span class="text_link_underlineColor">Bob White </span>
-	                                   	<img class="imgState" src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/online.gif')}"/>
-										<img class="imgState" src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/skype.gif')}"/>
-									</td>                             
-	                                <td class="member_detail_description">
-	                                  	ABC .inc
-	                                </td>
-	                                <td  class="member_detail_description">
-	                                    Director, Hosted Contact Management Solutions
-	                                </td>
-									<td class="member_detail_description">
-	                                   	Member
-	                                </td>
-									<td class="member_detail_description">
-	                                    tmayne@abc.comOwner of SBDF Implementation
-	                                </td>
-	                            </tr>        
-								<!-- Repeat  --> 
-								<tr>
-	                            	<td width="40px"><input type="checkbox" /> </td>
-	                            	<td width="33px">
-	                                    <img src="{!URLFOR($Resource.TeamsResources, 'images/temp/team.gif')}" alt="" />
-	                                </td>
-	                                <td class="member_detail_description">
-	                                    <span class="text_link_underlineColor">Bob White </span>
-	                                   	<img class="imgState" src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/online.gif')}"/>
-										<img class="imgState" src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/skype.gif')}"/>
-									</td>                             
-	                                <td class="member_detail_description">
-	                                  	ABC .inc
-	                                </td>
-	                                <td  class="member_detail_description">
-	                                    Director, Hosted Contact Management Solutions
-	                                </td>
-									<td class="member_detail_description">
-	                                   	Member
-	                                </td>
-									<td class="member_detail_description">
-	                                    tmayne@abc.comOwner of SBDF Implementation
-	                                </td>
-	                            </tr>  
-								<!-- Repeat  --> 
-								<tr>
-	                            	<td width="40px"><input type="checkbox" /> </td>
-	                            	<td width="33px">
-	                                    <img src="{!URLFOR($Resource.TeamsResources, 'images/temp/team.gif')}" alt="" />
-	                                </td>
-	                                <td class="member_detail_description">
-	                                    <span class="text_link_underlineColor">Bob White </span>
-	                                   	<img class="imgState" src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/online.gif')}"/>
-									   	<img class="imgState" src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/skype.gif')}"/>
-									</td>                             
-	                                <td class="member_detail_description">
-	                                 	ABC .inc
-	                                </td>
-	                                <td  class="member_detail_description">
-	                                    Director, Hosted Contact Management Solutions
-	                                </td>
-									<td class="member_detail_description">
-	                                   	Member
-	                                </td>
-									<td class="member_detail_description">
-	                                    tmayne@abc.comOwner of SBDF Implementation
-	                                </td>
-	                            </tr>  
-								<!-- Repeat  --> 
-								<tr>
-	                            	<td  width="40px"><input type="checkbox" /> </td>
-	                            	<td  width="33px">
-	                                	<img src="{!URLFOR($Resource.TeamsResources, 'images/temp/team.gif')}" alt="" />
-	                                </td>
-	                                <td  class="member_detail_description">
-	                                	<span class="text_link_underlineColor">Bob White </span>
-	                                   	<img class="imgState" src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/online.gif')}"/>
-									    <img class="imgState" src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/skype.gif')}"/>
-									</td>                             
-	                                <td class="member_detail_description">
-	                                  	ABC .inc
-	                                </td>
-	                                <td  class="member_detail_description">
-	                                    Director, Hosted Contact Management Solutions
-	                                </td>
-									<td class="member_detail_description">
-	                                   	Member
-	                                </td>
-									<td class="member_detail_description">
-	                                    tmayne@abc.comOwner of SBDF Implementation
-	                                </td>
-	                            </tr>  
-								<!-- Repeat  --> 
-								<tr>
-	                            	<td  width="40px"><input type="checkbox" /> </td>
-	                            	<td  width="33px">
-	                                	<img src="{!URLFOR($Resource.TeamsResources, 'images/temp/team.gif')}" alt="" />
-	                                </td>
-	                                <td class="member_detail_description">
-	                                   	<span class="text_link_underlineColor">Bob White </span>
-	                                   	<img class="imgState" src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/online.gif')}"/>
-									   	<img class="imgState" src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/skype.gif')}"/>
-									</td>                             
-	                                <td class="member_detail_description">
-	                                  	ABC .inc
-	                                </td>
-	                                <td class="member_detail_description">
-	                                    Director, Hosted Contact Management Solutions
-	                                </td>
-									<td class="member_detail_description">
-	                                   	Member
-	                                </td>
-									<td class="member_detail_description">
-	                                    tmayne@abc.comOwner of SBDF Implementation
-	                                </td>
-	                            </tr>        
-								<!-- Repeat  --> 
-								<tr>
-	                            	<td  width="40px"><input type="checkbox" /> </td>
-	                            	<td  width="33px">
-	                                    <img src="{!URLFOR($Resource.TeamsResources, 'images/temp/team.gif')}" alt="" />
-	                                </td>
-	                                <td class="member_detail_description">
-	                                    <span class="text_link_underlineColor">Bob White </span>
-	                                   	<img class="imgState" src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/online.gif')}"/>
-										<img class="imgState" src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/skype.gif')}"/>
-									</td>                             
-	                                <td class="member_detail_description">
-	                                  	ABC .inc
-	                                </td>
-	                                <td  class="member_detail_description">
-	                                    Director, Hosted Contact Management Solutions
-	                                </td>
-									<td class="member_detail_description">
-	                                  	Member
-	                                </td>
-									<td class="member_detail_description">
-	                                    tmayne@abc.comOwner of SBDF Implementation
-	                                </td>
-	                            </tr>     
-								<!-- Repeat  --> 
-								<tr>
-	                            	<td  width="40px"><input type="checkbox" /> </td>
-	                            	<td  width="33px">
-	                                	<img src="{!URLFOR($Resource.TeamsResources, 'images/temp/team.gif')}" alt="" />
-	                                </td>
-	                                <td  class="member_detail_description">
-	                                    <span class="text_link_underlineColor">Bob White </span>
-	                                   	<img class="imgState" src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/online.gif')}"/>
-										<img class="imgState" src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/skype.gif')}"/>
-									</td>                             
-	                                <td class="member_detail_description">
-	                                  	ABC .inc
-	                                </td>
-	                                <td  class="member_detail_description">
-	                                    Director, Hosted Contact Management Solutions
-	                                </td>
-									<td class="member_detail_description">
-	                                   	Member
-	                                </td>
-									<td class="member_detail_description">
-	                                    tmayne@abc.comOwner of SBDF Implementation
-	                                </td>
-	                            </tr>        
-								<!-- Repeat  --> 
-								<tr>
-	                            	<td width="40px"><input type="checkbox" /> </td>
-	                            	<td width="33px">
-	                                    <img src="{!URLFOR($Resource.TeamsResources, 'images/temp/team.gif')}" alt="" />
-	                                </td>
-	                                <td class="member_detail_description">
-	                                    <span class="text_link_underlineColor">Bob White </span>
-	                                   	<img class="imgState" src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/online.gif')}"/>
-									    <img class="imgState" src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/skype.gif')}"/>
-									</td>                             
-	                                <td class="member_detail_description">
-	                                  	ABC .inc
-	                                </td>
-	                                <td  class="member_detail_description">
-	                                    Director, Hosted Contact Management Solutions
-	                                </td>
-									<td class="member_detail_description">
-	                                   	Member
-	                                </td>
-									<td class="member_detail_description">
-	                                    tmayne@abc.comOwner of SBDF Implementation
-	                                </td>
-	                            </tr>                                    
-	                        </tbody>
-                    	</table>                          
-                    </div>
-                   	<div class="pagination">
-						<div class="pages">
-							<ul>
 								<li class="prev"><a href="javascript:;">Previous Page</a></li>
 								<li>(1</li>
 								<li>-</li>
 								<li>5)</li>
 								<li class="next">Next Page</li>
-							</ul>								
-						</div>						
-					</div> 						
-					<div class="divblackbtn" ></div>
+								</ul>								
+							</div>
+						
+						</div>                
+                      <table cellspacing="0" cellpadding="0" class="pageList">
+                        <thead>
+                            <tr>
+                            	<td  width="40px"><input type="checkbox" /> </td>
+                            	<td  colspan="2" class="member_title_description" width="210px">
+                                    Name
+                                </td>                               
+								 <td  class="member_title_description" width="110px">
+                                    Company
+                                </td>
+                                <td class="member_title_description" width="170px">
+                                    Title
+                                </td>
+                                <td class="member_title_description" width="100px">
+                                    Team Profile
+                                </td>
+							    <td class="member_title_description" width="160px">
+                                    Team Role
+                                </td>
+                            </tr>
+                        </thead>
+                        <!-- Description  -->
+                        <tbody>
+                            <tr>
+                            	<td  width="40px"><input type="checkbox" /> </td>
+                            	<td  width="33px">
+                                    <img src="{!URLFOR($Resource.TeamsResources, 'images/temp/team.gif')}" alt="" />
+                                </td>
+                                <td  class="member_detail_description">
+                                    <span class="text_link_underlineColor">Bob White </span>
+                                   <img class="imgState" src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/online.gif')}"/>
+								      <img class="imgState" src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/skype.gif')}"/>
+							</td>                             
+                                <td class="member_detail_description">
+                                  ABC .inc
+                                </td>
+                                <td  class="member_detail_description">
+                                    Director, Hosted Contact Management Solutions
+                                </td>
+								<td class="member_detail_description">
+                                   Member
+                                </td>
+								<td class="member_detail_description">
+                                    tmayne@abc.comOwner of SBDF Implementation
+                                </td>
+                            </tr>  
+						<!-- Repeat  --> 
+							  <tr>
+                            	<td  width="40px"><input type="checkbox" /> </td>
+                            	<td  width="33px">
+                                    <img src="{!URLFOR($Resource.TeamsResources, 'images/temp/team.gif')}" alt="" />
+                                </td>
+                                <td  class="member_detail_description">
+                                    <span class="text_link_underlineColor">Bob White </span>
+                                   <img class="imgState" src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/online.gif')}"/>
+								      <img class="imgState" src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/skype.gif')}"/>
+							</td>                             
+                                <td class="member_detail_description">
+                                  ABC .inc
+                                </td>
+                                <td  class="member_detail_description">
+                                    Director, Hosted Contact Management Solutions
+                                </td>
+								<td class="member_detail_description">
+                                   Member
+                                </td>
+								<td class="member_detail_description">
+                                    tmayne@abc.comOwner of SBDF Implementation
+                                </td>
+                            </tr>  
+					<!-- Repeat  --> 
+							  <tr>
+                            	<td  width="40px"><input type="checkbox" /> </td>
+                            	<td  width="33px">
+                                    <img src="{!URLFOR($Resource.TeamsResources, 'images/temp/team.gif')}" alt="" />
+                                </td>
+                                <td  class="member_detail_description">
+                                    <span class="text_link_underlineColor">Bob White </span>
+                                   <img class="imgState" src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/online.gif')}"/>
+								      <img class="imgState" src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/skype.gif')}"/>
+							</td>                             
+                                <td class="member_detail_description">
+                                  ABC .inc
+                                </td>
+                                <td  class="member_detail_description">
+                                    Director, Hosted Contact Management Solutions
+                                </td>
+								<td class="member_detail_description">
+                                   Member
+                                </td>
+								<td class="member_detail_description">
+                                    tmayne@abc.comOwner of SBDF Implementation
+                                </td>
+                            </tr>        
+						<!-- Repeat  --> 
+							  <tr>
+                            	<td  width="40px"><input type="checkbox" /> </td>
+                            	<td  width="33px">
+                                    <img src="{!URLFOR($Resource.TeamsResources, 'images/temp/team.gif')}" alt="" />
+                                </td>
+                                <td  class="member_detail_description">
+                                    <span class="text_link_underlineColor">Bob White </span>
+                                   <img class="imgState" src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/online.gif')}"/>
+								      <img class="imgState" src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/skype.gif')}"/>
+							</td>                             
+                                <td class="member_detail_description">
+                                  ABC .inc
+                                </td>
+                                <td  class="member_detail_description">
+                                    Director, Hosted Contact Management Solutions
+                                </td>
+								<td class="member_detail_description">
+                                   Member
+                                </td>
+								<td class="member_detail_description">
+                                    tmayne@abc.comOwner of SBDF Implementation
+                                </td>
+                            </tr>  
+							<!-- Repeat  --> 
+							  <tr>
+                            	<td  width="40px"><input type="checkbox" /> </td>
+                            	<td  width="33px">
+                                    <img src="{!URLFOR($Resource.TeamsResources, 'images/temp/team.gif')}" alt="" />
+                                </td>
+                                <td  class="member_detail_description">
+                                    <span class="text_link_underlineColor">Bob White </span>
+                                   <img class="imgState" src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/online.gif')}"/>
+								      <img class="imgState" src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/skype.gif')}"/>
+							</td>                             
+                                <td class="member_detail_description">
+                                  ABC .inc
+                                </td>
+                                <td  class="member_detail_description">
+                                    Director, Hosted Contact Management Solutions
+                                </td>
+								<td class="member_detail_description">
+                                   Member
+                                </td>
+								<td class="member_detail_description">
+                                    tmayne@abc.comOwner of SBDF Implementation
+                                </td>
+                            </tr>  
+							<!-- Repeat  --> 
+							  <tr>
+                            	<td  width="40px"><input type="checkbox" /> </td>
+                            	<td  width="33px">
+                                    <img src="{!URLFOR($Resource.TeamsResources, 'images/temp/team.gif')}" alt="" />
+                                </td>
+                                <td  class="member_detail_description">
+                                    <span class="text_link_underlineColor">Bob White </span>
+                                   <img class="imgState" src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/online.gif')}"/>
+								      <img class="imgState" src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/skype.gif')}"/>
+							</td>                             
+                                <td class="member_detail_description">
+                                  ABC .inc
+                                </td>
+                                <td  class="member_detail_description">
+                                    Director, Hosted Contact Management Solutions
+                                </td>
+								<td class="member_detail_description">
+                                   Member
+                                </td>
+								<td class="member_detail_description">
+                                    tmayne@abc.comOwner of SBDF Implementation
+                                </td>
+                            </tr>  
+						<!-- Repeat  --> 
+							  <tr>
+                            	<td  width="40px"><input type="checkbox" /> </td>
+                            	<td  width="33px">
+                                    <img src="{!URLFOR($Resource.TeamsResources, 'images/temp/team.gif')}" alt="" />
+                                </td>
+                                <td  class="member_detail_description">
+                                    <span class="text_link_underlineColor">Bob White </span>
+                                   <img class="imgState" src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/online.gif')}"/>
+								      <img class="imgState" src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/skype.gif')}"/>
+							</td>                             
+                                <td class="member_detail_description">
+                                  ABC .inc
+                                </td>
+                                <td  class="member_detail_description">
+                                    Director, Hosted Contact Management Solutions
+                                </td>
+								<td class="member_detail_description">
+                                   Member
+                                </td>
+								<td class="member_detail_description">
+                                    tmayne@abc.comOwner of SBDF Implementation
+                                </td>
+                            </tr>        
+						<!-- Repeat  --> 
+							  <tr>
+                            	<td  width="40px"><input type="checkbox" /> </td>
+                            	<td  width="33px">
+                                    <img src="{!URLFOR($Resource.TeamsResources, 'images/temp/team.gif')}" alt="" />
+                                </td>
+                                <td  class="member_detail_description">
+                                    <span class="text_link_underlineColor">Bob White </span>
+                                   <img class="imgState" src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/online.gif')}"/>
+								      <img class="imgState" src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/skype.gif')}"/>
+							</td>                             
+                                <td class="member_detail_description">
+                                  ABC .inc
+                                </td>
+                                <td  class="member_detail_description">
+                                    Director, Hosted Contact Management Solutions
+                                </td>
+								<td class="member_detail_description">
+                                   Member
+                                </td>
+								<td class="member_detail_description">
+                                    tmayne@abc.comOwner of SBDF Implementation
+                                </td>
+                            </tr>     
+									<!-- Repeat  --> 
+							  <tr>
+                            	<td  width="40px"><input type="checkbox" /> </td>
+                            	<td  width="33px">
+                                    <img src="{!URLFOR($Resource.TeamsResources, 'images/temp/team.gif')}" alt="" />
+                                </td>
+                                <td  class="member_detail_description">
+                                    <span class="text_link_underlineColor">Bob White </span>
+                                   <img class="imgState" src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/online.gif')}"/>
+								      <img class="imgState" src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/skype.gif')}"/>
+							</td>                             
+                                <td class="member_detail_description">
+                                  ABC .inc
+                                </td>
+                                <td  class="member_detail_description">
+                                    Director, Hosted Contact Management Solutions
+                                </td>
+								<td class="member_detail_description">
+                                   Member
+                                </td>
+								<td class="member_detail_description">
+                                    tmayne@abc.comOwner of SBDF Implementation
+                                </td>
+                            </tr>        
+						<!-- Repeat  --> 
+							  <tr>
+                            	<td  width="40px"><input type="checkbox" /> </td>
+                            	<td  width="33px">
+                                    <img src="{!URLFOR($Resource.TeamsResources, 'images/temp/team.gif')}" alt="" />
+                                </td>
+                                <td  class="member_detail_description">
+                                    <span class="text_link_underlineColor">Bob White </span>
+                                   <img class="imgState" src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/online.gif')}"/>
+								      <img class="imgState" src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/skype.gif')}"/>
+							</td>                             
+                                <td class="member_detail_description">
+                                  ABC .inc
+                                </td>
+                                <td  class="member_detail_description">
+                                    Director, Hosted Contact Management Solutions
+                                </td>
+								<td class="member_detail_description">
+                                   Member
+                                </td>
+								<td class="member_detail_description">
+                                    tmayne@abc.comOwner of SBDF Implementation
+                                </td>
+                            </tr>                                    
+                        </tbody>
+                    </table>                          
+                    </div>
+                   <div class="pagination">
+							<div class="pages">
+								<ul>
+								<li class="prev"><a href="javascript:;">Previous Page</a></li>
+								<li>(1</li>
+								<li>-</li>
+								<li>5)</li>
+								<li class="next">Next Page</li>
+								</ul>								
+							</div>						
+						</div> 						
+					<div class="divblackbtn" >
+					</div>
 					<div style="padding-left:300px">
 						<a class="blackbtn"><span>Web meeting</span></a><a class="blackbtn"><span>Conference call</span></a>
 					</div>        
@@ -468,8 +500,5 @@
             </div>
         </div>
     </div>
-	<script>
-		readPortalCSSRules();
-	</script>
 </html>
 </apex:page>

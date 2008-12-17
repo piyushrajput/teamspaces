@@ -1,10 +1,10 @@
 public class TeamsWidgetWikiController {
 
 
-	Id teamspaceId = System.currentPageReference().getParameters().get('id');
+	Id teamspaceId;
 	
-	public void setTeamspaceId (Id teamspaceId) {
-		this.teamspaceId = teamspaceId;	
+	public TeamsWidgetWikiController() {
+		teamspaceId = System.currentPageReference().getParameters().get('id');
 	}
 	
 	public Id getTeamspaceId() {
@@ -12,14 +12,15 @@ public class TeamsWidgetWikiController {
 	}
 	
 	public List<WikiPage__c> getWikiPages() {
-		List<WikiPage__c> pages = new List<WikiPage__c>();
-		if(teamspaceId !=null) {
-			pages = [SELECT Name
+		
+		if(teamspaceId==null) return new List<WikiPage__c>();
+		
+		List<WikiPage__c> pages = [SELECT Name
 									   FROM WikiPage__c
 									   WHERE Team__c =: teamspaceId
 									   ORDER BY LastModifiedDate DESC
 									   LIMIT 5];
-		}
+		
 		return pages;
 	}
 	

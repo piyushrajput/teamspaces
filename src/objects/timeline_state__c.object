@@ -5,7 +5,6 @@
         <fullName>Project__c</fullName>
         <label>Project</label>
         <referenceTo>Project2__c</referenceTo>
-        <relationshipLabel>timeline states</relationshipLabel>
         <type>Lookup</type>
     </fields>
     <fields>
@@ -39,5 +38,5 @@
         <type>Text</type>
     </nameField>
     <pluralLabel>timeline states</pluralLabel>
-    <sharingModel>Read</sharingModel>
+    <sharingModel>ReadWrite</sharingModel>
 </CustomObject>

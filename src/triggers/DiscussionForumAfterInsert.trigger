@@ -1,38 +1,26 @@
-trigger DiscussionForumAfterInsert on DiscussionForum__c bulk (after insert) {
-	if (!TeamUtil.currentlyExeTrigger) {
-		try {	
-			
-			if(trigger.isInsert){
-				List<String> teamSharingNames = new List<String>();
-				for(DiscussionForum__c newForum : trigger.new) {
-					teamSharingNames.add('teamSharing' + newForum.team__c);
-				}
-		       	List<Group> groupTeam = [select id, Name from Group where Name in:teamSharingNames];
-		       	
-		       	List<DiscussionForum__Share> newDiscussionForumShare = new List<DiscussionForum__Share>();	
-		       		
-		        for(DiscussionForum__c newForum : trigger.new){
-		            DiscussionForum__Share fShare = new DiscussionForum__Share();
-		            fShare.ParentId = newForum.Id;
-		            String groupName = 'teamSharing' + newForum.team__c;
-		            Boolean findGroup = false;
-			        Integer countGroup = 0;
-			        while (!findGroup && countGroup < groupTeam.size()) {
-			        	if (groupTeam[countGroup].Name == groupName) {
-			        		findGroup = true;
-			        		fShare.UserOrGroupId = groupTeam[countGroup].Id;
-			        	}
-			        	countGroup++;
-			        }
-			        
-		            fShare.AccessLevel = 'Read';
-		            fShare.RowCause = 'Manual';
-		            newDiscussionForumShare.add(fShare);
-		        }
-		        insert newDiscussionForumShare;
-			}
-		} finally {
-        	TeamUtil.currentlyExeTrigger = false;
-		}
-	} 			
+trigger DiscussionForumAfterInsert on DiscussionForum__c (after insert) {
+/*
+	 	
+	 for (DiscussionForum__c f : Trigger.new) 
+	 {
+	 	if (f.Parent_Forum__c != null)
+	 	{
+	 		DiscussionForum__c parentForum = [SELECT Id, SubForums__c From DiscussionForum__c WHERE id =: f.Parent_Forum__c ];
+	  		
+	  		parentForum.Has_Sub_Forums__c = true;
+	  		 
+	  		if (parentForum.SubForums__c != null)
+	  		{
+	  			parentForum.SubForums__c = parentForum.SubForums__c + 1;
+	  		}
+	  		else
+	  		{
+	  			parentForum.SubForums__c = 1;
+	  		}
+	  			
+	  		update parentForum;
+	  	}
+	}
+	  	
+	*/ 
 }

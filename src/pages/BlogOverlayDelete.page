@@ -1,0 +1,24 @@
+<apex:page sidebar="false" showHeader="false">
+<div id="deleteBlogOverlay" style="display:none;">
+	  <!-- Title of Dialog -->
+  <div class="modalTitle">
+	  <div class="title">Delete Blog</div>
+	  <div class="closeEvent">
+		  <a href="Javascript:;" onclick="modal.close();"><img src="{!URLFOR($Resource.BlogsResources, 'images/common/icons/close_dialog.gif')}" alt="Close Window" title="Close Window" /></a>
+	  </div>
+  </div>
+  <!-- Content  -->
+  <div class="modalContent">
+	  <!-- Dialog Body  -->
+	  <div class="modalMessage padding_30px bottom_border_gray">
+		  Are you sure you want to delete this Blog? <br />
+		  <span class="gray">Once an Blog is deleted, the comments posted to this blog will not be recoverable.</span>
+	  </div>
+	  <!--Actions  -->
+	  <div class="actions">
+		  <a href="javascript:;" class="button">Continue and delete</a>
+		  <a href="javascript:;" onclick="modal.close();" class="button gray">Cancel</a>
+	  </div>
+  </div><!-- END Modal Content -->
+</div>
+</apex:page>

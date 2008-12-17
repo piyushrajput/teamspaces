@@ -104,17 +104,11 @@
         <length>255</length>
         <type>Text</type>
     </fields>
-    <fields>
-        <fullName>isPrivate__c</fullName>
-        <defaultValue>false</defaultValue>
-        <label>isPrivate</label>
-        <type>Checkbox</type>
-    </fields>
     <label>People</label>
     <nameField>
         <label>People Name</label>
         <type>Text</type>
     </nameField>
     <pluralLabel>People</pluralLabel>
-    <sharingModel>Read</sharingModel>
+    <sharingModel>ReadWrite</sharingModel>
 </CustomObject>

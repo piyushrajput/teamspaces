@@ -1,95 +1,31 @@
-/**
-*@author Martin Prado @ 06/18/2008
-*/
-public with sharing class TeamsWidgetMilestonesController {
+public class TeamsWidgetMilestonesController {
 
 	String teamId;
 	
-	/**
-	*@param String
-	*/
+	// Setter method for Team Id variable
 	public void setTeamId(String id) {
-		if (teamId == null || teamId != id) {
-			teamId = id;
-			genPermissions();
-			genAllProjectTasks();	
-		}	
+		teamId = id;		
 	}
-	
-	/**
-	*@return String 
-	*/
+	// Getter Team Id variable
 	public String getTeamId(){
 		return teamId;
-	} 
-	
-	public Boolean sidebar = false;
-	
-	/**
-	* Set Sidebar
-	*@param Boolean
-	*/
-	public void setSidebar (Boolean b){
-		sidebar = b;
 	}
 	
-	/**
-	* Get Sidebar
-	*@return Boolean
-	*/
-	public Boolean getSidebar(){
-		return sidebar;
-	}	
-	
+			
 	//Size of List
 	Integer listSize = 0;
-	/**
-	*@return Integer
-	*/
 	public Integer getListSize (){
 		return listSize;
 	}
 	
-	/**
-	* For rerender use
-	*/
-	public void refresh(){}
-	
-	
-	public UserPermissions userPermissions = TeamsDetailController.userPermission.clone();
-	
-	/**
-	* Read user permissions
-	*/
-	public void genPermissions () {
-		userPermissions.setId(UserInfo.getUserId());
-		userPermissions.setTeam(teamId);
-		userPermissions.setObjectType('Project');
-		userPermissions.setPermissions();		
+	public TeamsWidgetMilestonesController(){   
 	}
 	
-	/**
-	*@return UserPermissions
-	*/
-	public UserPermissions getUserPermissions () {
-		if(userPermissions == null) genPermissions();
-		return userPermissions;
-	}
-
-	List<ProjectTasks> result = new List<ProjectTasks>();
-	/**
-	*@return List<ProjectTasks>
-	*/
+	// New of List of milestones
 	public List<ProjectTasks> getAllProjectTasks() {
-		return result;
-	}
 	
-	/**
-	* Read List of milestones
-	*/
-	public void genAllProjectTasks() {
-		List<ProjectTask__c> milestones = new List<ProjectTask__c>();
-		result = new List<ProjectTasks>();
+	List<ProjectTask__c> milestones = new List<ProjectTask__c>();
+	List<ProjectTasks> result = new List<ProjectTasks>();	
 		milestones = [Select 		
 	 					p.Name,
 	 					p.Priority__c, 
@@ -125,9 +61,11 @@ public with sharing class TeamsWidgetMilestonesController {
 							WHERE u.id IN: users]){
 			userMap.put(u.Id, u);							
 		}
-	 	
+	 				 
 		for( ProjectTask__c milestone : milestones) {
-			if(milestone.Percent_Completed__c < 100){				
+			
+			if(milestone.Percent_Completed__c < 100){
+				
 				ProjectTasks miMilestones = new ProjectTasks();
 				miMilestones.setTaskName(milestone.Name);
 				miMilestones.setTaskId(milestone.Id);
@@ -145,18 +83,13 @@ public with sharing class TeamsWidgetMilestonesController {
 			}
 			
 		 } 
-		 
-		 milestones.clear();
-		 users.clear();
-		 userMap.clear();
+
+		 return result;
 	 }
 		
 					
 	
 	
-	 /**
-	 * Class ProjectTasks
-	 */
 	 public class ProjectTasks {
 		
         public String TaskId;
@@ -173,240 +106,196 @@ public with sharing class TeamsWidgetMilestonesController {
         public String isToLate;
       	DateTime now = System.now();
 		
-      	/**
-      	* Constructor
-      	*/
-      	public ProjectTasks(){		
-      		
-      	}		
 		
-		/**
-		*@return Integer
-		*/
 		public Integer getDayPercent() {
       		return DayPercent;
         }
         
-        /**
-        * For progress bar use (wide widget use)
-        *@param Datetime end date
-        *@param Double duration
-        */
         public void setDayPercent(Datetime endD, Double dur){
+			
 			Date miToday = Date.today();
 			Date endDate = Date.newInstance(endD.year(), endD.month(),endD.day());
 			Integer DayDiference = miToday.daysBetween(endDate);
 			if(dur > 0){
 				DayDiference = DayDiference -  dur.intValue();
 			}  
-           	if(DayDiference < 0){
+           	if(DayDiference < 0)
+           	{
         		DayPercent = 0;	
-        	}else {
+        	}
+        	else 
+        	{
         		 DayDiference = DayDiference * 4;
-        		 if(DayDiference > 290){
+        		 if(DayDiference > 290)
+        		 {
         		 	DayPercent = 290;
-        		 }else {
+        		 }
+        		 else 
+        		 {
         		 	DayPercent = DayDiference;
         		 }
         	}
         }
         
-        /**
-        *@return Integer
-        */
         public Integer getDayPercentRight() {
       		return DayPercentRight;
         }
         
-        /**
-        *@param Datetime end date (thin widget use)
-        *@param Double duration
-        */
         public void setDayPercentRight(Datetime endD, Double dur){
+			
 			Date miToday = Date.today();
 			Date endDate = Date.newInstance(endD.year(), endD.month(),endD.day());
 			Integer DayDiference = miToday.daysBetween(endDate);
 			if(dur > 0){
 				DayDiference = DayDiference -  dur.intValue();
 			}  
-           	if(DayDiference < 0){
+           	if(DayDiference < 0)
+           	{
         		DayPercentRight = 0;	
-        	}else {
+        	}
+        	else 
+        	{
         		 DayDiference = DayDiference * 4;
-        		 if(DayDiference > 131){
+        		 if(DayDiference > 131)
+        		 {
         		 	DayPercentRight = 132;
-        		 }else {
+        		 }
+        		 else 
+        		 {
         		 	DayPercentRight = DayDiference;
         		 }
         	}
         }
+        
+      	public ProjectTasks(){		
+      	}
       	
-      	/**
-      	*@return String
-      	*/
       	public String getPicture() {
       		return Picture;
         }
       	
-      	/**
-      	*@return String
-      	*/
       	public String getEndDate() {
       		return EndDate;
         }
         
-        /**
-        *@param Datetime end time
-        *@param Double dif
-        */
-        public void setEndDate(Datetime endD, Double dif){			
+        public void setEndDate(Datetime endD, Double dif)
+        {			
 			if(dif > 0){
 				endD = endD.addDays(-dif.intValue());
 			}  
            	EndDate =  endD.format('MM/dd/yyyy');
         }
         
-  		/**
-  		*@return String
-  		*/
   		public String getIsToLate() {
       		return isToLate;
         }
         
-        /**
-        *@param Datetime end date
-        *@param Double dif
-        */
-        public void setEndDateRight(Datetime endD, Double dif){	
+         public void setEndDateRight(Datetime endD, Double dif)
+        {
+        	
 			if(dif > 0){
 				endD = endD.addDays(-dif.intValue());
-			}
-           	EndDateRight =  endD.format('(MM/dd)');
+			}  
+
+           	 EndDateRight =  endD.format('(MM/dd)');
         }
         
-  		/**
-  		*@return String
-  		*/
   		public String getEndDateRight() {
       		return EndDateRight;
         }
         
-        /**
-        *@param Datetime end date
-        */
-        public void setIsToLate(Datetime endD){	
+        
+        public void setIsToLate(Datetime endD){
+        	
         	Date miToday = Date.today();
 			Date myEndDate = Date.newInstance(endD.year(), endD.month(),endD.day());
 			Integer DayDiference = miToday.daysBetween(myEndDate); 	
         	
         	if(DayDiference < 1){
         		isToLate = 'latter';	
-        	}else {
+        	}
+            else {
             	isToLate = '';
             }
         }
         
-		/**
-		*@return String
-		*/       
         public String getDaysCount() {
       		return DaysCount;
         }
        
-        /**
-        *@param Datetime end date
-        *@param Double duration
-        */
         public void setDaysCount(Datetime endD, Double dur){
+        	
         	Date miToday = Date.today();
 			Date endDate = Date.newInstance(endD.year(), endD.month(),endD.day());
 			Integer DayDiference = miToday.daysBetween(endDate);   
 			if(dur > 0){
 				DayDiference = DayDiference -  dur.intValue();
 			}   	
-        	if(DayDiference < 2){	
-        		if(DayDiference == 1){
+        	if(DayDiference < 2)
+        	{	
+        		if(DayDiference == 1 )
+        		{
         			DaysCount = 'Tomorrow';
-        		}else if(DayDiference == 0 ){
+        		}
+        		else if(DayDiference == 0 )
+        		{
         			DaysCount = 'Today';
-        		}else {
+        		}
+        		else 
+        		{
+        			
         			DaysCount =  (DayDiference*-1) +' days late';
         		}
-        	}else {
+        		
+        	}
+        	else 
+        	{
         		 DaysCount = DayDiference +' days';
+           	 	
         	}
+
         }
         
-        /**
-        *@param User
-        */
         public void setUser(User user){
-        	if(user != null){
-	            UserName = user.name;
-	            UserId = user.Id;
-	        	
-	            if(user.People__r.size() > 0 &&
-	               user.People__r[0].Picture__c != null &&
-	               user.People__r[0].Picture__c != '') {
-	           		Picture = user.People__r[0].Picture__c;
-	            } else {
-	            	Picture = ' ';
-	            }
-        	}
+        	
+            UserName = user.name;
+            UserId = user.Id;
+        	
+            if(user.People__r.size() > 0 &&
+               user.People__r[0].Picture__c != null &&
+               user.People__r[0].Picture__c != '') {
+           		Picture = user.People__r[0].Picture__c;
+            } else {
+            	Picture = ' ';
+            }
         }
         
-        /**
-        *@return String
-        */
         public String getUserId() {
       		return UserId;
         }
         
-    	/**
-    	*@return String
-    	*/
     	public String getUserName() {
        		return UserName;
         }
       	
-      	/**
-      	*@return String
-      	*/
       	public String getTaskId() {
             return TaskId;
         }
-        
-        /**
-        *@param String
-        */
         public void setTaskId(String idTask){
             TaskId = idTask;
         }
         
-      	/**
-      	*@return String
-      	*/
       	public String getPriority() {
             return Priority;
         }
         
-        /**
-        *@param String
-        */
         public void setPriority(String pr){
             Priority = pr;
         }
         
-        /**
-        *@return String
-        */
         public String getTaskName() {
             return TaskName;
         }
-        
-        /**
-        *@param String
-        */
         public void setTaskName(String sName){
             TaskName = sName;
         }

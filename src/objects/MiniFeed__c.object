@@ -16,7 +16,6 @@
         <fullName>Team__c</fullName>
         <label>Team</label>
         <referenceTo>Team__c</referenceTo>
-        <relationshipLabel>Mini Feeds</relationshipLabel>
         <type>Lookup</type>
     </fields>
     <fields>
@@ -203,14 +202,6 @@
                 <fullName>MilestoneCompleted</fullName>
                 <default>false</default>
             </picklistValues>
-            <picklistValues>
-                <fullName>TaskDelete</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>MilestoneDelete</fullName>
-                <default>false</default>
-            </picklistValues>
             <sorted>false</sorted>
         </picklist>
         <type>Picklist</type>
@@ -219,7 +210,7 @@
         <fullName>User__c</fullName>
         <label>User</label>
         <referenceTo>User</referenceTo>
-        <relationshipName>MiniFeed</relationshipName>
+        <relationshipName>User</relationshipName>
         <type>Lookup</type>
     </fields>
     <label>Mini Feed</label>
@@ -228,5 +219,5 @@
         <type>Text</type>
     </nameField>
     <pluralLabel>Mini Feeds</pluralLabel>
-    <sharingModel>Private</sharingModel>
+    <sharingModel>ReadWrite</sharingModel>
 </CustomObject>

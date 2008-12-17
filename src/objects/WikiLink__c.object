@@ -5,15 +5,6 @@
         <fullName>FromLink__c</fullName>
         <label>FromLink</label>
         <referenceTo>WikiPage__c</referenceTo>
-        <relationshipLabel>WikiLinks (FromLink)</relationshipLabel>
-        <relationshipName>FromLink</relationshipName>
-        <type>Lookup</type>
-    </fields>
-    <fields>
-        <fullName>Team__c</fullName>
-        <label>Team</label>
-        <referenceTo>Team__c</referenceTo>
-        <relationshipLabel>Wiki Links</relationshipLabel>
         <relationshipName>WikiLinks</relationshipName>
         <type>Lookup</type>
     </fields>
@@ -21,8 +12,7 @@
         <fullName>ToLink__c</fullName>
         <label>ToLink</label>
         <referenceTo>WikiPage__c</referenceTo>
-        <relationshipLabel>WikiLinks (ToLink)</relationshipLabel>
-        <relationshipName>ToLink</relationshipName>
+        <relationshipName>WikiLinks1</relationshipName>
         <type>Lookup</type>
     </fields>
     <label>Wiki Link</label>
@@ -31,5 +21,5 @@
         <type>Text</type>
     </nameField>
     <pluralLabel>WikiLinks</pluralLabel>
-    <sharingModel>Private</sharingModel>
+    <sharingModel>ReadWrite</sharingModel>
 </CustomObject>

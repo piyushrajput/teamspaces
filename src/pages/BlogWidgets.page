@@ -1,0 +1,98 @@
+<apex:page sidebar="false" controller="BlogsOverviewController" tabStyle="BlogEntry__c">
+
+		<!-- /////////////////////////////////////////////////////
+		                THIS WEEK'S Most Commented
+		     //////////////////////////////////////////////////// -->
+	
+		<div class="box_round_orange">
+			<div class="header"  >
+				<div>
+					<div>
+						<div class="subtitle">This Week's</div>
+						<h3>Most Commented</h3>					
+					</div>
+				</div>
+			</div>			
+			<!-- Rounded Box Content  -->
+			<div class="box_content">
+				<div class="contentHolder">									
+					<apex:repeat value="{!MostCommented}" var="blogsMostCommented" >
+						<div class="sideBarItemLeft" style="clear:both;">
+							<apex:image styleClass="f_left" url="{!IF(blogsMostCommented.ImageURL != '', blogsMostCommented.ImageURL, URLFOR($Resource.commonResources, 'images/placeholders/unknowteam_small.gif'))}" alt="" />
+							<div class="sideBoxLinks" >
+								<a href="/apex/BlogDetails?id={!blogsMostCommented.IdUser}">{!blogsMostCommented.Title}</a> ( {!blogsMostCommented.Comments} )
+							</div>
+							<div class="sideBoxUnderLink" >
+								{!blogsMostCommented.Name}
+							</div>
+						</div>
+					</apex:repeat>						
+				</div>
+			</div>
+			<div class="bottom_borders"><div><div></div></div></div>
+		</div>
+		
+			<!-- /////////////////////////////////////////////////////
+		                THIS WEEK'S Most Active People
+		     //////////////////////////////////////////////////// -->
+		     
+	 <div class="box_round_orange">
+		<div class="header"  >
+			<div>
+				<div>
+					<div class="subtitle">This Week's</div>
+					<h3>Most Active People</h3>					
+				</div>
+			</div>
+		</div>
+		<!-- Rounded Box Content -->
+		<div class="box_content">
+			<div class="contentHolder">
+				<apex:repeat value="{!MostActiveUsers}" var="activeUser" rows="5">
+					<div class="sideBarItemLeft" style="clear:both;">
+						<apex:image styleClass="f_left" style="width:25px;" value="/servlet/servlet.FileDownload?file={!activeUser.Picture}" />
+						<div class="sideBoxLinks" >
+							<a href="/apex/PeopleProfileDisplay?id={!activeUser.Id}">{!activeUser.Name}</a>
+						</div>
+						<div class="sideBoxUnderLink" >
+							{!activeUser.PostedBlogs} posts | {!activeUser.CommentsCount} comments 
+						</div>
+					</div>
+				</apex:repeat>
+			</div>
+		</div>
+		<div class="bottom_borders"><div><div></div></div></div>
+	</div>
+		
+		<!-- /////////////////////////////////////////////////////
+		                THIS WEEK'S My Recent
+		     //////////////////////////////////////////////////// -->
+		     
+  	<div class="box_round_orange">
+		<div class="header"  >
+			<div>
+				<div>
+					<div class="subtitle">My Recent</div>
+					<h3>Post</h3>					
+				</div>
+			</div>
+		</div>
+		<!-- Rounded Box Content -->
+		<div class="box_content">
+			<div class="contentHolder"><span style="{!IF(MyRecentBlogsSize == 0, 'display:block', 'display:none')};">You don't have blogs created</span>
+				<apex:repeat value="{!MyRecentBlogs}" var="myBlogs">
+						<div class="sideBarItemLeft" >
+							<apex:image styleClass="f_left" url="{!IF(myBlogs.ImageURL != '', myBlogs.ImageURL, URLFOR($Resource.commonResources, 'images/placeholders/unknowteam_small.gif'))}" alt="" />
+							<div class="sideBoxLinks" >
+								<a href="/apex/BlogDetails?id={!myBlogs.IdUser}">{!myBlogs.Title}</a> ({!myBlogs.Comments})
+							</div>
+							<div class="sideBoxUnderLink" >
+								{!myBlogs.Name}
+							</div>
+						</div>
+					</apex:repeat>	
+			</div>
+		</div>
+		<div class="bottom_borders"><div><div></div></div></div>
+	</div>
+</apex:page>
