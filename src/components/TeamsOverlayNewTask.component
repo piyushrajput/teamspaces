@@ -1,22 +1,14 @@
 <apex:component controller="TeamsOverlayNewTaskController" allowDML="true">
 	<script type="text/javascript" src="{!URLFOR($Resource.commonResources, 'inc/js/modal.js')}"></script>
-	<style>
-		.overlay_form .errorMsg, .overlay_form .red {
-			float: left;
-			margin-left: 5px;
-			color:#CC0000;
-		}
-		
-		.overlay_form .errorMsgDate {
-			margin-left: 5px;
-			color: #CC0000;
-			width: 360px;
-		}
-		
-		.overlay_form  .dateFormat {
-			float: left;
-		}
-	</style>
+	
+	<apex:stylesheet value="{!URLFOR($Resource.commonResources, 'inc/css/teamsOverlayNewTask.css')}" />
+	
+	<apex:includeScript value="{!URLFOR($Resource.commonResources, 'inc/js/teamsOverlayNewTask.js')}" />
+	<script>
+		var org_country = '{!$Organization.Country}';	
+		document.observe('dom:loaded',newTaskLoad)	
+	</script>
+	
 	<!-- ### Initialize fixed Overlay ### -->
 	<div id="newTaskOverlay" class="fixedModalOverlay" style="display:none;"></div>
 	<!-- Overlay Container -->
@@ -39,7 +31,7 @@
 			<apex:form >
 				<apex:actionFunction name="refreshAssignToTask" action="{!dummyRefresh}" rerender="assignToTask" />
 			</apex:form>
-			<apex:form id="quickTaskorm" onSubmit="if(checkFormNewTaskOverlay('{!$Component.member}','{!$Component.taskEstimate}','{!$Component.name}','{!$Component.taskStartDate}')){return true;}else {return false;};"  >	
+			<apex:form id="quickTaskForm" onSubmit="if(checkFormNewTaskOverlay('{!$Component.member}','{!$Component.taskEstimate}','{!$Component.name}','{!$Component.taskStartDate}')){return true;}else {return false;};"  >	
 				<div id="formTaskID" style="display:none;">{!$Component.quickTaskorm}</div>
 				<apex:actionStatus id="taskStatus" layout="block">
 						<apex:facet name="start"><apex:outputText value="Saving Task..." /></apex:facet>
@@ -75,11 +67,9 @@
 								<!-- Save and Cancel Buttons -->
 								<div class="overlayFromButtons" align="center">
 									<apex:commandButton action="{!insertTask}" 										 										
-										rerender="quickTaskorm"
 										status="taskStatus" style="float: none;"
-										onComplete="formValidate('{!$Component.name}', '{!$Component.taskEstimate}', '{!$Component.member}' ,'{!$Component.taskStartDate}' , '{!$Component.taskDueDate}')"
-										value="Save" styleClass="overlaySaveBtn" >
-									</apex:commandButton>
+										onComplete="formValidate('{!$Component.name}', '{!$Component.taskEstimate}', '{!$Component.member}' ,'{!$Component.taskStartDate}' , '{!$Component.taskDueDate}');"
+										value="Save" styleClass="overlaySaveBtn" rerender="quickTaskForm"/>
 									<input class="overlayCancelBtn" type="button" style="float: none;" value="Cancel" onclick="fixedModalNewTask.close();resetFormNewTask();" />
 									<a href="javascript:;" onclick="sendTempTaskDetails('{!$Component.name}','{!$Component.taskStartDate}','{!$Component.taskDueDate}', '{!$Component.taskEstimate}','{!$Component.member}'); return false;">Edit task details</a>
 								</div>	
@@ -88,7 +78,7 @@
 						</apex:facet> 
 					</apex:actionStatus>
 				</apex:form>
-				</div>
+			</div>
 			</div>
 			<!-- The hidden form to send partial data to edit -->
 			<div style="display:none;">
@@ -103,231 +93,5 @@
 					<input type="submit" value="tempSend" />			
 				</form>
 			</div>
-		</div> 
-	<!-- ### Javascript ### -->	
-	<script>
-		var org_country = '{!$Organization.Country}';		
-	</script>
-	<script type="text/javascript">
-		function formValidate(name, estimated, member, start, end)
-		{
-			if($$('#newTask .overlay_form .errorMsg').length == 0)
-			{
-				fixedModalNewTask.close(); 
-				reloadProjectTask();
-				showSwirly('swirly_task'); 
-				$(name).value = '' ;
-				$(estimated).value =''; 
-				$(member).value = '-1';
-				$(start).value = '' ;
-				$(end).value = '' ;
-			}
-		}
-		
-		function checkFormNewTaskOverlay(member, estimate, taskname, startDate)
-		{
-			var hasError = false;
-			
-			if($F(member) == '-1')
-			{
-				$('memberError').show();
-				hasError= true;
-			}
-			else 
-			{
-				$('memberError').hide();
-			}
-			
-			// check if hours is an Integer value.
-			if ( $F(estimate) == '' || isNaN($F(estimate)) || (parseInt($F(estimate)) <= 0))
-			{
-				$('estimateError').show();
-				hasError= true;	
-			}
-			else 
-			{
-				$('estimateError').hide();
-				$(estimate).value = parseInt($(estimate).value);
-			}
-			
-			
-			// check if task name is not empty
-			if ( $F(taskname) == '')
-			{
-				$('taskNameError').show();
-				hasError= true;	
-			}
-			else 
-			{
-				$('taskNameError').hide();
-			}
-			
-			// check if task name is not empty
-			if ( $F(startDate) == '')
-			{
-				$('startDateError').show();
-				hasError= true;	
-			}
-			else 
-			{
-				$('startDateError').hide();
-			}
-			
-			return !hasError;
-		}
-		
-		
-		/**
-		* Send temp data to the extended form
-		*/
-
-		function sendTempTaskDetails(name,start,due, estimate, member ){
-			var tmpQuickStartDate = $F(start);
-			var tmpQuickDueDate = $F(due);
-			var tmpTaskEstimate = $F(estimate);
-			var tmpTaskName = $F(name)
-			var tmpTaskAssign = $F(member)
-			var tmpTeamId = $F('tempTeamid');
-		
-			( tmpQuickStartDate != ' ' ) ? $('tempQuickTaskStartDate').value = tmpQuickStartDate : $('tempQuickTaskStartDate').remove() ;
-			( tmpQuickDueDate != ' ' ) ? $('tempQuickTaskDueDate').value = tmpQuickDueDate : $('tempQuickTaskDueDate').remove() ;
-			( tmpTaskEstimate != ' ' ) ? $('tempQuickTaskEstimate').value = tmpTaskEstimate : $('tempQuickTaskEstimate').remove() ;
-			( tmpTaskName != ' ' ) ? $('tempQuickTaskName').value = tmpTaskName : $('tempQuickTaskName').remove() ;
-			( tmpTaskAssign != ' ' ) ? $('tempQuickTaskAsigneeId').value = tmpTaskAssign : $('tempQuickTaskAsigneeId').remove() ;
-		
-			$('hiddenFormQuickTask').submit();
-		}
-		
-		/**
-		* Fixed Modal Class
-		* @param String modalContent The div to show over
-		* @param String modalOverlay The div that need to be used as overlay
-		* @param Boolean effects Should we use effects to show and hide ?
-		*/
-		fixedModalClass = Class.create();
-		
-		fixedModalClass.prototype = {
-				  
-		  initialize: function(modalContent, modalOverlay, effects) {
-			
-			effects == null ? this.effectsEnabled = false : this.effectsEnabled = effects;
-			this.effectsEnabled = effects;
-		    
-		    this.modalContent  = $(modalContent);		    
-		    this.overlay = $(modalOverlay);
-		    
-		    Event.observe(modalOverlay, 'click', 
-			function(){
-				 var e;		    		
-				effects == null ? e = false : e = effects;		    		
-				if(e){	
-					var aux = this.modalContent;	    		
-					Effect.Appear(this.modalContent,{duration: 0.1 , from: 0.0, to: 0.6,
-							afterFinish:function(){
-								Effect.Appear(aux,{duration: 0.2});
-							}
-						});	
-				} else {
-					this.hide();
-						$(modalContent).hide();
-					 }
-				}			
-			); //observer to close the modal when the overlay is clicked
-						
-		  },
-		  open: function() {
-				 // get page dimensions to set the overlay div size
-				var pageDims = getPageSize();
-				var pageWidth = pageDims[0];
-				var pageHeight = pageDims[1];
-				
-				pageHeight = pageHeight + 50;
-							
-				this.overlay.style.height = pageHeight + 'px';
-				this.overlay.style.width = pageWidth + 'px';
-				
-				// show
-				if(this.effectsEnabled){
-				    var aux = this.modalContent;
-					Effect.Appear(this.overlay,{duration: 0.2 , from: 0.0, to: 0.6,
-						afterFinish:function(){
-							Effect.Appear(aux,{duration: 0.1});
-						}
-					});					
-				} else {
-					this.overlay.show();
-					this.modalContent.show();
-				}
-				
-				Effect.ScrollTo('sbtabset');
-				
-				
-		  },
-		  close: function(){
-				// hide
-				if(this.effectsEnabled){
-					var aux = this.overlay;
-					Effect.Fade(this.modalContent,{duration: 0.1 , from: 0.6, to: 0.0,
-						afterFinish:function(){
-							Effect.Fade(aux,{duration: 0.2});		
-						}
-					});
-								
-				} else {
-					this.overlay.hide();
-					this.modalContent.hide();	
-				}
-				
-				// clean error messages for the next overlay
-				$('estimateError').hide();
-				$('memberError').hide();
-				$('taskNameError').hide();
-				$('startDateError').hide();
-				
-				var errors = $$('.errorMsg');
-				var len = errors.length;
-				for (var i = 0; i< len; i++){
-					errors[i].remove();
-				}
-				
-				resetFormNewTask();							
-				
-				if(detectIE6()){
-					
-					var pageSels = document.getElementsByTagName('select');
-					
-					for(var i = 0;i < pageSels.length; i++){
-						pageSels[i].style.display = '';
-					}
-				}
-		  }	  
-		};
-		
-		/**
-		* Detect If the user browser is IE6
-		* @return Boolean True if the current browser is IE6
-		*/	
-		function detectIE6(){			
-			if(Prototype.Browser.IE){
-				var b_version=navigator.appVersion;
-				var version = b_version.split(';');
-				if(removeSpaces(version[1]) == 'MSIE6.0'){
-					return true;
-				}
-			}
-		}
-		
-		/**
-		*	Initialize the Fixed Modal
-		*/
-		fixedModalNewTask = new fixedModalClass('newTask', 'newTaskOverlay', true);	
-	</script>	
-	<script type="text/javascript"> 
-		function resetFormNewTask(){
-			var auxFormId = document.getElementById('formTaskID');
-			var formID = auxFormId.innerHTML;
-			var form = document.getElementById(formID);
-			form.reset();
-		}
-	</script>
+	</div>
 </apex:component>

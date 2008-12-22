@@ -139,10 +139,12 @@ public class DiscussionWidgetActivePeopleController {
 	
 	/**
 	* For refresh use
-	*@param String
 	*/
 	public void refreshActivePeople(){}
 	
+	/**
+	*@return active people list
+	*/
 	public List<Actives> getActivePeople(){
 		List<Actives> topics = new List<Actives>();
 		// Primary Set to store result values

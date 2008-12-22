@@ -576,6 +576,9 @@ public with sharing class ProjectTaskListController {
     
     String sortByExt ;
     
+    /**
+    *@param s sort by prev
+    */
     public void setSortByPrev(String s){
     	sortByExt = s;
     }
@@ -1171,13 +1174,16 @@ public with sharing class ProjectTaskListController {
 	
 	/**
 	*Set task to complete
-	*@return String task id
+	*@param String idTaskToComplete
 	*/
 	public void setIdTaskToComplete (String idTaskToComplete) {
 		this.idTaskToComplete = idTaskToComplete;	
 	}
 	
 	
+	/**
+	* Mark Complete
+	*/
 	public void markComplete () {
 		List<String> idsUpdate = new List<String>();
 		

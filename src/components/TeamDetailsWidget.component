@@ -4,6 +4,11 @@
 	
 	<apex:includeScript value="{!URLFOR($Resource.commonResources, 'inc/js/teamDetailsWidget.js')}" />
 	
+	<apex:stylesheet value="{!URLFOR($Resource.commonResources, 'inc/css/teamDetailsWidget.css')}" />
+
+	 
+	 
+	 
 	<script>
 	
 		var API_SESSION_ID = '{!$Api.Session_ID}';

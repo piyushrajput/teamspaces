@@ -80,6 +80,21 @@
 		document.observe("dom:loaded", documentLoad); 
 	</script>
 	
+	<style>
+		.crudButtons input.balcknutton{
+			background:transparent url(../../images/layout/buttons/button_right_bkg.gif) no-repeat scroll right top;
+			color:#FFFFFF !important;
+			display:block;
+			float:left;
+			font-family:Verdana,Arial;
+			font-size:10px;
+			font-weight:bold;
+			line-height:10px;
+			padding:5px 10px 8px 5px;
+			white-space:nowrap;
+		}
+	</style>		
+			
 	
 	<a href="#modal_container" id="initializeModal" style="display:none;"></a>
 	<div id="modal_container"></div>
@@ -91,8 +106,8 @@
 	<!-- Header -->
 	<apex:composition template="HeaderTemplate">
 		<apex:define name="moduleId"><apex:variable var="moduleId" value="headerTeams"/></apex:define>
-	    <apex:define name="module">{!$ObjectType.Team__c.label}</apex:define>
-	    <apex:define name="title">Admin-Team Profile</apex:define>
+	    <apex:define name="module">{!$ObjectType.Team__c.label} admin</apex:define>
+	    <apex:define name="title">Team Profile</apex:define>
 	    <apex:define name="search">
 	    	<c:Search module="team" />
 	    </apex:define>
@@ -107,8 +122,10 @@
 	<!-- BreadCrumbs -->
 	<apex:form id="form_content" onsubmit="getInputValue(); if(!isCloneAction){if(validator('{!$Component.form_content}', 'warning_to_user'))return false;};">
 		<div class="breadcrumbs">
-			<div style="{!IF(IsTeamAdminMember, 'display:block', 'display:none')};" class="crudButtons">							
-				<apex:commandButton id="save_top" rendered="{!(section != 'view')}" styleClass="inputButton" action="{!saveTeamProfile}" value="Save" />
+			<div style="{!IF(IsTeamAdminMember, 'display:block', 'display:none')};" class="crudButtons">					
+				<apex:commandLink id="save_top" styleclass="blackbutton" rendered="{!(section != 'view')}" action="{!saveTeamProfile}" onclick="getInputValue(); if(!isCloneAction){if(validator('{!$Component.form_content}', 'warning_to_user'))return false;};">
+					<span>Save</span>
+				</apex:commandLink>	
 				<a id="cancel_top" href="javascript:createOverlay('','cancelOverlay','140');" class="blackbutton" style="display:block;">
 					<span>Cancel</span>
 				</a>
@@ -299,8 +316,10 @@
 		</div>
 		<!-- BreadCrumbs -->
 		<div class="breadcrumbs" style="margin-bottom: 20px;">
-			<div style="{!IF(IsTeamAdminMember, 'display:block', 'display:none')};" class="crudButtons">							
-				<apex:commandButton id="save_bottom" rendered="{!(section != 'view')}" styleClass="inputButton" action="{!saveTeamProfile}" value="Save" />
+			<div style="{!IF(IsTeamAdminMember, 'display:block', 'display:none')};" class="crudButtons">
+				<apex:commandLink id="save_bottom" styleclass="blackbutton" rendered="{!(section != 'view')}" action="{!saveTeamProfile}" onclick="getInputValue(); if(!isCloneAction){if(validator('{!$Component.form_content}', 'warning_to_user'))return false;};">
+					<span>Save</span>
+				</apex:commandLink>	
 				<a id="cancel_bottom" href="javascript:createOverlay('','cancelOverlay','140');" class="blackbutton" style="display:block;">
 					<span>Cancel</span>
 				</a>

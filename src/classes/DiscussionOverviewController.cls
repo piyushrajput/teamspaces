@@ -318,16 +318,22 @@ public with sharing class DiscussionOverviewController {
 		String Picture;
 		
 		/**
-		* Setters 
+		*@param sTeamId team id
 		*/
 		public void setTeamId(String sTeamId){
         	TeamId = sTeamId;
         }
         
+    	/**
+    	*@param sTeamName team name
+    	*/
     	public void setTeamName(String sTeamName){
         	TeamName = sTeamName;
         }
         
+        /**
+        *@param sTeamDescription team description
+        */
         public void setTeamDescription(String sTeamDescription){
     		if(sTeamDescription != null){
     			 if(sTeamDescription.length() > 70){
@@ -344,49 +350,79 @@ public with sharing class DiscussionOverviewController {
         
         public String fullDescription {set; get;}
         
+        /**
+        *@param sNumberOfMessages number of messages
+        */
         public void setNumberOfMessages(Double sNumberOfMessages){
         	NumberOfMessages = sNumberOfMessages.intValue();
         }
 
+        /**
+        *@param sNumberOfThreads number of threads
+        */
         public void setNumberOfThreads(Double sNumberOfThreads){
         	NumberOfThreads = sNumberOfThreads.intValue();
         }
         
+        /**
+        *@param sLastPostMessage last posted message
+        */
         public void setLastPostMessage(Id sLastPostMessage){
         	LastPostMessage = lastPostInfoString(sLastPostMessage);
         }
         
+        /**
+        *@param teamAvatar team avatar
+        */
         public void setPicture(String teamAvatar){
         	Picture = teamAvatar;
         }
         
-        /**
-		* Getters 
+		/**
+		*@return team id
 		*/
 		public String getTeamId() {
 	    	return TeamId;
 		}
 		
+        /**
+        *@return team name
+        */
         public String getTeamName() {
 	    	return TeamName;
 		}		
         
+        /**
+        *@return team description
+        */
         public String getTeamDescription() {
 	    	return TeamDescription;
 		}
 		
+		/**
+		*@return number of messages
+		*/
 		public Integer getNumberOfMessages() {
 	    	return NumberOfMessages;
 		}
 		
+		/**
+		*@return number of threads
+		*/
 		public Integer getNumberOfThreads() {
 	    	return NumberOfThreads;
 		}	
 		
+		/**
+		*@return last posted message
+		*/
 		public String getLastPostMessage() {
 	    	return LastPostMessage;
 		}
 		
+		/**
+		*@return team avatar
+		*/
 		public String getImage(){			
 		  if(Picture == null)
 		  	return '';
@@ -555,45 +591,72 @@ public with sharing class DiscussionOverviewController {
 			this.commentsCount = [Select count() From DiscussionMessage__c where PostedBy__c =: id];	
 		}
 		
+		/**
+		*@return number of most active users
+		*/
 		public Integer getMostActive(){
 			return 	mostActive;
 		}	
 		
+		/**
+		*@return user name
+		*/
 		public String getName(){
 			return 	name;
 		}	
 		
+		/**
+		*@return user id
+		*/
 		public String getId(){
 			return 	id;
 		}	
 		
+		/**
+		*@return number of comments
+		*/
 		public Integer getCommentsCount(){
 			return 	commentsCount;
 		}
 		
+		/**
+		*@return user avatar
+		*/
 		public String getPicture(){
 			return this.userPicture;
 		}
 		
 		/**
-		* Setters
+		*@param mActive num of most active users
 		*/
 		public void setMostActive(Integer mActive){
 			mostActive = mActive;
 		}
 		
+		/**
+		*@param sName user name
+		*/
 		public void setName(String sName){
 			name = sName;
 		}
+		
+		/**
+		*@param id user id
+		*/
 		public void setId(String id){
 			this.id = id;
 		}
+		
+		/**
+		*@param countComments number of comments
+		*/
 		public void setCommentsCount(Integer countComments){
 			commentsCount = countComments;
 		}
 		
 		/**
 		* Set picture for instance user
+		*@param userId
 		*/
 		public void setPicture (String userId) {
 			String PictureId;

@@ -18,97 +18,26 @@
 	<script type="text/javascript" src="{!URLFOR($Resource.commonResources, 'inc/js/modal.js')}" ></script>
 	<!-- FCK Editor -->   
 	<script type="text/javascript" src="{!URLFOR($Resource.FCKeditor, 'fckeditor/fckeditor.js')}" ></script>
-	<style>
-		ul.nomilestone {
-			width:143px!important;
-		}
+	
+	<apex:stylesheet value="{!URLFOR($Resource.commonResources, 'inc/css/teamDetailMarkupTop.css')}" />
+	
+	<apex:includeScript value="{!URLFOR($Resource.commonResources, 'inc/js/teamDetailMarkupTop.js')}" />
 
-		/* Black buttons */
-		a.blackbutton {
-			background: transparent url('{!URLFOR($Resource.TeamsResources, 'images/layout/buttons/button_left_bkg.gif')}') no-repeat scroll left top;
-			color:#FFFFFF;
-			display:block;
-			float:left;
-			height:24px;
-			margin:0pt;
-			padding:0pt;
-			margin-left:5px;
-			text-decoration:none;
-			cursor:pointer;
+	<style>
+	
+		.bodyDiv a.blackbutton {
+				background: transparent url({!URLFOR($Resource.TeamsResources, 'images/layout/buttons/button_right_bkg.gif')}) no-repeat scroll right top;
+							
 		}
-		
-		a.blackbutton span {
-			background: url('{!URLFOR($Resource.TeamsResources, 'images/layout/buttons/button_right_bkg.gif')}') no-repeat scroll right top;
-			color:#FFFFFF !important;
-			display:block;
-			float:left;
-			font-family:Verdana,Arial;
-			font-size:10px;
-			font-weight:bold;
-			line-height:10px;
-			padding:5px 10px 8px 5px;
-			white-space:nowrap;
-		}
-		
-		div.breadcrumbs {
-			background:#E0E0E0 none repeat scroll 0 0;
-			clear:both;
-			height:30px;
-			overflow:hidden;
-			width:100%;
-		}
-		
-		div.breadcrumbs div.buttons {
-			float:none;
-			height:35px;
-			margin:0 auto;
-			position:relative;
-			text-align:center;
-			width:95px;
-		}
-		
-		.okMessage {
-			/*border:#2868B3 2px solid;
-			background-color:#FFFEB9;
-			width:525px;
-			height:40px;
-			margin-left:225px;
-			margin-top:5px;
-			color:black;*/
-		}
+	
+	
 	</style>
+
 	<!-- Common JS for FCK -->   
 	<script>    
 		FCK_BASEPATH = '{!URLFOR($Resource.FCKeditor,'fckeditor/')}';
 		var API_SESSION = '{!$Api.Session_ID}'; 
 		
-		/**
-		* Show message to user div
-		*@void
-		*/
-		function showMessageToUser(){
-			var messageDiv = $$('.okMessage')[0];
-			Effect.Appear(messageDiv);
-		}
-		/**
-		* Hide message to user div
-		*@void
-		*/
-		function hideMessageToUser(){
-			var messageDiv = $$('.okMessage')[0];
-			Effect.Fade(messageDiv);
-		}
-		
-		/*function showMessageToUser(message, type){
-			var messageDiv = $('infoToUser');
-			var imageInfo = globalInfoBig;
-			var imageSuccess = globalCheckNew;
-			var currentSource = (type == 'success') ? imageSuccess : imageInfo;
-			markup = '<img src="'+currentSource+'" />';
-			markup += '<div>' + message + '</div>';
-			messageDiv.innerHTML = markup;
-			Effect.Appear('infoToUser');
-		}*/
 		
 	</script> 
 	<c:TeamsOverlayNewTask />
@@ -140,7 +69,7 @@
 			<apex:outputPanel id="thisForm">
 				<apex:outputPanel layout="block" styleClass="breadcrumbs" rendered="{!teamIsOpen}">			
 					<apex:outputPanel styleClass="buttons" layout="block" >	
-						<apex:commandLink styleClass="blackbutton" action="{!joinTeam}" value="" oncomplete="refreshJoinButton();refreshLeaveButton();rerenderMemberList();showMessageToUser();" rerender="thisForm, okMessageContainer" onclick="disableAndShowProgress(this);">
+						<apex:commandLink styleClass="blackbutton" action="{!joinTeam}" value="" oncomplete="refreshJoinButton();refreshLeaveButton();rerenderMemberList();showJoinMessageToUser();" rerender="thisForm, okMessageContainer" onclick="disableAndShowProgress(this);">
 							<span>Join {!$ObjectType.Team__c.label}</span>
 						</apex:commandLink>				
 					</apex:outputPanel>					
@@ -166,9 +95,14 @@
 		<!-- Task Created Information Panel -->
 		<div class="informationPanel clear" id="infoToUser" style="display:none;"></div>
 		<apex:form >
-			<apex:outputPanel layout="block" styleClass="okMessage informationPanel clear" style="display:none;" id="infoToUser">
-				<img src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/WidgetConfig/checkNew.gif')}" alt="ok" /><div>You are a member of this {!$ObjectType.Team__c.label}&nbsp;<apex:commandLink action="{!leaveTeam}" value="Undo" rerender="thisForm, okMessageContainer" oncomplete="refreshLeaveButton();refreshJoinButton();rerenderMemberList();hideMessageToUser();" onclick="disableAndShowProgress(this);" /></div>
+			<apex:outputPanel layout="block" styleClass="joinMessage informationPanel clear" style="display:none;">
+				<img src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/WidgetConfig/checkNew.gif')}" alt="ok" /><div>You are a member of this {!$ObjectType.Team__c.label}&nbsp;<apex:commandLink action="{!leaveTeam}" value="Undo" rerender="thisForm, okMessageContainer" oncomplete="refreshLeaveButton();refreshJoinButton();rerenderMemberList();hideJoinMessageToUser();" onclick="disableAndShowProgress(this);" /></div>
 			</apex:outputPanel>	
+		</apex:form>
+		<apex:form >
+			<apex:outputPanel layout="block" styleClass="okMessage informationPanel clear" style="display:none;">
+				<img src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/WidgetConfig/checkNew.gif')}" alt="ok" /><div>Member has been added to this {!$ObjectType.Team__c.label}</div>
+			</apex:outputPanel>
 		</apex:form>
 	</apex:outputPanel>
 </apex:component>

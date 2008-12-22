@@ -620,9 +620,6 @@
 
 	
 	<apex:outputpanel id="auxPanel" />
-		<script>
-			resetSearchInput();
-		</script>
 		<!-- <img src="{!URLFOR($Resource.FCKeditor ,'fckeditor/editor/images/smiley/msn/teeth_smile.gif')}" /> -->
 		
 	<script>

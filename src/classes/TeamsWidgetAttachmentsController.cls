@@ -16,7 +16,7 @@ public class TeamsWidgetAttachmentsController {
 	
 	/**
 	* Set Sidebar
-	*@void
+	*@param b is sidebar widget
 	*/
 	public void setSidebar (Boolean b){
 		sidebar = b;
@@ -216,6 +216,7 @@ public class TeamsWidgetAttachmentsController {
 
    	/**
    	* Delete Attachment
+   	*@throws Exception
    	*/
    	public void DeleteAttach () { 
    		String idAttach = System.currentPageReference().getParameters().get('idAttach');

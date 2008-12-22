@@ -74,9 +74,7 @@
 	<div class="main_content">		
 		<div class="centerCol">
 			<div class="holder">
-		
 			<!-- Start Main Content -->
-			
 				<!-- Section Title -->
 				<div class="teamsTitleBlue">Recent Activity</div> 
 				<apex:outputPanel layout="block" id="theFeeds">
@@ -96,7 +94,7 @@
 						</apex:repeat>
 					</table>
 				</apex:outputPanel>
-		
+				<div id="main_loader" style="height: 650px; opacity: 0.8; display: none;"/>
 			<!-- End Main Content -->
 			</div>
 		</div>
@@ -106,73 +104,72 @@
 	<div class="rightCol">		
 		
 		<!-- Activity Feeds filter BOX -->
-		<div class="box_round forwidget mySmallWidget" style="width: 216px;">
-		
-			<!-- Header -->
-			<div class="header_blue">
+		<div class="teamWidget forwidget mySmallWidget">
+			<!-- Widget Title -->	
+			<div class="thinHeader">
 				<div><div><h4>Filter</h4></div></div>
 			</div>
-		
-			<!-- Rounded Box Content -->
+			<!-- Widget Container --> 
 			<div class="box_content">
-				<div class="small_links">
+				<div class="thinWidgetLinkAction">
 					<a href="javascript:;" onclick="markCheckboxes(true)">Show All</a>
 					&nbsp;|&nbsp;
 					<a href="javascript:;" onclick="markCheckboxes('')">None</a>
 				</div>
-				<div class="minifeeds_container">
+				<div class="thinBody">
+					<div id="minifeeds_loader" style="height: 250px; opacity: 0.8; display: none;"/>
 					<apex:form >
 						<table class="minifeeds" cellpadding="0" cellspacing="0">
 							<tr>
 								<td>
-									<apex:inputCheckbox value="{!filterStatus}" onclick="reloadEvent.onclick();" />
+									<apex:inputCheckbox value="{!filterStatus}" onclick="showLoading(true); reloadEvent.onclick();" />
 								</td>
 								<td class="feed_type status"><a class="status" href="javascript:;">&nbsp;</a>&nbsp;</td><td align="left"><a href="javascript:;" class="weight_bold">Status Updates</a></td>
 							</tr>
 							<tr>
 								<td>
-									<apex:inputCheckbox value="{!filterFollow}" onclick="reloadEvent.onclick();" />
+									<apex:inputCheckbox value="{!filterFollow}" onclick="showLoading(true); reloadEvent.onclick();" />
 								</td>
 								<td class="feed_type following"><a class="following" href="javascript:;">&nbsp;</a>&nbsp;</td><td align="left"><a href="javascript:;" class="weight_bold">Following</a></td>
 							</tr>
 							<tr>
 								<td>
-									<apex:inputCheckbox value="{!filterEducation}" onclick="reloadEvent.onclick();" />
+									<apex:inputCheckbox value="{!filterEducation}" onclick="showLoading(true); reloadEvent.onclick();" />
 								</td>
 								<td class="feed_type education"><a class="education" href="javascript:;">&nbsp;</a>&nbsp;</td><td align="left"><a href="javascript:;" class="weight_bold">Education History</a></td>
 							</tr>
 							<tr>
 								<td>
-									<apex:inputCheckbox value="{!filterCompetencies}" onclick="reloadEvent.onclick();" />
+									<apex:inputCheckbox value="{!filterCompetencies}" onclick="showLoading(true); reloadEvent.onclick();" />
 								</td>
 								<td class="feed_type competency"><a class="competency" href="javascript:;">&nbsp;</a>&nbsp;</td><td align="left"><a href="javascript:;" class="weight_bold">Competencies</a></td>
 							</tr>
 							<tr>
 								<td>
-									<apex:inputCheckbox value="{!filterMember}" onclick="reloadEvent.onclick();" />
+									<apex:inputCheckbox value="{!filterMember}" onclick="showLoading(true); reloadEvent.onclick();" />
 								</td>
 								<td class="feed_type teamspace"><a class="teamspace" href="javascript:;">&nbsp;</a>&nbsp;</td><td align="left"><a href="javascript:;" class="weight_bold">Teamspace Member</a></td>
 							</tr>
 							<tr>
 								<td>
-									<apex:inputCheckbox value="{!filterDiscussion}" onclick="reloadEvent.onclick();" />
+									<apex:inputCheckbox value="{!filterDiscussion}" onclick="showLoading(true); reloadEvent.onclick();" />
 								</td>
 								<td class="feed_type DiscussionNewTopic"><a class="discussion" href="javascript:;"></a>&nbsp;</td><td align="left"><a href="javascript:;" class="weight_bold">Discussion Thread</a></td>
 							</tr>
 							<tr>
 								<td>
-									<apex:inputCheckbox value="{!filterAnnoncements}" onclick="reloadEvent.onclick();" />
+									<apex:inputCheckbox value="{!filterAnnoncements}" onclick="showLoading(true); reloadEvent.onclick();" />
 								</td>
 								<td class="feed_type announcement"><a class="announcement" href="javascript:;">&nbsp;</a>&nbsp;</td><td align="left"><a href="javascript:;" class="weight_bold">Annoncements</a></td>
 							</tr>
 							<tr>
 								<td>
-									<apex:inputCheckbox value="{!filterProject}" onclick="reloadEvent.onclick();" />
+									<apex:inputCheckbox value="{!filterProject}" onclick="showLoading(true); reloadEvent.onclick();" />
 								</td>
 								<td class="feed_type project_task"><a class="project_task" href="javascript:;">&nbsp;</a>&nbsp;</td><td align="left"><a href="javascript:;" class="weight_bold">Project Task</a></td>
 							</tr>
 						</table>
-						<apex:commandButton action="{!getMiniFeeds}" rerender="theFeeds" id="refreshFeeds" value="Refresh" style="display:none;" />
+						<apex:commandButton action="{!getMiniFeeds}" onclick="" rerender="theFeeds" id="refreshFeeds" value="Refresh" style="display:none;" oncomplete="showLoading(false);" />
 						<script>
 							var reloadEvent = $('{!$Component.refreshFeeds}');
 						</script>

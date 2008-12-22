@@ -2072,7 +2072,7 @@ public without sharing class WikiPageEditController {
         }  
         
         /**
-        *@return Id
+        *@return String
         */
         public String getCreatedById() {
             return createdById;

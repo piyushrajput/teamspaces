@@ -365,10 +365,16 @@ public class PeopleProfileDisplayController {
 	        
 	        String Keyword;       
 	
+	        /**
+	        *@return keyword
+	        */
 	        public String getKeyword() {
 	                return Keyword;
 	        }
 	
+	        /**
+	        *@param Keyword key
+	        */
 	        public void setKeyword(String Keyword) {
 	                this.Keyword = Keyword;
 	        }        
@@ -1173,7 +1179,7 @@ public class PeopleProfileDisplayController {
 		}
 		
     	/**
-    	*@return Double
+    	*@param DateAttendedTo
     	*/
 		public void setDateAttendedTo(Double DateAttendedTo){
 			DateAttendedToInt = DateAttendedTo.intValue();
@@ -1190,6 +1196,9 @@ public class PeopleProfileDisplayController {
     
     public Integer employmentListSize = 0;
     
+    /**
+    *@return employment list size
+    */
     public Integer getEmploymentListSize(){
     	return employmentListSize;
     }	

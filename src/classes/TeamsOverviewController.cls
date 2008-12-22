@@ -90,8 +90,8 @@ public with sharing class TeamsOverviewController {
      
     List<teams> retTeams = new List<teams>();
 	/**
-    *@teamsForTabs()
     * This method completes the list of Teams: "retTeams"
+    *@return list of teams
     */
   	public List<teams> getTeamsForTabs(){
     	return retTeams;

@@ -60,9 +60,8 @@ public with sharing class TeamMembersWidgetController {
 		typeList = typeL;		
 	}
 	
-	public void getIsTeamAdmin(){
 	
-	}	
+	public void getIsTeamAdmin(){}	
 	
 	/**
 	*@return String typeList
@@ -431,6 +430,9 @@ public with sharing class TeamMembersWidgetController {
 		
 	Boolean already = false;
 	
+	/**
+	*@return already exist
+	*/
 	public Boolean getAlready(){
 		return already;
 	}	

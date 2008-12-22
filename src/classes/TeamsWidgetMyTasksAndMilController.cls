@@ -133,7 +133,7 @@ public with sharing class TeamsWidgetMyTasksAndMilController {
 
         /**
         * Returns task name
-        *@retrun String
+        *@return String
         */
         public String TaskName{ 
         	get; 

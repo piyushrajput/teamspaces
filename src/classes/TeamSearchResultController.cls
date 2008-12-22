@@ -58,7 +58,7 @@ public with sharing class TeamSearchResultController {
 		Id idTeamMember;
 		
 		/**
-		*@return Id
+		*@param idTeamMember
 		*/
 		public void setIdTeamMember (Id idTeamMember) {
 			this.idTeamMember = idTeamMember;	
@@ -514,6 +514,7 @@ public with sharing class TeamSearchResultController {
 		
 		/**
 		* Join Team w/o sharing
+		*@param teamId
 		*@return PageReference
 		*/
 		public PageReference joinTeam(String teamId){

@@ -32,8 +32,9 @@ trigger MiniFeedAfterInsert on MiniFeed__c bulk (after insert) {
 	
 	//MiniFeeds Limit Number
 	if (!TeamUtil.isTest) { 
-		Integer feedsCount = [select count() from MiniFeed__c limit 1000];
-		if(feedsCount >= MAX_FEED_LIMIT_NUM){
+		List<MiniFeed__c> feedsList = new List<MiniFeed__c>();
+		feedsList = [select Id from MiniFeed__c limit 500];
+		if(feedsList.size() >= MAX_FEED_LIMIT_NUM){
 			List<MiniFeed__c> feesToDelete = new List<MiniFeed__c>();
 			feesToDelete = [select Id from MiniFeed__c order by CreatedDate asc limit : feeds.size()];
 			if(feesToDelete.size() > 0)

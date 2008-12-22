@@ -34,14 +34,38 @@
 	<apex:stylesheet value="{!URLFOR($Resource.TeamsResources, 'inc/css/teamsOverlaysTemplate.css')}" />
 	<apex:stylesheet value="{!URLFOR($Resource.TeamsResources, 'inc/css/widgets/TeamMemberWidget.css')}" />		
 	<apex:stylesheet value="{!URLFOR($Resource.commonResources, 'inc/css/fonts.css')}" />
-	
-	
-	
-	
+
+	<!-- DiscussionOverview CSS  -->
+	<apex:stylesheet value="{!URLFOR($Resource.discussionResources, 'inc/css/discussionOverview.css')}" />
 	
 	<!-- Modal JS -->
 	<apex:includeScript value="{!URLFOR($Resource.commonResources, 'inc/js/modal.js')}"/>
 	
+	<script>
+		/**
+		* Show message to user div
+		*@void
+		*/
+		function showMessageToUser(){
+			var messageDiv = $$('.okMessage')[0];
+			Effect.Appear(messageDiv);
+		}
+		/**
+		* Hide message to user div
+		*@void
+		*/
+		function hideMessageToUser(){
+			var messageDiv = $$('.okMessage')[0];
+			Effect.Fade(messageDiv);
+		}
+	</script>
+	
+	<style>
+		.memberImg{
+			padding:0px;
+		}
+	</style>
+			
 	<!-- Initialize Modal Overlay for Remove Topic Replies -->
 	<a href="#discusionOverlay" id="initializeModal" style="display:none;"></a>
 	<div id="discusionOverlay"></div>
@@ -61,7 +85,18 @@
 	<!-- TeamsMemebersList JS  -->
 	<apex:includeScript value="{!URLFOR($Resource.TeamsResources, 'inc/js/teamsMembersList.js')}" />     
   
-     
+     <style>
+     	.okMessage {
+			border:#2868B3 2px solid;
+			background-color:#FFFEB9;
+			width:525px;
+			height:40px;
+			margin-left:225px;
+			margin-top:5px;
+			color:black;
+		}
+	</style>	
+	
      <script>
      	/**
         * Namespace Prefix Getter
@@ -93,16 +128,27 @@
         <div>
             <div class="main_cont">
                 <div>
+                	<apex:form >
+						<apex:outputPanel layout="block" styleClass="okMessage" style="display:none;">
+							<img src="{!URLFOR($Resource.TeamsResources, 'images/layout/icons/WidgetConfig/checkNew.gif')}" alt="ok" />Member has been added to this {!$ObjectType.Team__c.label}
+						</apex:outputPanel>
+					</apex:form>
           			<div class="holder">
-                        <table width="100%">
+						<div id="paginationOverlay" style="display:none;" >
+					 		<div class="loader">
+					 			<img src="{!URLFOR($Resource.discussionResourceFiles, 'images/common/layout/big-loader.gif')}" alt="Loading..." title="Loading..." />
+					 		</div>
+						</div>                        
+                        <table width="100%" align='center'>
                         	<tr>
                         		<td class="teamTitleButton titleTd" >                        	
 							 		Members							
                         		</td>
-								<td>
+								<td valign='center'>
+								<div>
 									<!-- BUTTONS -->
 									<apex:outputpanel rendered="{!userPermissions.canManage}">	
-										<a onclick="createOverlay('','inviteTeam','360','showSelects()');" href="javascript:;" class="blackbutton">New</a>
+										<a onclick="createOverlay('','inviteTeam','360','showSelects()');" href="javascript:;" class="blackbutton">New</a> 
 										<a href="javascript:;" class="blackbutton" onclick="massiveRemoveOverlay();">Remove</a>
 										<div class="editProfile">
 											<a href="javascript:;" class="blackbutton" onclick="showHideOptions();">Edit {!$ObjectType.Team__c.label} Profile | v</a>
@@ -116,6 +162,8 @@
 										</div>
 									</apex:outputpanel>
 									<!-- BUTTONS -->
+								</div>
+								
 								</td>	
 							</tr>
 						</table> 
@@ -178,16 +226,15 @@
 		               			<table border="0" cellspacing="0" cellpadding="2px" class="pageList">
 			                        <thead>
 			                            <tr>
-			                            	<td>
+			                            	<td width="3%">
 				                            	<apex:outputpanel rendered="{!userPermissions.canManage}">
 			                            			<input class="actionCheckAll" onclick="checkUnCheck(this);" type="checkbox" />
 			                            		</apex:outputpanel>
 			                            	</td>
-			                            	<td colspan="2" class="member_title_description" width="20px">
-			                                    <apex:outputpanel rendered="{!isTeamAdmin}">Action</apex:outputpanel>
+			                            	<td width="9%">
+			                                    <apex:outputpanel rendered="{!userPermissions.canManage}" style="font-weight:bold;">Action</apex:outputpanel>
 			                                </td>
-			                            	<td width="40px">&nbsp;</td>
-			                            	<td width="240px">
+			                            	<td width="29%" colspan="2">
 			                                    <apex:commandLink styleclass="member_title_description" action="{!sortList}" value="Name" rerender="membersList">
 													<apex:param name="sb" value="User__r.Name" />
 												</apex:commandLink>&nbsp;
@@ -200,7 +247,7 @@
 													</apex:outputpanel>
 												</apex:outputpanel>
 			                                </td>
-											<td width="130px">
+											<td width="16%">
 			                                    <apex:commandLink styleclass="member_title_description" action="{!sortList}" value="Company" rerender="membersList">
 													<apex:param name="sb" value="User__r.CompanyName" />
 												</apex:commandLink>&nbsp;
@@ -213,7 +260,7 @@
 													</apex:outputpanel>
 												</apex:outputpanel>
 			                                </td>
-			                                <td width="240px">
+			                                <td width="15%">
 			                                    <apex:commandLink styleclass="member_title_description" action="{!sortList}" value="Title" rerender="membersList">
 													<apex:param name="sb" value="User__r.Title" />
 												</apex:commandLink>&nbsp;
@@ -226,7 +273,7 @@
 													</apex:outputpanel>
 												</apex:outputpanel>
 			                                </td>
-			                                <td width="110px">
+			                                <td width="16%">
 			                                    <apex:commandLink styleclass="member_title_description" action="{!sortList}" value="{!$ObjectType.Team__c.label} Profile" rerender="membersList">
 													<apex:param name="sb" value="TeamProfile__r.Name" />
 												</apex:commandLink>&nbsp;
@@ -239,7 +286,7 @@
 													</apex:outputpanel>
 												</apex:outputpanel>
 			                                </td>
-										    <td width="140px">
+										    <td width="12%px">
 			                                    <apex:commandLink styleclass="member_title_description" action="{!sortList}" value="{!$ObjectType.Team__c.label} Role" rerender="membersList">
 													<apex:param name="sb" value="TeamRole__c" />
 												</apex:commandLink>&nbsp;
@@ -270,14 +317,13 @@
 														</apex:commandLink>
 				                            			<!-- <a href="javascript:;" class="member_detail_description_underline">Edit</a>&nbsp;| -->
 				                            		</apex:outputpanel>
-				                            	</td>
-				                            	<td>
+				                            		<apex:outputpanel rendered="{!userPermissions.canManage}">|</apex:outputpanel>
 				                            		<apex:outputpanel rendered="{!userPermissions.canManage}">
-														<apex:commandLink styleclass="member_detail_description_underline" value="Remove" action="{!assignRemoveId}" rerender="overlaysPanel" oncomplete="createOverlay('','removeMemberOverlay','155','');">
+														<apex:commandLink styleclass="member_detail_description_underline" value="Del" action="{!assignRemoveId}" rerender="overlaysPanel" oncomplete="createOverlay('','removeMemberOverlay','155','');">
 															<apex:param name="delId" value="{!item.userId}" />
 														</apex:commandLink>
 				                            			<!-- <a href="javascript:;" class="member_detail_description_underline">Delete</a> -->
-				                            		</apex:outputpanel>
+				                            		</apex:outputpanel>				                            		
 				                            	</td>
 				                            	<td class="memberImg">
 				                                    <apex:outputpanel rendered="{!IF(item.memberImg == '',true,false)}">
@@ -338,8 +384,14 @@
 							</apex:outputpanel>
 							<table width="100%">
 	                        	<tr>
-	                        		<td class="teamTitleButton titleTd" ></td>
-									<td>
+	                        		<!-- td class="teamTitleButton titleTd" ></td>
+									<td -->
+									
+									<div class='pagination'>
+										<div class='pages'>
+											<div class="discussion_content"> 
+											<h2 class="discussion_detail_title clear  titleTd f_left">Members</h2>
+											</div>
 										<!-- BUTTONS -->
 										<apex:outputpanel rendered="{!userPermissions.canManage}">	
 											<a onclick="createOverlay('','inviteTeam','360','showSelects()');" href="javascript:;" class="blackbutton">New</a>
@@ -356,7 +408,9 @@
 											</div>
 										</apex:outputpanel>
 										<!-- BUTTONS -->
-									</td>	
+										</div>
+									</div>
+									<!-- /td -->	
 								</tr>
 							</table> 
 							<br>

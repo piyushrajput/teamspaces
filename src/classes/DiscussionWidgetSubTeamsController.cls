@@ -107,6 +107,7 @@ public class DiscussionWidgetSubTeamsController {
 	
 	/**
 	* Read subteams instances and count topics
+	*@param teamId
 	*@return List<subTeams>
 	*/
 	public List<subTeams> getSubTeam(String teamId){

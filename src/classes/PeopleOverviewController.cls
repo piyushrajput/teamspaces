@@ -406,6 +406,7 @@ public class PeopleOverviewController {
 	
 	/**
 	*Get Clouds for Employer, School or Competency
+	*@param CloudType set could type
 	*@return List<CloudItems>
 	*/
 	public List<CloudItems> generateCloud(String CloudType){
@@ -812,7 +813,7 @@ public class PeopleOverviewController {
         
         /**
         *Get feed Date as String
-        *@return Datetime
+        *@return formated feed date
         */
        	public String getFeedDateString() {
         	return FeedDateString;

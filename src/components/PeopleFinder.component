@@ -1,4 +1,4 @@
-<apex:component controller="PeopleHeaderSearchController" >
+<apex:component access="global"controller="PeopleHeaderSearchController" >
 <div>
 	<div>
 		<!-- Search Form -->
@@ -9,7 +9,7 @@
 						<img class="f_left" alt="" src="{!URLFOR($Resource.TeamsResources, 'images/layout/magnifier.gif')}" />
 						<span>Find People</span>
 					</div>
-					<input type="text" value="Enter keyword or name" name="key" onfocus="setValue('');"  onblur="if(getValue(this)==''){ setValue('Enter keyword or name'); }"/>
+					<input type="text" value="Enter keyword or nam" name="key" onfocus="setValue('');"  onblur="if(getValue(this)==''){ setValue('Enter keyword or name'); }"/>
 				</div>
 				<input type="submit" value="Search" class="search_btn f_left"/>
 			</form>

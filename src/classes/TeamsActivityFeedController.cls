@@ -331,7 +331,7 @@ public with sharing class TeamsActivityFeedController {
         public Datetime FeedDate;  
               
         /**
-        *@constructor
+        * Constructor
         */
       	public miniFeed(){	
       		

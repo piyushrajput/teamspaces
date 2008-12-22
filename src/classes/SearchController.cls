@@ -123,7 +123,7 @@ public class SearchController {
 		}else if(module == 'team_detail'){
 			txt = txt + 'Team\'s content...';
 		}else if(module == 'wiki'){
-			txt = txt + '...';	
+			txt = txt + 'wiki page...';	
 		}else {
 			txt = '';
 		}

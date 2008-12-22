@@ -1,17 +1,9 @@
 <apex:component controller="TeamsRecentlyCreated">
-    <script>
-		function trunkText(text, len){
-			if(text.length > len){
-				text = text.substring(0, len) + '...';
-			}
-			document.write(text);
-		}    
-    </script>
-    <style>
-    	ul.recentTeams li{
-    		width: 192px;
-    	}
-    </style>
+    
+    <apex:stylesheet value="{!URLFOR($Resource.commonResources, 'inc/js/teamsRecentlyCreated.js')}" />
+    
+	<apex:includeScript value="{!URLFOR($Resource.commonResources, 'inc/js/teamsRecentlyCreated.js')}" />
+    
     <div class="box_round forwidget mySmallWidget" style="width: 216px;">
         <div class="header_blue">
             <div><div><h4>Recently Created {!$ObjectType.Team__c.labelPlural}</h4></div></div>

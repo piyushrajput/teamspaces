@@ -107,7 +107,7 @@ public class UserPermissions {
 	
 	/**
 	* Get permissions for current user
-	*@void
+	*@throws Exception
 	*/
 	public void setPermissions () {
 		try{

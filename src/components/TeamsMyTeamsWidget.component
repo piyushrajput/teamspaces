@@ -1,66 +1,19 @@
 <apex:component controller="TeamsMyTeamsWidgetController">
 	<script type="text/javascript" src="{!URLFOR($Resource.commonResources, 'inc/js/modal.js')}"></script>
 	<apex:includeScript value="{!URLFOR($Resource.TeamsResources, 'inc/js/sorttable.js')}"/>
+	
 	<!-- Ovelay CSS -->
 	<link rel="stylesheet" media="screen" href="{!URLFOR($Resource.commonResources, 'inc/css/modal.css')}" />
 	<link rel="stylesheet"  href="{!URLFOR($Resource.TeamsResources, '/inc/css/teamOverlyManage.css')}" />
 	<apex:stylesheet value="{!URLFOR($Resource.TeamsResources, 'inc/css/teamsOverlaysTemplate.css')}" />
-	
-	<apex:stylesheet value="{!URLFOR($Resource.commonResources, 'inc/css/teamsMyTeamsWidget.css')}" />
-	
-	<!-- -->
-	<apex:includeScript value="{!URLFOR($Resource.commonResources, 'inc/js/teamsMyTeamsWidget.js')}" />
-	 
-	<!-- 
-	<style>
-		.divLinks{
-			float:left;
-			color:#0F6CB0;
-		}
-		.actionLinks{
-			color:#0F6CB0;
-			font-weight:bold;
-			margin-left:5px;
-			margin-right:5px;
-		}
-		.divManageTeams{
-			overflow:hidden; 
-			width:100%; 
-			height:430px;
-		}
-		.divHeader{
-			width:515px;
-			clear:both;
-			height:15px;
-			padding:5px 0px;
-			border-top:1px solid #CCCCCC;
-			border-bottom:1px solid #CCCCCC;
-			overflow:hidden;
-			margin-top:8px;
-		}
-		.divHeader div{
-			float:left; 
-			color:#575757; 
-			font-family:Arial,Helvetica,sans-serif; 
-			font-size:12px; 
-			font-weight:bold; 
-			text-decoration:underline;
-		}
-		div.box_content div.membersDescription {
-			width: 110px;
-		}
-		div.sidebar div.membersDescription {
-			padding-top:10px;	
-			width:110px !important;
-			float:left;
-		}
-		div.sidebar div.membersDescription a {
-			color:#666666;
-			font-weight:bold;
-		}
-	</style>
 
-	-->
+	<apex:stylesheet value="{!URLFOR($Resource.commonResources, 'inc/css/teamsMyTeamsWidget.css')}" />
+	<apex:includeScript value="{!URLFOR($Resource.commonResources, 'inc/js/teamsMyTeamsWidget.js')}" />
+
+	<!-- Initialize the overlay box for modal.js -->
+	<a href="#modal_container" id="initializeModal" style="display:none;"></a>
+	<div id="modal_container"></div>
+	<script>createOverlay('initializeModal')</script>	
 	
 	<script>
 	
@@ -79,31 +32,15 @@
 		}
 		var API_SESSION_ID = '{!$Api.Session_ID}';
 		var globalTeamLabel = "{!$ObjectType.Team__c.label}";
-	</script>
-		
-	<!-- 
 	
-	  
-	<script>
-		/**
-        * Namespace Prefix Getter
-        */
-        var namespace = "{!namespace}";		
-		
-		/**
-		* Initialize toolkit connection
-		*@void
-		*/
-		function init(){
-	    	sforce.connection.sessionId = '{!$Api.Session_ID}';
-	    	sforce.connection.defaultNamespace = namespace;
-		}
-		
+	
+		//Temp code for testing @Gabriel Rilo @19/12/2008
+	
 	    function deleteTeam(teamSelectedId){
 	     	init();
 	     	var remove = sforce.connection.deleteIds([teamSelectedId],
 	    					{onSuccess:function(){ modal.close(); }, 
-	    						onFailure:function(){ alert('This {!$ObjectType.Team__c.label} Could Not Be Delete, Please Contact Your System Administrator'); }});
+	    						onFailure:function(){ alert('This '+ globalTeamLabel +' Could Not Be Delete, Please Contact Your System Administrator'); }});
 	    }  
 		
 		function getCountMembersForTeamProfile (idTeam, name){
@@ -113,7 +50,7 @@
 			if(result.size > 0){
 				$('teamNameLabel').innerHTML = name;
 				$('removeTeamEvent').innerHTML = '<a href="javascript:;" class="button" onclick="deleteTeam (\''+idTeam+'\')">Continue</a>';
-				$('countTeamUsers').innerHTML = result.size + ' members in this {!$ObjectType.Team__c.label}';
+				$('countTeamUsers').innerHTML = result.size + ' members in this '+ globalTeamLabel;
 				result = sforce.connection.query("select Id, Name from Team__c where Name !='" + name + "'");
 				records = result.getArray("records");
 				createOverlay('', 'deleteTeamOverlay', '250');
@@ -121,19 +58,13 @@
 				deleteTeamProfile (idTeam, false);
 			}
 		}
-		 
-		var API_SESSION_ID = '{!$Api.Session_ID}';
-		 
-		/**
-		*	Function to show the dialog to leave the team
-		*/
 		function leaveTeamDialog(teamId, userId, teamName, teamMemberId ){
 			$('teamMemberId').innerHTML = teamMemberId;
 			$('leaveTeamOverlay-teamName').innerHTML = teamName;
 			$('deleteTeamOverlay-teamName').innerHTML = teamName;
 			$('leavebuttonContainer').innerHTML = '<a onclick="leaveTeam(\'' + teamId + '\',\'' + userId + '\');" class="button" href="javascript:;">Leave</a> ';
 			$('deleteTeamButtonContainer').innerHTML = '<a onclick="deleteTeam(\'' + teamId + '\');" class="button" href="javascript:;">Delete</a>';
-			$('leaveOptions').innerHTML = '<a href="TeamsMembersList?id=' + teamId + '" class="linkOverlay">{!$ObjectType.Team__c.label} Members Page</a>. Or, you can <a href="javascript:;" onclick="deleteTeamDialog();" class="linkOverlay">delete this {!$ObjectType.Team__c.label}</a>';
+			$('leaveOptions').innerHTML = '<a href="TeamsMembersList?id=' + teamId + '" class="linkOverlay">'+ globalTeamLabel +' Members Page</a>. Or, you can <a href="javascript:;" onclick="deleteTeamDialog();" class="linkOverlay">delete this '+ globalTeamLabel +'</a>';
 			createOverlay('','leaveTeamDialog','215');
 		}
 		
@@ -211,7 +142,7 @@
 				 	modal.close();
 				},
 				onFailure:function(error){
-					alert('ERROR!!! , {!$ObjectType.Team__c.label} cannot be deleted :(');
+					alert('ERROR!!! , '+ globalTeamLabel +' cannot be deleted :(');
 				   	modal.close();
 				}
 			});
@@ -232,12 +163,18 @@
 			$('leaveConfirm').style.display = 'none';
 			$('deleteConfirm').style.display = '';	
 		}
+
+		function widgetRerender(teamId){
+		
+			alert(teamId);
+			//var memberRow = 'widgetRow-'+ teamId;
+			//$(memberRow).remove();
+		}
+
+		//End of temp code	
+	
 	</script>
-	 -->
-	<!-- Initialize the overlay box for modal.js -->
-	<a href="#modal_container" id="initializeModal" style="display:none;"></a>
-	<div id="modal_container"></div>
-	<script>createOverlay('initializeModal')</script>
+	 
 	<div class="teamWidget mySmallWidget" >
 		<!-- Widget Title -->		
 		<div class="thinHeader">
@@ -270,8 +207,9 @@
 		</div>
 	</div>
 	<div class="clear"></div>
+
 	<!------------------------------->		
-	<!----- MANAGE TEMAS OVERLAY ---->
+	<!----- MANAGE TEAMS OVERLAY ---->
 	<!------------------------------->
 	<div id="TeamMemberPermision" style="display:none;" class="overlayForm">	
 		<!-- Overlay Title -->
@@ -355,6 +293,7 @@
 			</apex:outputPanel>
 		</div>
  	</div>
+    
     <!------------------------------->		
 	<!------- DELETE OVERLAY -------->
 	<!------------------------------->
@@ -384,6 +323,7 @@
 		 </div>
 		 <!-- END Modal Content -->
 	</div>
+	
 	<!-- Leave team dialog -->
 	<div id="leaveTeamDialog" style="display:none;height:215px;">
 		<div class="modalTitle">

@@ -7,6 +7,11 @@
 
 	<apex:stylesheet value="{!URLFOR($Resource.commonResources, 'inc/css/searchResult.css')}" />
 
+	<!-- Swirli CSS -->
+	<apex:stylesheet value="{!URLFOR($Resource.commonResources, 'inc/css/swirli.css')}" />
+	
+	<!-- Swirli JS -->
+	<apex:includeScript value="{!URLFOR($Resource.commonResources, 'inc/js/swirli.js')}"/>
     
     <h4>{!title}</h4>
 	<!-- People List Container --> 
@@ -21,7 +26,7 @@
 					<apex:form >
 						<ul>
 							<li>
-								<apex:commandLink action="{!paginator.firstPage}" rerender="searchResult" rendered="{!paginator.prevPageLinkShow}" >
+								<apex:commandLink action="{!paginator.firstPage}" rerender="searchResult" rendered="{!paginator.prevPageLinkShow}"  onclick="showHideOverlay();">
 									<img src="{!URLFOR($Resource.discussionResourceFiles, 'images/searchresults/search_result_first.gif')}" alt="" />
 								</apex:commandLink>
 								<apex:outputpanel rendered="{!NOT(paginator.prevPageLinkShow)}">
@@ -29,20 +34,20 @@
 								</apex:outputpanel>
 							</li>
 							<li>
-								<apex:commandLink styleclass="prevPage" action="{!paginator.prevPage}" value="Previous Page" rerender="searchResult" rendered="{!paginator.prevPageLinkShow}"/>	
+								<apex:commandLink styleclass="prevPage" action="{!paginator.prevPage}" value="Previous Page" rerender="searchResult" rendered="{!paginator.prevPageLinkShow}" onclick="showHideOverlay();" />	
 								<apex:outputpanel rendered="{!paginator.prevPageShow}">
 									<a href="javascript:;" class="prevPageDisabled">Previous Page </a>
 								</apex:outputpanel>
 							</li>
 							<li>&nbsp; | &nbsp;</li>
 							<li>
-								<apex:commandLink styleclass="nextPage" action="{!paginator.nextPage}" value="Next Page" rerender="searchResult" rendered="{!paginator.nextPageLinkShow}"/>	
+								<apex:commandLink styleclass="nextPage" action="{!paginator.nextPage}" value="Next Page" rerender="searchResult" rendered="{!paginator.nextPageLinkShow}"  onclick="showHideOverlay();" />	
 								<apex:outputPanel rendered="{!paginator.nextPageShow}">
 									<a href="javascript:;" class="nextPageDisabled">Next Page</a>
 								</apex:outputPanel>
 							</li>
 							<li>
-								<apex:commandLink action="{!paginator.lastPage}" rerender="searchResult" rendered="{!paginator.nextPageLinkShow}" >
+								<apex:commandLink action="{!paginator.lastPage}" rerender="searchResult" rendered="{!paginator.nextPageLinkShow}" onclick="showHideOverlay();" >
 									<img src="{!URLFOR($Resource.discussionResourceFiles, 'images/searchresults/search_result_last.gif')}" alt="" />
 								</apex:commandLink>
 								<apex:outputpanel rendered="{!NOT(paginator.nextPageLinkShow)}">
@@ -53,7 +58,7 @@
 					</apex:form>						
 				</div>
 				<div class="pagecount">
-					<apex:form id="jumpToPageFormUp" onkeypress="return submitForm(event, '{!$Component.jumpToPageBtnUp}')">
+					<apex:form id="jumpToPageFormUp" onkeypress="return submitForm(event, '{!$Component.jumpToPageBtnUp}')"  onsubmit="showHideOverlay();"  >
 						Page <apex:inputText maxlength="3" size="1" id="jumpToPageInputUp" value="{!paginator.jumpPage}" disabled="{!IF(paginator.disabledInput,'true','false')}"  onkeypress="submitForm(event,'{!$Component.jumpToPageBtnUp}')"/> of {!paginator.cntPagination}
 						<apex:commandButton style="display:none;" id="jumpToPageBtnUp" value="Jump to Page" action="{!paginator.jumpToPage}" rerender="searchResult"/>
 					</apex:form>
@@ -62,6 +67,14 @@
 			<apex:outputPanel layout="block" rendered="{!IF((SizeList == 0) ,'true','false')}" >
 				 <h4 style="text-align: center; margin: 10px 0px;">No results on {!title}</h4>  
 			</apex:outputPanel>
+			
+			<!-- Loader -->
+				<div style="opacity: 0.6; display: none;" id="paginationOverlay">
+					<div class="loader">
+						<img title="Loading..." src="/resource/1229617276000/discussionResourceFiles/images/common/layout/big-loader.gif" alt="Loading..."/>
+					</div>
+			</div>
+			
 			<apex:repeat value="{!People}" var="personVar" id="searchResultsRepeat" first="{!paginator.firstItem}" rows="{!paginator.numberOfItemsToShow}">
 			<!-- People Card -->
 			<div class="people_card"> 
@@ -132,7 +145,7 @@
 					<apex:form >
 						<ul>
 							<li>
-								<apex:commandLink action="{!paginator.firstPage}" rerender="searchResult" rendered="{!paginator.prevPageLinkShow}" >
+								<apex:commandLink action="{!paginator.firstPage}" rerender="searchResult" rendered="{!paginator.prevPageLinkShow}" onclick="showHideOverlay();" >
 									<img src="{!URLFOR($Resource.discussionResourceFiles, 'images/searchresults/search_result_first.gif')}" alt="" />
 								</apex:commandLink>
 								<apex:outputpanel rendered="{!NOT(paginator.prevPageLinkShow)}">
@@ -140,20 +153,20 @@
 								</apex:outputpanel>
 							</li>
 							<li>
-								<apex:commandLink styleclass="prevPage" action="{!paginator.prevPage}" value="Previous Page" rerender="searchResult" rendered="{!paginator.prevPageLinkShow}"/>	
+								<apex:commandLink styleclass="prevPage" action="{!paginator.prevPage}" value="Previous Page" rerender="searchResult" rendered="{!paginator.prevPageLinkShow}" onclick="showHideOverlay();" />	
 								<apex:outputpanel rendered="{!paginator.prevPageShow}">
 									<a href="javascript:;" class="prevPageDisabled">Previous Page </a>
 								</apex:outputpanel>
 							</li>
 							<li>&nbsp; | &nbsp; </li>
 							<li>
-								<apex:commandLink styleclass="nextPage" action="{!paginator.nextPage}" value="Next Page" rerender="searchResult" rendered="{!paginator.nextPageLinkShow}"/>	
+								<apex:commandLink styleclass="nextPage" action="{!paginator.nextPage}" value="Next Page" rerender="searchResult" rendered="{!paginator.nextPageLinkShow}" onclick="showHideOverlay();" />	
 								<apex:outputPanel rendered="{!paginator.nextPageShow}">
 									<a href="javascript:;" class="nextPageDisabled">Next Page</a>
 								</apex:outputPanel>
 							</li>
 							<li>
-								<apex:commandLink action="{!paginator.lastPage}" rerender="searchResult" rendered="{!paginator.nextPageLinkShow}" >
+								<apex:commandLink action="{!paginator.lastPage}" rerender="searchResult" rendered="{!paginator.nextPageLinkShow}"  onclick="showHideOverlay();" >
 									<img src="{!URLFOR($Resource.discussionResourceFiles, 'images/searchresults/search_result_last.gif')}" alt="" />
 								</apex:commandLink>
 								<apex:outputpanel rendered="{!NOT(paginator.nextPageLinkShow)}">
@@ -164,7 +177,7 @@
 					</apex:form>						
 				</div>
 				<div class="pagecount">
-					<apex:form id="jumpToPageFormUp2" onkeypress="return submitForm(event, '{!$Component.jumpToPageBtnUp}')">
+					<apex:form id="jumpToPageFormUp2" onkeypress="return submitForm(event, '{!$Component.jumpToPageBtnUp}')"  onsubmit="showHideOverlay();"  >
 						Page <apex:inputText maxlength="3" size="1" id="jumpToPageInputUp" value="{!paginator.jumpPage}" onkeypress="submitForm(event,'{!$Component.jumpToPageBtnUp}')" disabled="{!IF(paginator.disabledInput,'true','false')}"/> of {!paginator.cntPagination}
 						<apex:commandButton style="display:none;" id="jumpToPageBtnUp" value="Jump to Page" action="{!paginator.jumpToPage}" rerender="searchResult"/>
 					</apex:form>

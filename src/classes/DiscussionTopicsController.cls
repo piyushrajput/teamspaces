@@ -499,7 +499,8 @@ public with sharing class DiscussionTopicsController {
 		
 		/**
 		* Method to convert dates.
-		* @return String datestring The string of the lastest reply. 
+		*@param dm discussion message id
+		*@return String datestring The string of the lastest reply. 
 		*/
 		public String lastPostInfoString(Id dm){
 			String lastPostString;
@@ -529,13 +530,6 @@ public with sharing class DiscussionTopicsController {
 		
 	}
 	
-
-	
-	/**
-   	* Pagination
-   	* ************
-   	*/
-   	
     /**
    	* Set of Integers to control pagination
    	*/

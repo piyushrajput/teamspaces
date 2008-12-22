@@ -17,6 +17,7 @@ public without sharing class TeamDetailsWidgetController {
 	*/
 	public void setTeam(String tID) {
 		team = tID;
+		genPermissions();
 	}
 	
 	/**
@@ -54,7 +55,7 @@ public without sharing class TeamDetailsWidgetController {
 	*@void
 	*/
 	public void genPermissions() {
-		userPermissions.setId(UserInfo.getUserId());
+		userPermissions.setId(USERID);
 		userPermissions.setTeam(team);
 		userPermissions.setObjectType('Team');
 		userPermissions.setPermissions();		
@@ -71,10 +72,13 @@ public without sharing class TeamDetailsWidgetController {
 	/**
 	* Return Team data
 	*@return Team__c
+	*@throws Exception
 	*/
 	public Team__c getTeamspace() {
+		if(teamspace.Id != null)
+			return teamspace;
 		try {
-			teamspace = [Select  t.SystemModstamp, 
+			teamspace = [Select t.SystemModstamp, 
 									t.OwnerId, t.Name,						
 									t.LastModifiedDate,
 									t.LastModifiedById, 
@@ -85,13 +89,12 @@ public without sharing class TeamDetailsWidgetController {
 									t.CreatedDate, 
 									t.CreatedById 
 									From Team__c t 
-									where id =: team];
+									where t.Id =: team];
 									
 			// The following is to clean text for the widget
 			teamspace.Description__c = teamspace.Description__c.replaceAll('[\n\r]*','');
 			teamspace.Description__c = teamspace.Description__c.replaceAll('[\n]*',''); 
-		
-			genPermissions();									
+												
 		} catch(Exception e){
 			
 		}
@@ -137,6 +140,7 @@ public without sharing class TeamDetailsWidgetController {
     /**
     * Send id of teammember (if any)
     *@return String
+    *@throws Exception
     */
     public String getTeamMemberId(){
     	List<TeamMember__c> tmember = new List<TeamMember__c>();
@@ -159,6 +163,7 @@ public without sharing class TeamDetailsWidgetController {
     /**
     * Look if the user is the team admin
     *@return boolean
+    *@throws Exception
     */    
     public boolean getIsTeamAdmin(){
     	TeamMember__c tmember = new TeamMember__c();    	
@@ -173,6 +178,7 @@ public without sharing class TeamDetailsWidgetController {
     /**
     * Get The list of admins to this team
     *@return String
+    *@throws Exception
     */
     public String getTeamAdmins(){
     	List<TeamMember__c> tmemberList = new List<TeamMember__c>();
@@ -197,6 +203,7 @@ public without sharing class TeamDetailsWidgetController {
     /**
     * Get The count of members at the team
     *@return Integer
+    *@throws Exception
     */
     public Integer getTeamCount(){
     	List<TeamMember__c> tmemberList = new List<TeamMember__c>();
@@ -217,7 +224,7 @@ public without sharing class TeamDetailsWidgetController {
     
     /**
     * Leave a Team
-    *@void
+    *@throws Exception
     */
     public void leaveTeam (){
     	List<TeamMember__c> userRow = new List<TeamMember__c>();
@@ -227,7 +234,6 @@ public without sharing class TeamDetailsWidgetController {
 		 } catch(Exception e){ 
 		 
 		 }
-		 		 
 		 
 		 if (userRow.size() == 1) {
 		 	delete userRow;
@@ -237,7 +243,6 @@ public without sharing class TeamDetailsWidgetController {
     
     /**
    	* For show leave link
-   	*@void
    	*/
    	public void refreshLeaveEvent(){
 		
