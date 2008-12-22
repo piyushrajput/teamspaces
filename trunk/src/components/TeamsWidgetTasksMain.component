@@ -134,51 +134,41 @@
 						</apex:form>
 		     			<div class="clear" ></div> 
 					</div>
-					<div class="thinBody">
-						<div style="{!IF(listSize > 0, 'display:none', '')}; " class="empty">
-						<ul class="notasks">
-							<li>
-								No Tasks<br/><a  href="TeamsCreateNewTask?id={!TeamId}" >Create New Task</a>
-							</li>
-						</ul>
-					<div class="clear"></div>
-					</div>
-					<div style="{!IF(listSize > 0, '', 'display:none')};">
-						<div style="position: relative;">
+					<div style="position: relative;">
+						<div class="thinBody">
 							<div id="results_task_loader2" style="display: none;"></div>
-								<div class="swirly_task" style="display: none;"></div>
-								<apex:outputPanel id="noTopicList" layout="block" >
-									<div style="{!IF(listSize > 0, 'display:none', '')};" class="empty">
-										<ul class="notasks">
-											<li>
-											No Tasks<br/>
-											<a onclick="fixedModalNewTask.open();" href="javascript:;" >Create New Task</a>
-											</li>
-										</ul>
-									</div>
-									<ul class="minifeed_task">		
-										<apex:repeat value="{!taskResults}" var="task" rows="5">
-											<li>
-												<div style="{!IF(task.Priority == 'High', '', 'display:none')}; width: 13px; margin-top: 3px;" class="center f_left" >
-													<img alt="" src="{!URLFOR($Resource.TeamsResources, '/images/layout/icons/highPriority.png')}"/>
-												</div>
-												<div style="{!IF(task.Priority == 'Low', '', 'display:none')}; width: 13px; margin-top: 3px;" class="center f_left" >
-													<img alt="" src="{!URLFOR($Resource.TeamsResources, '/images/layout/icons/lowPriority.png')}"/>
-												</div>
-												<div class="f_left {!task.isToLate}">
-													<a href="projecttaskdetail?id={!task.TaskId}">{!task.TaskName}</a><br/>
-													<span class="gray"> {!task.EndDate}</span>
-												</div>
-												<div class="clear"></div> 
-											</li>
-										</apex:repeat>
+							<div class="swirly_task" style="display: none;"></div>
+							<apex:outputPanel id="noTopicList" layout="block" >
+								<div style="{!IF(listSize > 0, 'display:none', '')};" class="empty">
+									<ul class="notasks">
+										<li>
+										No Tasks<br/>
+										<a onclick="fixedModalNewTask.open();" href="javascript:;" >Create New Task</a>
+										</li>
 									</ul>
-								</apex:outputPanel>  
-								<div class="clear"></div>
-							</div>
-						</div>    
-					</div>				
-				</div>
+								</div>
+								<ul class="minifeed_task">		
+									<apex:repeat value="{!taskResults}" var="task" rows="5">
+										<li>
+											<div style="{!IF(task.Priority == 'High', '', 'display:none')}; width: 13px; margin-top: 3px;" class="center f_left" >
+												<img alt="" src="{!URLFOR($Resource.TeamsResources, '/images/layout/icons/highPriority.png')}"/>
+											</div>
+											<div style="{!IF(task.Priority == 'Low', '', 'display:none')}; width: 13px; margin-top: 3px;" class="center f_left" >
+												<img alt="" src="{!URLFOR($Resource.TeamsResources, '/images/layout/icons/lowPriority.png')}"/>
+											</div>
+											<div class="f_left {!task.isToLate}">
+												<a href="projecttaskdetail?id={!task.TaskId}">{!task.TaskName}</a><br/>
+												<span class="gray"> {!task.EndDate}</span>
+											</div>
+											<div class="clear"></div> 
+										</li>
+									</apex:repeat>
+								</ul>
+							</apex:outputPanel>  
+							<div class="clear"></div>
+						</div>
+					</div>    
+				</div>				
 				<!-- Widget Holder Foot -->
 				<div class="bottom_borders">
 					<div><div></div></div>

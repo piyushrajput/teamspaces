@@ -22,7 +22,7 @@
 			<div class="linkAction">
 				<div class="linkAction">
 					<apex:outputpanel rendered="{!userPermissions.canCreate}"  > 
-						<a class="topRightLinks" href="javascript:;" onclick="fixedModalNewMilestone.open();" >New</a> |  
+						<a class="topRightLinks" href="javascript:;" onclick="fixedModalNewMilestone.open();hideErrors();" >New</a> |  
 					</apex:outputpanel>
 					<a href="ProjectTimeLine?id={!TeamId}">Timeline</a> |
 					<a href="ProjectTaskList?id={!TeamId}&filter=allMilestones" class="topRightLinks" >See More&#187;</a>
@@ -38,7 +38,7 @@
 										<li>
 											No Milestones<br/>
 											<apex:outputpanel rendered="{!userPermissions.canCreate}"  > 
-												<a  href="TeamsCreateNewTask?id={!TeamId}&t=true" >Create New Milestone</a>
+												<a  href="TeamsCreateNewTask?id={!TeamId}&t=true" onclick="hideErrors();">Create New Milestone</a>
 											</apex:outputpanel>
 										</li>
 									</ul>
@@ -107,7 +107,7 @@
 				<!-- Widget Links Holder -->
 				<div class="thinWidgetLinkAction">
 					<apex:outputpanel rendered="{!userPermissions.canCreate}"  > 
-						<a  href="javascript:;" onclick="fixedModalNewMilestone.open();" >New</a> | 
+						<a  href="javascript:;" onclick="fixedModalNewMilestone.open();hideErrors();" >New</a> | 
 						<a href="ProjectTimeLine?id={!TeamId}">Timeline</a> | 
 					</apex:outputpanel>
 					<a href="ProjectTaskList?id={!TeamId}&filter=allMilestones">See More&#187;</a>

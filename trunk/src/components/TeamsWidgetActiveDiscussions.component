@@ -4,6 +4,23 @@
 	<apex:attribute name="sidebar" description="Sideba Holder" type="Boolean" required="false" assignTo="{!sidebar}" />	
 	<!-- ### Javascript ### -->
 	<apex:includeScript value="{!URLFOR($Resource.TeamsResources, 'inc/js/TeamsWidgetActiveDiscussions.js')}"/>		
+	
+	<style>
+		.swirly_members {
+			background: #FFFFFF url(../../images/layout/small_loader.gif) no-repeat center center;
+			left: 0pt;
+			opacity: 0.6;
+			-moz-opacity: 0.6;
+			filter: alpha(opacity=60);
+			overflow: hidden;
+			position: absolute;
+			top: 0;
+			width: 100%;
+			z-index: 9999;
+		}
+		
+	</style>
+	
 	<!--### Rerender Method ###--> 
 	<apex:form >
 		<apex:actionFunction name="reloadDiscussionList" action="{!refresh}" onComplete="hideSwirly('swirly_discussion')" rerender="TaskWidgetLeft,TaskWidgetFull" />

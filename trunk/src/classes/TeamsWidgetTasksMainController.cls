@@ -15,7 +15,7 @@ public with sharing class TeamsWidgetTasksMainController {
 	}
 		
 	/**
-	*2param String
+	*@param String
 	*/
 	public void setTeamId(String id) {
 		if(teamId == null || teamId != id){
@@ -264,7 +264,7 @@ public with sharing class TeamsWidgetTasksMainController {
         }
         
   		/**
-  		*@retrun String
+  		*@return String
   		*/
   		public String getIsToLate() {
       		return isToLate;
@@ -327,6 +327,9 @@ public with sharing class TeamsWidgetTasksMainController {
             Priority = pr;
         }
         
+        /**
+        *@return percent complete
+        */
         public Integer getPercent(){
             return Percent;
         }

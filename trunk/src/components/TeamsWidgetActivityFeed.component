@@ -1,15 +1,8 @@
 <apex:component controller="TeamsWidgetActivityFeedController">
-	<style>
-		table.minifeeds.widget td {
-			border: none;
-			font-size: 11px;
-		}
-		
-		table.minifeeds.widget {
-			margin-left: 3px;
-			width:209px;
-		}
-	</style>
+	
+	
+	<apex:stylesheet value="{!URLFOR($Resource.commonResources, 'inc/css/teamsWidgetActivityFeed.css')}" /> 
+	
 	<div class="teamWidget mySmallWidget" >
 		<!-- Widget Title -->		
 		<div class="thinHeader">

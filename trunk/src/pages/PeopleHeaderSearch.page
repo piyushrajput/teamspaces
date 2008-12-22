@@ -1,7 +1,6 @@
 <apex:page sidebar="false" showHeader="false" controller="PeopleHeaderSearchController">
 <script>
 	function submitForm (e,idButton) {
-		alert('Here');
 		if (e.keyCode == 13) {
 			var buttonForm = document.getElementById(idButton);
 			buttonForm.click();

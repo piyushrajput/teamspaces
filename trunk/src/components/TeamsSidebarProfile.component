@@ -1,91 +1,19 @@
 <apex:component controller="TeamsSidebarProfileController" AllowDML="true">
-	<style>
-		div.main_form_holder div.main_form div.form_action div.cancel, div.advanced_search div.form_action div.cancel {
-			padding-top:9px !important;
-		}
-		div.main_form_holder div.main_form div.form_action div.cancel, div.advanced_search div.form_action div.cancel {
-			float:left;
-			padding-top:12px;
-			width:70px;
-		}
-		div.grayButton { 
-			background:#999999 none repeat scroll 0%;
-			color:white;
-			float:left;
-			margin-left:5px;
-			padding:5px 12px 6px;
-			text-align:center;
-		}
-		div.grayButton a {
-			display:block;
-			color:white; 
-			font-size:11px;
-		}	
-		div.brt div.contblue {
-			background:url( {!URLFOR($Resource.TeamsResources, 'images/layout/rc_boxes/blue.gif')} ) no-repeat;
-			color:#FFFFFF;
-			font-weight:bold;
-			height:20px;
-			padding-left:10px;
-			padding-top:3px;
-		}
-		div.box_round_blue div.header div div h3 {
-			font-weight:bold;
-		}
-		.statusInputText {
-			margin-bottom: 3px;
-		}
-		
-		#currentStatus, #statusEdition {
-			padding-top: 5px;
-		}
-		div.personal_data div.avatar_name h2 {
-			width:106px;
-		}
-	</style>  
-	<script>
-		/*********************************/
-		  /* Status  Change Scripting	 */
-		/*********************************/
-		// Edit Status
-		/////////////////////////////////
-		function editStatus(){
-			$(InputStatusId).value = '{!Status.Message}';
-			document.getElementById("UserStatus").value = '{!Status.Message}';
-			var statusContainer = $('currentStatus');
-			var statusEdition = $('statusEdition');
-			var statusOverlay = $('statusOverlay');
-			statusContainer.style.display = 'none';
-			statusEdition.style.display = 'block';
-			document.getElementById("UserStatus").focus();
-		}
 	
-		// Cancel Status Edition
-		/////////////////////////////////
-		function cancelEditStatus(){
-			var statusContainer = $('currentStatus');
-			var statusEdition = $('statusEdition');
-			var statusMessage = $('status_message');
-			var statusModified = $('status_modified');
-			var statusOverlay = $('statusOverlay');
-			statusEdition.style.display = 'none';
-			statusContainer.style.display = 'block';
-		}
-		
-		function setValue(input){
-			var statusMessage = $('status_message');
-			statusMessage.innerHTML = $F(input);
-		}
-		
-		function sendEnterKey(e) {
-			$(InputStatusId).value = document.getElementById("UserStatus").value;
-			var unicode = e.keyCode ? e.keyCode : e.charCode;
-			if (unicode == '13') {
-				var div = $$('.buttonSave')[0];
-				var linkid = div.getElementsByTagName('a')[0];
-				$(linkid).onclick();
+	<apex:stylesheet value="{!URLFOR($Resource.commonResources, 'inc/css/teamsSidebarProfile.css')}" />
+	
+	<apex:includeScript value="{!URLFOR($Resource.commonResources, 'inc/js/teamsSidebarProfile.js')}" />
+	
+	<style>
+			div.brt div.contblue {
+				background:url( {!URLFOR($Resource.TeamsResources, 'images/layout/rc_boxes/blue.gif')} ) no-repeat;
 			}
-		}
+	</style>
+	 
+	<script>
+	
+		var globalStatusMessage = "{!Status.Message}";
+		
 	</script>
 	<div class="teamWidget mySmallWidget" >
 		<!-- Widget Title -->		
@@ -117,7 +45,7 @@
 				<div class="subHeader">
 					<h4>My Status</h4>
 				</div>
-				<apex:outputPanel id="StatusPanel">
+				<apex:outputPanel id="StatusPanel" style="clear: both;" >
 					<div class="status" id="status" style="margin: 5px;" >
 						<div class="statusOverlay" id="statusOverlay" style="display:none;">
 							<br /><img src="{!URLFOR($Resource.PeopleResourceFiles, 'images/layout/small_loader.gif')}" alt="Loading..." />						
@@ -158,7 +86,7 @@
 					</div> 
 				</apex:outputPanel>
 				<!-- People Updates -->
-				<apex:outputpanel layout="block" rendered="{!showSubscribedPeople}">						
+				<apex:outputpanel layout="block" rendered="{!showSubscribedPeople}" >						
 					<div class="subHeader">
 						<h4>People Updates</h4>
 					</div>					

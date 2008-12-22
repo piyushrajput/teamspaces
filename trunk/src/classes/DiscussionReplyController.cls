@@ -119,6 +119,9 @@ public without sharing class DiscussionReplyController {
 	
 	public DiscussionMessage__c firstMessage = new DiscussionMessage__c();
 	
+	/**
+	*@return first discussion message
+	*/
 	public DiscussionMessage__c getFirstMessage(){
 		return firstMessage;
 	}

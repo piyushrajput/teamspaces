@@ -106,6 +106,10 @@ public class ValidateTeamSharingController {
 		return null;
 	}
 	
+	/**
+	*@param teams remaining teams
+	*@return validated teams list
+	*/
 	public List<String> validateTeams (List<Team__c> teams) {
 		List<String> actionsTaken = new List<String>();
 		

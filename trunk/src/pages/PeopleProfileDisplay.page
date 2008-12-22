@@ -61,30 +61,6 @@
          var API_SESSION_ID = '{!$Api.Session_ID}';
   		document.observe("dom:loaded", loadCollapsableWidgets);
     </script>
-    <style>
-    
-    	div.profileBlockTitle div.options div.button {
-    		width:130px;
-    	}
-    	
-    	.employTitle{
-    		clear:both;
-    		font-size:13px;
-			font-weight:bold;
-			color:#333333;
-		}
-		
-		ul.teamspaces li span a {
-			color:#666666 !important;
-			font-size:11px !important;
-		}	
-		
-		div.name_and_role h1{
-			display:block;
-			z-index:1000;
-		}
-		
-    </style>
 	
     <!-- Delete Competency Overlay -->
     <div id="deleteCompetencyDialog" style="display:none;">

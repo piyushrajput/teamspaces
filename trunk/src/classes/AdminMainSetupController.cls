@@ -10,20 +10,57 @@ public class AdminMainSetupController {
 	String newIdProfileNewMember = null;
 	String newIdProfilePublicProfile = null; 
 	
+	// Param to indicate list to order
+	String listToOrder = System.CurrentPageReference().getParameters().get('list');
+	// Param to indicate field to order
+	String fieldToOrder = 'created';
+	// Boolean to define if order is desc
+	Boolean isDesc = true;
+	
 	/**
 	* Constructor
 	*/
 	public AdminMainSetupController(){
 		TeamUtil.isAdminMemberUser();
-		getTeamTypes ();
+		getTeamTypes();
 		getTeamProfiles();
+	}
+	
+	/**
+	*@param Boolean
+	*/
+	public void setIsDesc(Boolean isDesc){
+		this.isDesc = isDesc;
+	}
+	
+	/**
+	* Return true if the order is desc
+	*@return Boolean
+	*/
+	public Boolean getIsDesc(){
+		return isDesc;
+	}
+	
+	/**
+	*@param String
+	*/
+	public void setField(String field){
+		this.fieldToOrder = field;
+	}
+	
+	/**
+	* Return the name of ordered field
+	*@return String
+	*/
+	public String getField(){
+		return fieldToOrder;
 	}
 	
 	/**
 	* Return the Namespace Prefix
 	*@return String namespace
 	*/
-	public String getNamespace () {
+	public String getNamespace() {
         return TeamUtil.getNamespace();
     } 
 	
@@ -31,21 +68,135 @@ public class AdminMainSetupController {
 	* Get 5 last TeamTypes order by CreatedDate.
 	*/
 	public void getTeamTypes(){
-		types = new List<TeamTypes>();
+		Integer n;
+	    Integer i;
+	    Integer j;
+	    
+	    types = new List<TeamTypes>();
 		List<TeamType__c> teamTypeList = new List<TeamType__c>(); 
-		teamTypeList = [select t.Id, t.CreatedById, t.CreatedDate, 
-						t.Name, t.PageName__c, t.IsActive__c
-						from TeamType__c t order by t.CreatedDate desc LIMIT 5];
+		teamTypeList = [select Id, CreatedById, CreatedDate, 
+						Name, PageName__c, IsActive__c
+						from TeamType__c order by CreatedDate desc LIMIT 5];
 		for (TeamType__c teamType : teamTypeList){
 			types.add (new TeamTypes(teamType));
 		}	
+	    
+	    //Set oreder sense
+		if (fieldToOrder == System.CurrentPageReference().getParameters().get('field')) {
+			isDesc = !isDesc;
+		}else {
+			isDesc = true;
+		}
+		
+		if(System.CurrentPageReference().getParameters().get('list') != null && System.CurrentPageReference().getParameters().get('list') != '')
+			listToOrder = System.CurrentPageReference().getParameters().get('list');
+		
+		if(System.CurrentPageReference().getParameters().get('field') != null && System.CurrentPageReference().getParameters().get('field') != '')
+			this.setField(System.CurrentPageReference().getParameters().get('field'));
+		
+	    n = types.size() - 1;
+	    if(listToOrder == 'tmtp'){
+		    if(isDesc){
+		    	if(fieldToOrder == 'name'){
+					for(i = 1; i <= n; i++){
+						for(j = n; j >= i; j--){
+							if(types.get(j).teamType.Name >= types.get(j - 1).teamType.Name){
+								TeamTypes tempTeamTypes;
+								tempTeamTypes = types.get(j - 1);
+								types.set(j - 1, types.get(j));
+								types.set(j, tempTeamTypes);
+							}
+						}
+					}
+		    	}else if(fieldToOrder == 'nteams'){
+		    		for(i = 1; i <= n; i++){
+						for(j = n; j >= i; j--){
+							if(types.get(j).teams >= types.get(j - 1).teams){
+								TeamTypes tempTeamTypes;
+								tempTeamTypes = types.get(j - 1);
+								types.set(j - 1, types.get(j));
+								types.set(j, tempTeamTypes);
+							}
+						}
+					}
+		    	}else if(fieldToOrder == 'creator'){
+		    		for(i = 1; i <= n; i++){
+						for(j = n; j >= i; j--){
+							if(types.get(j).creator.Name >= types.get(j - 1).creator.Name){
+								TeamTypes tempTeamTypes;
+								tempTeamTypes = types.get(j - 1);
+								types.set(j - 1, types.get(j));
+								types.set(j, tempTeamTypes);
+							}
+						}
+					}
+		    	}else if(fieldToOrder == 'created' || fieldToOrder == null){
+		    		for(i = 1; i <= n; i++){
+						for(j = n; j >= i; j--){
+							if(types.get(j).teamType.CreatedDate >= types.get(j - 1).teamType.CreatedDate){
+								TeamTypes tempTeamTypes;
+								tempTeamTypes = types.get(j - 1);
+								types.set(j - 1, types.get(j));
+								types.set(j, tempTeamTypes);
+							}
+						}
+					}
+		    	}
+			}else {
+		    	if(fieldToOrder == 'name'){
+					for(i = 1; i <= n; i++){
+						for(j = n; j >= i; j--){
+							if(types.get(j).teamType.Name <= types.get(j - 1).teamType.Name){
+								TeamTypes tempTeamTypes;
+								tempTeamTypes = types.get(j - 1);
+								types.set(j - 1, types.get(j));
+								types.set(j, tempTeamTypes);
+							}
+						}
+					}
+		    	}else if(fieldToOrder == 'nteams'){
+		    		for(i = 1; i <= n; i++){
+						for(j = n; j >= i; j--){
+							if(types.get(j).teams <= types.get(j - 1).teams){
+								TeamTypes tempTeamTypes;
+								tempTeamTypes = types.get(j - 1);
+								types.set(j - 1, types.get(j));
+								types.set(j, tempTeamTypes);
+							}
+						}
+					}
+		    	}else if(fieldToOrder == 'creator'){
+		    		for(i = 1; i <= n; i++){
+						for(j = n; j >= i; j--){
+							if(types.get(j).creator.Name <= types.get(j - 1).creator.Name){
+								TeamTypes tempTeamTypes;
+								tempTeamTypes = types.get(j - 1);
+								types.set(j - 1, types.get(j));
+								types.set(j, tempTeamTypes);
+							}
+						}
+					}
+		    	}else if(fieldToOrder == 'created' || fieldToOrder == null){
+		    		for(i = 1; i <= n; i++){
+						for(j = n; j >= i; j--){
+							if(types.get(j).teamType.CreatedDate <= types.get(j - 1).teamType.CreatedDate){
+								TeamTypes tempTeamTypes;
+								tempTeamTypes = types.get(j - 1);
+								types.set(j - 1, types.get(j));
+								types.set(j, tempTeamTypes);
+							}
+						}
+					}
+		    	}
+			}
+		}
 	}
 	
 	/**
 	* Returns TeamTypes list.
 	*@return List<TeamTypes>
 	*/
-	public List<TeamTypes> getTypes () {
+	public List<TeamTypes> getTypes() {
 		return types;
 	}
 	
@@ -194,13 +345,105 @@ public class AdminMainSetupController {
 	* Read 5 last TeamProfile__c order by CreatedDate
 	*/
 	public void getTeamProfiles(){
+		Integer n;
+	    Integer i;
+	    Integer j;
+		
 		profiles = new List<TeamProfile>();
 		List<TeamProfile__c> teamProfileList = new List<TeamProfile__c>(); 
-		teamProfileList = [select t.Id, t.CreatedById, t.CreatedDate, 
-						t.Name from TeamProfile__c t order by t.CreatedDate desc LIMIT 5];
+		teamProfileList = [select Id, CreatedById, CreatedDate, 
+						Name from TeamProfile__c order by CreatedDate desc LIMIT 5];
 		for (TeamProfile__c teamProfile : teamProfileList){
 			profiles.add (new TeamProfile(teamProfile));
 		}	
+		
+		//Set oreder sense
+		if (fieldToOrder == System.CurrentPageReference().getParameters().get('field')) {
+			isDesc = !isDesc;
+		}else {
+			isDesc = true;
+		}
+		
+		if(System.CurrentPageReference().getParameters().get('list') != null && System.CurrentPageReference().getParameters().get('list') != '')
+			listToOrder = System.CurrentPageReference().getParameters().get('list');
+		
+		if(System.CurrentPageReference().getParameters().get('field') != null && System.CurrentPageReference().getParameters().get('field') != '')
+			this.setField(System.CurrentPageReference().getParameters().get('field'));
+		
+		n = profiles.size() - 1;
+	    if(listToOrder == 'tmpf'){
+		    if(isDesc){
+		    	if(fieldToOrder == 'name'){
+					for(i = 1; i <= n; i++){
+						for(j = n; j >= i; j--){
+							if(profiles.get(j).teamProfile.Name >= profiles.get(j - 1).teamProfile.Name){
+								TeamProfile tempTeamProfile;
+								tempTeamProfile = profiles.get(j - 1);
+								profiles.set(j - 1, profiles.get(j));
+								profiles.set(j, tempTeamProfile);
+							}
+						}
+					}
+		    	}else if(fieldToOrder == 'creator'){
+		    		for(i = 1; i <= n; i++){
+						for(j = n; j >= i; j--){
+							if(profiles.get(j).creator.Name >= profiles.get(j - 1).creator.Name){
+								TeamProfile tempTeamProfile;
+								tempTeamProfile = profiles.get(j - 1);
+								profiles.set(j - 1, profiles.get(j));
+								profiles.set(j, tempTeamProfile);
+							}
+						}
+					}
+		    	}else if(fieldToOrder == 'created' || fieldToOrder == null){
+		    		for(i = 1; i <= n; i++){
+						for(j = n; j >= i; j--){
+							if(profiles.get(j).teamProfile.CreatedDate >= profiles.get(j - 1).teamProfile.CreatedDate){
+								TeamProfile tempTeamProfile;
+								tempTeamProfile = profiles.get(j - 1);
+								profiles.set(j - 1, profiles.get(j));
+								profiles.set(j, tempTeamProfile);
+							}
+						}
+					}
+		    	}
+			}else {
+		    	if(fieldToOrder == 'name'){
+					for(i = 1; i <= n; i++){
+						for(j = n; j >= i; j--){
+							if(profiles.get(j).teamProfile.Name <= profiles.get(j - 1).teamProfile.Name){
+								TeamProfile tempTeamProfile;
+								tempTeamProfile = profiles.get(j - 1);
+								profiles.set(j - 1, profiles.get(j));
+								profiles.set(j, tempTeamProfile);
+							}
+						}
+					}
+		    	}else if(fieldToOrder == 'creator'){
+		    		for(i = 1; i <= n; i++){
+						for(j = n; j >= i; j--){
+							if(profiles.get(j).creator.Name <= profiles.get(j - 1).creator.Name){
+								TeamProfile tempTeamProfile;
+								tempTeamProfile = profiles.get(j - 1);
+								profiles.set(j - 1, profiles.get(j));
+								profiles.set(j, tempTeamProfile);
+							}
+						}
+					}
+		    	}else if(fieldToOrder == 'created' || fieldToOrder == null){
+		    		for(i = 1; i <= n; i++){
+						for(j = n; j >= i; j--){
+							if(profiles.get(j).teamProfile.CreatedDate >= profiles.get(j - 1).teamProfile.CreatedDate){
+								TeamProfile tempTeamProfile;
+								tempTeamProfile = profiles.get(j - 1);
+								profiles.set(j - 1, profiles.get(j));
+								profiles.set(j, tempTeamProfile);
+							}
+						}
+					}
+		    	}
+			}
+		}
 	}
 	
 	/**

@@ -1,3 +1,6 @@
+/**
+*@author Juan Bessonart @ 06/09/2008
+*/
 public without sharing class TeamMembersListController {
 	public String idTeam = System.currentPageReference().getParameters().get('id');
 	public String removeMemberId = System.currentPageReference().getParameters().get('delId');
@@ -168,7 +171,7 @@ public without sharing class TeamMembersListController {
 	
 	/**
 	* Return if the user to delette is the last admin
-	*@return Boolean
+	*@param s member id
 	*/
 	public void setEditMemberId (String s){
 		editMemberId = s;	
@@ -266,8 +269,7 @@ public without sharing class TeamMembersListController {
 	}
 	
 	/**
-	*
-	*
+	*@return profiles select option list
 	*/
 	public List<SelectOption> getProfilesOptions () {
 		List<SelectOption> options = new List<SelectOption>();
@@ -277,6 +279,9 @@ public without sharing class TeamMembersListController {
 		return options;
 	}
 	
+	/**
+	*@return profile list option filter
+	*/
 	public List<SelectOption> getProfilesOptionsFilter () {
 		List<SelectOption> options = new List<SelectOption>();
 		for (TeamProfile__c item: [select id, Name from TeamProfile__c where ManageTeams__c = true order by Name]) {
@@ -771,7 +776,7 @@ public without sharing class TeamMembersListController {
 	}
 	
 	/**
-	*@param Boolean
+	*@param s sort by field
 	*/
 	public void setSortBy (String s){
 		sortBy = s;	

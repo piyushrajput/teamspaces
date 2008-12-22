@@ -205,14 +205,23 @@ public class DiscussionSearchResultsController {
 			}
 		}
 		
+		/**
+		*@return title
+		*/
 		public String getTitle () {
 			return title;
 		}
 		
+		/**
+		*@return key matches
+		*/
 		public String getMatches () {
 			return matches;
 		}
 		
+		/**
+		*@return url
+		*/
 		public String getUrl () {
 			return url;
 		}
@@ -398,7 +407,7 @@ public class DiscussionSearchResultsController {
    	
    	/**
    	* Pagination Integer Getters
-   	*@return Boolean
+   	*@return position of first item
    	*/
    	public Integer getFirstItem () {
 		return (firstRow + 1);

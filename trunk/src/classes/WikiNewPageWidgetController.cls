@@ -15,7 +15,7 @@ public with sharing class WikiNewPageWidgetController {
 	}	
 	
 	/**
-	* Return the Namespace Prefix
+	*@return Return the Namespace Prefix 
 	*/
 	public String getNamespace () {
         return TeamUtil.getNamespace();

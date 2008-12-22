@@ -29,14 +29,9 @@ public without sharing class  DiscussionOverlayDeleteTopicController {
 	* Delete Topic by Id
 	*/
 	public void deleteTopic(){
-		DiscussionTopic__c topicToDelete = [select Id, LastPostedMessage__c, Team__c, MessageCount__c 
-											from DiscussionTopic__c 
-											where Id =: topicId];
-		DiscussionForum__c discForum = [select Id, LastPostedMessage__c, Team__c, MessageCount__c 
-										from DiscussionForum__c 
-										where Team__c =: topicToDelete.Team__c];
-		discForum.MessageCount__c = discForum.MessageCount__c - topicToDelete.MessageCount__c;
-		update discForum;
-		delete topicToDelete;
+		List<DiscussionTopic__c> topicToDelete = [Select Id FROM DiscussionTopic__c where Id =: TOPICID];
+		if (topicToDelete.size() > 0) {
+			delete topicToDelete[0];
+		}	
 	}
 }

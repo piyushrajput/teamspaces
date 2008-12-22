@@ -192,7 +192,8 @@ public without sharing class TeamsCreateNewTeamController {
     
     /**
     * Save Team
-    *@void
+    *@return team detail page reference
+    *@throws Exception
     */    
     public PageReference saveTeam(){
     	try{

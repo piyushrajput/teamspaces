@@ -85,25 +85,23 @@
 						</div>
 						<apex:outputPanel id="forums" rendered="{!IF(noForums,false,true)}" layout="block">						 	
 							<apex:outputpanel styleClass="pagination" layout="block" rendered="{!IF(AND(prevPageShow,nextPageShow),false,true)}">
-			 					<div class="discussion_content" >
-									<h2 class="discussion_detail_title clear">Discussions</h2>					
-								</div>
-		 						<div class="pages" style="width:46%"> 
+		 						<div class="pages"> 
+			 						<div class="discussion_content" >
+										<h2 class="discussion_detail_title clear">Discussions</h2>					
+									</div>
 					 				<apex:form >					 
 										<ul>
 											<li class="prev {!IF(prevPageShow,'prev_disabled','')}">
 												<apex:commandLink action="{!prevPage}" value="Previous Page" rerender="forums" rendered="{!prevPageLinkShow}" onclick="ie6FixOverlay();showHideOverlay();" oncomplete="ie6FixOverlay();showHideOverlay();"/>
 												<apex:outputText value="Previous Page" rendered="{!prevPageShow}" />
 											</li>
-											<li>({!currentPagination}</li>
-											<li>-</li>
-											<li>{!cntPagination})</li>
+											<li>({!currentPagination} - {!cntPagination})</li>
 											<li class="next {!IF(nextPageShow,'next_disabled','')}">
-												<apex:commandLink action="{!nextPage}" value="Next Page" rerender="forums" rendered="{!nextPageLinkShow}" onclick="ie6FixOverlay();showHideOverlay();"  oncomplete="ie6FixOverlay();showHideOverlay();"/>										
+												<apex:commandLink action="{!nextPage}" value="Next Page" rerender="forums" rendered="{!nextPageLinkShow}" onclick="ie6FixOverlay();showHideOverlay();" oncomplete="ie6FixOverlay();showHideOverlay();"/>										
 												<apex:outputText value="Next Page" rendered="{!nextPageShow}" />
 											</li>
-										</ul>								
-									</apex:form>								
+										</ul>
+									</apex:form>
 								</div>
 							</apex:outputpanel>								
 							<!-- End Pagination controls -->

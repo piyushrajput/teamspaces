@@ -182,6 +182,7 @@ public class AdminProfileListController {
 	
 	/**
 	* Reassing members asoc from old profile to new team profile
+	*@throws DmlException by delete DML
 	*/
 	public void reAssignUsers (){
 		
@@ -312,7 +313,8 @@ public class AdminProfileListController {
 	
 	/**
 	* Sort list by creator name
-	*@return List<TeamProfile> tempProfiles
+	*@param tempProfiles unsorted list
+	*@return team profile sorted list
 	*/
 	public List<TeamProfile> sortList(List<TeamProfile> tempProfiles){
 	    Integer n;

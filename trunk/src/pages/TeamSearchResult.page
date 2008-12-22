@@ -3,41 +3,41 @@
 	<!-- CSS de TS -->
 	<link rel="stylesheet"  href="{!URLFOR($Resource.TeamsResources, '/inc/css/commonLayout.css')}" />	
 	<link rel="stylesheet" media="screen" href="{!URLFOR($Resource.discussionResourceFiles, 'inc/css/DiscussionSearchResults.css')}" />		
-	<apex:includeScript value="/soap/ajax/12.0/connection.js"/>
+	<script src="/soap/ajax/12.0/connection.js"/>
 	
 	<!-- Javascript -->
 	<!-- Prototype + Scriptaculous -->
-	<apex:includeScript value="{!URLFOR($Resource.Script_aculo_us, 'prototype.js')}"/>
-	<apex:includeScript value="{!URLFOR($Resource.Script_aculo_us, 'scriptaculous.js')}"/>
-	<apex:includeScript value="{!URLFOR($Resource.Script_aculo_us, 'effects.js')}"/>
+	<script src="{!URLFOR($Resource.Script_aculo_us, 'prototype.js')}"/>
+	<script src="{!URLFOR($Resource.Script_aculo_us, 'scriptaculous.js')}"/>
+	<script src="{!URLFOR($Resource.Script_aculo_us, 'effects.js')}"/>
 	
 	<!-- Portal Support -->
-	<apex:includeScript value="{!$Resource.portalSupport}"/>
+	<script src="{!$Resource.portalSupport}"/>
 	
-	<!-- Common css for modal -->
-	<link rel="stylesheet" media="screen" href="{!URLFOR($Resource.commonResources, 'inc/css/modal.css')}" />
-	
-	<!-- Modal JS -->
-	<apex:includeScript value="{!URLFOR($Resource.commonResources, 'inc/js/modal.js')}"/>
-	<apex:includeScript value="{!URLFOR($Resource.commonResources, 'inc/js/common.js')}"/>
+	<!-- Common JS -->
+	<script src="{!URLFOR($Resource.commonResources, 'inc/js/common.js')}"/>
     
     <!-- CSS styles for Portal Integration -->
     <apex:stylesheet value="{!URLFOR($Resource.portalStyles, 'portal.css')}" />
     <apex:stylesheet value="{!URLFOR($Resource.TeamsResources, 'inc/css/headerTeams.css')}" />
 	<apex:stylesheet value="{!URLFOR($Resource.TeamsResources, 'inc/css/widgetTeam.css')}" />
 	
-	<!-- Initialize Modal Overlay for Remove Topic Replies -->
-	<a href="#discusionOverlay" id="initializeModal" style="display:none;"></a>
-	<div id="discusionOverlay"></div>
-
-
+	<!-- Search component includes -->
 	<apex:stylesheet value="{!URLFOR($Resource.TeamsResources, 'inc/css/teamSearchResult.css')}" />
 	
-	<apex:includeScript value="{!URLFOR($Resource.TeamsResources, 'inc/js/teamSearchResult.js')}" />
+	<!-- 
+	<script src="{!URLFOR($Resource.TeamsResources, 'inc/js/teamSearchResult.js')}" />
+	 -->
+	
+	<!-- Swirli CSS -->
+	<apex:stylesheet value="{!URLFOR($Resource.commonResources, 'inc/css/swirli.css')}" />
+	
+	<!-- Swirli JS -->
+	<apex:includeScript value="{!URLFOR($Resource.commonResources, 'inc/js/swirli.js')}"/>
+	
+	
 	
 	<script>
-	
-	
 		/**
         * Namespace Prefix Getter
         */
@@ -46,12 +46,121 @@
 		sforce.connection.sessionId = '{!$Api.Session_ID}';
 		
 		var globalTeamLabel = '{!$ObjectType.Team__c.label}';
+	
 		
-		createOverlay('initializeModal');
+		//Temp Code - @Gabriel Rilo @19/12/2008
+		//@Reason: Testing leave button, works wrong
+	
+		var cantLeave = false;
+	
+		function submitForm (e,idButton) {
+			if (e.keyCode == 13) {
+				var buttonForm = document.getElementById(idButton);
+				buttonForm.focus();
+				buttonForm.onclick();
+				return false;
+			}
+			else {
+				return true;
+			}
+		}
+		
+		/**
+		*	Function to show the dialog to leave the team
+		*/
+		function leaveTeamDialogSearchResult(){
+			if(cantLeave){
+				$('leaveModalSearchResult').style.display = 'none';
+				$('leaveConfirmSearchResult').style.display = '';
+				$('leaveLoading').style.display = 'none';
+			}else{
+				$('leaveModalSearchResult').style.display = '';
+				$('leaveConfirmSearchResult').style.display = 'none';
+				$('leaveLoading').style.display = 'none';
+			}
+		}
+		
+		function leaveConfirm(teamId,userId){
+			sforce.connection.defaultNamespace = namespace;
+			createOverlay('','leaveTeamDialogSearchResult','215');
+			var q = 'Select User__c, Team__c, TeamProfile__r.ManageTeams__c, TeamProfile__r.Name, TeamProfile__c From TeamMember__c where Team__c =\'' + teamId + '\' and User__c = \'' + userId + '\'';
+			var idQueue = 'Select id from group where name = \'team' + teamId + '\' limit 1';
+			var resultMember = sforce.connection.query(idQueue);
+			var recordsMembers = resultMember.getArray("records");
+			var adminMembersMe = 'Select UserOrGroupId From GroupMember where groupId = \'' + recordsMembers[0].Id + '\' and UserOrGroupId = \''+ userId +'\'';
+			var resultAdminMe = sforce.connection.query(adminMembersMe);
+			var recordsAdminMe = resultAdminMe.getArray("records");
+			var adminMembers = 'Select UserOrGroupId From GroupMember where groupId = \'' + recordsMembers[0].Id + '\'';
+			var resultAdmin = sforce.connection.query(adminMembers);
+			var recordsAdmin = resultAdmin.getArray("records");
+			var adminNum = recordsAdmin.length;
+
+			
+			sforce.connection.query(q, {
+				onSuccess:function(result){
+					records = result.getArray("records");
+					if (records[0].TeamProfile__c != null) {
+						if(adminNum == 1 && resultAdminMe.size > 0) {
+							var qteamAdmins = 'Select User__c, Team__c, TeamProfile__r.Name, TeamProfile__c From TeamMember__c where TeamProfile__r.ManageTeams__c = true and Team__c = \'' + teamId + '\'';
+							sforce.connection.query(qteamAdmins, {
+								onSuccess:function(result){
+									var records = result.getArray("records");
+									if(records.length <= 1 ){
+										cantLeave = true;
+									}								
+								},
+								onFailure:function(error){
+									
+								}
+							});	
+						}else{
+							cantLeave = false;
+						}
+					}
+				},
+				onFailure:function(error){
+					
+				}
+			});		
+		}
+		
+		/**
+		*	Function to delete the team
+		*/		
+		function deleteTeam(teamId){
+			var teamstodel = [];
+			var team = new sforce.SObject("Team__c");
+			team.Id = teamId;
+			teamstodel.push(team);
+			result = sforce.connection.deleteIds([team.Id], {
+				onSuccess:function(result){
+					
+					var buttonForm = document.getElementById('TeamSearchResult:searchForm:mainSearchBtn');
+					buttonForm.focus();
+					buttonForm.onclick();									
+				},
+				onFailure:function(error){
+					alert('ERROR!!!!, '+ globalTeamLabel  +' cannot be deleted :(');
+					modal.close();
+				}
+			});
+		}
+		
+		/**
+		*	Function to delete the team
+		*/		
+		function deleteTeamDialog(){
+			$('leaveConfirmSearchResult').style.display = 'none';
+			$('deleteConfirm').style.display = '';	
+		}		
+	
+
+		//End Temp Code
 	</script>
 	
+		
 	<!-- Leave team dialog -->
-	<div id="leaveTeamDialog" style="display:none;height:215px;">
+	<div id="leaveTeamDialogSearchResult" style="display:none;height:215px;">
 		<apex:outputpanel id="leaveTeamPanel">
 			<div class="modalTitle">
 		   		<div class="title">Leave team ?</div>
@@ -63,7 +172,7 @@
 		  		<!-- Some modal Contents  -->
 		  		<!-- Leave the team -->
 		  		<div id="leaveLoading">Loading, Please wait...</div>
-		  		<div id="leaveModal" style="display:none;">
+		  		<div id="leaveModalSearchResult" style="display:none;">
 			   		<div class="modalMessage" style="padding:50px;text-align:center;" >
 			    		Are you sure you want to leave {!leaveTeamName} ? 
 			   		</div>
@@ -71,7 +180,7 @@
 			   		<div class="actions" style="width:180px;" > 
 			    		<div id="removeButtonContainer">
 			    			<apex:form >
-				    			<apex:commandLink styleClass="button" action="{!leaveTeam}" onclick="this.innerHTML = 'Wait...'" rerender="searchResult" value="Leave" oncomplete="modal.close();">
+				    			<apex:commandLink styleClass="button" action="{!leaveTeam}" onclick="this.innerHTML = 'Wait...'" rerender="searchResult" value="Leave" oncomplete="widgetRerender({!leaveTeamId}); modal.close(); ">
 				    				<apex:param name="teamId" value="{!leaveTeamId}"  />
 				    			</apex:commandLink>
 			    			</apex:form>
@@ -80,7 +189,7 @@
 			   		</div>
 			   	</div>
 			   	<!-- Cannot Leave  -->
-		  		<div id="leaveConfirm" style="display:none;">
+		  		<div id="leaveConfirmSearchResult" style="display:none;">
 			   		<div class="modalMessage" style="padding: 50px 10px 20px 20px;">
 			    		You cannot leave this {!$ObjectType.Team__c.label} because you are the only {!$ObjectType.Team__c.label} Administrator.<br>
 			    		Please promote another member to {!$ObjectType.Team__c.label} Administrator profile from the <a href="TeamsMembersList?id={!leaveTeamId}" class="linkOverlay">{!$ObjectType.Team__c.label} Members Page</a>. Or, you can <a href="javascript:;" onclick="deleteTeamDialog();" class="linkOverlay">delete this {!$ObjectType.Team__c.label}</a>
@@ -120,8 +229,9 @@
 	<div class="sidebar">
 		<!-- Quick links & Admin widget -->
 		<c:TeamAdminQuickLinks />
-		<!-- MyTeams Widget 
-		<c:TeamsMyTeamsWidget /> -->
+		<!-- MyTeams Widget -->
+		<c:TeamsMyTeamsWidget /> 
+		
 	</div>
 	<!-- Main Content Div Start -->
 	<div class="main_content">
@@ -149,7 +259,7 @@
 							<apex:form >
 								<ul>
 									<li>
-										<apex:commandLink action="{!firstPage}" rerender="searchResult" rendered="{!prevPageLinkShow}" >
+										<apex:commandLink action="{!firstPage}" rerender="searchResult" rendered="{!prevPageLinkShow}" onclick="showHideOverlay();" >
 											<img src="{!URLFOR($Resource.discussionResourceFiles, 'images/searchresults/search_result_first.gif')}" alt="" />
 										</apex:commandLink>
 										<apex:outputpanel rendered="{!NOT(prevPageLinkShow)}">
@@ -157,20 +267,20 @@
 										</apex:outputpanel>
 									</li>
 									<li>
-										<apex:commandLink styleclass="prevPage" action="{!prevPage}" value="Previous Page" rerender="searchResult" rendered="{!prevPageLinkShow}"/>	
+										<apex:commandLink styleclass="prevPage" action="{!prevPage}" value="Previous Page" rerender="searchResult" rendered="{!prevPageLinkShow}" onclick="showHideOverlay();" />	
 										<apex:outputpanel rendered="{!prevPageShow}">
 											<a href="javascript:;" class="prevPageDisabled">Previous Page </a>
 										</apex:outputpanel>
 									</li>
 									<li>&nbsp; | &nbsp; </li>
 									<li>
-										<apex:commandLink styleclass="nextPage" action="{!nextPage}" value="Next Page" rerender="searchResult" rendered="{!nextPageLinkShow}"/>	
+										<apex:commandLink styleclass="nextPage" action="{!nextPage}" value="Next Page" rerender="searchResult" rendered="{!nextPageLinkShow}" onclick="showHideOverlay();" />	
 										<apex:outputPanel rendered="{!nextPageShow}">
 											<a href="javascript:;" class="nextPageDisabled">Next Page</a>
 										</apex:outputPanel>
 									</li>
 									<li>
-										<apex:commandLink action="{!lastPage}" rerender="searchResult" rendered="{!nextPageLinkShow}" >
+										<apex:commandLink action="{!lastPage}" rerender="searchResult" rendered="{!nextPageLinkShow}"  onclick="showHideOverlay();" >
 											<img src="{!URLFOR($Resource.discussionResourceFiles, 'images/searchresults/search_result_last.gif')}" alt="" />
 										</apex:commandLink>
 										<apex:outputpanel rendered="{!NOT(nextPageLinkShow)}">
@@ -182,12 +292,20 @@
 						</div>
 						<!--  Navigation End -->
 						<div class="pagecount">
-							<apex:form id="jumpToPageFormUp" onkeypress="return submitForm(event, '{!$Component.jumpToPageBtnUp}')">
+							<apex:form id="jumpToPageFormUp" onkeypress="return submitForm(event, '{!$Component.jumpToPageBtnUp}')"  onsubmit="showHideOverlay();"  >
 								Page <apex:inputText maxlength="3" size="1" id="jumpToPageInputUp" value="{!jumpPage}" onkeypress="submitForm(event,'{!$Component.jumpToPageBtnUp}')"/> of {!cntPagination}
 								<apex:commandButton style="display:none;" id="jumpToPageBtnUp" value="Jump to Page" action="{!jumpToPage}" rerender="searchResult"/>
 							</apex:form>
 						</div>
 					</div>
+					
+					<!-- Loader -->
+					<div style="opacity: 0.6; display: none;" id="paginationOverlay">
+							<div class="loader">
+									<img title="Loading..." src="/resource/1229617276000/discussionResourceFiles/images/common/layout/big-loader.gif" alt="Loading..."/>
+							</div>
+					</div>
+					
 					<!-- Results Pag. End -->	
 					<apex:repeat var="teamItem" value="{!srList}" rows="{!numberOfItemsToShow}" first="{!firstRow}">
 						<div class="searchResultItem">
@@ -208,7 +326,7 @@
 												<apex:commandLink styleclass="linktoMessage" 
 																	action="{!assignLeaveTeamId}" 
 																	onclick="leaveConfirm('{!teamItem.teamId}', '{!$User.Id}');" 
-																	oncomplete="leaveTeamDialog();"
+																	oncomplete="leaveTeamDialogSearchResult(); "
 																	value="Leave Team" rerender="leaveTeamPanel">
 													<apex:param name="teamId" value="{!teamItem.teamId}" />
 												</apex:commandLink>
@@ -262,7 +380,7 @@
 							<apex:form >
 								<ul>
 									<li>
-										<apex:commandLink action="{!firstPage}" rerender="searchResult" rendered="{!prevPageLinkShow}" >
+										<apex:commandLink action="{!firstPage}" rerender="searchResult" rendered="{!prevPageLinkShow}"  onclick="showHideOverlay();" >
 											<img src="{!URLFOR($Resource.discussionResourceFiles, 'images/searchresults/search_result_first.gif')}" alt="" />
 										</apex:commandLink>
 										<apex:outputpanel rendered="{!NOT(prevPageLinkShow)}">
@@ -270,20 +388,20 @@
 										</apex:outputpanel>
 									</li>
 									<li>
-										<apex:commandLink styleclass="prevPage" action="{!prevPage}" value="Previous Page" rerender="searchResult" rendered="{!prevPageLinkShow}"/>	
+										<apex:commandLink styleclass="prevPage" action="{!prevPage}" value="Previous Page" rerender="searchResult" rendered="{!prevPageLinkShow}"  onclick="showHideOverlay();" />	
 										<apex:outputpanel rendered="{!prevPageShow}">
 											<a href="javascript:;" class="prevPageDisabled">Previous Page </a>
 										</apex:outputpanel>
 									</li>
 									<li>&nbsp; | &nbsp; </li>
 									<li>
-										<apex:commandLink styleclass="nextPage" action="{!nextPage}" value="Next Page" rerender="searchResult" rendered="{!nextPageLinkShow}"/>	
+										<apex:commandLink styleclass="nextPage" action="{!nextPage}" value="Next Page" rerender="searchResult" rendered="{!nextPageLinkShow}" onclick="showHideOverlay();" />	
 										<apex:outputPanel rendered="{!nextPageShow}">
 											<a href="javascript:;" class="nextPageDisabled">Next Page</a>
 										</apex:outputPanel>
 									</li>
 									<li>
-										<apex:commandLink action="{!lastPage}" rerender="searchResult" rendered="{!nextPageLinkShow}" >
+										<apex:commandLink action="{!lastPage}" rerender="searchResult" rendered="{!nextPageLinkShow}" onclick="showHideOverlay();" >
 											<img src="{!URLFOR($Resource.discussionResourceFiles, 'images/searchresults/search_result_last.gif')}" alt="" />
 										</apex:commandLink>
 										<apex:outputpanel rendered="{!NOT(nextPageLinkShow)}">
@@ -295,7 +413,7 @@
 						</div>
 						<!-- Navigation End -->
 						<div class="pagecount">
-							<apex:form id="jumpToPageFormDown" onkeypress="return submitForm(event, '{!$Component.jumpToPageBtnDown}')">
+							<apex:form id="jumpToPageFormDown" onkeypress="return submitForm(event, '{!$Component.jumpToPageBtnDown}')"  onsubmit="showHideOverlay();" >
 								Page <apex:inputText maxlength="3" size="1" id="jumpToPageInputDown" value="{!jumpPage}" onkeypress="submitForm(event,'{!$Component.jumpToPageBtnDown}')"/> of {!cntPagination}
 								<apex:commandButton style="display:none;" id="jumpToPageBtnDown" value="Jump to Page" action="{!jumpToPage}" rerender="searchResult"/>
 							</apex:form>
@@ -309,6 +427,7 @@
 		</apex:outputpanel> 
 		<!-- Output panel searchResult End -->
 	</div>
+
 	<!-- Main Content Div End -->
 	<script>
 		readPortalCSSRules();

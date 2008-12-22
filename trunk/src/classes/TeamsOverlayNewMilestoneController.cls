@@ -116,7 +116,6 @@ public class TeamsOverlayNewMilestoneController {
    		if(!userPermissions.getCanCreate()){
         	throw new CustomException('Insufficient Privileges');
    		}		
-   		
 		newProyect.Milestone__c = true;
 		newProyect.Team__c = TEAMID;
 		newProyect.StartDate__c = newProyect.EndDate__c;

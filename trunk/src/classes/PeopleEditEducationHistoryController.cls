@@ -51,10 +51,16 @@ public class PeopleEditEducationHistoryController {
 	public class PeopleSearch {
         String Keyword;       
 
+        /**
+        *@return keyword
+        */
         public String getKeyword() {
                 return Keyword;
         }
 
+        /**
+        *@param Keyword key
+        */
         public void setKeyword(String Keyword) {
                 this.Keyword = Keyword;
         }        
@@ -126,7 +132,7 @@ public class PeopleEditEducationHistoryController {
 		
 	/**
 	* Get user status
-	@return Status
+	*@return Status
 	*/
 	public Status getStatus() {
     	// Status Obj
@@ -680,7 +686,7 @@ public class PeopleEditEducationHistoryController {
 	  	
 	  	/**
 	  	* Set attended from
-	  	*@return Double attended from
+	  	*@param Double attended from
 	  	*/	  	
 	  	public void setAttendedFrom(Double AttendedFrom) {
 	  	 	if (AttendedFrom != null) {

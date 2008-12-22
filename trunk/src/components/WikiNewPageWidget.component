@@ -4,20 +4,9 @@
 	<!-- Overlay Styles -->
 	<apex:stylesheet value="{!URLFOR($Resource.TeamsResources, 'inc/css/teamsOverlaysTemplate.css')}" />
 	<apex:stylesheet value="{!URLFOR($Resource.WikiResource, 'inc/css/NewWikiPageOverlay.css')}" />
-	<script>
-		function showOverlayStatus ( formId ) {
-			var statusDiv = $('overlayFormStatus');
-			var mainForm = $(formId);
-			statusDiv.style.display= '';
-			mainForm.style.display= 'none';
-		}
-	</script>
-	<!-- Initialize the overlay box for modal.js -->
-	<a href="#modal_container" id="initializeModalOverlay" style="display:none;"></a>
-	<div id="modal_container" style="display:none;"></div>
-	<script>
-		createOverlay('initializeModalOverlay');
-	</script>
+	
+	<apex:includeScript value="{!URLFOR($Resource.commonResources, 'inc/js/wikiNewPageWidget.js')}" />
+	
 	<script>
 		var idTeam = '{!idTeam}';
 		var API_SESSION_ID = '{!$Api.Session_ID}';
@@ -26,41 +15,15 @@
         * Namespace Prefix Getter
         */
         var namespace = "{!namespace}";		
-		
-		function validateName (elementId,name, formDiv) {
-			var records;
-			Name = document.getElementById(name).value;
-			sforce.connection.sessionId = API_SESSION_ID;
-			sforce.connection.defaultNamespace = namespace;
-			result = sforce.connection.query("Select Name from WikiPage__c where Name = '" + Name + "' and team__c = '" + idTeam + "'");
-			records = result.getArray("records");
-			if (records.length != 0 || Name.replace(/[ ]*/gi ,'') == '') {
-				document.getElementById(elementId).style.display = 'block';
-				$('modal_container').style.height = '320px';
-				$$(".overlaySaveBtn")[0].style.color = '#DDDEB8';
-				return false;
-			}
-			else {
-				document.getElementById(elementId).style.display = 'none';
-				$('modal_container').style.height = '305px';
-				$$(".overlaySaveBtn")[0].style.color = '#FFFFFF';
-				$('saving').style.display='';	
-				$(formDiv).style.display='none';
-				return true;
-			}
-		}
-		
-		function reinicializeScrollBar () {
-			if($("Scroller-1")){
-  				scroller  = new jsScroller(document.getElementById("Scroller-1"), 400, 200);
-  				scrollbar = new jsScrollbar (document.getElementById("Scrollbar-Container"), scroller, false);
- 				}
-			if($("Scroller-2")){
-					scroller2  = new jsScroller2(document.getElementById("Scroller-2"), 500, 240);
-					scrollbar2 = new jsScrollbar2 (document.getElementById("Scrollbar-Container2"), scroller2, false);
-			}
-		}
 	</script>
+	
+	<!-- Initialize the overlay box for modal.js -->
+	<a href="#modal_container" id="initializeModalOverlay" style="display:none;"></a>
+	<div id="modal_container" style="display:none;"></div>
+	<script>
+		createOverlay('initializeModalOverlay');
+	</script>
+
 	<div id="AddChildForm" style="display:none;" class="overlayForm">	
 		<!-- Overlay Title -->
 		<div class="overlayTitleContent">

@@ -1,14 +1,13 @@
 <apex:component allowDML="true" controller="TeamSubscribeController" >
+	
+	
+	<apex:stylesheet value="{!URLFOR($Resource.commonResources, 'inc/css/teamSubscribe.css')}" />
 	<style>
-		.suscribeTeam {
-			margin: 10px 0pt 10px 9px;
-		}
-		
 		a.sus {
 			background:url('{!URLFOR($Resource.PeopleResourceFiles, 'images/layout/icons/users_rss.gif')}') no-repeat left center;
-			padding: 4px 0pt 4px 22px;			
 		}
 	</style>
+	 
 	<apex:attribute name="teamId" description="The team ID" type="String" required="true" assignTo="{!TEAM}" />
 	<div class="teamWidget mySmallWidget" >
 		<!-- Widget Title -->		

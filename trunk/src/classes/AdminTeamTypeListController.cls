@@ -41,7 +41,7 @@ public class AdminTeamTypeListController {
 	
 	/**
 	* Set order sense
-	*@param String sort
+	*@param b set 'desc sense' order
 	*/
 	public void setSortByDesc(Boolean b){
 		sortByDesc = b;
@@ -256,7 +256,8 @@ public class AdminTeamTypeListController {
 	
 	/**
 	* Sort list by creator name
-	*@return List<TeamProfile> tempProfiles
+	*@param tempTypes unsorted team type list
+	*@return team type sorted list
 	*/
 	public List<TeamTypes> sortList(List<TeamTypes> tempTypes){
 	    Integer n;

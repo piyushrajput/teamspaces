@@ -317,7 +317,6 @@
 	<apex:outputpanel id="auxPanel" style="display:none;">
 	</apex:outputpanel>	
 	<script>
-		resetSearchInput();
 		readPortalCSSRules();
 	</script>
 </apex:page>

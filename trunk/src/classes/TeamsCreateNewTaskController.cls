@@ -48,6 +48,9 @@ public without sharing class  TeamsCreateNewTaskController {
 	
 	public List<Integer> errorAttachList = new List<Integer>();
 	
+	/**
+	*@return inputs file erros index
+	*/
 	public List<Integer> getErrorAttachList(){
 		return errorAttachList;
 	}

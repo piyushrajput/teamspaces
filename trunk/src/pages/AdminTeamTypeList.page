@@ -76,20 +76,24 @@
     <!-- Header -->
 	<apex:composition template="HeaderTemplate">
 		<apex:define name="moduleId"><apex:variable var="moduleId" value="headerTeams"/></apex:define>
-	    <apex:define name="module">{!$ObjectType.Team__c.label}</apex:define>
-	    <apex:define name="title">Administrator</apex:define>
+	    <apex:define name="module">{!$ObjectType.Team__c.label} admin</apex:define>
+	    <apex:define name="title">Team Types</apex:define>
 	    <apex:define name="search">
 	    	<c:Search module="team" />
 	    </apex:define>
     </apex:composition>
     
-	<div class="top_content">
-		<div class="breadCrumb">
-			<a class="smallLinkColor" href="/apex/AdminMainSetup">Administrator Setup</a>
-			<span class="linkSeparator"> > </>
-			<span class="smallLink">{!$ObjectType.Team__c.label} Type List</span>
+	<div class="breadcrumbs">
+		<div class="map">
+			<a href="/apex/AdminMainSetup">Administrator Setup</a>
+			<span class="linkSeparator"> > </span>
+			<strong>
+				<span>{!$ObjectType.Team__c.label} Type List</span>
+			</strong>
 			<span class="linkSeparator"> 
-			<span class="breadcrumb_actualpage"></span>
+			<strong>
+				<span class="breadcrumb_actualpage"></span>
+			</strong>
 		</div>
 	</div>
 	<div class="Button_fixed" >
@@ -124,10 +128,10 @@
 								<table class="pageList sortable">
 			                        <thead>
 			                            <tr>
-			                            	<td class="manage_title_descriptionNoUnderline sorttable_nosort" width="22%">
+			                            	<td class="manage_title_descriptionNoUnderline sorttable_nosort" width="21%">
 			                                    Action
 			                                </td>
-			                                <td width="240px">
+			                                <td width="22%">
 			                                    <apex:commandLink styleclass="member_title_description" action="{!getTeamTypes}" value="Name" rerender="theGrid">
 													<apex:param name="sb" value="name" />
 												</apex:commandLink>&nbsp;
@@ -153,7 +157,7 @@
 													</apex:outputpanel>
 												</apex:outputpanel>
 			                                </td>
-			                                <td width="240px">
+			                                <td width="20%">
 			                                    <apex:commandLink styleclass="member_title_description" action="{!getTeamTypes}" value="Creator" rerender="theGrid">
 													<apex:param name="sb" value="creator" />
 												</apex:commandLink>&nbsp;
@@ -166,7 +170,7 @@
 													</apex:outputpanel>
 												</apex:outputpanel>
 			                                </td>
-			                                <td width="240px">
+			                                <td width="22%">
 			                                    <apex:commandLink styleclass="member_title_description" action="{!getTeamTypes}" value="Created date" rerender="theGrid">
 													<apex:param name="sb" value="created" />
 												</apex:commandLink>&nbsp;
@@ -209,7 +213,7 @@
 														</apex:outputPanel>                							
 		                 							</apex:outputPanel>
 				                                </td>
-				                                <td class="manage_detail_description_underlineColorBold{!IF(!type.teamType.IsActive__c, ' red', '')}">
+				                                <td class="manage_detail_description_underlineColorBold{!IF(!type.teamType.IsActive__c, ' red', '')}" style="padding-right:20px;">
 				                                   <a href="/apex/AdminWidgetConfig?view={!type.teamType.Id}">{!type.teamType.Name}</a>
 				                                </td>
 												<td class="number_teams_field">

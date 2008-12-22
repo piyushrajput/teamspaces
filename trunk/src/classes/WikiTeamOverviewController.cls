@@ -42,6 +42,7 @@ public with sharing class WikiTeamOverviewController {
 
 	/**
 	* Executes on constructor
+	*@throws CustomException
 	*/
 	public void genContructor () {
 		if (TEAMID != null && TEAMID != '') {
@@ -155,8 +156,10 @@ public with sharing class WikiTeamOverviewController {
 		}		
 	}
 	
-	/*
+	/**
 	* Tunk text, util method
+	*@param t text
+	*@return trunkated text
 	*/
 	public String trunkText(String t){
 		String text = '';

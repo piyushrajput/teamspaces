@@ -83,20 +83,24 @@
 	<!-- Header -->
 	<apex:composition template="HeaderTemplate">
 		<apex:define name="moduleId"><apex:variable var="moduleId" value="headerTeams"/></apex:define>
-	    <apex:define name="module">{!$ObjectType.Team__c.label}</apex:define>
-	    <apex:define name="title">Administrator</apex:define>
+	    <apex:define name="module">{!$ObjectType.Team__c.label} admin</apex:define>
+	    <apex:define name="title">Team Profiles</apex:define>
 	    <apex:define name="search">
 	    	<c:Search module="team" />
 	    </apex:define>
     </apex:composition>
     
-	<div class="top_content">
-		<div class="breadCrumb">
-			<a class="smallLinkColor" href="/apex/AdminMainSetup">Administrator Setup</a>
-			<span class="linkSeparator"> > </>
-			<span class="smallLink">{!$ObjectType.Team__c.label} Profile List</span>
+	<div class="breadcrumbs">
+		<div class="map">
+			<a href="/apex/AdminMainSetup">Administrator Setup</a>
+			<span class="linkSeparator"> > </span>
+			<strong>
+				<span>{!$ObjectType.Team__c.label} Profile List</span>
+			</strong>
 			<span class="linkSeparator"> 
-			<span class="breadcrumb_actualpage"></span>
+			<strong>
+				<span class="breadcrumb_actualpage"></span>
+			</strong>
 		</div>
 	</div>
 		<div class="divblackbtnProfileCenterMargin" >

@@ -1,5 +1,5 @@
 <apex:page id="WikiOverview" controller="WikiOverviewController" tabStyle="WikiPage__c" sidebar="false" >
-	<!-- Scripts -->
+	<!-- Scripts --> 
 	<apex:includeScript value="{!URLFOR($Resource.WikiResource, 'inc/js/common.js')}"/>
 	<apex:includeScript value="{!URLFOR($Resource.Script_aculo_us, 'prototype.js')}"/>
 	<apex:includeScript value="{!URLFOR($Resource.Script_aculo_us, 'scriptaculous.js')}"/>
@@ -59,7 +59,6 @@
 		    	<c:Search module="wiki" />
 		    </apex:define>
 	    </apex:composition>
-	    
 		<div class="MainPage">
 			<div class="PageBlock">	
 				<!-- - - - - - - - - - - - - - - - - - - - - -->	
@@ -68,95 +67,14 @@
 				<table border="0" class="bodyTable">
 					<tr>
 						<td valign="top" class="sideBarTD">
-							<!-- Sidebar -->
-							<div class="sidebar">
-								<!-- - - - - - - - - - - - - - - - - - - -->	
-								<!-- 			MY FAVORITES			 -->
-								<!-- - - - - - - - - - - - - - - - - - - -->
-								<div class="teamWidget mySmallWidget" >
-									<!-- Widget Title -->		
-									<div class="thinHeader">
-										<div><div><h4>My Favorites</h4></div></div>
-									</div>
-									<!-- Widget Container -->   		
-									<div class="box_content">
-										<div class="thinBody">
-											<apex:outputpanel rendered="{!IF(cntFav == 0 , false, true)}">
-												<div class="linkAction">
-													+ <a href="javascript:;">Expand to show all</a>
-												</div>
-											</apex:outputpanel>
-											<apex:outputpanel id="formFavorite">
-												<table width="100%" style="margin-top:7px;" border="0">
-													<apex:repeat value="{!favorite}" var="item">
-														<tr>
-															<td width="17px" valign="top"><apex:image style="vertical-align:bottom;" value="{!URLFOR($Resource.commonResources, 'images/icons/favOn.gif')}"/></td>
-															<td>
-																<a href="/apex/WikiPage?idWP={!item.WikiPage__r.Id}" class="WikiLink">{!item.WikiPage__r.Name}</a>
-																<br>
-																<a href="/apex/WikiTeamOverview?tid={!item.WikiPage__r.Team__r.Id}" class="WikiSite">{!item.WikiPage__r.Team__r.Name}</a>
-															</td>
-														</tr> 
-													</apex:repeat>
-													<apex:outputPanel layout="block" rendered="{!IF(cntFav == 0 , true, false)}">
-														<tr>
-															<td style="padding:5px;" align="center" valign="middle">No Favorites Yet </td>
-														</tr>
-													</apex:outputPanel>	
-												</table>
-											</apex:outputpanel>
-										</div>				
-									</div>
-									<!-- Widget Holder Foot -->
-									<div class="bottom_borders">
-										<div><div></div></div>
-									</div>
-								</div>
-								<div class="clear"></div>
-								<!-- - - - - - - - - - - - - - - - - - - - - -->	
-								<!-- 			MY RECENT CHANGES			 -->
-								<!-- - - - - - - - - - - - - - - - - - - - - -->
-								<div class="teamWidget mySmallWidget" >
-									<!-- Widget Title -->		
-									<div class="thinHeader">
-										<div><div><h4>My Recent Changes</h4></div></div>
-									</div>
-									<!-- Widget Container -->   		
-									<div class="box_content">
-										<div class="thinBody">
-											<apex:outputpanel rendered="{!IF(cntMyRecentChanges == 0 , false, true)}">
-												<div class="linkAction">
-													<a href="javascript:;" class="topRightLinks" >See More&#187</a>
-												</div>
-											</apex:outputpanel>
-											<apex:outputpanel id="formMyRecentChanges">
-												<table width="100%" style="margin-top:7px;" border="0">
-													<apex:repeat value="{!myRecentChanges}" var="item">
-														<tr>
-															<td width="28px" valign="top"><apex:image value="{!URLFOR($Resource.WikiResource, 'images/WikiImages/pic_5.jpg')}" /></td>
-															<td>
-																<a href="/apex/WikiPage?idWP={!item.Id}" class="WikiLink">{!item.Name}</a>
-																<br>
-																<a href="/apex/WikiTeamOverview?tid={!item.parentId}" class="WikiSite">{!item.parentName}</a>
-															</td>
-														</tr> 
-													</apex:repeat>
-													<apex:outputPanel layout="block" rendered="{!IF(cntMyRecentChanges == 0 , true, false)}">
-														<tr>
-															<td style="padding:5px;" align="center" valign="middle">No Recent Changes </td>
-														</tr>
-													</apex:outputPanel>
-												</table>
-											</apex:outputpanel>
-										</div>				
-									</div>
-									<!-- Widget Holder Foot -->
-									<div class="bottom_borders">
-										<div><div></div></div>
-									</div>
-								</div>
-								<div class="clear"></div>
-							</div>	
+						
+						<!-- My Favorites Widget -->
+						<c:WikiWidgetMyFavorites />
+						
+						<!-- My Recent Changes Widget -->
+						<c:WikiWidgetMyRecentChanges />
+						
+						
 						</td>
 						<td valign="top" class="mainContentTD">
 							<!-- - - - - - - - - - - - - - - - - - - - - -->	
@@ -249,6 +167,7 @@
 													<!-- - - - - - - - - - - - - - - - - -->	
 													<!-- 			PAGINATION			 -->
 													<!-- - - - - - - - - - - - - - - - - -->
+													
 													<div class="pagination">
 														<apex:outputpanel id="paginationPanelTop">
 															<apex:form id="paginationFormTop">
@@ -300,6 +219,7 @@
 																</div>
 															</apex:form>
 														</apex:outputpanel>
+														
 													</div>
 													<hr style="border: 0px solid ; background-color: #333434; height: 1px;"/>
 													<!-- - - - - - - - - - - - - - - - - - - - - -->	
@@ -346,6 +266,7 @@
 													<!-- - - - - - - - - - - - - - - -->	
 													<!-- 		 PAGINATION			 -->
 													<!-- - - - - - - - - - - - - - - -->
+													
 													<div class="pagination">
 														<apex:outputpanel id="paginationPanelBottom">
 															<apex:form id="paginationFormBottom">
@@ -397,6 +318,7 @@
 																</div>
 															</apex:form>
 														</apex:outputpanel>
+												
 													</div>
 												</apex:outputpanel>											
 											</td>
@@ -408,9 +330,7 @@
 												<div class="teamBlockTitle">
 													<h4>Recently Updated Pages</h4>
 												</div>
-												<div class="linkAction">
-													<a href="#" class="topRightLinks" >See More&#187</a>
-												</div>
+				
 												<apex:outputpanel id="updatedPanel">
 													<apex:outputpanel id="formRecentlyUpdate">
 														<apex:repeat value="{!recentlyUpdated}" var="item">
@@ -462,7 +382,6 @@
 	<apex:outputpanel id="auxPanel" style="display:none;">
 	</apex:outputpanel>	
 	<script>
-		resetSearchInput();
 		readPortalCSSRules();
 	</script>	
 </apex:page>
